@@ -1,7 +1,7 @@
 #ifndef OCTMARKERMAINWINDOW_H
 #define OCTMARKERMAINWINDOW_H
 
-#include <qt4/QtGui/QMainWindow>
+#include <QMainWindow>
 
 class CScan;
 class CVImageWidget;

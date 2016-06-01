@@ -1,11 +1,17 @@
-cmake_minimum_required(VERSION 2.6)
+# cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 project(octmarker)
-find_package(Qt4 REQUIRED)
+#find_package(Qt4 REQUIRED)
+find_package(Qt5Core)
+find_package(Qt5Widgets)
 
 FIND_PACKAGE(Boost 1.40 COMPONENTS program_options filesystem system REQUIRED)
 # find_package (Threads REQUIRED)
 find_package(OpenCV REQUIRED)
 
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
 # include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR}) # ${Boost_INCLUDE_DIR})
@@ -42,10 +48,10 @@ endforeach(loop_var)
 
 
 
-QT4_WRAP_UI(ui_files_headers ${ui_forms})
-QT4_WRAP_CPP(octmarker_HEADERS_MOC ${octmarker_HEADERS})
-QT4_ADD_RESOURCES(octmarker_RESOURCES_RCC ${octmarker_RESOURCES})
-QT4_ADD_TRANSLATION(TRANSLATIONS ${LANG})
+# QT4_WRAP_UI(ui_files_headers ${ui_forms})
+# QT4_WRAP_CPP(octmarker_HEADERS_MOC ${octmarker_HEADERS})
+QT5_ADD_RESOURCES(octmarker_RESOURCES_RCC ${octmarker_RESOURCES})
+# QT5_ADD_TRANSLATION(TRANSLATIONS ${LANG})
 
 
 
@@ -63,9 +69,8 @@ endif()
 
 add_executable(octmarker src/main.cpp ${octmarker_SRCS}
 	${ui_files_headers}
-	${octmarker_HEADERS_MOC}
 	${TRANSLATIONS})
 
-target_link_libraries(octmarker ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 
 install(TARGETS octmarker RUNTIME DESTINATION bin)
