@@ -3,12 +3,22 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QToolBar>
 
 #include <widgets/cvimagewidget.h>
+#include <octxmlread/octxml.h>
+#include <data_structure/cscan.h>
+#include <data_structure/sloimage.h>
+#include <data_structure/bscan.h>
 
 
-OCTMarkerMainWindow::OCTMarkerMainWindow(): QMainWindow()
+OCTMarkerMainWindow::OCTMarkerMainWindow()
+: QMainWindow()
+, cscan(new CScan)
 {
+
+	imageWidget = new CVImageWidget(this);
+	setCentralWidget(imageWidget);
 
 	setupMenu();
 
@@ -31,7 +41,7 @@ void OCTMarkerMainWindow::setupMenu()
 	actionLoadImage->setText(tr("Load OCT scan (XML)"));
 	actionLoadImage->setShortcut(Qt::CTRL | Qt::Key_O);
 	actionLoadImage->setIcon(QIcon(":/icons/folder_image.png"));
-	// connect(actionLoadImage, SIGNAL(triggered()), workingImage, SLOT(showLoadImageDialog()));
+	connect(actionLoadImage, SIGNAL(triggered()), this, SLOT(showLoadImageDialog()));
 	fileMenu->addAction(actionLoadImage);
 
 
@@ -54,8 +64,25 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(actionAboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 	helpMenu->addAction(actionAboutDialog);
 
+
+
 	menuBar()->addMenu(fileMenu);
 	menuBar()->addMenu(helpMenu);
+
+
+	QAction* nextBScan = new QAction(this);
+	nextBScan->setText("->");
+	connect(nextBScan, SIGNAL(triggered()), this, SLOT(nextBScan()));
+
+	QAction* previousBScan = new QAction(this);
+	previousBScan->setText("<-");
+	connect(previousBScan, SIGNAL(triggered(bool)), this, SLOT(previousBScan()));
+
+	QToolBar* toolBar = new QToolBar("B-Scan");
+	toolBar->addAction(previousBScan);
+	toolBar->addAction(nextBScan);
+
+	addToolBar(toolBar);
 }
 
 void OCTMarkerMainWindow::showAboutDialog()
@@ -71,3 +98,47 @@ void OCTMarkerMainWindow::showAboutDialog()
 
 	QMessageBox::about(this,tr("About"), text);
 }
+
+
+void OCTMarkerMainWindow::showLoadImageDialog()
+{
+	delete cscan;
+	cscan = new CScan;
+
+	OctXml::readOctXml("testoct.xml", cscan);
+
+	bscanPos = 0;
+
+	showBScan();
+// 	const SLOImage* image = cscan->getSloImage();
+// 	if(image)
+// 		imageWidget->showImage(image->getImage());
+}
+
+
+void OCTMarkerMainWindow::showBScan()
+{
+	const BScan* bscan = cscan->getBScan(bscanPos);
+	if(bscan)
+		imageWidget->showImage(bscan->getImage());
+}
+
+
+void OCTMarkerMainWindow::nextBScan()
+{
+	if(bscanPos < cscan->bscanCount()-1)
+	{
+		++bscanPos;
+		showBScan();
+	}
+}
+
+void OCTMarkerMainWindow::previousBScan()
+{
+	if(bscanPos > 0)
+	{
+		--bscanPos;
+		showBScan();
+	}
+}
+

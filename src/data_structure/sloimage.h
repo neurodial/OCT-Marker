@@ -25,15 +25,17 @@ public:
 	SLOImage(const SLOImage& other)            = delete;
 	SLOImage& operator=(const SLOImage& other) = delete;
 
-	const cv::Mat* getImage()           const                   { return image                  ; }
+	const cv::Mat& getImage()                   const           { return *image                 ; }
+	void           setImage(const cv::Mat& image);
 
-	const std::string getFilename()     const                   { return filename               ; }
+	const std::string& getFilename()             const          { return filename               ; }
+	void               setFilename(const std::string& s)        {        filename = s           ; }
 
-	double getScaleX()                  const                   { return scaleX                 ; }
-	double getScaleY()                  const                   { return scaleY                 ; }
+	double getScaleX()                          const           { return scaleX                 ; }
+	double getScaleY()                          const           { return scaleY                 ; }
 
-	int    getNumAverage()              const                   { return numAverage             ; }
-	int    getImageQuality()            const                   { return imageQuality           ; }
+	int    getNumAverage()                      const           { return numAverage             ; }
+	int    getImageQuality()                    const           { return imageQuality           ; }
 
 };
 
