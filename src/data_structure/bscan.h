@@ -14,8 +14,7 @@ public:
 	{
 		std::string filename;
 
-		double scaleX                  = 0.;
-		double scaleY                  = 0.;
+		ScaleFactor scaleFactor;
 
 		int    numAverage              = 0 ;
 		int    imageQuality            = 0 ;
@@ -23,8 +22,8 @@ public:
 		bool   positionWithinTolerance     ;
 		bool   edi                         ;
 
-		CoordSLO start;
-		CoordSLO end;
+		CoordSLOmm start;
+		CoordSLOmm end;
 	};
 
 	cv::Mat*    image    = nullptr;
@@ -32,7 +31,7 @@ public:
 
 public:
 	// BScan();
-	BScan(const cv::Mat& img, BScan::Data data);
+	BScan(const cv::Mat& img, const BScan::Data& data);
 	~BScan();
 
 	BScan(const BScan& other)            = delete;
@@ -42,17 +41,15 @@ public:
 
 	const std::string getFilename()     const                   { return data.filename               ; }
 
-	double getScaleX()                  const                   { return data.scaleX                 ; }
-	double getScaleY()                  const                   { return data.scaleY                 ; }
-
 	int    getNumAverage()              const                   { return data.numAverage             ; }
 	int    getImageQuality()            const                   { return data.imageQuality           ; }
 
 	bool   getPositionWithinTolerance() const                   { return data.positionWithinTolerance; }
 	bool   getEdi()                     const                   { return data.edi                    ; }
 
-	const CoordSLO& getStart()          const                   { return data.start                  ; }
-	const CoordSLO& getEnd()            const                   { return data.end                    ; }
+	const ScaleFactor& getScaleFactor() const                   { return data.scaleFactor            ; }
+	const CoordSLOmm& getStart()        const                   { return data.start                  ; }
+	const CoordSLOmm& getEnd()          const                   { return data.end                    ; }
 };
 
 

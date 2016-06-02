@@ -30,6 +30,9 @@ public:
 	const BScan* getBScan(std::size_t pos) const;
 	std::size_t  bscanCount() const { return bscans.size(); }
 
+
+	const std::vector<BScan*> getBscans() const { return bscans; }
+
 };
 
 #endif // CSCAN_H

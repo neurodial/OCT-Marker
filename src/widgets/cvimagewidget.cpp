@@ -82,7 +82,6 @@ void CVImageWidget::cvImage2qtImage()
 	{
 		qtImage = qtImage.scaled(imageScale,  Qt::KeepAspectRatio);
 		scaleFactor = std::min(static_cast<double>(height())/cvImage.rows, static_cast<double>(width())/cvImage.cols);
-		qDebug("scaleFactor %lf", scaleFactor);
 	}
 	else
 	{

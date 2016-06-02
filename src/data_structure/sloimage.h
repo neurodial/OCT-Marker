@@ -12,8 +12,7 @@ class SLOImage
 	cv::Mat*    image    = nullptr;
 	std::string filename;
 
-	double scaleX                  = 0.;
-	double scaleY                  = 0.;
+	ScaleFactor scaleFactor;
 
 	int    numAverage              = 0 ;
 	int    imageQuality            = 0 ;
@@ -31,8 +30,8 @@ public:
 	const std::string& getFilename()             const          { return filename               ; }
 	void               setFilename(const std::string& s)        {        filename = s           ; }
 
-	double getScaleX()                          const           { return scaleX                 ; }
-	double getScaleY()                          const           { return scaleY                 ; }
+	const ScaleFactor& getScaleFactor()         const           { return scaleFactor            ; }
+	void               setScaleFactor(const ScaleFactor& f)     { scaleFactor = f               ; }
 
 	int    getNumAverage()                      const           { return numAverage             ; }
 	int    getImageQuality()                    const           { return imageQuality           ; }

@@ -38,9 +38,38 @@ namespace
 		return std::string();
 	}
 
+	ScaleFactor readScaleFactor(ptree& dataNode)
+	{
+		double x = dataNode.get_child("ScaleX").get_value<double>();
+		double y = dataNode.get_child("ScaleY").get_value<double>();
+
+		// std::cout << "Scale: " << x << " | " << y << std::endl;
+
+		return ScaleFactor(x, y);
+	}
+
+	CoordSLOmm readCoordmm(ptree& coordNode)
+	{
+		boost::optional<ptree&> xyCoordNode = coordNode.get_child_optional("Coord");
+
+		if(xyCoordNode)
+		{
+			double x = xyCoordNode->get_child("X").get_value<double>();
+			double y = xyCoordNode->get_child("Y").get_value<double>();
+
+			// std::cout << x << " | " << y << std::endl;
+
+			return CoordSLOmm(x, y);
+		}
+		return CoordSLOmm();
+	}
+
 	void fillSLOImage(ptree& imageNode, SLOImage* sloImage, const std::string& xmlPath)
 	{
 		sloImage->setFilename(getFilename(imageNode));
+
+
+		sloImage->setScaleFactor(readScaleFactor(imageNode.get_child("OphthalmicAcquisitionContext")));
 
 		std::string filepath = xmlPath + '/' + sloImage->getFilename();
 		cv::Mat image = cv::imread(filepath, true);
@@ -55,6 +84,10 @@ namespace
 		std::string filename = getFilename(imageNode);
 		std::string filepath = xmlPath + '/' + filename;
 		cv::Mat image = cv::imread(filepath, true);
+
+		bscanData.start       = readCoordmm    (imageNode.get_child("OphthalmicAcquisitionContext.Start"));
+		bscanData.end         = readCoordmm    (imageNode.get_child("OphthalmicAcquisitionContext.End"));
+		bscanData.scaleFactor = readScaleFactor(imageNode.get_child("OphthalmicAcquisitionContext"));
 
 
 		cscann.takeBScan(new BScan(image, bscanData));

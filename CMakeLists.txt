@@ -1,13 +1,12 @@
-# cmake_minimum_required(VERSION 2.6)
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 project(octmarker)
-#find_package(Qt4 REQUIRED)
+
 find_package(Qt5Core)
 find_package(Qt5Widgets)
-
-FIND_PACKAGE(Boost 1.40 COMPONENTS program_options filesystem system REQUIRED)
+find_package(Boost 1.40 COMPONENTS program_options filesystem system REQUIRED)
 # find_package (Threads REQUIRED)
 find_package(OpenCV REQUIRED)
+
 
 
 set(CMAKE_AUTOMOC ON)
@@ -28,30 +27,14 @@ endif()
 
 
 set(srcs_directories data_structure octxmlread widgets windows manager)
-set(qt_header_directories widgets windows)
-set(ui_directories widgets)
 
 foreach(loop_var ${srcs_directories})
 	file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")
 	list(APPEND octmarker_SRCS ${sources})
 endforeach(loop_var)
 
-foreach(loop_var ${qt_header_directories})
-	file(GLOB header "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.h")
-	list(APPEND octmarker_HEADERS ${header})
-endforeach(loop_var)
 
-foreach(loop_var ${ui_directories})
-	file(GLOB ui_files "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/ui/*.ui")
-	list(APPEND ui_forms ${ui_files})
-endforeach(loop_var)
-
-
-
-# QT4_WRAP_UI(ui_files_headers ${ui_forms})
-# QT4_WRAP_CPP(octmarker_HEADERS_MOC ${octmarker_HEADERS})
 QT5_ADD_RESOURCES(octmarker_RESOURCES_RCC ${octmarker_RESOURCES})
-# QT5_ADD_TRANSLATION(TRANSLATIONS ${LANG})
 
 
 

@@ -3,8 +3,8 @@
 #include "sloimagewidget.h"
 #include <QResizeEvent>
 
-DWSloImage::DWSloImage()
-: imageWidget(new SLOImageWidget)
+DWSloImage::DWSloImage(MarkerManager& markerManger)
+: imageWidget(new SLOImageWidget(markerManger))
 {
 	setWidget(imageWidget);
 	imageWidget->setImageSize(size());

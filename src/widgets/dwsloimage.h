@@ -7,6 +7,8 @@ class QResizeEvent;
 namespace cv { class Mat; }
 
 class SLOImageWidget;
+class MarkerManager;
+
 class DWSloImage : public QDockWidget
 {
 	Q_OBJECT
@@ -14,7 +16,7 @@ class DWSloImage : public QDockWidget
 	SLOImageWidget* imageWidget;
 
 public:
-	DWSloImage();
+	DWSloImage(MarkerManager& markerManger);
 	~DWSloImage();
 
 	void setSLOImage(const cv::Mat& image);

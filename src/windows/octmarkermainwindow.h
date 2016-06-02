@@ -3,23 +3,22 @@
 
 #include <QMainWindow>
 
+class BScanMarkerWidget;
+class MarkerManager;
 class DWSloImage;
 class CScan;
-class CVImageWidget;
 
 class OCTMarkerMainWindow : public QMainWindow
 {
 	Q_OBJECT
 
 	void setupMenu();
+	
+	MarkerManager* markerManager = nullptr;
 
 	DWSloImage*    dwSloImage  = nullptr;
-	CVImageWidget* imageWidget = nullptr;
-	CScan* cscan = nullptr;
+	BScanMarkerWidget* bscanMarkerWidget = nullptr;
 
-	std::size_t bscanPos = 0;
-
-	void showBScan();
 
 public:
 	OCTMarkerMainWindow();
@@ -31,8 +30,6 @@ public slots:
 	virtual void showAboutDialog();
     virtual void showLoadImageDialog();
 
-	virtual void nextBScan();
-	virtual void previousBScan();
 };
 
 #endif // OCTMARKERMAINWINDOW_H
