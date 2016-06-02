@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+class DWSloImage;
 class CScan;
 class CVImageWidget;
 
@@ -12,6 +13,7 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	void setupMenu();
 
+	DWSloImage*    dwSloImage  = nullptr;
 	CVImageWidget* imageWidget = nullptr;
 	CScan* cscan = nullptr;
 

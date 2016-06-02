@@ -6,6 +6,7 @@
 #include <QToolBar>
 
 #include <widgets/cvimagewidget.h>
+#include <widgets/dwsloimage.h>
 #include <octxmlread/octxml.h>
 #include <data_structure/cscan.h>
 #include <data_structure/sloimage.h>
@@ -15,7 +16,9 @@
 OCTMarkerMainWindow::OCTMarkerMainWindow()
 : QMainWindow()
 , cscan(new CScan)
+, dwSloImage(new DWSloImage)
 {
+	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
 
 	imageWidget = new CVImageWidget(this);
 	setCentralWidget(imageWidget);
@@ -110,6 +113,10 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 	bscanPos = 0;
 
 	showBScan();
+
+	if(cscan->getSloImage())
+		dwSloImage->setSLOImage(cscan->getSloImage()->getImage());
+
 // 	const SLOImage* image = cscan->getSloImage();
 // 	if(image)
 // 		imageWidget->showImage(image->getImage());

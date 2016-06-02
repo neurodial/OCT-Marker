@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QImage>
 #include <QPainter>
+
 #include <opencv2/opencv.hpp>
 
 
@@ -17,33 +18,36 @@ class CVImageWidget : public QWidget
 	Q_OBJECT
 	virtual void contextMenuEvent(QContextMenuEvent* event);
 	
+	double scaleFactor = 1.;
 	
 public:
 	explicit CVImageWidget(QWidget *parent = 0);
 	virtual ~CVImageWidget();
 
-	QSize sizeHint() const { return _qimage.size(); }
-	QSize minimumSizeHint() const { return _qimage.size(); }
+	QSize sizeHint()        const                               { return qtImage.size(); }
+	QSize minimumSizeHint() const                               { return qtImage.size(); }
+
+	void setImageSize(QSize size)                               { imageScale = size; cvImage2qtImage(); }
+
+	double getImageScaleFactor()                                { return scaleFactor; }
 
 public slots:
 	void showImage(const cv::Mat& image);
 
 protected:
-	void paintEvent(QPaintEvent* /*event*/)
-	{
-		// Display the image
-		QPainter painter(this);
-		painter.drawImage(QPoint(0,0), _qimage);
-		painter.end();
-	}
+	void paintEvent(QPaintEvent* event);
 
-	QImage _qimage;
-	cv::Mat _tmp;
-	QMenu* contextMenu;
+	QImage   qtImage;
+	cv::Mat  cvImage;
+	QMenu*   contextMenu;
+	QAction* saveAction;
+	QSize    imageScale;
 	
 	
 	QString translateFileFormat(const QString& format) const;
 	int fileDialog(QString& filename);
+
+	void cvImage2qtImage();
 	
 public slots:
 	virtual void saveImage();

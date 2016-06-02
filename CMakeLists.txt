@@ -27,7 +27,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 
-set(srcs_directories data_structure octxmlread widgets windows)
+set(srcs_directories data_structure octxmlread widgets windows manager)
 set(qt_header_directories widgets windows)
 set(ui_directories widgets)
 

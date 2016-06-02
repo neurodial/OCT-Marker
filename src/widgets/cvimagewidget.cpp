@@ -35,10 +35,10 @@ void CVImageWidget::showImage(const cv::Mat& image)
 	switch(image.type())
 	{
 		case CV_8UC1:
-			cvtColor(image, _tmp, CV_GRAY2RGB);
+			cvtColor(image, cvImage, CV_GRAY2RGB);
 			break;
 		case CV_8UC3:
-			cvtColor(image, _tmp, CV_BGR2RGB);
+			cvtColor(image, cvImage, CV_BGR2RGB);
 			break;
 		case CV_32FC1:
 		case CV_64FC1:
@@ -50,31 +50,49 @@ void CVImageWidget::showImage(const cv::Mat& image)
 			
 			if(min == max)
 				max = min+1;
-			image.convertTo(_tmp, CV_8UC3, 255.0/(max-min), -255.0*min/(max-min));
-		//	image.convertTo(_tmp, CV_8U, 255.0/(max-min), -255.0*min/(max-min));
-			
-	
-			if(_tmp.channels() == 1)
-			{
-				cv::cvtColor(_tmp, _tmp, CV_GRAY2BGR);
-			//	cv::cvtColor(result, result, CV_8UC3, 3);
-			}
-			
+			image.convertTo(cvImage, CV_8UC3, 255.0/(max-min), -255.0*min/(max-min));
+
+			if(cvImage.channels() == 1)
+				cv::cvtColor(cvImage, cvImage, CV_GRAY2BGR);
+
 			break;
 		}
+		default:
+			qDebug("unhandeld opencv image format %d", image.type());
+			return;
 	}
 
 	// QImage needs the data to be stored continuously in memory
-	assert(_tmp.isContinuous());
+	assert(cvImage.isContinuous());
+
+	cvImage2qtImage();
+}
+
+void CVImageWidget::cvImage2qtImage()
+{
+	if(cvImage.empty())
+		return;
+
 	// Assign OpenCV's image buffer to the QImage. Note that the bytesPerLine parameter
 	// (http://qt-project.org/doc/qt-4.8/qimage.html#QImage-6) is 3*width because each pixel
 	// has three bytes.
-	_qimage = QImage(_tmp.data, _tmp.cols, _tmp.rows, _tmp.cols*3, QImage::Format_RGB888);
+	qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols*3, QImage::Format_RGB888);
 
-	this->setFixedSize(image.cols, image.rows);
+	if(imageScale.width() > 0 && imageScale.height() > 0)
+	{
+		qtImage = qtImage.scaled(imageScale,  Qt::KeepAspectRatio);
+		scaleFactor = std::min(static_cast<double>(height())/cvImage.rows, static_cast<double>(width())/cvImage.cols);
+		qDebug("scaleFactor %lf", scaleFactor);
+	}
+	else
+	{
+		setFixedSize(cvImage.cols, cvImage.rows);
+		scaleFactor = 1.;
+	}
 
 	repaint();
 }
+
 
 
 void CVImageWidget::saveImage()
@@ -82,9 +100,18 @@ void CVImageWidget::saveImage()
 	QString filename;
 	if(fileDialog(filename))
 	{
-		_qimage.save(filename);
+		qtImage.save(filename);
 	}
 }
+
+void CVImageWidget::paintEvent(QPaintEvent* event)
+{
+	// Display the image
+	QPainter painter(this);
+	painter.drawImage(QPoint(0,0), qtImage);
+	painter.end();
+}
+
 
 
 int CVImageWidget::fileDialog(QString& filename)
