@@ -11,7 +11,7 @@ DWSloImage::DWSloImage(MarkerManager& markerManger)
 
 	setWindowTitle(tr("SLO image"));
 
-	imageWidget->resize(165, imageWidget->height());
+	// imageWidget->resize(100, imageWidget->height());
 }
 
 

@@ -4,6 +4,8 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QToolBar>
+#include <QFileDialog>
+#include <QStringList>
 
 #include <widgets/dwsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
@@ -25,6 +27,11 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 
 	setupMenu();
 
+	try
+	{
+		markerManager->loadOCTXml("testoct.xml");
+	}
+	catch(...) {}
 }
 
 
@@ -105,7 +112,28 @@ void OCTMarkerMainWindow::showAboutDialog()
 
 void OCTMarkerMainWindow::showLoadImageDialog()
 {
-	markerManager->loadOCTXml("testoct.xml");
+	QFileDialog fd;
+	// fd.selectFile(lineEditFile->text());
+	fd.setWindowTitle(tr("Choose a filename to load a File"));
+	fd.setAcceptMode(QFileDialog::AcceptOpen);
+
+	QStringList filters;
+	filters << "OCT XML file (*.xml)";
+
+	filters.sort();
+	fd.setNameFilters(filters);
+	fd.setFileMode(QFileDialog::ExistingFile);
+
+	// fd.setDirectory("~/oct/");
+
+	if(fd.exec())
+	{
+		bool gpxLoaded = false;
+
+		QStringList filenames = fd.selectedFiles();
+
+		markerManager->loadOCTXml(filenames[0]);
+	}
 }
 
 

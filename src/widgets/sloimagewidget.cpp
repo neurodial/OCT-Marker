@@ -10,6 +10,8 @@ SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
 {
 	connect(&markerManger, SIGNAL(newCScanLoaded()), this, SLOT(reladSLOImage()));
 	connect(&markerManger, SIGNAL(bscanChanged(int)), this, SLOT(bscanChanged(int)));
+
+	setMinimumSize(50,50);
 }
 
 SLOImageWidget::~SLOImageWidget()

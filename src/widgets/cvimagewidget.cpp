@@ -80,8 +80,9 @@ void CVImageWidget::cvImage2qtImage()
 
 	if(imageScale.width() > 0 && imageScale.height() > 0)
 	{
-		qtImage = qtImage.scaled(imageScale,  Qt::KeepAspectRatio);
 		scaleFactor = std::min(static_cast<double>(height())/cvImage.rows, static_cast<double>(width())/cvImage.cols);
+		// qtImage = qtImage.scaled(imageScale,  Qt::KeepAspectRatio);
+		qtImage = qtImage.scaled(cvImage.cols*scaleFactor, cvImage.rows*scaleFactor,  Qt::KeepAspectRatio);
 	}
 	else
 	{
