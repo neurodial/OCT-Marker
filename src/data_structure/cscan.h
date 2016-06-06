@@ -33,6 +33,8 @@ public:
 
 	const std::vector<BScan*> getBscans() const { return bscans; }
 
+
+
 };
 
 #endif // CSCAN_H

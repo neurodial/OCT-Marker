@@ -14,3 +14,8 @@ BScan::~BScan()
 {
 	delete image;
 }
+
+int BScan::getWidth() const
+{
+	return image->cols;
+}

@@ -3,6 +3,7 @@
 #include <manager/markermanager.h>
 #include <data_structure/cscan.h>
 #include <data_structure/bscan.h>
+#include <data_structure/intervallmarker.h>
 #include <QWheelEvent>
 
 BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
@@ -14,29 +15,56 @@ BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 	connect(&markerManger, SIGNAL(bscanChanged(int)), this, SLOT(bscanChanged(int)));
 
 	connect(this, SIGNAL(bscanChangeInkrement(int)), &markerManger, SLOT(inkrementBScan(int)));
+
+	createIntervallColors();
 }
+
 
 
 BScanMarkerWidget::~BScanMarkerWidget()
 {
-
+	deleteIntervallColors();
 }
 
+
+void BScanMarkerWidget::deleteIntervallColors()
+{
+	for(QColor* c : intervallColors)
+		delete c;
+
+	intervallColors.clear();
+}
+
+
+void BScanMarkerWidget::createIntervallColors()
+{
+	deleteIntervallColors();
+
+	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
+
+	for(const IntervallMarker::Marker& marker : intervallMarker.getIntervallMarkerList())
+		intervallColors.push_back(new QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 60));
+}
 
 void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 {
 	CVImageWidget::paintEvent(event);
 
-	if(markerStart != markerEnd)
+	if(!markerManger.cscanLoaded())
+		return;
+
+	QPainter painter(this);
+
+	for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers())
 	{
-		QPainter painter(this);
+		// std::cout << "paintEvent(QPaintEvent* event) " << pair.second << " - " << pair.first << std::endl;
 
-		QBrush brush(QColor(255,0,0,80));
-
-		// painter.setBrush(brush);
-		painter.fillRect(markerStart, 0, markerEnd-markerStart, height(), brush);
-
-		painter.end();
+		int markerQ = pair.second;
+		if(markerQ >= 0)
+		{
+			boost::icl::discrete_interval<int> itv  = pair.first;
+			painter.fillRect(itv.lower(), 0, itv.upper()-itv.lower(), height(), *(intervallColors.at(markerQ)));
+		}
 	}
 }
 
@@ -84,8 +112,8 @@ void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 
 	if(clickPos != event->x())
 	{
-		markerStart = clickPos;
-		markerEnd   = event->x();
+		// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
+		markerManger.setMarker(clickPos, event->x());
 	}
 
 	repaint();

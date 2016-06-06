@@ -8,7 +8,6 @@ find_package(Boost 1.40 COMPONENTS program_options filesystem system REQUIRED)
 find_package(OpenCV REQUIRED)
 
 
-
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -16,7 +15,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR}) # ${Boost_INCLUDE_DIR})
 include_directories(SYSTEM ${QT_INCLUDES} ${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/src/)
-
 
 
 if(CMAKE_COMPILER_IS_GNUCXX)

@@ -102,7 +102,9 @@ void OctXml::readOctXml(const std::string& filename, CScan* cscan)
 		return;
 
 	bfs::path xmlfile(filename);
-	std::cout << xmlfile.branch_path() << std::endl;
+	if(!bfs::exists(xmlfile))
+		return;
+	// std::cout << xmlfile.branch_path() << std::endl;
 
 	std::string xmlPath     = xmlfile.branch_path().generic_string();
 	std::string xmlFilename = xmlfile.filename().generic_string();

@@ -3,19 +3,25 @@
 
 #include "cvimagewidget.h"
 
+#include <vector>
+
 class QWheelEvent;
 class QMouseEvent;
 class MarkerManager;
+class QColor;
 
 class BScanMarkerWidget : public CVImageWidget
 {
 	Q_OBJECT
 
 	int clickPos;
-	int markerStart = 0;
-	int markerEnd   = 0;
 
 	MarkerManager& markerManger;
+
+	std::vector<QColor*> intervallColors;
+
+	void createIntervallColors();
+	void deleteIntervallColors();
 
 public:
 	BScanMarkerWidget(MarkerManager& markerManger);

@@ -50,6 +50,8 @@ public:
 	const ScaleFactor& getScaleFactor() const                   { return data.scaleFactor            ; }
 	const CoordSLOmm& getStart()        const                   { return data.start                  ; }
 	const CoordSLOmm& getEnd()          const                   { return data.end                    ; }
+
+	int   getWidth()                    const;
 };
 
 

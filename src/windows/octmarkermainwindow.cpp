@@ -6,13 +6,31 @@
 #include <QToolBar>
 #include <QFileDialog>
 #include <QStringList>
+#include <QSignalMapper>
+
+#include <QActionGroup>
 
 #include <widgets/dwsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
 #include <octxmlread/octxml.h>
-#include <data_structure/oct_base/sloimage.h>
-#include <data_structure/oct_base/bscan.h>
+#include <data_structure/sloimage.h>
+#include <data_structure/bscan.h>
+#include <data_structure/intervallmarker.h>
 #include <manager/markermanager.h>
+
+#include <boost/exception/exception.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+
+
+namespace
+{
+	QIcon createColorIcon(const QColor& color)
+	{
+		QPixmap pixmap(10,10);
+		pixmap.fill(color);
+		return QIcon(pixmap);
+	}
+}
 
 
 OCTMarkerMainWindow::OCTMarkerMainWindow()
@@ -26,6 +44,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	setCentralWidget(bscanMarkerWidget);
 
 	setupMenu();
+	createMarkerToolbar();
 
 	try
 	{
@@ -97,6 +116,45 @@ void OCTMarkerMainWindow::setupMenu()
 	addToolBar(toolBar);
 }
 
+void OCTMarkerMainWindow::createMarkerToolbar()
+{
+	QActionGroup*  actionGroup  = new QActionGroup (this);
+	QSignalMapper* signalMapper = new QSignalMapper(this) ;
+
+	QToolBar* toolBar = new QToolBar("Marker");
+
+	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
+
+	int counter = 0;
+	for(const IntervallMarker::Marker& marker : intervallMarker.getIntervallMarkerList())
+	{
+		QIcon icon = createColorIcon(QColor::fromRgb(marker.getRed(), marker.getGreen(), marker.getBlue()));
+
+		QAction* markerAction = new QAction(this);
+		markerAction->setCheckable(true);
+		markerAction->setText(QString::fromStdString(marker.getName()));
+		markerAction->setIcon(icon);
+		// connect(markerAction, SIGNAL(triggered()), markerManager, SLOT(nextBScan()));
+		connect(markerAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
+		signalMapper->setMapping(markerAction, counter) ;
+
+		actionGroup->addAction(markerAction);
+		toolBar->addAction(markerAction);
+
+		++counter;
+	}
+
+
+	connect(signalMapper, SIGNAL(mapped(int)), markerManager, SLOT(chooseMarkerID(int))) ;
+
+	actionGroup->setExclusive(true);
+	// toolBar->addAction(actionGroup);
+
+	addToolBar(toolBar);
+}
+
+
+
 void OCTMarkerMainWindow::showAboutDialog()
 {
 	QString text("<h1><b>Info &#252;ber OCTMarker</b></h1>");
@@ -130,11 +188,34 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 
 	if(fd.exec())
 	{
-		bool gpxLoaded = false;
-
 		QStringList filenames = fd.selectedFiles();
 
-		markerManager->loadOCTXml(filenames[0]);
+		try
+		{
+			markerManager->loadOCTXml(filenames[0]);
+		}
+		catch(boost::exception& e)
+		{
+			QMessageBox msgBox;
+			msgBox.setText(QString::fromStdString(boost::diagnostic_information(e)));
+			msgBox.setIcon(QMessageBox::Critical);
+			msgBox.exec();
+		}
+		catch(std::exception& e)
+		{
+			QMessageBox msgBox;
+			msgBox.setText(QString::fromStdString(e.what()));
+			msgBox.setIcon(QMessageBox::Critical);
+			msgBox.exec();
+		}
+		catch(...)
+		{
+			QMessageBox msgBox;
+			msgBox.setText(QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__));
+			msgBox.setIcon(QMessageBox::Critical);
+			msgBox.exec();
+		}
+
 	}
 }
 

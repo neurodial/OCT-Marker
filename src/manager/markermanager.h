@@ -2,20 +2,16 @@
 #define MARKERMANAGER_H
 
 #include <QObject>
+#include <boost/icl/interval_map.hpp>
 
 class CScan;
 
 class MarkerManager : public QObject
 {
 	Q_OBJECT
-
-	int actBScan = 0;
-
-
-	CScan* cscan = nullptr;
-
-
 public:
+	typedef boost::icl::interval_map<int, int> MarkerMap;
+
 	MarkerManager();
     virtual ~MarkerManager();
 
@@ -23,6 +19,18 @@ public:
 
 	const CScan& getCScan()                                     { return *cscan;   }
 
+	const MarkerMap& getMarkers() const                         { return markers.at(actBScan); }
+	void setMarker(int x1, int x2, int type = -2);
+
+	bool cscanLoaded() const;
+
+	int markerId = -1;
+
+private:
+	int actBScan = 0;
+	CScan* cscan = nullptr;
+
+	std::vector<MarkerMap> markers;
 
 public slots:
 	virtual void chooseBScan(int bscan);
@@ -31,6 +39,7 @@ public slots:
 	virtual void nextBScan()                                    { inkrementBScan(+1); }
 	virtual void previousBScan()                                { inkrementBScan(-1); }
 
+	virtual void chooseMarkerID(int id)                         { markerId = id; }
 
 	virtual void loadOCTXml(QString filename);
 

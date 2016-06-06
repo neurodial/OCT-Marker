@@ -13,6 +13,8 @@ class OCTMarkerMainWindow : public QMainWindow
 	Q_OBJECT
 
 	void setupMenu();
+
+	void createMarkerToolbar();
 	
 	MarkerManager* markerManager = nullptr;
 
