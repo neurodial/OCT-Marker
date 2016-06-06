@@ -29,9 +29,12 @@ endif()
 set(srcs_directories data_structure octxmlread widgets windows manager)
 
 foreach(loop_var ${srcs_directories})
-	file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")
-	list(APPEND octmarker_SRCS ${sources})
+	file(GLOB sources_base "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")
+	file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/**/*.cpp")
+	list(APPEND octmarker_SRCS ${sources} ${sources_base})
 endforeach(loop_var)
+
+set(octmarker_RESOURCES application.qrc)
 
 
 QT5_ADD_RESOURCES(octmarker_RESOURCES_RCC ${octmarker_RESOURCES})
@@ -52,7 +55,8 @@ endif()
 
 add_executable(octmarker src/main.cpp ${octmarker_SRCS}
 	${ui_files_headers}
-	${TRANSLATIONS})
+	${TRANSLATIONS}
+	${octmarker_RESOURCES_RCC})
 
 target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 

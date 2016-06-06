@@ -10,8 +10,8 @@
 #include <widgets/dwsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
 #include <octxmlread/octxml.h>
-#include <data_structure/sloimage.h>
-#include <data_structure/bscan.h>
+#include <data_structure/oct_base/sloimage.h>
+#include <data_structure/oct_base/bscan.h>
 #include <manager/markermanager.h>
 
 
@@ -50,7 +50,7 @@ void OCTMarkerMainWindow::setupMenu()
 	QAction* actionLoadImage = new QAction(this);
 	actionLoadImage->setText(tr("Load OCT scan (XML)"));
 	actionLoadImage->setShortcut(Qt::CTRL | Qt::Key_O);
-	actionLoadImage->setIcon(QIcon(":/icons/folder_image.png"));
+	actionLoadImage->setIcon(QIcon(":/icons/folder.png"));
 	connect(actionLoadImage, SIGNAL(triggered()), this, SLOT(showLoadImageDialog()));
 	fileMenu->addAction(actionLoadImage);
 
@@ -70,7 +70,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* actionAboutDialog = new QAction(this);
 	actionAboutDialog->setText(tr("About"));
-	actionAboutDialog->setIcon(QIcon(":/icons/eye.png"));
+	actionAboutDialog->setIcon(QIcon(":/icons/help.png"));
 	connect(actionAboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 	helpMenu->addAction(actionAboutDialog);
 
@@ -81,11 +81,13 @@ void OCTMarkerMainWindow::setupMenu()
 
 
 	QAction* nextBScan = new QAction(this);
-	nextBScan->setText("->");
+	nextBScan->setText("next bscan");
+	nextBScan->setIcon(QIcon(":/icons/arrow_right.png"));
 	connect(nextBScan, SIGNAL(triggered()), markerManager, SLOT(nextBScan()));
 
 	QAction* previousBScan = new QAction(this);
-	previousBScan->setText("<-");
+	previousBScan->setText("previous bscan");
+	previousBScan->setIcon(QIcon(":/icons/arrow_left.png"));
 	connect(previousBScan, SIGNAL(triggered(bool)), markerManager, SLOT(previousBScan()));
 
 	QToolBar* toolBar = new QToolBar("B-Scan");
@@ -101,7 +103,7 @@ void OCTMarkerMainWindow::showAboutDialog()
 
 	// text += "<br />Dieses Programm entstand im Rahmen der Masterarbeit &#8222;Aktive-Konturen-Methoden zur Segmentierung von OCT-Aufnahmen&#8220;";
 	text += "<br /><br />Author: Kay Gawlik";
-	// text += "<br /><br />Icons von <a href=\"http://www.famfamfam.com/lab/icons/silk/\">FamFamFam</a>";
+	text += "<br /><br />Icons von <a href=\"http://www.famfamfam.com/lab/icons/silk/\">FamFamFam</a>";
 	text += QString("<br /><br />&#220;bersetzungszeit: %1 %2").arg(__DATE__).arg(__TIME__);
 	text += QString("<br />Qt-Version: %1").arg(qVersion());
 
