@@ -21,7 +21,8 @@ public:
 
 	const MarkerMap& getMarkers() const                         { return markers.at(actBScan); }
 	const MarkerMap& getMarkers(int bscan) const                { return markers.at(bscan); }
-	void setMarker(int x1, int x2, int type = -2);
+	void setMarker(int x1, int x2, int type = -2)               { setMarker(x1, x2, type, actBScan); }
+	void setMarker(int x1, int x2, int type, int bscan);
 
 	bool cscanLoaded() const;
 	
@@ -49,6 +50,9 @@ public slots:
 	virtual void chooseMarkerID(int id)                         { markerId = id; }
 
 	virtual void loadOCTXml(QString filename);
+	
+	virtual void loadMarkersXml(QString filename);
+	virtual void saveMarkersXml(QString filename);
 
 signals:
 	void bscanChanged(int bscan);

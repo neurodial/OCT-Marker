@@ -1,5 +1,6 @@
 #include "markermanager.h"
 #include <octxmlread/octxml.h>
+#include <octxmlread/markersxml.h>
 #include <data_structure/cscan.h>
 #include <data_structure/intervallmarker.h>
 #include <data_structure/bscan.h>
@@ -17,7 +18,7 @@ MarkerManager::MarkerManager()
 
 MarkerManager::~MarkerManager()
 {
-
+	saveMarkersXml(xmlFilename+"_markes.xml");
 }
 
 
@@ -54,6 +55,8 @@ void MarkerManager::loadOCTXml(QString filename)
 
 	xmlFilename = filename;
 
+	loadMarkersXml(xmlFilename+"_markes.xml");
+	
 	emit(newCScanLoaded());
 }
 
@@ -62,13 +65,16 @@ bool MarkerManager::cscanLoaded() const
 	return cscan->bscanCount() > 0;
 }
 
-void MarkerManager::setMarker(int x1, int x2, int type)
+void MarkerManager::setMarker(int x1, int x2, int type, int bscan)
 {
 	if(!cscanLoaded())
 		return;
 	
 	if(type <= -2)
 		type = markerId;
+	
+	if(bscan<0 || bscan >= cscan->bscanCount())
+		return;
 
 // 	printf("MarkerManager::setMarker(%d, %d, %d)", x1, x2, type);
 // 	std::cout << std::endl;
@@ -79,7 +85,7 @@ void MarkerManager::setMarker(int x1, int x2, int type)
 	if(x2 < x1)
 		std::swap(x1, x2);
 
-	int maxWidth = cscan->getBScan(actBScan)->getWidth();
+	int maxWidth = cscan->getBScan(bscan)->getWidth();
 
 	if(x2 < 0 || x1 > maxWidth)
 		return;
@@ -89,7 +95,17 @@ void MarkerManager::setMarker(int x1, int x2, int type)
 	if(x2 >= maxWidth)
 		x2 = maxWidth - 1;
 
-	markers.at(actBScan).set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
+	markers.at(bscan).set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
 }
 
+
+void MarkerManager::loadMarkersXml(QString filename)
+{
+	MarkersXML::readXML(this, filename.toStdString());
+}
+
+void MarkerManager::saveMarkersXml(QString filename)
+{
+	MarkersXML::writeXML(this, filename.toStdString());
+}
 
