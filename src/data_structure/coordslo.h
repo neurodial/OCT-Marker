@@ -1,6 +1,7 @@
 #ifndef COORDSLO_H
 #define COORDSLO_H
 
+#include <cmath>
 
 class ScaleFactor
 {
@@ -20,15 +21,21 @@ public:
 
 class CoordSLOpx
 {
-	int x;
-	int y;
+	double x;
+	double y;
 
 public:
 	CoordSLOpx(double x, double y) : x(x), y(y)                 {}
 	CoordSLOpx() : x(0), y(0)                                   {}
 
-	int getX() const                                            { return x; }
-	int getY() const                                            { return y; }
+	int getX() const                                            { return std::round(x); }
+	int getY() const                                            { return std::round(y); }
+	
+	
+	double getXf() const                                        { return x; }
+	double getYf() const                                        { return y; }
+	
+	double abs(const CoordSLOpx& o) const                       { return std::sqrt((x-o.x)*(x-o.x) + (y-o.y)*(y-o.y)); }
 };
 
 
@@ -36,15 +43,19 @@ class CoordSLOmm
 {
 	double x;
 	double y;
+	
+	bool set = false;
 
 public:
-	CoordSLOmm(double x, double y) : x(x), y(y)                 {}
+	CoordSLOmm(double x, double y) : x(x), y(y), set(true)      {}
 	CoordSLOmm() : x(0), y(0)                                   {}
 
 	double getX() const                                         { return x; }
 	double getY() const                                         { return y; }
 
 	CoordSLOpx operator*(const ScaleFactor& factor) const       { return CoordSLOpx(x/factor.getX(), y/factor.getY()); }
+	
+	operator bool() const                                       { return set; }
 };
 
 

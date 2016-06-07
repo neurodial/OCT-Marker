@@ -26,7 +26,7 @@ namespace
 {
 	QIcon createColorIcon(const QColor& color)
 	{
-		QPixmap pixmap(10,10);
+		QPixmap pixmap(15, 15);
 		pixmap.fill(color);
 		return QIcon(pixmap);
 	}
@@ -51,6 +51,8 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 		markerManager->loadOCTXml("testoct.xml");
 	}
 	catch(...) {}
+
+	connect(markerManager, SIGNAL(newCScanLoaded()), this, SLOT(newCscanLoaded()));
 }
 
 
@@ -120,8 +122,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 {
 	QActionGroup*  actionGroup  = new QActionGroup (this);
 	QSignalMapper* signalMapper = new QSignalMapper(this) ;
-
-	QToolBar* toolBar = new QToolBar("Marker");
+	QToolBar*      toolBar      = new QToolBar("Marker");
 
 	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
 
@@ -134,7 +135,6 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		markerAction->setCheckable(true);
 		markerAction->setText(QString::fromStdString(marker.getName()));
 		markerAction->setIcon(icon);
-		// connect(markerAction, SIGNAL(triggered()), markerManager, SLOT(nextBScan()));
 		connect(markerAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
 		signalMapper->setMapping(markerAction, counter) ;
 
@@ -144,12 +144,9 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		++counter;
 	}
 
-
 	connect(signalMapper, SIGNAL(mapped(int)), markerManager, SLOT(chooseMarkerID(int))) ;
 
 	actionGroup->setExclusive(true);
-	// toolBar->addAction(actionGroup);
-
 	addToolBar(toolBar);
 }
 
@@ -219,4 +216,9 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 	}
 }
 
+
+void OCTMarkerMainWindow::newCscanLoaded()
+{
+	setWindowTitle(tr("OCT-Marker - %1").arg(markerManager->getFilename()));
+}
 

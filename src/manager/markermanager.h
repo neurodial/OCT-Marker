@@ -23,6 +23,8 @@ public:
 	void setMarker(int x1, int x2, int type = -2);
 
 	bool cscanLoaded() const;
+	
+	const QString& getFilename() const                          { return xmlFilename; }
 
 	int markerId = -1;
 
@@ -31,6 +33,8 @@ private:
 	CScan* cscan = nullptr;
 
 	std::vector<MarkerMap> markers;
+	
+	QString xmlFilename;
 
 public slots:
 	virtual void chooseBScan(int bscan);

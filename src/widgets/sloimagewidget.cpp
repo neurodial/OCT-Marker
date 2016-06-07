@@ -40,7 +40,7 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	activBscan.setWidth(2);
 	activBscan.setColor(QColor(255,0,0));
 
-	int activBScan = markerManger.getActBScan();
+	int activBScan     = markerManger.getActBScan();
 	const CScan& cscan = markerManger.getCScan();
 	const std::vector<BScan*> bscans = cscan.getBscans();
 
@@ -54,12 +54,24 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 		else
 			painter.setPen(normalBscan);
 
-		const CoordSLOpx& start_px = bscan->getStart() * factor;
-		const CoordSLOpx&   end_px = bscan->getEnd()   * factor;
+		if(bscan->getCenter())
+		{
+			const CoordSLOpx&  start_px = bscan->getStart()  * factor;
+			const CoordSLOpx& center_px = bscan->getCenter() * factor;
+			
+			double radius = center_px.abs(start_px);
 
-		painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
-		// qDebug("painter.drawLine(%d, %d, %d, %d)", start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
+			painter.drawEllipse(QPointF(center_px.getXf(), center_px.getYf()), radius, radius);
+		}
+		else
+		{
+			const CoordSLOpx& start_px = bscan->getStart() * factor;
+			const CoordSLOpx&   end_px = bscan->getEnd()   * factor;
 
+			painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
+			// qDebug("painter.drawLine(%d, %d, %d, %d)", start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
+		}
+			
 		++bscanCounter;
 	}
 

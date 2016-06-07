@@ -52,7 +52,7 @@ void MarkerManager::loadOCTXml(QString filename)
 	markers.clear();
 	markers.resize(numBscans);
 
-
+	xmlFilename = filename;
 
 	emit(newCScanLoaded());
 }

@@ -26,6 +26,8 @@ public:
 	OCTMarkerMainWindow();
 	~OCTMarkerMainWindow();
 
+private slots:
+	virtual void newCscanLoaded();
 
 public slots:
 

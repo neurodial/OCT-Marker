@@ -24,6 +24,7 @@ public:
 
 		CoordSLOmm start;
 		CoordSLOmm end;
+		CoordSLOmm center;
 	};
 
 	cv::Mat*    image    = nullptr;
@@ -50,6 +51,7 @@ public:
 	const ScaleFactor& getScaleFactor() const                   { return data.scaleFactor            ; }
 	const CoordSLOmm& getStart()        const                   { return data.start                  ; }
 	const CoordSLOmm& getEnd()          const                   { return data.end                    ; }
+	const CoordSLOmm& getCenter()       const                   { return data.center                 ; }
 
 	int   getWidth()                    const;
 };

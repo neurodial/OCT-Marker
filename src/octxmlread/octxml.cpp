@@ -84,9 +84,16 @@ namespace
 		std::string filename = getFilename(imageNode);
 		std::string filepath = xmlPath + '/' + filename;
 		cv::Mat image = cv::imread(filepath, true);
+		
+		
+		boost::optional<ptree&> koordEndNode = imageNode.get_child_optional("OphthalmicAcquisitionContext.End");
 
 		bscanData.start       = readCoordmm    (imageNode.get_child("OphthalmicAcquisitionContext.Start"));
-		bscanData.end         = readCoordmm    (imageNode.get_child("OphthalmicAcquisitionContext.End"));
+		if(koordEndNode)
+			bscanData.end         = readCoordmm    (imageNode.get_child("OphthalmicAcquisitionContext.End"));
+		else
+			bscanData.center      = readCoordmm    (imageNode.get_child("OphthalmicAcquisitionContext.Center"));
+			
 		bscanData.scaleFactor = readScaleFactor(imageNode.get_child("OphthalmicAcquisitionContext"));
 
 
