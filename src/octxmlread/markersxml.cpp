@@ -104,7 +104,8 @@ void MarkersXML::writeXML(MarkerManager* markerManger, std::string filename)
 		}
 	}
 	
-    boost::property_tree::xml_writer_settings<char> settings('\t', 1);
-    write_xml(filename, xmltree, std::locale(), settings);
+
+    // boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+    write_xml(filename, xmltree, std::locale(), boost::property_tree::xml_writer_make_settings<ptree::key_type>('\t', 1u));
 }
 

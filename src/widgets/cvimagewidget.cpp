@@ -3,6 +3,7 @@
 #include <QMenu>
 #include <QImageWriter>
 #include <QFileDialog>
+#include <QPainter>
 
 #include <iostream>
 
@@ -90,7 +91,7 @@ void CVImageWidget::cvImage2qtImage()
 		scaleFactor = 1.;
 	}
 
-	repaint();
+	update();
 }
 
 
@@ -111,7 +112,6 @@ void CVImageWidget::paintEvent(QPaintEvent* event)
 	painter.drawImage(QPoint(0,0), qtImage);
 	painter.end();
 }
-
 
 
 int CVImageWidget::fileDialog(QString& filename)

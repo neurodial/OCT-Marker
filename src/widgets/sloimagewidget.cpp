@@ -1,5 +1,7 @@
 #include "sloimagewidget.h"
 
+#include <QPainter>
+
 #include <manager/markermanager.h>
 #include <data_structure/cscan.h>
 #include <data_structure/sloimage.h>

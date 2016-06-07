@@ -18,6 +18,9 @@ class BScanMarkerWidget : public CVImageWidget
 	QPoint clickPos;
 	QPoint mousePos;
 
+	bool markerActiv = false;
+
+
 	MarkerManager& markerManger;
 
 	std::vector<QColor*> intervallColors;
@@ -25,9 +28,8 @@ class BScanMarkerWidget : public CVImageWidget
 
 	void createIntervallColors();
 	void deleteIntervallColors();
-	
-	bool markerActiv = false;
 
+	virtual void contextMenuEvent(QContextMenuEvent* event);
 public:
 	BScanMarkerWidget(MarkerManager& markerManger);
 

@@ -4,7 +4,9 @@
 #include <data_structure/cscan.h>
 #include <data_structure/bscan.h>
 #include <data_structure/intervallmarker.h>
+
 #include <QWheelEvent>
+#include <QPainter>
 
 BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 : CVImageWidget()
@@ -66,8 +68,6 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 	for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers())
 	{
-		// std::cout << "paintEvent(QPaintEvent* event) " << pair.second << " - " << pair.first << std::endl;
-
 		int markerQ = pair.second;
 		if(markerQ >= 0)
 		{
@@ -79,8 +79,10 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	if(markerActiv)
 	{
 		int markerId = markerManger.getActMarkerId();
-		if(markerId >= 0 && markerId < markerColors.size())
+		if(markerId >= 0 && markerId < markerColors.size() && mousePos.x() != clickPos.x())
 		{
+			painter.drawLine(mousePos.x(), 0, mousePos.x(), height());
+			painter.drawLine(clickPos.x(), 0, clickPos.x(), height());
 			QPen pen;
 			pen.setColor(*markerColors.at(markerId));
 			pen.setWidth(5);
@@ -88,6 +90,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 			painter.drawLine(mousePos, clickPos);
 		}
 	}
+	painter.end();
 }
 
 void BScanMarkerWidget::bscanChanged(int bscanNR)
@@ -122,7 +125,7 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 	if(markerActiv)
 	{
 		mousePos = event->pos();
-		repaint();
+		update();
 	}
 }
 
@@ -144,7 +147,6 @@ void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 {
 	QWidget::mouseReleaseEvent(event);
-
 
 	if(clickPos.x() != event->x() && markerActiv)
 	{
@@ -175,4 +177,9 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 			break;
 	}
 	
+}
+
+void BScanMarkerWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+	QWidget::contextMenuEvent(event);
 }
