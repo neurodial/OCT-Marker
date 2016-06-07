@@ -40,6 +40,8 @@ void MarkerManager::chooseBScan(int bscan)
 
 void MarkerManager::loadOCTXml(QString filename)
 {
+	saveMarkersXml(xmlFilename+"_markes.xml");
+	
 	delete cscan;
 	cscan = new CScan;
 
