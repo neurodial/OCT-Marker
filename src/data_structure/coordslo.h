@@ -35,6 +35,9 @@ public:
 	double getXf() const                                        { return x; }
 	double getYf() const                                        { return y; }
 	
+	CoordSLOpx operator+(const CoordSLOpx& o) const             { return CoordSLOpx(x+o.x   , y+o.y   ); }
+	CoordSLOpx operator*(double factor)       const             { return CoordSLOpx(x*factor, y*factor); }
+	
 	double abs(const CoordSLOpx& o) const                       { return std::sqrt((x-o.x)*(x-o.x) + (y-o.y)*(y-o.y)); }
 };
 

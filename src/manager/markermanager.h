@@ -20,17 +20,20 @@ public:
 	const CScan& getCScan()                                     { return *cscan;   }
 
 	const MarkerMap& getMarkers() const                         { return markers.at(actBScan); }
+	const MarkerMap& getMarkers(int bscan) const                { return markers.at(bscan); }
 	void setMarker(int x1, int x2, int type = -2);
 
 	bool cscanLoaded() const;
 	
 	const QString& getFilename() const                          { return xmlFilename; }
+	
+	int getActMarkerId() const                                  { return markerId; }
 
-	int markerId = -1;
 
 private:
 	int actBScan = 0;
 	CScan* cscan = nullptr;
+	int markerId = -1;
 
 	std::vector<MarkerMap> markers;
 	

@@ -4,6 +4,7 @@
 #include <data_structure/cscan.h>
 #include <data_structure/sloimage.h>
 #include <data_structure/bscan.h>
+#include <data_structure/intervallmarker.h>
 
 SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
 : markerManger(markerManger)
@@ -12,10 +13,13 @@ SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
 	connect(&markerManger, SIGNAL(bscanChanged(int)), this, SLOT(bscanChanged(int)));
 
 	setMinimumSize(50,50);
+	
+	createIntervallColors();
 }
 
 SLOImageWidget::~SLOImageWidget()
 {
+	deleteIntervallColors();
 }
 
 void SLOImageWidget::paintEvent(QPaintEvent* event)
@@ -69,6 +73,32 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 			const CoordSLOpx&   end_px = bscan->getEnd()   * factor;
 
 			painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
+			
+			double bscanWidth = bscan->getWidth();
+			QPen pen;
+			pen.setWidth(3);
+			
+			for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers(bscanCounter))
+			{
+				int markerQ = pair.second;
+				if(markerQ >= 0)
+				{
+					boost::icl::discrete_interval<int> itv  = pair.first;
+					
+					double f1 = static_cast<double>(itv.lower())/bscanWidth;
+					double f2 = static_cast<double>(itv.upper())/bscanWidth;
+					
+					const CoordSLOpx p1 = start_px*(1.-f1) + end_px*f1;
+					const CoordSLOpx p2 = start_px*(1.-f2) + end_px*f2;
+					
+					pen.setColor(*(intervallColors.at(markerQ)));
+					painter.setPen(pen);
+					painter.drawLine(QPointF(p1.getXf(), p1.getYf()), QPointF(p2.getXf(), p2.getYf()));
+					
+					// painter.fillRect(itv.lower(), 0, itv.upper()-itv.lower(), height(), *(intervallColors.at(markerQ)));
+				}
+			}
+		
 			// qDebug("painter.drawLine(%d, %d, %d, %d)", start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
 		}
 			
@@ -76,9 +106,6 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	}
 
 	painter.end();
-
-
-
 }
 
 void SLOImageWidget::reladSLOImage()
@@ -96,3 +123,24 @@ void SLOImageWidget::bscanChanged(int bscan)
 
 	repaint();
 }
+
+
+void SLOImageWidget::deleteIntervallColors()
+{
+	for(QColor* c : intervallColors)
+		delete c;
+
+	intervallColors.clear();
+}
+
+
+void SLOImageWidget::createIntervallColors()
+{
+	deleteIntervallColors();
+
+	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
+
+	for(const IntervallMarker::Marker& marker : intervallMarker.getIntervallMarkerList())
+		intervallColors.push_back(new QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
+}
+

@@ -2,14 +2,21 @@
 #define SLOIMAGEWIDGET_H
 
 #include "cvimagewidget.h"
+#include <vector>
 
+class QColor;
 class MarkerManager;
+
 class SLOImageWidget : public CVImageWidget
 {
 	Q_OBJECT
 
 	MarkerManager& markerManger;
+	
+	std::vector<QColor*> intervallColors;
 
+	void createIntervallColors();
+	void deleteIntervallColors();
 public:
 	SLOImageWidget(MarkerManager& markerManger);
 
