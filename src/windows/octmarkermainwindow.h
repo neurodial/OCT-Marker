@@ -41,6 +41,10 @@ public slots:
 	virtual void showAboutDialog();
     virtual void showLoadImageDialog();
 
+	virtual void showAddMarkersDialog();
+	virtual void showLoadMarkersDialog();
+	virtual void showSaveMarkersDialog();
+
 };
 
 #endif // OCTMARKERMAINWINDOW_H

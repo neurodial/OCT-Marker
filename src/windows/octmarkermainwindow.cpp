@@ -79,6 +79,27 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(actionLoadImage, SIGNAL(triggered()), this, SLOT(showLoadImageDialog()));
 	fileMenu->addAction(actionLoadImage);
 
+	fileMenu->addSeparator();
+
+	QAction* loadMarkersAction = new QAction(this);
+	loadMarkersAction->setText(tr("load markers"));
+	loadMarkersAction->setIcon(QIcon(":/icons/folder.png"));
+	connect(loadMarkersAction, SIGNAL(triggered()), SLOT(showLoadMarkersDialog()));
+	fileMenu->addAction(loadMarkersAction);
+
+
+	QAction* addMarkersAction = new QAction(this);
+	addMarkersAction->setText(tr("add markers"));
+	addMarkersAction->setIcon(QIcon(":/icons/folder_add.png"));
+	connect(addMarkersAction, SIGNAL(triggered()), SLOT(showAddMarkersDialog()));
+	fileMenu->addAction(addMarkersAction);
+
+
+	QAction* saveMarkersAction = new QAction(this);
+	saveMarkersAction->setText(tr("save markers"));
+	saveMarkersAction->setIcon(QIcon(":/icons/disk.png"));
+	connect(saveMarkersAction, SIGNAL(triggered()), SLOT(showSaveMarkersDialog()));
+	fileMenu->addAction(saveMarkersAction);
 
 	fileMenu->addSeparator();
 
@@ -276,6 +297,53 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 	}
 }
 
+void OCTMarkerMainWindow::showAddMarkersDialog()
+{
+	QFileDialog fd;
+	fd.setWindowTitle(tr("Choose a file to add markers"));
+	fd.setAcceptMode(QFileDialog::AcceptOpen);
+
+	fd.setNameFilter(tr("OCT Markers file (*.xml)"));
+	fd.setFileMode(QFileDialog::ExistingFile);
+
+	if(fd.exec())
+	{
+		QStringList filenames = fd.selectedFiles();
+		markerManager->addMarkersXml(filenames[0]);
+	}
+}
+
+void OCTMarkerMainWindow::showLoadMarkersDialog()
+{
+	QFileDialog fd;
+	fd.setWindowTitle(tr("Choose a file to load markers"));
+	fd.setAcceptMode(QFileDialog::AcceptOpen);
+
+	fd.setNameFilter(tr("OCT Markers file (*.xml)"));
+	fd.setFileMode(QFileDialog::ExistingFile);
+
+	if(fd.exec())
+	{
+		QStringList filenames = fd.selectedFiles();
+		markerManager->loadMarkersXml(filenames[0]);
+	}
+}
+
+void OCTMarkerMainWindow::showSaveMarkersDialog()
+{
+	QFileDialog fd;
+	fd.setWindowTitle(tr("Choose a filename to save markers"));
+	fd.setAcceptMode(QFileDialog::AcceptSave);
+
+	fd.setNameFilter(tr("OCT Markers file (*.xml)"));
+	fd.setFileMode(QFileDialog::AnyFile);
+
+	if(fd.exec())
+	{
+		QStringList filenames = fd.selectedFiles();
+		markerManager->saveMarkersXml(filenames[0]);
+	}
+}
 
 void OCTMarkerMainWindow::newCscanLoaded()
 {

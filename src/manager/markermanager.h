@@ -63,6 +63,7 @@ public slots:
 	virtual void loadOCTXml(QString filename);
 	
 	virtual void loadMarkersXml(QString filename);
+	virtual void addMarkersXml (QString filename);
 	virtual void saveMarkersXml(QString filename);
 
 signals:

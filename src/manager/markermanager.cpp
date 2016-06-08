@@ -6,7 +6,11 @@
 #include <data_structure/bscan.h>
 
 
+#include <boost/exception/exception.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+
 #include <iostream>
+#include <QMessageBox>
 
 MarkerManager::MarkerManager()
 : QObject()
@@ -60,7 +64,6 @@ void MarkerManager::loadOCTXml(QString filename)
 	delete oldCScan;
 
 	actBScan = 0;
-	initMarkerMap();
 
 	loadMarkersXml(xmlFilename+"_markes.xml");
 
@@ -147,11 +150,42 @@ void MarkerManager::fillMarker(int x, int type)
 
 void MarkerManager::loadMarkersXml(QString filename)
 {
-	MarkersXML::readXML(this, filename.toStdString());
+	initMarkerMap();
+	addMarkersXml(filename);
 }
+
+void MarkerManager::addMarkersXml(QString filename)
+{
+	try
+	{
+		MarkersXML::readXML(this, filename.toStdString());
+	}
+	catch(boost::exception& e)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString::fromStdString(boost::diagnostic_information(e)));
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	catch(std::exception& e)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString::fromStdString(e.what()));
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	catch(...)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__));
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	emit(bscanChanged(actBScan)); // TODO: implementiere eigenes Signal
+}
+
 
 void MarkerManager::saveMarkersXml(QString filename)
 {
 	MarkersXML::writeXML(this, filename.toStdString());
 }
-

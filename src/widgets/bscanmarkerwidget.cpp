@@ -222,6 +222,4 @@ void BScanMarkerWidget::markersMethodChanged()
 			break;
 	}
 	update();
-
-	std::cout << "BScanMarkerWidget::markersMethodChanged()" << std::endl;
 }

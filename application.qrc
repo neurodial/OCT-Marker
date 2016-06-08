@@ -1,6 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
 	<file>icons/folder.png</file>
+	<file>icons/folder_add.png</file>
+	<file>icons/disk.png</file>
 	<file>icons/door_in.png</file>
 
 	<file>icons/arrow_left.png</file>
