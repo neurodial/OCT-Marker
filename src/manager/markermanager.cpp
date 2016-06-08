@@ -42,25 +42,45 @@ void MarkerManager::loadOCTXml(QString filename)
 {
 	saveMarkersXml(xmlFilename+"_markes.xml");
 	
-	delete cscan;
-	cscan = new CScan;
+	CScan* oldCScan = cscan;
+	cscan = nullptr;
 
-	OctXml::readOctXml(filename.toStdString(), cscan);
+	try
+	{
+		cscan = new CScan;
+		OctXml::readOctXml(filename.toStdString(), cscan);
+		xmlFilename = filename;
+	}
+	catch(...)
+	{
+		delete cscan;
+		cscan = oldCScan;
+		throw;
+	}
+	delete oldCScan;
 
 	actBScan = 0;
+	initMarkerMap();
 
-	// showBScan();
+	loadMarkersXml(xmlFilename+"_markes.xml");
 
+
+	emit(newCScanLoaded());
+}
+
+void MarkerManager::initMarkerMap()
+{
 	std::size_t numBscans = cscan->bscanCount();
 	markers.clear();
 	markers.resize(numBscans);
 
-	xmlFilename = filename;
-
-	loadMarkersXml(xmlFilename+"_markes.xml");
-	
-	emit(newCScanLoaded());
+	for(int i = 0; i<numBscans; ++i)
+	{
+		int bscanWidth = cscan->getBScan(i)->getWidth();
+		markers[i].set(std::make_pair(boost::icl::discrete_interval<int>::closed(0, bscanWidth), 0));
+	}
 }
+
 
 bool MarkerManager::cscanLoaded() const
 {
@@ -99,6 +119,30 @@ void MarkerManager::setMarker(int x1, int x2, int type, int bscan)
 
 	markers.at(bscan).set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
 }
+
+void MarkerManager::fillMarker(int x, int type)
+{
+	int bscan = actBScan;
+
+	if(!cscanLoaded())
+		return;
+
+	if(type <= -2)
+		type = markerId;
+
+	if(bscan<0 || bscan >= cscan->bscanCount())
+		return;
+
+	MarkerMap& map = markers.at(bscan);
+	MarkerMap::const_iterator it = map.find(x);
+
+	boost::icl::discrete_interval<int> intervall = it->first;
+
+	if(intervall.upper() > 0)
+		markers.at(bscan).set(std::make_pair(boost::icl::discrete_interval<int>::closed(intervall.lower(), intervall.upper()), type));
+
+}
+
 
 
 void MarkerManager::loadMarkersXml(QString filename)

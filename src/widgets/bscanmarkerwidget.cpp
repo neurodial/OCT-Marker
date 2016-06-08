@@ -16,11 +16,14 @@ BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 	connect(&markerManger, SIGNAL(newCScanLoaded()), this, SLOT(cscanLoaded()));
 	connect(&markerManger, SIGNAL(bscanChanged(int)), this, SLOT(bscanChanged(int)));
 
+	connect(&markerManger, SIGNAL(markerMethodChanged(Method)), this, SLOT(markersMethodChanged()));
+
 	connect(this, SIGNAL(bscanChangeInkrement(int)), &markerManger, SLOT(inkrementBScan(int)));
 
 	createIntervallColors();
 	
 	setFocusPolicy(Qt::ClickFocus);
+	setMouseTracking(true);
 }
 
 
@@ -69,27 +72,33 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers())
 	{
 		int markerQ = pair.second;
-		if(markerQ >= 0)
+		if(markerQ > 0)
 		{
 			boost::icl::discrete_interval<int> itv  = pair.first;
 			painter.fillRect(itv.lower(), 0, itv.upper()-itv.lower(), height(), *(intervallColors.at(markerQ)));
 		}
 	}
 	
-	if(markerActiv)
+
+	if(mouseInWidget && markerManger.getMarkerMethod() == MarkerManager::Method::Paint)
 	{
-		int markerId = markerManger.getActMarkerId();
-		if(markerId >= 0 && markerId < markerColors.size() && mousePos.x() != clickPos.x())
+		painter.drawLine(mousePos.x(), 0, mousePos.x(), height());
+
+		if(markerActiv)
 		{
-			painter.drawLine(mousePos.x(), 0, mousePos.x(), height());
-			painter.drawLine(clickPos.x(), 0, clickPos.x(), height());
-			QPen pen;
-			pen.setColor(*markerColors.at(markerId));
-			pen.setWidth(5);
-			painter.setPen(pen);
-			painter.drawLine(mousePos, clickPos);
+			int markerId = markerManger.getActMarkerId();
+			if(markerId >= 0 && static_cast<size_t>(markerId) < markerColors.size() && mousePos.x() != clickPos.x())
+			{
+				painter.drawLine(clickPos.x(), 0, clickPos.x(), height());
+				QPen pen;
+				pen.setColor(*markerColors.at(markerId));
+				pen.setWidth(5);
+				painter.setPen(pen);
+				painter.drawLine(mousePos, clickPos);
+			}
 		}
 	}
+
 	painter.end();
 }
 
@@ -99,6 +108,14 @@ void BScanMarkerWidget::bscanChanged(int bscanNR)
 	const BScan* bscan = cscan.getBScan(bscanNR);
 	if(bscan)
 		showImage(bscan->getImage());
+}
+
+void BScanMarkerWidget::leaveEvent(QEvent* e)
+{
+	QWidget::leaveEvent(e);
+
+	mouseInWidget = false;
+	update();
 }
 
 
@@ -122,7 +139,8 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	QWidget::mouseMoveEvent(event);
 	
-	if(markerActiv)
+	mouseInWidget = true;
+	// if(markerActiv)
 	{
 		mousePos = event->pos();
 		update();
@@ -148,14 +166,22 @@ void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 {
 	QWidget::mouseReleaseEvent(event);
 
-	if(clickPos.x() != event->x() && markerActiv)
+	switch(markerManger.getMarkerMethod())
 	{
-		// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
-		markerManger.setMarker(clickPos.x(), event->x());
+		case MarkerManager::Method::Paint:
+			if(clickPos.x() != event->x() && markerActiv)
+			{
+				// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
+				markerManger.setMarker(clickPos.x(), event->x());
+			}
+			break;
+		case MarkerManager::Method::Fill:
+			if(markerActiv)
+				markerManger.fillMarker(clickPos.x());
+			break;
 	}
 	
 	markerActiv = false;
-
 	repaint();
 }
 
@@ -182,4 +208,20 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 void BScanMarkerWidget::contextMenuEvent(QContextMenuEvent* event)
 {
 	QWidget::contextMenuEvent(event);
+}
+
+void BScanMarkerWidget::markersMethodChanged()
+{
+	switch(markerManger.getMarkerMethod())
+	{
+		case MarkerManager::Method::Paint:
+			setMouseTracking(true);
+			break;
+		default:
+			setMouseTracking(false);
+			break;
+	}
+	update();
+
+	std::cout << "BScanMarkerWidget::markersMethodChanged()" << std::endl;
 }

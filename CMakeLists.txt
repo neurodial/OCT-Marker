@@ -3,6 +3,7 @@ project(octmarker)
 
 find_package(Qt5Core)
 find_package(Qt5Widgets)
+find_package(Qt5LinguistTools)
 find_package(Boost 1.40 COMPONENTS program_options filesystem system REQUIRED)
 # find_package (Threads REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -32,11 +33,15 @@ foreach(loop_var ${srcs_directories})
 	list(APPEND octmarker_SRCS ${sources} ${sources_base})
 endforeach(loop_var)
 
+
+file(GLOB LANG ${CMAKE_CURRENT_SOURCE_DIR}/language_files/*.ts)
+
 set(octmarker_RESOURCES application.qrc)
 
+# qt5_create_translation(qm_files ${srcs_directories} sources ${LANG})
 
 QT5_ADD_RESOURCES(octmarker_RESOURCES_RCC ${octmarker_RESOURCES})
-
+QT5_ADD_TRANSLATION(TRANSLATIONS ${LANG})
 
 
 if(compiler_flags_debug)
@@ -54,7 +59,8 @@ endif()
 add_executable(octmarker src/main.cpp ${octmarker_SRCS}
 	${ui_files_headers}
 	${TRANSLATIONS}
-	${octmarker_RESOURCES_RCC})
+	${octmarker_RESOURCES_RCC}
+	${TRANSLATIONS})
 
 target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 

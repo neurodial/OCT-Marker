@@ -7,5 +7,9 @@
 	<file>icons/arrow_right.png</file>
 
 	<file>icons/help.png</file>
+	<file>icons/image_edit.png</file>
+
+	<file>icons/paintbrush.png</file>
+	<file>icons/paintcan.png</file>
 </qresource>
 </RCC>

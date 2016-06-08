@@ -43,8 +43,12 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 
 	setCentralWidget(bscanMarkerWidget);
 
+	setWindowIcon(QIcon(":/icons/image_edit.png"));
+
 	setupMenu();
 	createMarkerToolbar();
+
+	setActionToggel();
 
 	try
 	{
@@ -102,16 +106,18 @@ void OCTMarkerMainWindow::setupMenu()
 
 
 	QAction* nextBScan = new QAction(this);
-	nextBScan->setText("next bscan");
+	nextBScan->setText(tr("next bscan"));
 	nextBScan->setIcon(QIcon(":/icons/arrow_right.png"));
+	nextBScan->setShortcut(Qt::RightArrow);
 	connect(nextBScan, SIGNAL(triggered()), markerManager, SLOT(nextBScan()));
 
 	QAction* previousBScan = new QAction(this);
-	previousBScan->setText("previous bscan");
+	previousBScan->setText(tr("previous bscan"));
 	previousBScan->setIcon(QIcon(":/icons/arrow_left.png"));
+	previousBScan->setShortcut(Qt::LeftArrow);
 	connect(previousBScan, SIGNAL(triggered(bool)), markerManager, SLOT(previousBScan()));
 
-	QToolBar* toolBar = new QToolBar("B-Scan");
+	QToolBar* toolBar = new QToolBar(tr("B-Scan"));
 	toolBar->addAction(previousBScan);
 	toolBar->addAction(nextBScan);
 
@@ -120,9 +126,11 @@ void OCTMarkerMainWindow::setupMenu()
 
 void OCTMarkerMainWindow::createMarkerToolbar()
 {
-	QActionGroup*  actionGroup  = new QActionGroup (this);
-	QSignalMapper* signalMapper = new QSignalMapper(this) ;
-	QToolBar*      toolBar      = new QToolBar("Marker");
+	QActionGroup*  actionGroupMarker  = new QActionGroup (this);
+	QActionGroup*  actionGroupMethod  = new QActionGroup (this);
+	QSignalMapper* signalMapperMarker = new QSignalMapper(this) ;
+	QSignalMapper* signalMapperMethod = new QSignalMapper(this) ;
+	QToolBar*      toolBar            = new QToolBar(tr("Marker"));
 
 	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
 
@@ -135,20 +143,72 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		markerAction->setCheckable(true);
 		markerAction->setText(QString::fromStdString(marker.getName()));
 		markerAction->setIcon(icon);
-		connect(markerAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
-		signalMapper->setMapping(markerAction, counter) ;
+		connect(markerAction, SIGNAL(triggered()), signalMapperMarker, SLOT(map()));
+		signalMapperMarker->setMapping(markerAction, counter) ;
 
-		actionGroup->addAction(markerAction);
+		actionGroupMarker->addAction(markerAction);
 		toolBar->addAction(markerAction);
+
+		markersActions.push_back(markerAction);
 
 		++counter;
 	}
 
-	connect(signalMapper, SIGNAL(mapped(int)), markerManager, SLOT(chooseMarkerID(int))) ;
 
-	actionGroup->setExclusive(true);
+
+	toolBar->addSeparator();
+
+
+	paintMarkerAction = new QAction(this);
+	paintMarkerAction->setCheckable(true);
+	paintMarkerAction->setText(tr("paint marker"));
+	paintMarkerAction->setIcon(QIcon(":/icons/paintbrush.png"));
+	paintMarkerAction->setShortcut(Qt::LeftArrow);
+	connect(paintMarkerAction, SIGNAL(triggered()), signalMapperMethod, SLOT(map()));
+	signalMapperMethod->setMapping(paintMarkerAction, static_cast<int>(MarkerManager::Method::Paint));
+	actionGroupMethod->addAction(paintMarkerAction);
+	toolBar->addAction(paintMarkerAction);
+
+	fillMarkerAction = new QAction(this);
+	fillMarkerAction->setCheckable(true);
+	fillMarkerAction->setText(tr("fill marker"));
+	fillMarkerAction->setIcon(QIcon(":/icons/paintcan.png"));
+	fillMarkerAction->setShortcut(Qt::LeftArrow);
+	connect(fillMarkerAction, SIGNAL(triggered()), signalMapperMethod, SLOT(map()));
+	signalMapperMethod->setMapping(fillMarkerAction, static_cast<int>(MarkerManager::Method::Fill));
+	actionGroupMethod->addAction(fillMarkerAction);
+	toolBar->addAction(fillMarkerAction);
+
+
+	actionGroupMarker->setExclusive(true);
+	actionGroupMethod->setExclusive(true);
+
+	connect(signalMapperMarker, SIGNAL(mapped(int)), markerManager, SLOT(chooseMarkerID(int)));
+	connect(signalMapperMethod, SIGNAL(mapped(int)), markerManager, SLOT(chooseMethodID(int)));
+
 	addToolBar(toolBar);
 }
+
+void OCTMarkerMainWindow::setActionToggel()
+{
+
+	int markersId = markerManager->getActMarkerId();
+	if(markersId >= 0)
+		markersActions.at(markersId)->setChecked(true);
+
+	switch(markerManager->getMarkerMethod())
+	{
+		case MarkerManager::Method::Paint:
+			paintMarkerAction->setChecked(true);
+			break;
+		case MarkerManager::Method::Fill:
+			fillMarkerAction->setChecked(true);
+			break;
+		default:
+			qDebug("Undefined Action in %s %d", __FILE__, __LINE__);
+	}
+}
+
 
 
 
@@ -175,7 +235,7 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 	fd.setAcceptMode(QFileDialog::AcceptOpen);
 
 	QStringList filters;
-	filters << "OCT XML file (*.xml)";
+	filters << tr("OCT XML file (*.xml)");
 
 	filters.sort();
 	fd.setNameFilters(filters);

@@ -19,6 +19,7 @@ class BScanMarkerWidget : public CVImageWidget
 	QPoint mousePos;
 
 	bool markerActiv = false;
+	bool mouseInWidget = false;
 
 
 	MarkerManager& markerManger;
@@ -44,11 +45,14 @@ protected:
 	virtual void mousePressEvent  (QMouseEvent*);
 	virtual void mouseReleaseEvent(QMouseEvent*);
 	
-	virtual void keyPressEvent    (QKeyEvent*);
+	virtual void keyPressEvent    (QKeyEvent*  );
+	virtual void leaveEvent       (QEvent*     );
 
 private slots:
 	void bscanChanged(int);
 	void cscanLoaded();
+
+	void markersMethodChanged();
 
 signals:
 	void bscanChangeInkrement(int delta);

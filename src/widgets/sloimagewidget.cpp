@@ -52,63 +52,86 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 
 	const ScaleFactor factor = cscan.getSloImage()->getScaleFactor() * (1/getImageScaleFactor());
 
-	int bscanCounter = 0;
+	int bscanCounter = -1;
+	const BScan* actBScan = nullptr;
 	for(const BScan* bscan : bscans)
 	{
-		if(bscanCounter == activBScan)
-			painter.setPen(activBscan);
-		else
-			painter.setPen(normalBscan);
-
-		if(bscan->getCenter())
-		{
-			const CoordSLOpx&  start_px = bscan->getStart()  * factor;
-			const CoordSLOpx& center_px = bscan->getCenter() * factor;
-			
-			double radius = center_px.abs(start_px);
-
-			painter.drawEllipse(QPointF(center_px.getXf(), center_px.getYf()), radius, radius);
-		}
-		else
-		{
-			const CoordSLOpx& start_px = bscan->getStart() * factor;
-			const CoordSLOpx&   end_px = bscan->getEnd()   * factor;
-
-			painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
-			
-			double bscanWidth = bscan->getWidth();
-			QPen pen;
-			pen.setWidth(3);
-			
-			for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers(bscanCounter))
-			{
-				int markerQ = pair.second;
-				if(markerQ >= 0)
-				{
-					boost::icl::discrete_interval<int> itv  = pair.first;
-					
-					double f1 = static_cast<double>(itv.lower())/bscanWidth;
-					double f2 = static_cast<double>(itv.upper())/bscanWidth;
-					
-					const CoordSLOpx p1 = start_px*(1.-f1) + end_px*f1;
-					const CoordSLOpx p2 = start_px*(1.-f2) + end_px*f2;
-					
-					pen.setColor(*(intervallColors.at(markerQ)));
-					painter.setPen(pen);
-					painter.drawLine(QPointF(p1.getXf(), p1.getYf()), QPointF(p2.getXf(), p2.getYf()));
-					
-					// painter.fillRect(itv.lower(), 0, itv.upper()-itv.lower(), height(), *(intervallColors.at(markerQ)));
-				}
-			}
-		
-			// qDebug("painter.drawLine(%d, %d, %d, %d)", start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
-		}
-			
 		++bscanCounter;
+		
+		if(!bscan)
+			continue;
+
+		if(bscanCounter == activBScan)
+		{
+			actBScan = bscan;
+			continue;
+		}
+
+		painter.setPen(normalBscan);
+		paintBScan(painter, *bscan, factor, bscanCounter, true);
+	}
+
+	if(actBScan)
+	{
+		painter.setPen(activBscan);
+		paintBScan(painter, *actBScan, factor, -1, false);
 	}
 
 	painter.end();
 }
+
+void SLOImageWidget::paintBScan(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, int bscanNr, bool paintMarker)
+{
+	if(bscan.getCenter())
+	{
+		const CoordSLOpx&  start_px = bscan.getStart()  * factor;
+		const CoordSLOpx& center_px = bscan.getCenter() * factor;
+
+		double radius = center_px.abs(start_px);
+
+		painter.drawEllipse(QPointF(center_px.getXf(), center_px.getYf()), radius, radius);
+	}
+	else
+		paintBScanLine(painter, bscan, factor, bscanNr, paintMarker);
+}
+
+
+void SLOImageWidget::paintBScanLine(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, int bscanNr, bool paintMarker)
+{
+	const CoordSLOpx& start_px = bscan.getStart() * factor;
+	const CoordSLOpx&   end_px = bscan.getEnd()   * factor;
+
+	painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
+
+	double bscanWidth = bscan.getWidth();
+	QPen pen;
+	pen.setWidth(3);
+
+	if(paintMarker)
+	{
+		for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers(bscanNr))
+		{
+			int markerQ = pair.second;
+			if(markerQ >= 0)
+			{
+				boost::icl::discrete_interval<int> itv  = pair.first;
+
+				double f1 = static_cast<double>(itv.lower())/bscanWidth;
+				double f2 = static_cast<double>(itv.upper())/bscanWidth;
+
+				const CoordSLOpx p1 = start_px*(1.-f1) + end_px*f1;
+				const CoordSLOpx p2 = start_px*(1.-f2) + end_px*f2;
+
+				pen.setColor(*(intervallColors.at(markerQ)));
+				painter.setPen(pen);
+				painter.drawLine(QPointF(p1.getXf(), p1.getYf()), QPointF(p2.getXf(), p2.getYf()));
+
+				// painter.fillRect(itv.lower(), 0, itv.upper()-itv.lower(), height(), *(intervallColors.at(markerQ)));
+			}
+		}
+	}
+}
+
 
 void SLOImageWidget::reladSLOImage()
 {

@@ -4,7 +4,10 @@
 #include "cvimagewidget.h"
 #include <vector>
 
+class BScan;
+class ScaleFactor;
 class QColor;
+class QPainter;
 class MarkerManager;
 
 class SLOImageWidget : public CVImageWidget
@@ -24,6 +27,9 @@ public:
 
 protected:
 	void paintEvent(QPaintEvent* event);
+
+	void paintBScan    (QPainter& painter, const BScan& bscan, const ScaleFactor& factor, int bscanNr, bool paintMarker);
+	void paintBScanLine(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, int bscanNr, bool paintMarker);
 
 private slots:
 	void reladSLOImage();

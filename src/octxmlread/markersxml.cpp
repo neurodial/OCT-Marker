@@ -89,7 +89,7 @@ void MarkersXML::writeXML(MarkerManager* markerManger, std::string filename)
 			// std::cout << "paintEvent(QPaintEvent* event) " << pair.second << " - " << pair.first << std::endl;
 
 			int markerQ = pair.second;
-			if(markerQ >= 0)
+			if(markerQ > 0)
 			{
 				boost::icl::discrete_interval<int> itv  = pair.first;
 				
