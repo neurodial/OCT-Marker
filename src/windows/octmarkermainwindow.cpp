@@ -155,7 +155,8 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 
 	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
 
-	int counter = 0;
+	markersActions.resize(IntervallMarker::Marker::getMaxInternalId() + 1); // +1 for undefined marker
+
 	for(const IntervallMarker::Marker& marker : intervallMarker.getIntervallMarkerList())
 	{
 		QIcon icon = createColorIcon(QColor::fromRgb(marker.getRed(), marker.getGreen(), marker.getBlue()));
@@ -165,14 +166,12 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		markerAction->setText(QString::fromStdString(marker.getName()));
 		markerAction->setIcon(icon);
 		connect(markerAction, SIGNAL(triggered()), signalMapperMarker, SLOT(map()));
-		signalMapperMarker->setMapping(markerAction, counter) ;
+		signalMapperMarker->setMapping(markerAction, marker.getInternalId()) ;
 
 		actionGroupMarker->addAction(markerAction);
 		toolBar->addAction(markerAction);
 
-		markersActions.push_back(markerAction);
-
-		++counter;
+		markersActions.at(marker.getInternalId()) = markerAction;
 	}
 
 
@@ -213,7 +212,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 void OCTMarkerMainWindow::setActionToggel()
 {
 
-	int markersId = markerManager->getActMarkerId();
+	int markersId = markerManager->getActMarker().getInternalId();
 	if(markersId >= 0)
 		markersActions.at(markersId)->setChecked(true);
 

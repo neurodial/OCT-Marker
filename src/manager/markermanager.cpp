@@ -80,7 +80,7 @@ void MarkerManager::initMarkerMap()
 	for(int i = 0; i<numBscans; ++i)
 	{
 		int bscanWidth = cscan->getBScan(i)->getWidth();
-		markers[i].set(std::make_pair(boost::icl::discrete_interval<int>::closed(0, bscanWidth), 0));
+		markers[i].set(std::make_pair(boost::icl::discrete_interval<int>::closed(0, bscanWidth), IntervallMarker::Marker()));
 	}
 }
 
@@ -90,22 +90,16 @@ bool MarkerManager::cscanLoaded() const
 	return cscan->bscanCount() > 0;
 }
 
-void MarkerManager::setMarker(int x1, int x2, int type, int bscan)
+void MarkerManager::setMarker(int x1, int x2, const Marker& type, int bscan)
 {
 	if(!cscanLoaded())
 		return;
-	
-	if(type <= -2)
-		type = markerId;
 	
 	if(bscan<0 || bscan >= cscan->bscanCount())
 		return;
 
 // 	printf("MarkerManager::setMarker(%d, %d, %d)", x1, x2, type);
 // 	std::cout << std::endl;
-
-	if(type > IntervallMarker::getInstance().size())
-		return;
 
 	if(x2 < x1)
 		std::swap(x1, x2);
@@ -123,15 +117,12 @@ void MarkerManager::setMarker(int x1, int x2, int type, int bscan)
 	markers.at(bscan).set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
 }
 
-void MarkerManager::fillMarker(int x, int type)
+void MarkerManager::fillMarker(int x, const Marker& type)
 {
 	int bscan = actBScan;
 
 	if(!cscanLoaded())
 		return;
-
-	if(type <= -2)
-		type = markerId;
 
 	if(bscan<0 || bscan >= cscan->bscanCount())
 		return;

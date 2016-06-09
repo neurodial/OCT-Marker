@@ -55,11 +55,20 @@ void MarkersXML::readXML(MarkerManager* markerManger, std::string filename)
 				
 				const ptree& intervallNode = intervallNodePair.second;
 				
-				int start          = intervallNode.get_child("Start").get_value<int>();
-				int end            = intervallNode.get_child("End"  ).get_value<int>();
-				int intervallClass = intervallNode.get_child("Class").get_value<int>();
+				int         start          = intervallNode.get_child("Start").get_value<int>();
+				int         end            = intervallNode.get_child("End"  ).get_value<int>();
+				std::string intervallClass = intervallNode.get_child("Class").get_value<std::string>();
+
+				try
+				{
+					IntervallMarker::Marker marker = IntervallMarker::getInstance().getMarkerFromString(intervallClass);
+					markerManger->setMarker(start, end, marker, bscanId);
+				}
+				catch(std::out_of_range& r)
+				{
+					std::cerr << "unknown intervall class " << intervallClass << " : " << r.what() << std::endl;
+				}
 				
-				markerManger->setMarker(start, end, intervallClass, bscanId);
 			}
 		}
 
@@ -88,8 +97,8 @@ void MarkersXML::writeXML(MarkerManager* markerManger, std::string filename)
 			
 			// std::cout << "paintEvent(QPaintEvent* event) " << pair.second << " - " << pair.first << std::endl;
 
-			int markerQ = pair.second;
-			if(markerQ > 0)
+			IntervallMarker::Marker marker = pair.second;
+			if(marker.isDefined())
 			{
 				boost::icl::discrete_interval<int> itv  = pair.first;
 				
@@ -97,7 +106,7 @@ void MarkersXML::writeXML(MarkerManager* markerManger, std::string filename)
 				
 				intervallNode.add("Start", itv.lower());
 				intervallNode.add("End"  , itv.upper());
-				intervallNode.add("Class", markerQ);
+				intervallNode.add("Class", marker.getName());
 				
 				// xmltree.add(name, value);
 			}

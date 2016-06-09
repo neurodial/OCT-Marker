@@ -20,45 +20,16 @@ BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 
 	connect(this, SIGNAL(bscanChangeInkrement(int)), &markerManger, SLOT(inkrementBScan(int)));
 
-	createIntervallColors();
 	
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);
 }
 
 
-
 BScanMarkerWidget::~BScanMarkerWidget()
 {
-	deleteIntervallColors();
 }
 
-
-void BScanMarkerWidget::deleteIntervallColors()
-{
-	for(QColor* c : intervallColors)
-		delete c;
-
-	for(QColor* c : markerColors)
-		delete c;
-
-	markerColors   .clear();
-	intervallColors.clear();
-}
-
-
-void BScanMarkerWidget::createIntervallColors()
-{
-	deleteIntervallColors();
-
-	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
-
-	for(const IntervallMarker::Marker& marker : intervallMarker.getIntervallMarkerList())
-	{
-		intervallColors.push_back(new QColor(marker.getRed(), marker.getGreen(), marker.getBlue(),  60));
-		markerColors   .push_back(new QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
-	}
-}
 
 void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 {
@@ -71,11 +42,11 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 	for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers())
 	{
-		int markerQ = pair.second;
-		if(markerQ > 0)
+		IntervallMarker::Marker marker = pair.second;
+		if(marker.isDefined())
 		{
 			boost::icl::discrete_interval<int> itv  = pair.first;
-			painter.fillRect(itv.lower(), 0, itv.upper()-itv.lower(), height(), *(intervallColors.at(markerQ)));
+			painter.fillRect(itv.lower(), 0, itv.upper()-itv.lower(), height(), QColor(marker.getRed(), marker.getGreen(), marker.getBlue(),  60));
 		}
 	}
 	
@@ -86,12 +57,12 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 		if(markerActiv)
 		{
-			int markerId = markerManger.getActMarkerId();
-			if(markerId >= 0 && static_cast<size_t>(markerId) < markerColors.size() && mousePos.x() != clickPos.x())
+			const IntervallMarker::Marker& marker = markerManger.getActMarker();
+			if(mousePos.x() != clickPos.x())
 			{
 				painter.drawLine(clickPos.x(), 0, clickPos.x(), height());
 				QPen pen;
-				pen.setColor(*markerColors.at(markerId));
+				pen.setColor(QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
 				pen.setWidth(5);
 				painter.setPen(pen);
 				painter.drawLine(mousePos, clickPos);
