@@ -1,5 +1,9 @@
 #include "intervallmarker.h"
 
+
+#include <stdexcept>
+
+
 IntervallMarker::IntervallMarker()
 {
 	markerList.push_back(Marker("undef",   0,   0,   0));
@@ -17,3 +21,13 @@ IntervallMarker::Marker::Marker(const std::string& name, uint8_t red, uint8_t gr
 	color.blue  = blue ;
 
 }
+
+const IntervallMarker::Marker& IntervallMarker::getMarkerFromString(const std::string& str) const
+{
+	for(const Marker& marker : markerList)
+		if(marker.getName() == str)
+			return marker;
+
+	throw(std::out_of_range(str + " is not in marker list"));
+}
+

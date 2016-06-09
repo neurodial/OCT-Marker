@@ -36,6 +36,8 @@ public:
 	const IntervallMarkerList& getIntervallMarkerList() const   { return markerList;        }
 	std::size_t size() const                                    { return markerList.size(); }
 
+	const Marker& getMarkerFromString(const std::string&) const;
+
 private:
 	IntervallMarkerList markerList;
 };

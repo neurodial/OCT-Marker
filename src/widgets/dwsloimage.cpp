@@ -1,10 +1,12 @@
 #include "dwsloimage.h"
 
 #include "sloimagewidget.h"
+#include <manager/markermanager.h>
 #include <QResizeEvent>
 
 DWSloImage::DWSloImage(MarkerManager& markerManger)
 : imageWidget(new SLOImageWidget(markerManger))
+, markerManger(markerManger)
 {
 	setWidget(imageWidget);
 	imageWidget->setImageSize(size());
@@ -33,3 +35,16 @@ void DWSloImage::resizeEvent(QResizeEvent* event)
 	imageWidget->setImageSize(event->size());
 }
 
+void DWSloImage::wheelEvent(QWheelEvent* wheelE)
+{
+	int deltaWheel = wheelE->delta();
+	if(deltaWheel < 0)
+		markerManger.previousBScan();
+	else
+		markerManger.nextBScan();
+}
+
+void DWSloImage::mouseReleaseEvent(QMouseEvent* mouseE)
+{
+	QWidget::mouseReleaseEvent(mouseE);
+}

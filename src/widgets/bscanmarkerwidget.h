@@ -36,7 +36,6 @@ public:
 
 	virtual ~BScanMarkerWidget();
 
-    virtual void wheelEvent(QWheelEvent*);
 
 protected:
 	void paintEvent(QPaintEvent* event);
@@ -47,6 +46,7 @@ protected:
 	
 	virtual void keyPressEvent    (QKeyEvent*  );
 	virtual void leaveEvent       (QEvent*     );
+    virtual void wheelEvent       (QWheelEvent*);
 
 private slots:
 	void bscanChanged(int);
