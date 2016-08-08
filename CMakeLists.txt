@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 project(octmarker)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_module/)
+
 
 find_package(Qt5Core)
 find_package(Qt5Widgets)
@@ -7,15 +9,19 @@ find_package(Qt5LinguistTools)
 find_package(Boost 1.40 COMPONENTS program_options filesystem system REQUIRED)
 # find_package (Threads REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(LibOctData REQUIRED)
 
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+message(${LibOctData_INCLUDE_DIRS})
 
 # include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR}) # ${Boost_INCLUDE_DIR})
 include_directories(SYSTEM ${QT_INCLUDES} ${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/src/)
+include_directories(${LibOctData_INCLUDE_DIRS})
+
 
 
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -63,5 +69,6 @@ add_executable(octmarker src/main.cpp ${octmarker_SRCS}
 	${TRANSLATIONS})
 
 target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(octmarker ${LibOctData_LIBRARIES})
 
 install(TARGETS octmarker RUNTIME DESTINATION bin)
