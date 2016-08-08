@@ -25,6 +25,8 @@
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
+#include <octdata/octfileread.h>
+
 
 namespace
 {
@@ -274,23 +276,25 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 	fd.setWindowTitle(tr("Choose a filename to load a File"));
 	fd.setAcceptMode(QFileDialog::AcceptOpen);
 
-	QString allExtentions = "*.E2E *.vol *.xml *.sdb";
-	
-	QStringList filters;
-	
-#ifdef USE_DCMTK
-	filters << tr("DICOM file (*.dcm *.DCM)");
-	allExtentions += " *.dcm *.DCM";
-#endif // USE_DCMTK
-	
-	filters << tr("All readabel (%1)").arg(allExtentions);
-	filters << tr("All files (* *.*)").arg(allExtentions);
-	filters << tr("OCT XML file (*.xml)");
-	filters << tr("E2E file (*.E2E *.sdb)");
-	filters << tr("VOL file (*.vol)");
-	
 
-	filters.sort();
+	QString allExtentions;
+	QStringList filtersOct;
+
+	for(const OctData::OctExtension& ext : OctData::OctFileRead::supportedExtensions())
+	{
+		filtersOct << QString("%1 (*.%2)").arg(ext.name.c_str()).arg(ext.extension.c_str());
+		allExtentions += QString("*.%1").arg(ext.extension.c_str());
+	}
+
+	filtersOct.sort();
+	
+	QStringList filtersAllFiles;
+	filtersAllFiles << tr("All readabel (%1)").arg(allExtentions);
+	filtersAllFiles << tr("All files (* *.*)");
+
+	QStringList filters = filtersAllFiles + filtersOct;
+
+
 
 	fd.setNameFilters(filters);
 	fd.setFileMode(QFileDialog::ExistingFile);
