@@ -13,6 +13,7 @@ class SLOImage
 	std::string filename;
 
 	ScaleFactor scaleFactor;
+	CoordSLOpx  shift;
 
 	int    numAverage              = 0 ;
 	int    imageQuality            = 0 ;
@@ -31,7 +32,9 @@ public:
 	void               setFilename(const std::string& s)        {        filename = s           ; }
 
 	const ScaleFactor& getScaleFactor()         const           { return scaleFactor            ; }
+	const CoordSLOpx&  getShift()               const           { return shift                  ; }
 	void               setScaleFactor(const ScaleFactor& f)     { scaleFactor = f               ; }
+	void               setShift      (const CoordSLOpx&  s)     { shift       = s               ; }
 
 	int    getNumAverage()                      const           { return numAverage             ; }
 	int    getImageQuality()                    const           { return imageQuality           ; }

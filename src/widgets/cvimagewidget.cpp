@@ -51,7 +51,8 @@ void CVImageWidget::showImage(const cv::Mat& image)
 			
 			if(min == max)
 				max = min+1;
-			image.convertTo(cvImage, CV_8UC3, 255.0/(max-min), -255.0*min/(max-min));
+	//		image.convertTo(cvImage, CV_8UC3, 255.0/(max-min), -255.0*min/(max-min));
+			image.convertTo(cvImage, CV_8UC3, 255.0, 0);
 
 			if(cvImage.channels() == 1)
 				cv::cvtColor(cvImage, cvImage, CV_GRAY2BGR);
@@ -105,7 +106,7 @@ void CVImageWidget::saveImage()
 	}
 }
 
-void CVImageWidget::paintEvent(QPaintEvent* event)
+void CVImageWidget::paintEvent(QPaintEvent* /*event*/)
 {
 	// Display the image
 	QPainter painter(this);

@@ -46,7 +46,7 @@ const IntervallMarker::Marker& IntervallMarker::getMarkerFromString(const std::s
 
 const IntervallMarker::Marker& IntervallMarker::getMarkerFromID(int id) const
 {
-	if(id>=0 && id < markerList.size())
+	if(id>=0 && id < static_cast<int>(markerList.size()))
 		return markerList[id];
 	return markerList[0]; // TODO: besserer Rückgabewert
 }

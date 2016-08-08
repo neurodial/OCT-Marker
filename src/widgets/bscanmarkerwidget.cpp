@@ -5,8 +5,13 @@
 #include <data_structure/bscan.h>
 #include <data_structure/intervallmarker.h>
 
+#include <cmath>
+
 #include <QWheelEvent>
 #include <QPainter>
+#include <QMenu>
+#include <QMessageBox>
+#include <QFileDialog>
 
 BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 : CVImageWidget()
@@ -23,6 +28,20 @@ BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 	
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);
+	
+	
+	saveRawImageAction = new QAction(this);
+	saveRawImageAction->setText(tr("Save Raw Image"));
+	saveRawImageAction->setIcon(QIcon(":/icons/disk.png"));
+	contextMenu->addAction(saveRawImageAction);
+	connect(saveRawImageAction, SIGNAL(triggered(bool)), this, SLOT(saveRawImage()));
+	
+	
+	saveRawMatAction = new QAction(this);
+	saveRawMatAction->setText(tr("Save raw data as matrix"));
+	saveRawMatAction->setIcon(QIcon(":/icons/disk.png"));
+	contextMenu->addAction(saveRawMatAction);
+	connect(saveRawMatAction, SIGNAL(triggered(bool)), this, SLOT(saveRawMat()));
 }
 
 
@@ -37,6 +56,31 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 	if(!markerManger.cscanLoaded())
 		return;
+
+
+	QPainter segPainter(this);
+	QPen pen;
+	pen.setColor(QColor(255, 0, 0, 180));
+	pen.setWidth(1);
+	segPainter.setPen(pen);
+
+	std::size_t nrSegLine = actBscan->getNumSegmentLine();
+	int bScanHeight = actBscan->getHeight();
+	for(int i=0; i<nrSegLine; ++i)
+	{
+		double lastEnt = std::numeric_limits<double>::quiet_NaN();
+		int xCoord = 0;
+		for(double value : actBscan->getSegmentLine(i))
+		{
+			// std::cout << value << '\n';
+			if(!std::isnan(lastEnt) && lastEnt < bScanHeight && lastEnt > 0 && value < bScanHeight && value > 0)
+			{
+				segPainter.drawLine(QLineF(xCoord-1, lastEnt, xCoord, value));
+			}
+			lastEnt = value;
+			++xCoord;
+		}
+	}
 
 	QPainter painter(this);
 
@@ -73,12 +117,50 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	painter.end();
 }
 
+bool BScanMarkerWidget::existsRaw() const
+{
+	if(!actBscan)
+		return false;
+	return !(actBscan->getRawImage().empty());
+}
+
+bool BScanMarkerWidget::rawSaveableAsImage() const
+{
+	if(!actBscan)
+		return false;
+	cv::Mat rawImage = actBscan->getRawImage();
+	if(existsRaw())
+	{
+		int chanels = rawImage.channels();
+		if(rawImage.depth() == CV_8U || rawImage.depth() == CV_16U)
+			if(chanels == 1 || chanels == 3)
+				return true;
+	}
+	return false;
+}
+
+
+void BScanMarkerWidget::updateRawExport()
+{
+	bool rawExists       = existsRaw();
+	bool saveableAsImage = rawSaveableAsImage();
+
+	
+	saveRawImageAction->setEnabled(saveableAsImage);
+	saveRawMatAction  ->setEnabled(rawExists);
+}
+
+
 void BScanMarkerWidget::bscanChanged(int bscanNR)
 {
 	const CScan& cscan = markerManger.getCScan();
-	const BScan* bscan = cscan.getBScan(bscanNR);
-	if(bscan)
-		showImage(bscan->getImage());
+	actBscan = cscan.getBScan(bscanNR);
+	
+	updateRawExport();
+	if(actBscan)
+		showImage(actBscan->getImage());
+	else
+		update();
 }
 
 void BScanMarkerWidget::leaveEvent(QEvent* e)
@@ -176,10 +258,6 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 	
 }
 
-void BScanMarkerWidget::contextMenuEvent(QContextMenuEvent* event)
-{
-	QWidget::contextMenuEvent(event);
-}
 
 void BScanMarkerWidget::markersMethodChanged()
 {
@@ -193,4 +271,58 @@ void BScanMarkerWidget::markersMethodChanged()
 			break;
 	}
 	update();
+}
+
+void BScanMarkerWidget::saveRawImage()
+{
+	if(actBscan && rawSaveableAsImage())
+	{
+		QString filename;
+		if(fdSaveRaw(filename))
+		{
+			if(!cv::imwrite(filename.toStdString(), actBscan->getRawImage()))
+			{
+				QMessageBox msgBox;
+				msgBox.setText("image not saved");
+				msgBox.setIcon(QMessageBox::Critical);
+				msgBox.exec();
+			}
+		}
+	}
+}
+
+void BScanMarkerWidget::saveRawMat()
+{
+	
+	if(actBscan && existsRaw())
+	{
+		QString filename = QFileDialog::getSaveFileName(this, tr("Save raw data as matrix"), "", "CV (*.xml *.jml)");
+		if(!filename.isEmpty())
+		{
+			cv::FileStorage fs(filename.toStdString(), cv::FileStorage::WRITE);
+			fs << "BScan" << actBscan->getRawImage();
+		}
+	}
+}
+
+
+int BScanMarkerWidget::fdSaveRaw(QString& filename)
+{
+	QFileDialog fd(this);
+	// fd.selectFile(lineEditFile->text());
+	fd.setWindowTitle(tr("Choose a filename to save under"));
+	fd.setAcceptMode(QFileDialog::AcceptSave);
+	
+	QStringList mimeTypeFilters;
+	mimeTypeFilters << "image/png" << "image/tiff";
+	fd.setMimeTypeFilters(mimeTypeFilters);
+	fd.setFileMode(QFileDialog::AnyFile);
+	
+	int result = fd.exec();
+	
+	if(result)
+	{
+		filename = fd.selectedFiles().first();
+	}
+	return result;
 }

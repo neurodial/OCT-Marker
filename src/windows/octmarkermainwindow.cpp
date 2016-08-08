@@ -7,8 +7,11 @@
 #include <QFileDialog>
 #include <QStringList>
 #include <QSignalMapper>
+#include <QtGui>
 
 #include <QActionGroup>
+#include <QSpinBox>
+#include <QLabel>
 
 #include <widgets/dwsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
@@ -16,6 +19,7 @@
 #include <data_structure/sloimage.h>
 #include <data_structure/bscan.h>
 #include <data_structure/intervallmarker.h>
+#include <data_structure/cscan.h>
 #include <manager/markermanager.h>
 
 #include <boost/exception/exception.hpp>
@@ -52,11 +56,10 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 
 	try
 	{
-		markerManager->loadOCTXml("testoct.xml");
+		markerManager->loadImage("testoct.xml");
 	}
 	catch(...) {}
 
-	connect(markerManager, SIGNAL(newCScanLoaded()), this, SLOT(newCscanLoaded()));
 }
 
 
@@ -73,7 +76,7 @@ void OCTMarkerMainWindow::setupMenu()
 	fileMenu->setTitle(tr("File"));
 
 	QAction* actionLoadImage = new QAction(this);
-	actionLoadImage->setText(tr("Load OCT scan (XML)"));
+	actionLoadImage->setText(tr("Load OCT scan"));
 	actionLoadImage->setShortcut(Qt::CTRL | Qt::Key_O);
 	actionLoadImage->setIcon(QIcon(":/icons/folder.png"));
 	connect(actionLoadImage, SIGNAL(triggered()), this, SLOT(showLoadImageDialog()));
@@ -114,12 +117,18 @@ void OCTMarkerMainWindow::setupMenu()
 	QMenu* helpMenu = new QMenu(this);
 	helpMenu->setTitle(tr("Help"));
 
+	QAction* aboutQtAct = new QAction(this);
+	aboutQtAct->setText(tr("About Qt"));
+    aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
+	aboutQtAct->setIcon(QIcon(":/icons/help.png"));
+	connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+	helpMenu->addAction(aboutQtAct);
+
 	QAction* actionAboutDialog = new QAction(this);
 	actionAboutDialog->setText(tr("About"));
 	actionAboutDialog->setIcon(QIcon(":/icons/help.png"));
 	connect(actionAboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 	helpMenu->addAction(actionAboutDialog);
-
 
 
 	menuBar()->addMenu(fileMenu);
@@ -132,6 +141,14 @@ void OCTMarkerMainWindow::setupMenu()
 	nextBScan->setShortcut(Qt::RightArrow);
 	connect(nextBScan, SIGNAL(triggered()), markerManager, SLOT(nextBScan()));
 
+	bscanChooser = new QSpinBox(this);
+	connect(bscanChooser, SIGNAL(valueChanged(int)), markerManager, SLOT(chooseBScan(int)));
+	connect(markerManager, SIGNAL(bscanChanged(int)), bscanChooser, SLOT(setValue(int)));
+
+	labelMaxBscan = new QLabel(this);
+	labelMaxBscan->setText("/0");
+
+
 	QAction* previousBScan = new QAction(this);
 	previousBScan->setText(tr("previous bscan"));
 	previousBScan->setIcon(QIcon(":/icons/arrow_left.png"));
@@ -141,6 +158,9 @@ void OCTMarkerMainWindow::setupMenu()
 	QToolBar* toolBar = new QToolBar(tr("B-Scan"));
 	toolBar->addAction(previousBScan);
 	toolBar->addAction(nextBScan);
+	toolBar->addSeparator();
+	toolBar->addWidget(bscanChooser);
+	toolBar->addWidget(labelMaxBscan);
 
 	addToolBar(toolBar);
 }
@@ -254,10 +274,24 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 	fd.setWindowTitle(tr("Choose a filename to load a File"));
 	fd.setAcceptMode(QFileDialog::AcceptOpen);
 
+	QString allExtentions = "*.E2E *.vol *.xml *.sdb";
+	
 	QStringList filters;
+	
+#ifdef USE_DCMTK
+	filters << tr("DICOM file (*.dcm *.DCM)");
+	allExtentions += " *.dcm *.DCM";
+#endif // USE_DCMTK
+	
+	filters << tr("All readabel (%1)").arg(allExtentions);
+	filters << tr("All files (* *.*)").arg(allExtentions);
 	filters << tr("OCT XML file (*.xml)");
+	filters << tr("E2E file (*.E2E *.sdb)");
+	filters << tr("VOL file (*.vol)");
+	
 
 	filters.sort();
+
 	fd.setNameFilters(filters);
 	fd.setFileMode(QFileDialog::ExistingFile);
 
@@ -269,7 +303,7 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 
 		try
 		{
-			markerManager->loadOCTXml(filenames[0]);
+			markerManager->loadImage(filenames[0]);
 		}
 		catch(boost::exception& e)
 		{
@@ -347,5 +381,16 @@ void OCTMarkerMainWindow::showSaveMarkersDialog()
 void OCTMarkerMainWindow::newCscanLoaded()
 {
 	setWindowTitle(tr("OCT-Marker - %1").arg(markerManager->getFilename()));
+	configBscanChooser();
 }
+
+void OCTMarkerMainWindow::configBscanChooser()
+{
+	int maxBscan = markerManager->getCScan().bscanCount()-1;
+	bscanChooser->setMaximum(maxBscan);
+	bscanChooser->setValue(markerManager->getActBScan());
+
+	labelMaxBscan->setText(QString("/%1").arg(maxBscan));
+}
+
 

@@ -51,6 +51,8 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	const std::vector<BScan*> bscans = cscan.getBscans();
 
 	const ScaleFactor factor = cscan.getSloImage()->getScaleFactor() * (1/getImageScaleFactor());
+	const CoordSLOpx  shift  = cscan.getSloImage()->getShift()       * (getImageScaleFactor());
+	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
 	int bscanCounter = -1;
 	const BScan* actBScan = nullptr;
@@ -68,19 +70,19 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 		}
 
 		painter.setPen(normalBscan);
-		paintBScan(painter, *bscan, factor, bscanCounter, true);
+		paintBScan(painter, *bscan, factor, shift, bscanCounter, true);
 	}
 
 	if(actBScan)
 	{
 		painter.setPen(activBscan);
-		paintBScan(painter, *actBScan, factor, -1, false);
+		paintBScan(painter, *actBScan, factor, shift, -1, false);
 	}
 
 	painter.end();
 }
 
-void SLOImageWidget::paintBScan(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, int bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScan(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, const CoordSLOpx& shift, int bscanNr, bool paintMarker)
 {
 	if(bscan.getCenter())
 	{
@@ -92,14 +94,14 @@ void SLOImageWidget::paintBScan(QPainter& painter, const BScan& bscan, const Sca
 		painter.drawEllipse(QPointF(center_px.getXf(), center_px.getYf()), radius, radius);
 	}
 	else
-		paintBScanLine(painter, bscan, factor, bscanNr, paintMarker);
+		paintBScanLine(painter, bscan, factor, shift, bscanNr, paintMarker);
 }
 
 
-void SLOImageWidget::paintBScanLine(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, int bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScanLine(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, const CoordSLOpx& shift, int bscanNr, bool paintMarker)
 {
-	const CoordSLOpx& start_px = bscan.getStart() * factor;
-	const CoordSLOpx&   end_px = bscan.getEnd()   * factor;
+	const CoordSLOpx& start_px = bscan.getStart()*factor + shift;
+	const CoordSLOpx&   end_px = bscan.getEnd()  *factor + shift;
 
 	painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
 
@@ -142,31 +144,7 @@ void SLOImageWidget::reladSLOImage()
 		showImage(sloImage->getImage());
 }
 
-void SLOImageWidget::bscanChanged(int bscan)
+void SLOImageWidget::bscanChanged(int /*bscan*/)
 {
-
-	// qDebug("void SLOImageWidget::bscanChanged(%d)", bscan);
-
 	repaint();
 }
-
-/*
-void SLOImageWidget::deleteIntervallColors()
-{
-	for(QColor* c : intervallColors)
-		delete c;
-
-	intervallColors.clear();
-}
-
-
-void SLOImageWidget::createIntervallColors()
-{
-	deleteIntervallColors();
-
-	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
-
-	for(const IntervallMarker::Marker& marker : intervallMarker.getIntervallMarkerList())
-		intervallColors.push_back(new QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
-}
-*/

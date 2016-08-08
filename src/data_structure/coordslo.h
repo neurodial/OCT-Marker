@@ -2,6 +2,7 @@
 #define COORDSLO_H
 
 #include <cmath>
+#include <ostream>
 
 class ScaleFactor
 {
@@ -10,7 +11,8 @@ class ScaleFactor
 
 public:
 	ScaleFactor(double x, double y) : x(x), y(y)                {}
-	ScaleFactor() : x(0), y(0)                                  {}
+	explicit ScaleFactor(double factor) : x(factor), y(factor)  {}
+	ScaleFactor() : x(1), y(1)                                  {}
 
 	double getX() const                                         { return x; }
 	double getY() const                                         { return y; }
@@ -39,7 +41,11 @@ public:
 	CoordSLOpx operator*(double factor)       const             { return CoordSLOpx(x*factor, y*factor); }
 	
 	double abs(const CoordSLOpx& o) const                       { return std::sqrt((x-o.x)*(x-o.x) + (y-o.y)*(y-o.y)); }
+	
+	void print(std::ostream& stream) const                      { stream << "(" << x << " | " << y << ")"; }
 };
+
+inline std::ostream& operator<<(std::ostream& stream, const CoordSLOpx& obj) { obj.print(stream); return stream; }
 
 
 class CoordSLOmm

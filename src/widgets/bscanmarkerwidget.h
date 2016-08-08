@@ -5,6 +5,7 @@
 
 #include <QPoint>
 
+class BScan;
 class QWheelEvent;
 class QMouseEvent;
 class MarkerManager;
@@ -20,8 +21,15 @@ class BScanMarkerWidget : public CVImageWidget
 	bool mouseInWidget = false;
 
 	MarkerManager& markerManger;
-
-	virtual void contextMenuEvent(QContextMenuEvent* event);
+	
+	QAction*                                saveRawImageAction = nullptr;
+	QAction*                                saveRawMatAction   = nullptr;
+	const BScan*                            actBscan           = nullptr;
+	
+	int fdSaveRaw(QString& filename);
+	void updateRawExport();
+	bool existsRaw() const;
+	bool rawSaveableAsImage() const;
 public:
 	BScanMarkerWidget(MarkerManager& markerManger);
 
@@ -43,7 +51,12 @@ private slots:
 	void cscanLoaded();
 
 	void markersMethodChanged();
+	
 
+public slots:
+	virtual void saveRawImage();
+	virtual void saveRawMat  ();
+	
 signals:
 	void bscanChangeInkrement(int delta);
 };

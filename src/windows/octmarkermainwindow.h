@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+class QLabel;
+class QSpinBox;
 class QAction;
 class BScanMarkerWidget;
 class MarkerManager;
@@ -25,9 +27,13 @@ class OCTMarkerMainWindow : public QMainWindow
 	QAction* fillMarkerAction  = nullptr;
 	QAction* paintMarkerAction = nullptr;
 
+	QSpinBox* bscanChooser     = nullptr;
+	QLabel*   labelMaxBscan    = nullptr;
+
 	std::vector<QAction*> markersActions;
 
 	void setActionToggel();
+	void configBscanChooser();
 
 public:
 	OCTMarkerMainWindow();

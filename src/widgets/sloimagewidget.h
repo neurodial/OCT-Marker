@@ -4,6 +4,7 @@
 #include "cvimagewidget.h"
 // #include <vector>
 
+class CoordSLOpx;
 class BScan;
 class ScaleFactor;
 // class QColor;
@@ -28,8 +29,8 @@ public:
 protected:
 	void paintEvent(QPaintEvent* event);
 
-	void paintBScan    (QPainter& painter, const BScan& bscan, const ScaleFactor& factor, int bscanNr, bool paintMarker);
-	void paintBScanLine(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, int bscanNr, bool paintMarker);
+	void paintBScan    (QPainter& painter, const BScan& bscan, const ScaleFactor& factor, const CoordSLOpx& shift, int bscanNr, bool paintMarker);
+	void paintBScanLine(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, const CoordSLOpx& shift, int bscanNr, bool paintMarker);
 
 private slots:
 	void reladSLOImage();

@@ -43,9 +43,10 @@ public:
 
 
 private:
-	int actBScan = 0;
+	int    actBScan = 0;
 	CScan* cscan = nullptr;
 	Marker aktMarker;
+	bool   dataChanged = false;
 
 	Method markerMethod = Method::Paint;
 
@@ -65,7 +66,7 @@ public slots:
 	virtual void chooseMarkerID(int id)                         { aktMarker = IntervallMarker::getInstance().getMarkerFromID(id); }
 	virtual void chooseMethodID(int id)                         { markerMethod = static_cast<Method>(id); emit(markerMethodChanged(markerMethod)); }
 
-	virtual void loadOCTXml(QString filename);
+	virtual void loadImage(QString filename);
 	
 	virtual void loadMarkersXml(QString filename);
 	virtual void addMarkersXml (QString filename);
