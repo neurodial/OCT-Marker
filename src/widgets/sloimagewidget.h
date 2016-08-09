@@ -4,9 +4,13 @@
 #include "cvimagewidget.h"
 // #include <vector>
 
-class CoordSLOpx;
-class BScan;
-class ScaleFactor;
+namespace OctData
+{
+	class CoordSLOpx;
+	class BScan;
+	class ScaleFactor;
+}
+
 // class QColor;
 class QPainter;
 class MarkerManager;
@@ -29,8 +33,8 @@ public:
 protected:
 	void paintEvent(QPaintEvent* event);
 
-	void paintBScan    (QPainter& painter, const BScan& bscan, const ScaleFactor& factor, const CoordSLOpx& shift, int bscanNr, bool paintMarker);
-	void paintBScanLine(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, const CoordSLOpx& shift, int bscanNr, bool paintMarker);
+	void paintBScan    (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, int bscanNr, bool paintMarker);
+	void paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, int bscanNr, bool paintMarker);
 
 private slots:
 	void reladSLOImage();

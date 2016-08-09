@@ -1,10 +1,12 @@
 #include "markermanager.h"
 #include <octxmlread/octxml.h>
 #include <octxmlread/markersxml.h>
-#include <data_structure/cscan.h>
 #include <data_structure/intervallmarker.h>
-#include <data_structure/bscan.h>
 
+#include <octdata/datastruct/series.h>
+#include <octdata/datastruct/bscan.h>
+#include <octdata/datastruct/oct.h>
+#include <octdata/octfileread.h>
 
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
@@ -14,7 +16,7 @@
 
 MarkerManager::MarkerManager()
 : QObject()
-, cscan(new CScan)
+, series(new OctData::Series)
 {
 
 }
@@ -22,6 +24,7 @@ MarkerManager::MarkerManager()
 
 MarkerManager::~MarkerManager()
 {
+	delete oct;
 	if(!xmlFilename.isEmpty() && dataChanged)
 		saveMarkersXml(xmlFilename+"_markes.xml");
 }
@@ -34,7 +37,7 @@ void MarkerManager::chooseBScan(int bscan)
 		return;
 	if(bscan < 0)
 		return;
-	if(bscan >= static_cast<int>(cscan->bscanCount()))
+	if(bscan >= static_cast<int>(series->bscanCount()))
 		return;
 
 	actBScan = bscan;
@@ -48,24 +51,36 @@ void MarkerManager::loadImage(QString filename)
 	if(!xmlFilename.isEmpty() && dataChanged)
 		saveMarkersXml(xmlFilename+"_markes.xml");
 	
-	CScan* oldCScan = cscan;
-	cscan = nullptr;
+	OctData::Series* oldSeries = series;
+	OctData::OCT*    oldOct    = oct;
+	series = nullptr;
+	oct    = nullptr;
 
 	try
 	{
-		cscan = new CScan;
-		if(filename.toLower().endsWith(".xml"))
-			OctXml::readOctXml(filename.toStdString(), cscan);
+		oct = new OctData::OCT(OctData::OctFileRead::openFile(filename.toStdString()));
+
+		// TODO: bessere Datenverwertung / Fehlerbehandlung
+		if(oct->size() == 0)
+			throw "MarkerManager::loadImage: oct->size() == 0";
+		OctData::Patient* patient = oct->begin()->second;
+		if(patient->size() == 0)
+			throw "MarkerManager::loadImage: patient->size() == 0";
+		OctData::Study* study = patient->begin()->second;
+		if(study->size() == 0)
+			throw "MarkerManager::loadImage: study->size() == 0";
+		series = study->begin()->second;
 		
 		xmlFilename = filename;
 	}
 	catch(...)
 	{
-		delete cscan;
-		cscan = oldCScan;
+		delete oct;
+		oct    = oldOct;
+		series = oldSeries;
 		throw;
 	}
-	delete oldCScan;
+	delete oldOct;
 
 	actBScan = 0;
 
@@ -78,13 +93,13 @@ void MarkerManager::loadImage(QString filename)
 
 void MarkerManager::initMarkerMap()
 {
-	std::size_t numBscans = cscan->bscanCount();
+	std::size_t numBscans = series->bscanCount();
 	markers.clear();
 	markers.resize(numBscans);
 
 	for(std::size_t i = 0; i<numBscans; ++i)
 	{
-		int bscanWidth = cscan->getBScan(i)->getWidth();
+		int bscanWidth = series->getBScan(i)->getWidth();
 		markers[i].set(std::make_pair(boost::icl::discrete_interval<int>::closed(0, bscanWidth), IntervallMarker::Marker()));
 	}
 }
@@ -92,7 +107,7 @@ void MarkerManager::initMarkerMap()
 
 bool MarkerManager::cscanLoaded() const
 {
-	return cscan->bscanCount() > 0;
+	return series->bscanCount() > 0;
 }
 
 void MarkerManager::setMarker(int x1, int x2, const Marker& type, int bscan)
@@ -100,7 +115,7 @@ void MarkerManager::setMarker(int x1, int x2, const Marker& type, int bscan)
 	if(!cscanLoaded())
 		return;
 	
-	if(bscan<0 || bscan >= static_cast<int>(cscan->bscanCount()))
+	if(bscan<0 || bscan >= static_cast<int>(series->bscanCount()))
 		return;
 
 // 	printf("MarkerManager::setMarker(%d, %d, %d)", x1, x2, type);
@@ -109,7 +124,7 @@ void MarkerManager::setMarker(int x1, int x2, const Marker& type, int bscan)
 	if(x2 < x1)
 		std::swap(x1, x2);
 
-	int maxWidth = cscan->getBScan(bscan)->getWidth();
+	int maxWidth = series->getBScan(bscan)->getWidth();
 
 	if(x2 < 0 || x1 > maxWidth)
 		return;
@@ -130,7 +145,7 @@ void MarkerManager::fillMarker(int x, const Marker& type)
 	if(!cscanLoaded())
 		return;
 
-	if(bscan<0 || bscan >= static_cast<int>(cscan->bscanCount()))
+	if(bscan<0 || bscan >= static_cast<int>(series->bscanCount()))
 		return;
 
 	MarkerMap& map = markers.at(bscan);

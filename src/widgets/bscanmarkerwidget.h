@@ -5,7 +5,8 @@
 
 #include <QPoint>
 
-class BScan;
+namespace OctData { class BScan; }
+
 class QWheelEvent;
 class QMouseEvent;
 class MarkerManager;
@@ -24,7 +25,7 @@ class BScanMarkerWidget : public CVImageWidget
 	
 	QAction*                                saveRawImageAction = nullptr;
 	QAction*                                saveRawMatAction   = nullptr;
-	const BScan*                            actBscan           = nullptr;
+	const OctData::BScan*                   actBscan           = nullptr;
 	
 	int fdSaveRaw(QString& filename);
 	void updateRawExport();

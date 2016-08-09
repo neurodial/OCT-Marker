@@ -5,11 +5,10 @@
 #include <boost/icl/interval_map.hpp>
 #include <data_structure/intervallmarker.h>
 
-class CScan;
+namespace OctData { class Series; class OCT; }
 
 class MarkerManager : public QObject
 {
-	Q_OBJECT
 public:
 	typedef IntervallMarker::Marker Marker;
 	typedef boost::icl::interval_map<int, Marker, boost::icl::partial_enricher> MarkerMap;
@@ -21,7 +20,7 @@ public:
 
 	int getActBScan() const                                     { return actBScan; }
 
-	const CScan& getCScan()                                     { return *cscan;   }
+	const OctData::Series& getSeries()                          { return *series;   }
 
 	const MarkerMap& getMarkers() const                         { return markers.at(actBScan); }
 	const MarkerMap& getMarkers(int bscan) const                { return markers.at(bscan); }
@@ -43,10 +42,11 @@ public:
 
 
 private:
-	int    actBScan = 0;
-	CScan* cscan = nullptr;
-	Marker aktMarker;
-	bool   dataChanged = false;
+	int              actBScan = 0;
+	OctData::Series* series = nullptr;
+	OctData::OCT*    oct    = nullptr;
+	Marker           aktMarker;
+	bool             dataChanged = false;
 
 	Method markerMethod = Method::Paint;
 
@@ -77,6 +77,8 @@ signals:
 	void newCScanLoaded();
 
 	void markerMethodChanged(Method);
+private:
+	Q_OBJECT
 };
 
 #endif // MARKERMANAGER_H

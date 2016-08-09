@@ -16,11 +16,12 @@
 #include <widgets/dwsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
 #include <octxmlread/octxml.h>
-#include <data_structure/sloimage.h>
-#include <data_structure/bscan.h>
 #include <data_structure/intervallmarker.h>
-#include <data_structure/cscan.h>
 #include <manager/markermanager.h>
+
+#include <octdata/datastruct/sloimage.h>
+#include <octdata/datastruct/bscan.h>
+#include <octdata/datastruct/series.h>
 
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
@@ -61,6 +62,8 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 		markerManager->loadImage("testoct.xml");
 	}
 	catch(...) {}
+
+	connect(markerManager, SIGNAL(newCScanLoaded()), this, SLOT(newCscanLoaded()));
 
 }
 
@@ -390,7 +393,7 @@ void OCTMarkerMainWindow::newCscanLoaded()
 
 void OCTMarkerMainWindow::configBscanChooser()
 {
-	int maxBscan = markerManager->getCScan().bscanCount()-1;
+	int maxBscan = markerManager->getSeries().bscanCount()-1;
 	bscanChooser->setMaximum(maxBscan);
 	bscanChooser->setValue(markerManager->getActBScan());
 

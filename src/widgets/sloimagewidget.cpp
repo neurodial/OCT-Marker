@@ -2,10 +2,13 @@
 
 #include <QPainter>
 
+#include <octdata/datastruct/series.h>
+#include <octdata/datastruct/sloimage.h>
+#include <octdata/datastruct/coordslo.h>
+#include <octdata/datastruct/bscan.h>
+
 #include <manager/markermanager.h>
-#include <data_structure/cscan.h>
-#include <data_structure/sloimage.h>
-#include <data_structure/bscan.h>
+
 #include <data_structure/intervallmarker.h>
 
 SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
@@ -46,17 +49,19 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	activBscan.setWidth(2);
 	activBscan.setColor(QColor(255,0,0));
 
-	int activBScan     = markerManger.getActBScan();
-	const CScan& cscan = markerManger.getCScan();
-	const std::vector<BScan*> bscans = cscan.getBscans();
+	int activBScan                          = markerManger.getActBScan();
+	const OctData::Series& series           = markerManger.getSeries();
+	const OctData::Series::BScanList bscans = series.getBScans();
 
-	const ScaleFactor factor = cscan.getSloImage()->getScaleFactor() * (1/getImageScaleFactor());
-	const CoordSLOpx  shift  = cscan.getSloImage()->getShift()       * (getImageScaleFactor());
+	const OctData::SloImage& sloImage = series.getSloImage();
+
+	const OctData::ScaleFactor factor = sloImage.getScaleFactor() * (1./getImageScaleFactor());
+	const OctData::CoordSLOpx  shift  = sloImage.getShift()       * (getImageScaleFactor());
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
 	int bscanCounter = -1;
-	const BScan* actBScan = nullptr;
-	for(const BScan* bscan : bscans)
+	const OctData::BScan* actBScan = nullptr;
+	for(const OctData::BScan* bscan : bscans)
 	{
 		++bscanCounter;
 		
@@ -82,12 +87,12 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	painter.end();
 }
 
-void SLOImageWidget::paintBScan(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, const CoordSLOpx& shift, int bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, int bscanNr, bool paintMarker)
 {
 	if(bscan.getCenter())
 	{
-		const CoordSLOpx&  start_px = bscan.getStart()  * factor;
-		const CoordSLOpx& center_px = bscan.getCenter() * factor;
+		const OctData::CoordSLOpx&  start_px = bscan.getStart()  * factor;
+		const OctData::CoordSLOpx& center_px = bscan.getCenter() * factor;
 
 		double radius = center_px.abs(start_px);
 
@@ -98,10 +103,10 @@ void SLOImageWidget::paintBScan(QPainter& painter, const BScan& bscan, const Sca
 }
 
 
-void SLOImageWidget::paintBScanLine(QPainter& painter, const BScan& bscan, const ScaleFactor& factor, const CoordSLOpx& shift, int bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, int bscanNr, bool paintMarker)
 {
-	const CoordSLOpx& start_px = bscan.getStart()*factor + shift;
-	const CoordSLOpx&   end_px = bscan.getEnd()  *factor + shift;
+	const OctData::CoordSLOpx& start_px = bscan.getStart()*factor + shift;
+	const OctData::CoordSLOpx&   end_px = bscan.getEnd()  *factor + shift;
 
 	painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
 
@@ -121,8 +126,8 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const BScan& bscan, const
 				double f1 = static_cast<double>(itv.lower())/bscanWidth;
 				double f2 = static_cast<double>(itv.upper())/bscanWidth;
 
-				const CoordSLOpx p1 = start_px*(1.-f1) + end_px*f1;
-				const CoordSLOpx p2 = start_px*(1.-f2) + end_px*f2;
+				const OctData::CoordSLOpx p1 = start_px*(1.-f1) + end_px*f1;
+				const OctData::CoordSLOpx p2 = start_px*(1.-f2) + end_px*f2;
 
 				// pen.setColor(*(intervallColors.at(markerQ)));
 				pen.setColor(QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
@@ -138,10 +143,10 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const BScan& bscan, const
 
 void SLOImageWidget::reladSLOImage()
 {
-	const CScan& cscan = markerManger.getCScan();
-	const SLOImage* sloImage = cscan.getSloImage();
-	if(sloImage)
-		showImage(sloImage->getImage());
+	const OctData::Series& series = markerManger.getSeries();
+	const OctData::SloImage& sloImage = series.getSloImage();
+	//if(sloImage)
+		showImage(sloImage.getImage());
 }
 
 void SLOImageWidget::bscanChanged(int /*bscan*/)

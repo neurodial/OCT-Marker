@@ -1,9 +1,10 @@
 #include "bscanmarkerwidget.h"
 
 #include <manager/markermanager.h>
-#include <data_structure/cscan.h>
-#include <data_structure/bscan.h>
 #include <data_structure/intervallmarker.h>
+
+#include <octdata/datastruct/series.h>
+#include <octdata/datastruct/bscan.h>
 
 #include <cmath>
 
@@ -64,6 +65,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	pen.setWidth(1);
 	segPainter.setPen(pen);
 
+	/*
 	std::size_t nrSegLine = actBscan->getNumSegmentLine();
 	int bScanHeight = actBscan->getHeight();
 	for(int i=0; i<nrSegLine; ++i)
@@ -81,6 +83,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 			++xCoord;
 		}
 	}
+	*/
 
 	QPainter painter(this);
 
@@ -153,8 +156,8 @@ void BScanMarkerWidget::updateRawExport()
 
 void BScanMarkerWidget::bscanChanged(int bscanNR)
 {
-	const CScan& cscan = markerManger.getCScan();
-	actBscan = cscan.getBScan(bscanNR);
+	const OctData::Series& series = markerManger.getSeries();
+	actBscan = series.getBScan(bscanNR);
 	
 	updateRawExport();
 	if(actBscan)

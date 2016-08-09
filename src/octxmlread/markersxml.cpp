@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include <manager/markermanager.h>
-#include <data_structure/cscan.h>
+#include <octdata/datastruct/series.h>
 
 
 #include <boost/property_tree/ptree.hpp>
@@ -85,7 +85,7 @@ void MarkersXML::writeXML(MarkerManager* markerManger, std::string filename)
 	
 	ptree xmltree;
 	
-	int numBscans = markerManger->getCScan().bscanCount();
+	int numBscans = markerManger->getSeries().bscanCount();
 	for(int bscan = 0; bscan < numBscans; ++bscan)
 	{
 		std::string nodeName = "OCT.BScan";
