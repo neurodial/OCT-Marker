@@ -286,7 +286,7 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 	for(const OctData::OctExtension& ext : OctData::OctFileRead::supportedExtensions())
 	{
 		filtersOct << QString("%1 (*.%2)").arg(ext.name.c_str()).arg(ext.extension.c_str());
-		allExtentions += QString("*.%1").arg(ext.extension.c_str());
+		allExtentions += QString("*.%1 ").arg(ext.extension.c_str());
 	}
 
 	filtersOct.sort();
@@ -323,6 +323,13 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 		{
 			QMessageBox msgBox;
 			msgBox.setText(QString::fromStdString(e.what()));
+			msgBox.setIcon(QMessageBox::Critical);
+			msgBox.exec();
+		}
+		catch(const char* str)
+		{
+			QMessageBox msgBox;
+			msgBox.setText(str);
 			msgBox.setIcon(QMessageBox::Critical);
 			msgBox.exec();
 		}
