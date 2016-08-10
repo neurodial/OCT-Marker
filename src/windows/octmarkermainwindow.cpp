@@ -15,7 +15,6 @@
 
 #include <widgets/dwsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
-#include <octxmlread/octxml.h>
 #include <data_structure/intervallmarker.h>
 #include <manager/markermanager.h>
 
