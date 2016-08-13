@@ -23,7 +23,6 @@ include_directories(${CMAKE_SOURCE_DIR}/src/)
 include_directories(${LibOctData_INCLUDE_DIRS})
 
 
-
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(compiler_flags_debug "-Wall -Wextra -Wunreachable-code")        ## Optimize -O3 -Weverything -Weffc++
 	# set(compiler_flags_release "-std=c++11")        ## Optimize -O3 -Weverything
@@ -61,7 +60,6 @@ if(compiler_flags)
 endif()
 
 
-
 add_executable(octmarker src/main.cpp ${octmarker_SRCS}
 	${ui_files_headers}
 	${TRANSLATIONS}
@@ -72,3 +70,4 @@ target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT}
 target_link_libraries(octmarker ${LibOctData_LIBRARIES})
 
 install(TARGETS octmarker RUNTIME DESTINATION bin)
+

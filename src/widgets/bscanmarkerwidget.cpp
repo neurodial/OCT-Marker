@@ -50,6 +50,24 @@ BScanMarkerWidget::~BScanMarkerWidget()
 {
 }
 
+namespace
+{
+	void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const OctData::BScan::Segmentline& segLine)
+	{
+		double lastEnt = std::numeric_limits<double>::quiet_NaN();
+		int xCoord = 0;
+		for(double value : segLine)
+		{
+			// std::cout << value << '\n';
+			if(!std::isnan(lastEnt) && lastEnt < bScanHeight && lastEnt > 0 && value < bScanHeight && value > 0)
+			{
+				segPainter.drawLine(QLineF(xCoord-1, lastEnt, xCoord, value));
+			}
+			lastEnt = value;
+			++xCoord;
+		}
+	}
+}
 
 void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 {
@@ -64,10 +82,13 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	pen.setColor(QColor(255, 0, 0, 180));
 	pen.setWidth(1);
 	segPainter.setPen(pen);
+	int bScanHeight = actBscan->getHeight();
+
+	paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM));
+	paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::BM));
 
 	/*
 	std::size_t nrSegLine = actBscan->getNumSegmentLine();
-	int bScanHeight = actBscan->getHeight();
 	for(int i=0; i<nrSegLine; ++i)
 	{
 		double lastEnt = std::numeric_limits<double>::quiet_NaN();

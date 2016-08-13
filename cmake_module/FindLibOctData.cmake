@@ -15,9 +15,9 @@ find_path(LibOctData_INCLUDE_DIR NAMES octdata PATHS ../
           )
 
 
-find_library(LibOctData_LIBRARY NAMES liboctdata.a
+find_library(LibOctData_LIBRARY NAMES liboctdata.so
 			PATHS ${LibOctData_INCLUDE_DIR}
-			PATH_SUFFIXES build release
+			PATH_SUFFIXES release build
              # HINTS ${PC_LIBXML_LIBDIR} ${PC_LIBXML_LIBRARY_DIRS}
              )
 

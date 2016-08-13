@@ -13,6 +13,8 @@
 #include <iostream>
 #include <QMessageBox>
 
+#include <QTime>
+
 MarkerManager::MarkerManager()
 : QObject()
 , series(new OctData::Series)
@@ -57,7 +59,12 @@ void MarkerManager::loadImage(QString filename)
 
 	try
 	{
+		QTime t;
+		t.start();
+
+		qDebug("Lese: %s", filename.toStdString().c_str());
 		oct = new OctData::OCT(OctData::OctFileRead::openFile(filename.toStdString()));
+		qDebug("Dauer: %d ms", t.elapsed());
 
 		// TODO: bessere Datenverwertung / Fehlerbehandlung
 		if(oct->size() == 0)
