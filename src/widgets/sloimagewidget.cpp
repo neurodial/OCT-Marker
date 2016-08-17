@@ -59,29 +59,32 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	const OctData::CoordSLOpx  shift  = sloImage.getShift()       * (getImageScaleFactor());
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
-	int bscanCounter = -1;
-	const OctData::BScan* actBScan = nullptr;
-	for(const OctData::BScan* bscan : bscans)
+	if(drawBScans)
 	{
-		++bscanCounter;
-		
-		if(!bscan)
-			continue;
-
-		if(bscanCounter == activBScan)
+		int bscanCounter = -1;
+		const OctData::BScan* actBScan = nullptr;
+		for(const OctData::BScan* bscan : bscans)
 		{
-			actBScan = bscan;
-			continue;
+			++bscanCounter;
+
+			if(!bscan)
+				continue;
+
+			if(bscanCounter == activBScan)
+			{
+				actBScan = bscan;
+				continue;
+			}
+
+			painter.setPen(normalBscan);
+			paintBScan(painter, *bscan, factor, shift, bscanCounter, true);
 		}
 
-		painter.setPen(normalBscan);
-		paintBScan(painter, *bscan, factor, shift, bscanCounter, true);
-	}
-
-	if(actBScan)
-	{
-		painter.setPen(activBscan);
-		paintBScan(painter, *actBScan, factor, shift, -1, false);
+		if(actBScan)
+		{
+			painter.setPen(activBscan);
+			paintBScan(painter, *actBScan, factor, shift, -1, false);
+		}
 	}
 
 	painter.end();
@@ -153,3 +156,10 @@ void SLOImageWidget::bscanChanged(int /*bscan*/)
 {
 	repaint();
 }
+
+void SLOImageWidget::showBScans(bool show)
+{
+	drawBScans = show;
+	update();
+}
+

@@ -5,6 +5,7 @@
 
 #include <QResizeEvent>
 #include <QToolBar>
+#include <QAction>
 
 WgSloImage::WgSloImage(MarkerManager& markerManger)
 : QMainWindow(0)
@@ -16,8 +17,16 @@ WgSloImage::WgSloImage(MarkerManager& markerManger)
 	
 	
 	QToolBar* bar = new QToolBar(this);
-	bar->addAction("First");
-	// bar->clo(false);
+
+	QAction* showBScans = new QAction(this);
+	showBScans->setText(tr("show BScans"));
+	showBScans->setIcon(QIcon(":/icons/help.png"));
+	showBScans->setCheckable(true);
+	showBScans->setChecked(imageWidget->getShowBScans());
+	connect(showBScans, &QAction::toggled, imageWidget, &SLOImageWidget::showBScans);
+	bar->addAction(showBScans);
+
+
 	setContextMenuPolicy(Qt::NoContextMenu);
 	addToolBar(bar);
 }

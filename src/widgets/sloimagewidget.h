@@ -22,6 +22,7 @@ class SLOImageWidget : public CVImageWidget
 	MarkerManager& markerManger;
 	
 	// std::vector<QColor*> intervallColors;
+	bool drawBScans = true;
 
 	void createIntervallColors();
 	void deleteIntervallColors();
@@ -29,6 +30,11 @@ public:
 	SLOImageWidget(MarkerManager& markerManger);
 
     virtual ~SLOImageWidget();
+
+	bool getShowBScans() const                                   { return drawBScans; }
+
+public slots:
+	void showBScans(bool show);
 
 protected:
 	void paintEvent(QPaintEvent* event);
