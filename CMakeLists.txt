@@ -30,7 +30,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 
-set(srcs_directories data_structure octxmlread widgets windows manager)
+set(srcs_directories data_structure octxmlread widgets windows manager markerobjects)
 
 foreach(loop_var ${srcs_directories})
 	file(GLOB sources_base "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")
@@ -70,5 +70,4 @@ target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT}
 target_link_libraries(octmarker ${LibOctData_LIBRARIES})
 
 install(TARGETS octmarker RUNTIME DESTINATION bin)
-
 

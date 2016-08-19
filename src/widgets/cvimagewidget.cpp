@@ -95,6 +95,16 @@ void CVImageWidget::cvImage2qtImage()
 	update();
 }
 
+int CVImageWidget::imageHight() const
+{
+	return cvImage.rows;
+}
+
+int CVImageWidget::imageWidth() const
+{
+	return cvImage.cols;
+}
+
 
 
 void CVImageWidget::saveImage()

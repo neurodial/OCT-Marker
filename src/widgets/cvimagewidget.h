@@ -28,6 +28,9 @@ public:
 
 	void setImageSize(QSize size)                               { imageScale = size; cvImage2qtImage(); }
 
+	int  imageHight() const;
+	int  imageWidth() const;
+
 	double getImageScaleFactor()                                { return scaleFactor; }
 
 public slots:
