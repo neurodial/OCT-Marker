@@ -25,6 +25,9 @@
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
+
+#include <boost/algorithm/string/join.hpp>
+
 #include <octdata/octfileread.h>
 
 
@@ -279,19 +282,36 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 	fd.setAcceptMode(QFileDialog::AcceptOpen);
 
 
-	QString allExtentions;
+	QStringList allExtentions;
 	QStringList filtersOct;
 
 	for(const OctData::OctExtension& ext : OctData::OctFileRead::supportedExtensions())
 	{
-		filtersOct << QString("%1 (*.%2)").arg(ext.name.c_str()).arg(ext.extension.c_str());
-		allExtentions += QString("*.%1 ").arg(ext.extension.c_str());
+		QStringList extensions;
+		for(const std::string& str : ext.extensions)
+		{
+			if(!str.empty())
+			{
+				if(str[0] == '.')
+				{
+					extensions << QString("*%1").arg(str.c_str());
+					allExtentions << QString("*%1").arg(str.c_str());
+				}
+				else
+				{
+					extensions << str.c_str();
+					allExtentions << str.c_str();
+				}
+			}
+		}
+		// std::string extensions = boost::algorithm::join(ext.extensions, " ");
+		filtersOct << QString("%1 (%2)").arg(ext.name.c_str()).arg(extensions.join(' '));
 	}
 
 	filtersOct.sort();
 	
 	QStringList filtersAllFiles;
-	filtersAllFiles << tr("All readabel (%1)").arg(allExtentions);
+	filtersAllFiles << tr("All readabel (%1)").arg(allExtentions.join(' '));
 	filtersAllFiles << tr("All files (* *.*)");
 
 	QStringList filters = filtersAllFiles + filtersOct;
