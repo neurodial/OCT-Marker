@@ -6,6 +6,7 @@
 class QLabel;
 class QSpinBox;
 class QAction;
+class QFileDialog;
 class BScanMarkerWidget;
 class MarkerManager;
 class DWSloImage;
@@ -35,9 +36,14 @@ class OCTMarkerMainWindow : public QMainWindow
 	void setActionToggel();
 	void configBscanChooser();
 
+	static void setMarkersFilters(QFileDialog& fd);
+
 public:
 	OCTMarkerMainWindow();
 	~OCTMarkerMainWindow();
+
+	
+	static void setMarkersStringList(QStringList& filters);
 
 private slots:
 	virtual void newCscanLoaded();

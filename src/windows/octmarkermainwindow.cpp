@@ -379,19 +379,50 @@ void OCTMarkerMainWindow::showAddMarkersDialog()
 	}
 }
 
+void OCTMarkerMainWindow::setMarkersStringList(QStringList& filters)
+{
+	filters << tr("OCT Markers Josn file (*.joctmarkers)");
+	filters << tr("OCT Markers XML file (*_markes.xml)");
+}
+
+namespace
+{
+	MarkerManager::Fileformat getMarkerFileFormat(const QString& filter)
+	{
+		QStringList filters;
+		OCTMarkerMainWindow::setMarkersStringList(filters);
+		int index = filters.indexOf(filter);
+		if(index == 0)
+			return MarkerManager::Fileformat::Josn;
+		if(index == 1)
+			return MarkerManager::Fileformat::XML;
+
+		throw "unknown filtername";
+	}
+}
+
+
+void OCTMarkerMainWindow::setMarkersFilters(QFileDialog& fd)
+{
+	QStringList filters;
+	setMarkersStringList(filters);
+	fd.setNameFilters(filters);
+}
+
+
 void OCTMarkerMainWindow::showLoadMarkersDialog()
 {
 	QFileDialog fd;
 	fd.setWindowTitle(tr("Choose a file to load markers"));
 	fd.setAcceptMode(QFileDialog::AcceptOpen);
 
-	fd.setNameFilter(tr("OCT Markers file (*_markers.xml)"));
+	setMarkersFilters(fd);
 	fd.setFileMode(QFileDialog::ExistingFile);
 
 	if(fd.exec())
 	{
 		QStringList filenames = fd.selectedFiles();
-		markerManager->loadMarkers(filenames[0], MarkerManager::Fileformat::XML);
+		markerManager->loadMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
 	}
 }
 
@@ -401,13 +432,13 @@ void OCTMarkerMainWindow::showSaveMarkersDialog()
 	fd.setWindowTitle(tr("Choose a filename to save markers"));
 	fd.setAcceptMode(QFileDialog::AcceptSave);
 
-	fd.setNameFilter(tr("OCT Markers file (*_markers.xml)"));
+	setMarkersFilters(fd);
 	fd.setFileMode(QFileDialog::AnyFile);
 
 	if(fd.exec())
 	{
 		QStringList filenames = fd.selectedFiles();
-		markerManager->saveMarkers(filenames[0], MarkerManager::Fileformat::XML);
+		markerManager->saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
 	}
 }
 
