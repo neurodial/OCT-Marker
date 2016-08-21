@@ -11,6 +11,9 @@ namespace OctData
 	class ScaleFactor;
 }
 
+class QGraphicsScene;
+class QGraphicsView;
+
 // class QColor;
 class QPainter;
 class MarkerManager;
@@ -20,6 +23,8 @@ class SLOImageWidget : public CVImageWidget
 	Q_OBJECT
 
 	MarkerManager& markerManger;
+	QGraphicsView* gv = nullptr;
+	QGraphicsScene* scene = nullptr;
 	
 	// std::vector<QColor*> intervallColors;
 	bool drawBScans = true;
@@ -33,8 +38,11 @@ public:
 
 	bool getShowBScans() const                                   { return drawBScans; }
 
+	virtual void setImageSize(QSize size);
+
 public slots:
 	void showBScans(bool show);
+	void showLabels(bool show);
 
 protected:
 	void paintEvent(QPaintEvent* event);

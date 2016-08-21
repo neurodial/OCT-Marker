@@ -14,13 +14,14 @@ public:
 	typedef boost::icl::interval_map<int, Marker, boost::icl::partial_enricher> MarkerMap;
 
 	enum class Method { Paint, Fill };
+	enum class Fileformat { XML, Josn };
 
 	MarkerManager();
     virtual ~MarkerManager();
 
 	int getActBScan() const                                     { return actBScan; }
 
-	const OctData::Series& getSeries()                          { return *series;   }
+	const OctData::Series& getSeries() const                    { return *series;   }
 
 	const MarkerMap& getMarkers() const                         { return markers.at(actBScan); }
 	const MarkerMap& getMarkers(int bscan) const                { return markers.at(bscan); }
@@ -53,6 +54,8 @@ private:
 	std::vector<MarkerMap> markers;
 
 	void initMarkerMap();
+	void saveMarkerDefault();
+	void loadMarkerDefault();
 	
 	QString xmlFilename;
 
@@ -68,9 +71,9 @@ public slots:
 
 	virtual void loadImage(QString filename);
 	
-	virtual void loadMarkersXml(QString filename);
-	virtual void addMarkersXml (QString filename);
-	virtual void saveMarkersXml(QString filename);
+	virtual bool loadMarkers(QString filename, Fileformat format);
+	virtual bool addMarkers (QString filename, Fileformat format);
+	virtual void saveMarkers(QString filename, Fileformat format);
 
 signals:
 	void bscanChanged(int bscan);

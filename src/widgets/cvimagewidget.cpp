@@ -107,6 +107,7 @@ int CVImageWidget::imageWidth() const
 
 
 
+
 void CVImageWidget::saveImage()
 {
 	QString filename;

@@ -1,5 +1,5 @@
 #include "markermanager.h"
-#include <octxmlread/markersxml.h>
+#include <octxmlread/markersreadwrite.h>
 #include <data_structure/intervallmarker.h>
 
 #include <octdata/datastruct/series.h>
@@ -25,10 +25,24 @@ MarkerManager::MarkerManager()
 
 MarkerManager::~MarkerManager()
 {
+	saveMarkerDefault();
+
 	delete oct;
-	if(!xmlFilename.isEmpty() && dataChanged)
-		saveMarkersXml(xmlFilename+"_markes.xml");
 }
+
+void MarkerManager::saveMarkerDefault()
+{
+	if(!xmlFilename.isEmpty() && dataChanged)
+		saveMarkers(xmlFilename+".joctmarkers", Fileformat::Josn);
+}
+
+void MarkerManager::loadMarkerDefault()
+{
+	if(!loadMarkers(xmlFilename+".joctmarkers", Fileformat::Josn))
+		loadMarkers(xmlFilename+"_markes.xml", Fileformat::XML);
+	dataChanged = false;
+}
+
 
 
 
@@ -49,9 +63,8 @@ void MarkerManager::chooseBScan(int bscan)
 
 void MarkerManager::loadImage(QString filename)
 {
-	if(!xmlFilename.isEmpty() && dataChanged)
-		saveMarkersXml(xmlFilename+"_markes.xml");
-	
+	saveMarkerDefault();
+
 	OctData::Series* oldSeries = series;
 	OctData::OCT*    oldOct    = oct;
 	series = nullptr;
@@ -90,9 +103,7 @@ void MarkerManager::loadImage(QString filename)
 
 	actBScan = 0;
 
-	loadMarkersXml(xmlFilename+"_markes.xml");
-
-	dataChanged = false;
+	loadMarkerDefault();
 	
 	emit(newCScanLoaded());
 }
@@ -169,17 +180,26 @@ void MarkerManager::fillMarker(int x, const Marker& type)
 
 
 
-void MarkerManager::loadMarkersXml(QString filename)
+bool MarkerManager::loadMarkers(QString filename, Fileformat format)
 {
 	initMarkerMap();
-	addMarkersXml(filename);
+	return addMarkers(filename, format);
 }
 
-void MarkerManager::addMarkersXml(QString filename)
+bool MarkerManager::addMarkers(QString filename, Fileformat format)
 {
+	bool result = false;
 	try
 	{
-		MarkersXML::readXML(this, filename.toStdString());
+		switch(format)
+		{
+			case Fileformat::XML:
+				result = MarkersReadWrite::readXML(this, filename.toStdString());
+				break;
+			case Fileformat::Josn:
+				result = MarkersReadWrite::readJosn(this, filename.toStdString());
+				break;
+		}
 		dataChanged = true;
 		emit(bscanChanged(actBScan)); // TODO: implementiere eigenes Signal
 	}
@@ -204,10 +224,19 @@ void MarkerManager::addMarkersXml(QString filename)
 		msgBox.setIcon(QMessageBox::Critical);
 		msgBox.exec();
 	}
+	return result;
 }
 
 
-void MarkerManager::saveMarkersXml(QString filename)
+void MarkerManager::saveMarkers(QString filename, Fileformat format)
 {
-	MarkersXML::writeXML(this, filename.toStdString());
+	switch(format)
+	{
+		case Fileformat::XML:
+			MarkersReadWrite::writeXML(this, filename.toStdString());
+			break;
+		case Fileformat::Josn:
+			MarkersReadWrite::writeJosn(this, filename.toStdString());
+			break;
+	}
 }

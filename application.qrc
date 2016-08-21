@@ -13,5 +13,8 @@
 
 	<file>icons/paintbrush.png</file>
 	<file>icons/paintcan.png</file>
+
+	<file>icons/layers.png</file>
+	<file>icons/tag_blue_edit.png</file>
 </qresource>
 </RCC>

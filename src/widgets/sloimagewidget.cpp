@@ -1,6 +1,7 @@
 #include "sloimagewidget.h"
 
 #include <QPainter>
+#include <QResizeEvent>
 
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/sloimage.h>
@@ -11,6 +12,11 @@
 
 #include <data_structure/intervallmarker.h>
 
+#include <QGraphicsView>
+#include <QGraphicsTextItem>
+
+#include <markerobjects/rectitem.h>
+
 SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
 : markerManger(markerManger)
 {
@@ -18,6 +24,29 @@ SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
 	connect(&markerManger, SIGNAL(bscanChanged(int)), this, SLOT(bscanChanged(int)));
 
 	setMinimumSize(50,50);
+	setFocusPolicy(Qt::StrongFocus);
+
+	gv = new QGraphicsView(this);
+	gv->setStyleSheet("background: transparent");
+	gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	gv->setWindowFlags (Qt::FramelessWindowHint);
+	gv->setCacheMode(QGraphicsView::CacheBackground);
+	gv->setFocusPolicy(Qt::NoFocus);
+
+	scene = new QGraphicsScene(this);
+	gv->setScene(scene);
+
+	RectItem* currentRect = new RectItem();
+	currentRect->setDescription("ONH");
+	currentRect->setRect(QRectF(50, 50, 50, 50));
+	currentRect->setSelected(true);
+	scene->addItem(currentRect);
+
+
+	gv->show();
+	gv->setGeometry(rect());
+
 	
 	// createIntervallColors();
 }
@@ -150,6 +179,8 @@ void SLOImageWidget::reladSLOImage()
 	const OctData::SloImage& sloImage = series.getSloImage();
 	//if(sloImage)
 		showImage(sloImage.getImage());
+
+	gv->setSceneRect(0, 0, imageWidth(), imageHight());
 }
 
 void SLOImageWidget::bscanChanged(int /*bscan*/)
@@ -162,4 +193,27 @@ void SLOImageWidget::showBScans(bool show)
 	drawBScans = show;
 	update();
 }
+
+void SLOImageWidget::showLabels(bool show)
+{
+
+	gv->setVisible(show);
+}
+
+
+
+
+void SLOImageWidget::setImageSize(QSize size)
+{
+	CVImageWidget::setImageSize(size);
+/*
+	QPoint p = imageWidget->pos();
+	QRect  r = imageWidget->rect();*/
+	gv->setGeometry(0, 0, scaledImageWidth(), scaledImageHight());
+	// gv->setPos(imageWidget->pos());
+	gv->resetTransform();
+	gv->scale(getImageScaleFactor(), getImageScaleFactor());
+	// gv->setSceneRect(0, 0, imageWidth(), imageHight());
+}
+
 

@@ -26,10 +26,13 @@ public:
 	QSize sizeHint()        const                               { return qtImage.size(); }
 	QSize minimumSizeHint() const                               { return qtImage.size(); }
 
-	void setImageSize(QSize size)                               { imageScale = size; cvImage2qtImage(); }
+	virtual void setImageSize(QSize size)                       { imageScale = size; cvImage2qtImage(); }
 
 	int  imageHight() const;
 	int  imageWidth() const;
+
+	int  scaledImageHight() const                               { return qtImage.height(); }
+	int  scaledImageWidth() const                               { return qtImage.width() ; }
 
 	double getImageScaleFactor()                                { return scaleFactor; }
 
