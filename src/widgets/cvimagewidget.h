@@ -18,6 +18,7 @@ class CVImageWidget : public QWidget
 	virtual void contextMenuEvent(QContextMenuEvent* event);
 	
 	double scaleFactor = 1.;
+	bool grayCvImage;
 	
 public:
 	explicit CVImageWidget(QWidget *parent = 0);

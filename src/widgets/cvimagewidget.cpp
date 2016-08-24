@@ -32,40 +32,47 @@ void CVImageWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void CVImageWidget::showImage(const cv::Mat& image)
 {
-	// Convert the image to the RGB888 format
-	switch(image.type())
+	if(image.empty())
+		cvImage = cv::Mat();
+	else
 	{
-		case CV_8UC1:
-			cvtColor(image, cvImage, CV_GRAY2RGB);
-			break;
-		case CV_8UC3:
-			cvtColor(image, cvImage, CV_BGR2RGB);
-			break;
-		case CV_32FC1:
-		case CV_64FC1:
+		// Convert the image to the RGB888 format
+		switch(image.type())
 		{
-			double min, max;
-			cv::minMaxLoc(image, &min, &max);
-		//	qDebug("min: %d\tmax: %d", min, max);
-		//	std::cout << "min: " << min << "\tmax: " << max << std::endl;
-			
-			if(min == max)
-				max = min+1;
-	//		image.convertTo(cvImage, CV_8UC3, 255.0/(max-min), -255.0*min/(max-min));
-			image.convertTo(cvImage, CV_8UC3, 255.0, 0);
+			case CV_8UC1:
+				// cvtColor(image, cvImage, CV_GRAY2RGB);
+				cvImage = image.clone();
+				grayCvImage = true;
+				break;
+			case CV_8UC3:
+				cvtColor(image, cvImage, CV_BGR2RGB);
+				grayCvImage = false;
+				break;
+			case CV_32FC1:
+			case CV_64FC1:
+			{
+				double min, max;
+				cv::minMaxLoc(image, &min, &max);
+			//	qDebug("min: %d\tmax: %d", min, max);
+			//	std::cout << "min: " << min << "\tmax: " << max << std::endl;
 
-			if(cvImage.channels() == 1)
-				cv::cvtColor(cvImage, cvImage, CV_GRAY2BGR);
+				if(min == max)
+					max = min+1;
+		//		image.convertTo(cvImage, CV_8UC3, 255.0/(max-min), -255.0*min/(max-min));
+				image.convertTo(cvImage, CV_8UC3, 255.0, 0);
 
-			break;
+				if(cvImage.channels() == 1)
+					cv::cvtColor(cvImage, cvImage, CV_GRAY2BGR);
+
+				break;
+			}
+			default:
+				qDebug("unhandeld opencv image format %d", image.type());
+				return;
 		}
-		default:
-			qDebug("unhandeld opencv image format %d", image.type());
-			return;
-	}
 
-	// QImage needs the data to be stored continuously in memory
-	assert(cvImage.isContinuous());
+		// QImage needs the data to be stored continuously in memory
+	}
 
 	cvImage2qtImage();
 }
@@ -73,12 +80,19 @@ void CVImageWidget::showImage(const cv::Mat& image)
 void CVImageWidget::cvImage2qtImage()
 {
 	if(cvImage.empty())
+	{
+		qtImage = QImage();
 		return;
+	}
 
+		assert(cvImage.isContinuous());
 	// Assign OpenCV's image buffer to the QImage. Note that the bytesPerLine parameter
 	// (http://qt-project.org/doc/qt-4.8/qimage.html#QImage-6) is 3*width because each pixel
 	// has three bytes.
-	qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols*3, QImage::Format_RGB888);
+	if(grayCvImage)
+		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols, QImage::Format_Grayscale8);
+	else
+		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols*3, QImage::Format_RGB888);
 
 	if(imageScale.width() > 0 && imageScale.height() > 0)
 	{

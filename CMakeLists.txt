@@ -70,4 +70,3 @@ target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT}
 target_link_libraries(octmarker ${LibOctData_LIBRARIES})
 
 install(TARGETS octmarker RUNTIME DESTINATION bin)
-

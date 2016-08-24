@@ -86,25 +86,8 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 	paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM));
 	paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::BM));
+	paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::NFL));
 
-	/*
-	std::size_t nrSegLine = actBscan->getNumSegmentLine();
-	for(int i=0; i<nrSegLine; ++i)
-	{
-		double lastEnt = std::numeric_limits<double>::quiet_NaN();
-		int xCoord = 0;
-		for(double value : actBscan->getSegmentLine(i))
-		{
-			// std::cout << value << '\n';
-			if(!std::isnan(lastEnt) && lastEnt < bScanHeight && lastEnt > 0 && value < bScanHeight && value > 0)
-			{
-				segPainter.drawLine(QLineF(xCoord-1, lastEnt, xCoord, value));
-			}
-			lastEnt = value;
-			++xCoord;
-		}
-	}
-	*/
 
 	QPainter painter(this);
 
