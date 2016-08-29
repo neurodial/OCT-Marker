@@ -66,7 +66,6 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	catch(...) {}
 
 	connect(markerManager, SIGNAL(newCScanLoaded()), this, SLOT(newCscanLoaded()));
-
 }
 
 
@@ -326,42 +325,48 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 	if(fd.exec())
 	{
 		QStringList filenames = fd.selectedFiles();
-
-		try
-		{
-			markerManager->loadImage(filenames[0]);
-		}
-		catch(boost::exception& e)
-		{
-			QMessageBox msgBox;
-			msgBox.setText(QString::fromStdString(boost::diagnostic_information(e)));
-			msgBox.setIcon(QMessageBox::Critical);
-			msgBox.exec();
-		}
-		catch(std::exception& e)
-		{
-			QMessageBox msgBox;
-			msgBox.setText(QString::fromStdString(e.what()));
-			msgBox.setIcon(QMessageBox::Critical);
-			msgBox.exec();
-		}
-		catch(const char* str)
-		{
-			QMessageBox msgBox;
-			msgBox.setText(str);
-			msgBox.setIcon(QMessageBox::Critical);
-			msgBox.exec();
-		}
-		catch(...)
-		{
-			QMessageBox msgBox;
-			msgBox.setText(QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__));
-			msgBox.setIcon(QMessageBox::Critical);
-			msgBox.exec();
-		}
-
+		loadFile(filenames[0]);
 	}
 }
+
+bool OCTMarkerMainWindow::loadFile(const QString& filename)
+{
+	try
+	{
+		markerManager->loadImage(filename);
+		return true;
+	}
+	catch(boost::exception& e)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString::fromStdString(boost::diagnostic_information(e)));
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	catch(std::exception& e)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString::fromStdString(e.what()));
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	catch(const char* str)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(str);
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	catch(...)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__));
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	return false;
+}
+
 
 void OCTMarkerMainWindow::showAddMarkersDialog()
 {
