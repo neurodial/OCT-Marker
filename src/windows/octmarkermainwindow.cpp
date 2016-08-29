@@ -16,11 +16,14 @@
 #include <widgets/dwsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
 #include <data_structure/intervallmarker.h>
+#include <data_structure/programoptions.h>
 #include <manager/markermanager.h>
 
 #include <octdata/datastruct/sloimage.h>
 #include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/series.h>
+
+#include <octdata/filereadoptions.h>
 
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
@@ -29,6 +32,8 @@
 #include <boost/algorithm/string/join.hpp>
 
 #include <octdata/octfileread.h>
+
+#include <cpp_framework/cvmat/treestructbin.h>
 
 
 namespace
@@ -75,9 +80,29 @@ OCTMarkerMainWindow::~OCTMarkerMainWindow()
 }
 
 
+namespace
+{
+	void addMenuProgramOptionGroup(const QString& name, OptionInt& obj, QMenu* menu, SendInt& sendObj, QActionGroup* group, QObject* parent)
+	{
+		QAction* action = new QAction(parent);
+		action->setText(name);
+		action->setCheckable(true);
+		action->setActionGroup(group);
+		sendObj.connectOptions(obj, action);
+
+		menu->addAction(action);
+	}
+
+}
+
+
 
 void OCTMarkerMainWindow::setupMenu()
 {
+
+	// ----------
+	// fileMenu
+	// ----------
 	QMenu* fileMenu = new QMenu(this);
 	fileMenu->setTitle(tr("File"));
 
@@ -119,6 +144,45 @@ void OCTMarkerMainWindow::setupMenu()
 	fileMenu->addAction(actionQuit);
 
 
+	// ----------
+	// Options
+	// ----------
+	QMenu* optionsMenu = new QMenu(this);
+	optionsMenu->setTitle(tr("Options"));
+
+	optionsMenu->addAction(ProgramOptions::fillEmptyPixelWhite.getAction());
+	optionsMenu->addAction(ProgramOptions::registerBScanns    .getAction());
+
+	QMenu* optionsMenuE2E = new QMenu(this);
+	optionsMenuE2E->setTitle(tr("E2E Gray"));
+	optionsMenu->addMenu(optionsMenuE2E);
+
+	QActionGroup* e2eGrayTransformGroup = new QActionGroup(this);
+	static SendInt e2eGrayNativ(static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::nativ));
+	addMenuProgramOptionGroup(tr("E2E nativ"    ), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayNativ, e2eGrayTransformGroup, this);
+	static SendInt e2eGrayXml   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::xml));
+	addMenuProgramOptionGroup(tr("Xml emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayXml  , e2eGrayTransformGroup, this);
+	static SendInt e2eGrayVol   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::vol));
+	addMenuProgramOptionGroup(tr("Vol emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayVol  , e2eGrayTransformGroup, this);
+
+
+	// ----------
+	// Extras
+	// ----------
+
+	QMenu* extrisMenu = new QMenu(this);
+	extrisMenu->setTitle(tr("Extras"));
+
+	QAction* actionSaveMatlabBinCode = new QAction(this);
+	actionSaveMatlabBinCode->setText(tr("Save Matlab Bin Code"));
+	actionSaveMatlabBinCode->setIcon(QIcon(":/icons/save.png"));
+	connect(actionSaveMatlabBinCode, &QAction::triggered, this, &OCTMarkerMainWindow::saveMatlabBinCode);
+	extrisMenu->addAction(actionSaveMatlabBinCode);
+
+
+	// ----------
+	// Help Menu
+	// ----------
 
 	QMenu* helpMenu = new QMenu(this);
 	helpMenu->setTitle(tr("Help"));
@@ -137,8 +201,14 @@ void OCTMarkerMainWindow::setupMenu()
 	helpMenu->addAction(actionAboutDialog);
 
 
+
 	menuBar()->addMenu(fileMenu);
+	menuBar()->addMenu(optionsMenu);
+	menuBar()->addMenu(extrisMenu);
 	menuBar()->addMenu(helpMenu);
+
+
+
 
 
 	QAction* nextBScan = new QAction(this);
@@ -462,4 +532,26 @@ void OCTMarkerMainWindow::configBscanChooser()
 	labelMaxBscan->setText(QString("/%1").arg(maxBscan));
 }
 
+void OCTMarkerMainWindow::saveMatlabBinCode()
+{
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save Matlab Bin Code"), QString("readbin.m"), "Matlab (*.m)");
+	if(!filename.isEmpty())
+		CppFW::CVMatTreeStructBin::writeMatlabReadCode(filename.toStdString().c_str());
+}
+
+
+void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
+{
+	ProgramOptions::writeAllOptions();
+	QWidget::closeEvent(e);
+}
+
+
+void SendInt::connectOptions(OptionInt& option, QAction* action)
+{
+	connect(action, SIGNAL(toggled(bool)), this, SLOT(recive(bool)));
+	connect(this, SIGNAL(send(int)), &option, SLOT(setValue(int)));
+
+	action->setChecked(option() == v);
+}
 

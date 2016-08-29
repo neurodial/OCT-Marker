@@ -6,6 +6,8 @@
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
 
+#include <cpp_framework/cvmat/treestructbin.h>
+
 #include <cmath>
 
 #include <QWheelEvent>
@@ -30,6 +32,7 @@ BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);
 	
+	contextMenu->addSeparator();
 	
 	saveRawImageAction = new QAction(this);
 	saveRawImageAction->setText(tr("Save Raw Image"));
@@ -43,6 +46,21 @@ BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 	saveRawMatAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveRawMatAction);
 	connect(saveRawMatAction, SIGNAL(triggered(bool)), this, SLOT(saveRawMat()));
+	
+
+	contextMenu->addSeparator();
+	
+	saveRawBinAction = new QAction(this);
+	saveRawBinAction->setText(tr("Save raw data as bin"));
+	saveRawBinAction->setIcon(QIcon(":/icons/disk.png"));
+	contextMenu->addAction(saveRawBinAction);
+	connect(saveRawBinAction, SIGNAL(triggered(bool)), this, SLOT(saveRawBin()));
+	
+	saveImageBinAction = new QAction(this);
+	saveImageBinAction->setText(tr("Save image data as bin"));
+	saveImageBinAction->setIcon(QIcon(":/icons/disk.png"));
+	contextMenu->addAction(saveImageBinAction);
+	connect(saveImageBinAction, SIGNAL(triggered(bool)), this, SLOT(saveImageBin()));
 }
 
 
@@ -312,6 +330,30 @@ void BScanMarkerWidget::saveRawMat()
 	}
 }
 
+
+void BScanMarkerWidget::saveRawBin()
+{
+	if(actBscan && existsRaw())
+	{
+		QString filename = QFileDialog::getSaveFileName(this, tr("Save raw data as bin"), "", "Binary (*.bin)");
+		if(!filename.isEmpty())
+		{
+			CppFW::CVMatTreeStructBin::writeBin(filename.toStdString(), actBscan->getRawImage());
+		}
+	}
+}
+
+void BScanMarkerWidget::saveImageBin()
+{
+	if(actBscan)
+	{
+		QString filename = QFileDialog::getSaveFileName(this, tr("Save image data as bin"), "", "Binary (*.bin)");
+		if(!filename.isEmpty())
+		{
+			CppFW::CVMatTreeStructBin::writeBin(filename.toStdString(), actBscan->getImage());
+		}
+	}
+}
 
 int BScanMarkerWidget::fdSaveRaw(QString& filename)
 {

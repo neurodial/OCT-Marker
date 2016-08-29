@@ -12,6 +12,7 @@ class MarkerManager;
 class DWSloImage;
 class CScan;
 
+
 class OCTMarkerMainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -40,6 +41,8 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	bool loadFile(const QString& filename);
 
+	virtual void closeEvent(QCloseEvent* e);
+
 public:
 	OCTMarkerMainWindow();
 	~OCTMarkerMainWindow();
@@ -59,6 +62,24 @@ public slots:
 	virtual void showLoadMarkersDialog();
 	virtual void showSaveMarkersDialog();
 
+	virtual void saveMatlabBinCode();
+
 };
+
+
+class OptionInt;
+class SendInt : public QObject
+{
+Q_OBJECT
+	int v;
+public:
+	SendInt(int value) : v(value) {}
+	void connectOptions(OptionInt& option, QAction* action);
+public slots:
+	void recive(bool b = true) { if(b) send(v); }
+signals:
+	void send(int value);
+};
+
 
 #endif // OCTMARKERMAINWINDOW_H

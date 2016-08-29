@@ -23,11 +23,11 @@ SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
 	connect(&markerManger, SIGNAL(newCScanLoaded()), this, SLOT(reladSLOImage()));
 	connect(&markerManger, SIGNAL(bscanChanged(int)), this, SLOT(bscanChanged(int)));
 
-	setMinimumSize(50,50);
+	setMinimumSize(150,150);
 	setFocusPolicy(Qt::StrongFocus);
 
 	gv = new QGraphicsView(this);
-	gv->setStyleSheet("background: transparent");
+	gv->setStyleSheet("QGraphicsView { border-style: none; background: transparent;}" );
 	gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	gv->setWindowFlags (Qt::FramelessWindowHint);

@@ -25,6 +25,8 @@ class BScanMarkerWidget : public CVImageWidget
 	
 	QAction*                                saveRawImageAction = nullptr;
 	QAction*                                saveRawMatAction   = nullptr;
+	QAction*                                saveRawBinAction   = nullptr;
+	QAction*                                saveImageBinAction = nullptr;
 	const OctData::BScan*                   actBscan           = nullptr;
 	
 	int fdSaveRaw(QString& filename);
@@ -57,6 +59,8 @@ private slots:
 public slots:
 	virtual void saveRawImage();
 	virtual void saveRawMat  ();
+	virtual void saveRawBin  ();
+	virtual void saveImageBin();
 	
 signals:
 	void bscanChangeInkrement(int delta);

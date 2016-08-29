@@ -85,7 +85,7 @@ void CVImageWidget::cvImage2qtImage()
 		return;
 	}
 
-		assert(cvImage.isContinuous());
+	assert(cvImage.isContinuous());
 	// Assign OpenCV's image buffer to the QImage. Note that the bytesPerLine parameter
 	// (http://qt-project.org/doc/qt-4.8/qimage.html#QImage-6) is 3*width because each pixel
 	// has three bytes.
@@ -190,3 +190,6 @@ QString CVImageWidget::translateFileFormat(const QString& format) const
 	
 	return tr("%1 File").arg(format);
 }
+
+
+

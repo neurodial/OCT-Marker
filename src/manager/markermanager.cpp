@@ -1,11 +1,13 @@
 #include "markermanager.h"
 #include <octxmlread/markersreadwrite.h>
 #include <data_structure/intervallmarker.h>
+#include <data_structure/programoptions.h>
 
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/oct.h>
 #include <octdata/octfileread.h>
+#include <octdata/filereadoptions.h>
 
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
@@ -75,8 +77,13 @@ void MarkerManager::loadImage(QString filename)
 		QTime t;
 		t.start();
 
+		OctData::FileReadOptions octOptions;
+		octOptions.e2eGray             = static_cast<OctData::FileReadOptions::E2eGrayTransform>(ProgramOptions::e2eGrayTransform());
+		octOptions.registerBScanns     = ProgramOptions::registerBScanns();
+		octOptions.fillEmptyPixelWhite = ProgramOptions::fillEmptyPixelWhite();
+
 		qDebug("Lese: %s", filename.toStdString().c_str());
-		oct = new OctData::OCT(OctData::OctFileRead::openFile(filename.toStdString()));
+		oct = new OctData::OCT(OctData::OctFileRead::openFile(filename.toStdString(), octOptions));
 		qDebug("Dauer: %d ms", t.elapsed());
 
 		// TODO: bessere Datenverwertung / Fehlerbehandlung

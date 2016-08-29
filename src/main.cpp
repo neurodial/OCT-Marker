@@ -5,6 +5,7 @@
 #include <QFile>
 
 #include <windows/octmarkermainwindow.h>
+#include "data_structure/programoptions.h"
 
 int main(int argc, char **argv)
 {
@@ -26,6 +27,8 @@ int main(int argc, char **argv)
 	app.installTranslator(&translator);
 	app.installTranslator(&translator2);
 
+
+	ProgramOptions::readAllOptions();
 
 
 	OCTMarkerMainWindow octMarkerProg;
