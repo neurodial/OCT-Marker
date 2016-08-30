@@ -79,7 +79,7 @@ void MarkerManager::loadImage(QString filename)
 
 		OctData::FileReadOptions octOptions;
 		octOptions.e2eGray             = static_cast<OctData::FileReadOptions::E2eGrayTransform>(ProgramOptions::e2eGrayTransform());
-		octOptions.registerBScanns     = ProgramOptions::registerBScanns();
+		octOptions.registerBScanns     = ProgramOptions::registerBScans();
 		octOptions.fillEmptyPixelWhite = ProgramOptions::fillEmptyPixelWhite();
 
 		qDebug("Lese: %s", filename.toStdString().c_str());
@@ -98,6 +98,7 @@ void MarkerManager::loadImage(QString filename)
 		series = study->begin()->second;
 		
 		xmlFilename = filename;
+		ProgramOptions::loadOctdataAtStart.setValue(filename);
 	}
 	catch(...)
 	{

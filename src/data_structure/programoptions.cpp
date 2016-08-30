@@ -8,14 +8,18 @@
 
 
 OptionBool ProgramOptions::fillEmptyPixelWhite(true, "fillEmptyPixelWhite");
-OptionBool ProgramOptions::registerBScanns(true, "registerBScanns");
+OptionBool ProgramOptions::registerBScans     (true, "registerBScans"     );
 
 OptionInt  ProgramOptions::e2eGrayTransform(1, "e2eGrayTransform");
 
 
+OptionBool ProgramOptions::sloShowBscans(true , "sloShowBscans");
+OptionBool ProgramOptions::sloShowLabels(false, "sloShowLabels");
 
-OptionString ProgramOptions::imageDirectory("../../../material/XML_QMROCT-noCorrection/", "imageDirectory");
-OptionString ProgramOptions::loadImageAtStart("../../../material/XML_QMROCT-noCorrection/79C551C0.tif", "loadImageAtStart");
+
+
+OptionString ProgramOptions::octDirectory(".", "imageDirectory");
+OptionString ProgramOptions::loadOctdataAtStart("", "loadImageAtStart");
 
 
 void OptionColor::showColorDialog()
@@ -32,7 +36,7 @@ void OptionColor::showColorDialog()
 
 std::vector<Option*> ProgramOptions::getAllOptions()
 {
-	std::vector<Option*> options = {&fillEmptyPixelWhite, &registerBScanns, &e2eGrayTransform, &imageDirectory, &loadImageAtStart};
+	std::vector<Option*> options = {&fillEmptyPixelWhite, &registerBScans, &e2eGrayTransform, &sloShowBscans, &sloShowLabels, &octDirectory, &loadOctdataAtStart};
 	
 	return options;
 }

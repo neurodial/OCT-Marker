@@ -10,6 +10,8 @@ class SLOImageWidget;
 
 class WgSloImage : public QMainWindow
 {
+	Q_OBJECT
+	
 	SLOImageWidget* imageWidget;
 	MarkerManager& markerManger;
 public:

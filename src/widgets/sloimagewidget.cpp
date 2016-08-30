@@ -11,6 +11,7 @@
 #include <manager/markermanager.h>
 
 #include <data_structure/intervallmarker.h>
+#include <data_structure/programoptions.h>
 
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
@@ -19,6 +20,7 @@
 
 SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
 : markerManger(markerManger)
+, drawBScans(ProgramOptions::sloShowBscans())
 {
 	connect(&markerManger, SIGNAL(newCScanLoaded()), this, SLOT(reladSLOImage()));
 	connect(&markerManger, SIGNAL(bscanChanged(int)), this, SLOT(bscanChanged(int)));
@@ -44,8 +46,10 @@ SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
 	scene->addItem(currentRect);
 
 
-	gv->show();
+	// gv->show();
 	gv->setGeometry(rect());
+
+	gv->setVisible(ProgramOptions::sloShowLabels());
 
 	
 	// createIntervallColors();

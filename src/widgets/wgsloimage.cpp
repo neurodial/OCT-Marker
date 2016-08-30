@@ -2,6 +2,7 @@
 
 #include "sloimagewidget.h"
 #include <manager/markermanager.h>
+#include <data_structure/programoptions.h>
 
 #include <QResizeEvent>
 #include <QToolBar>
@@ -19,20 +20,16 @@ WgSloImage::WgSloImage(MarkerManager& markerManger)
 
 	QToolBar* bar = new QToolBar(this);
 
-	QAction* showBScans = new QAction(this);
+	QAction* showBScans = ProgramOptions::sloShowBscans.getAction();
 	showBScans->setText(tr("show BScans"));
 	showBScans->setIcon(QIcon(":/icons/layers.png"));
-	showBScans->setCheckable(true);
-	showBScans->setChecked(imageWidget->getShowBScans());
 	connect(showBScans, &QAction::toggled, imageWidget, &SLOImageWidget::showBScans);
 	bar->addAction(showBScans);
 
 
-	QAction* showLabels = new QAction(this);
+	QAction* showLabels = ProgramOptions::sloShowLabels.getAction();
 	showLabels->setText(tr("show Labels"));
 	showLabels->setIcon(QIcon(":/icons/tag_blue_edit.png"));
-	showLabels->setCheckable(true);
-	showLabels->setChecked(imageWidget->getShowBScans());
 	connect(showLabels, &QAction::toggled, imageWidget, &SLOImageWidget::showLabels);
 	bar->addAction(showLabels);
 

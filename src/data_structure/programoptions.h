@@ -159,13 +159,15 @@ class ProgramOptions
 public:
 	
 	static OptionBool fillEmptyPixelWhite;
-	static OptionBool registerBScanns;
+	static OptionBool registerBScans;
 
 	static OptionInt  e2eGrayTransform;
 	
+	static OptionBool sloShowBscans;
+	static OptionBool sloShowLabels;
 	
-	static OptionString imageDirectory;
-	static OptionString loadImageAtStart;
+	static OptionString octDirectory;
+	static OptionString loadOctdataAtStart;
 	
 	
 	static std::vector<Option*> getAllOptions();

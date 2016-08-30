@@ -64,13 +64,10 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 
 	setActionToggel();
 
-	try
-	{
-		markerManager->loadImage("testoct.xml");
-	}
-	catch(...) {}
-
 	connect(markerManager, SIGNAL(newCScanLoaded()), this, SLOT(newCscanLoaded()));
+
+	if(!ProgramOptions::loadOctdataAtStart().isEmpty())
+		loadFile(ProgramOptions::loadOctdataAtStart());
 }
 
 
@@ -150,8 +147,12 @@ void OCTMarkerMainWindow::setupMenu()
 	QMenu* optionsMenu = new QMenu(this);
 	optionsMenu->setTitle(tr("Options"));
 
-	optionsMenu->addAction(ProgramOptions::fillEmptyPixelWhite.getAction());
-	optionsMenu->addAction(ProgramOptions::registerBScanns    .getAction());
+	QAction* fillEpmtyPixelWhite = ProgramOptions::fillEmptyPixelWhite.getAction();
+	QAction* registerBScans      = ProgramOptions::registerBScans     .getAction();
+	fillEpmtyPixelWhite->setText(tr("Fill empty pixels white"));
+	registerBScans     ->setText(tr("register BScans"));
+	optionsMenu->addAction(fillEpmtyPixelWhite);
+	optionsMenu->addAction(registerBScans);
 
 	QMenu* optionsMenuE2E = new QMenu(this);
 	optionsMenuE2E->setTitle(tr("E2E Gray"));
