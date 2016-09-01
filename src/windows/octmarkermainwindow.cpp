@@ -63,6 +63,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	createMarkerToolbar();
 
 	setActionToggel();
+	setAcceptDrops(true);
 
 	connect(markerManager, SIGNAL(newCScanLoaded()), this, SLOT(newCscanLoaded()));
 
@@ -176,7 +177,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* actionSaveMatlabBinCode = new QAction(this);
 	actionSaveMatlabBinCode->setText(tr("Save Matlab Bin Code"));
-	actionSaveMatlabBinCode->setIcon(QIcon(":/icons/save.png"));
+	actionSaveMatlabBinCode->setIcon(QIcon(":/icons/disk.png"));
 	connect(actionSaveMatlabBinCode, &QAction::triggered, this, &OCTMarkerMainWindow::saveMatlabBinCode);
 	extrisMenu->addAction(actionSaveMatlabBinCode);
 
@@ -197,7 +198,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* actionAboutDialog = new QAction(this);
 	actionAboutDialog->setText(tr("About"));
-	actionAboutDialog->setIcon(QIcon(":/icons/help.png"));
+	actionAboutDialog->setIcon(QIcon(":/icons/image_edit.png"));
 	connect(actionAboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 	helpMenu->addAction(actionAboutDialog);
 
@@ -399,6 +400,49 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 		loadFile(filenames[0]);
 	}
 }
+
+
+void OCTMarkerMainWindow::dropEvent(QDropEvent* event)
+{
+	const QMimeData* mimeData = event->mimeData();
+
+	// check for our needed mime type, here a file or a list of files
+	if(mimeData->hasUrls())
+	{
+		QStringList pathList;
+		QList<QUrl> urlList = mimeData->urls();
+		if(urlList.size() == 1)
+		{
+			loadFile(urlList.at(0).toLocalFile());
+		}
+	}
+}
+
+void OCTMarkerMainWindow::dragEnterEvent(QDragEnterEvent* event)
+{
+	const QMimeData* mimeData = event->mimeData();
+	if(mimeData->hasUrls())
+	{
+		QStringList pathList;
+		QList<QUrl> urlList = mimeData->urls();
+		if(urlList.size() == 1)
+		{
+			if(OctData::OctFileRead::isLoadable(urlList.at(0).toLocalFile().toStdString()))
+				event->acceptProposedAction();
+		}
+	}
+}
+
+void OCTMarkerMainWindow::dragLeaveEvent(QDragLeaveEvent* event)
+{
+	QWidget::dragLeaveEvent(event);
+}
+
+void OCTMarkerMainWindow::dragMoveEvent(QDragMoveEvent* event)
+{
+	QWidget::dragMoveEvent(event);
+}
+
 
 bool OCTMarkerMainWindow::loadFile(const QString& filename)
 {

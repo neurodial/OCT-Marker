@@ -173,6 +173,7 @@ void BScanMarkerWidget::updateRawExport()
 	
 	saveRawImageAction->setEnabled(saveableAsImage);
 	saveRawMatAction  ->setEnabled(rawExists);
+	saveRawBinAction  ->setEnabled(rawExists);
 }
 
 
