@@ -7,6 +7,9 @@
 #include <QSettings>
 
 
+OptionBool ProgramOptions::bscansShowSegmentationslines(true, "bscansShowSegmentationslines");
+
+
 OptionBool ProgramOptions::fillEmptyPixelWhite(true, "fillEmptyPixelWhite");
 OptionBool ProgramOptions::registerBScans     (true, "registerBScans"     );
 
@@ -36,7 +39,7 @@ void OptionColor::showColorDialog()
 
 std::vector<Option*> ProgramOptions::getAllOptions()
 {
-	std::vector<Option*> options = {&fillEmptyPixelWhite, &registerBScans, &e2eGrayTransform, &sloShowBscans, &sloShowLabels, &octDirectory, &loadOctdataAtStart};
+	std::vector<Option*> options = {&bscansShowSegmentationslines, &fillEmptyPixelWhite, &registerBScans, &e2eGrayTransform, &sloShowBscans, &sloShowLabels, &octDirectory, &loadOctdataAtStart};
 	
 	return options;
 }

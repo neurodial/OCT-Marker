@@ -233,12 +233,18 @@ void OCTMarkerMainWindow::setupMenu()
 	previousBScan->setShortcut(Qt::LeftArrow);
 	connect(previousBScan, SIGNAL(triggered(bool)), markerManager, SLOT(previousBScan()));
 
+	QAction* showSeglines = ProgramOptions::bscansShowSegmentationslines.getAction();
+	showSeglines->setText(tr("show segmentationslines"));
+	showSeglines->setIcon(QIcon(":/icons/chart_curve.png"));
+
 	QToolBar* toolBar = new QToolBar(tr("B-Scan"));
 	toolBar->addAction(previousBScan);
 	toolBar->addAction(nextBScan);
 	toolBar->addSeparator();
 	toolBar->addWidget(bscanChooser);
 	toolBar->addWidget(labelMaxBscan);
+	toolBar->addSeparator();
+	toolBar->addAction(showSeglines);
 
 	addToolBar(toolBar);
 }
@@ -594,9 +600,8 @@ void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
 
 void SendInt::connectOptions(OptionInt& option, QAction* action)
 {
-	connect(action, SIGNAL(toggled(bool)), this, SLOT(recive(bool)));
-	connect(this, SIGNAL(send(int)), &option, SLOT(setValue(int)));
+	connect(action, &QAction::toggled, this   , &SendInt::recive    );
+	connect(this  , &SendInt::send   , &option, &OptionInt::setValue);
 
 	action->setChecked(option() == v);
 }
-

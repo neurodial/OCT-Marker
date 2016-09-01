@@ -53,6 +53,8 @@ private slots:
 	void bscanChanged(int);
 	void cscanLoaded();
 
+	void viewOptionsChangedSlot();
+
 	void markersMethodChanged();
 	
 

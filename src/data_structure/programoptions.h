@@ -157,6 +157,7 @@ class ProgramOptions
 {
 	ProgramOptions() = delete;
 public:
+	static OptionBool bscansShowSegmentationslines;
 	
 	static OptionBool fillEmptyPixelWhite;
 	static OptionBool registerBScans;

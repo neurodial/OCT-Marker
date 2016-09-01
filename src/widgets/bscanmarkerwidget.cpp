@@ -2,6 +2,7 @@
 
 #include <manager/markermanager.h>
 #include <data_structure/intervallmarker.h>
+#include <data_structure/programoptions.h>
 
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
@@ -21,12 +22,13 @@ BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 , markerManger(markerManger)
 {
 
-	connect(&markerManger, SIGNAL(newCScanLoaded()), this, SLOT(cscanLoaded()));
-	connect(&markerManger, SIGNAL(bscanChanged(int)), this, SLOT(bscanChanged(int)));
+	connect(&markerManger, &MarkerManager::newCScanLoaded     , this, &BScanMarkerWidget::cscanLoaded         );
+	connect(&markerManger, &MarkerManager::bscanChanged       , this, &BScanMarkerWidget::bscanChanged        );
+	connect(&markerManger, &MarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
 
-	connect(&markerManger, SIGNAL(markerMethodChanged(Method)), this, SLOT(markersMethodChanged()));
+	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &MarkerManager::inkrementBScan);
 
-	connect(this, SIGNAL(bscanChangeInkrement(int)), &markerManger, SLOT(inkrementBScan(int)));
+	connect(&ProgramOptions::bscansShowSegmentationslines, &OptionBool::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 
 	
 	setFocusPolicy(Qt::ClickFocus);
@@ -102,9 +104,12 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	segPainter.setPen(pen);
 	int bScanHeight = actBscan->getHeight();
 
-	paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM));
-	paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::BM));
-	paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::NFL));
+	if(ProgramOptions::bscansShowSegmentationslines())
+	{
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM));
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::BM));
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::NFL));
+	}
 
 
 	QPainter painter(this);
@@ -202,6 +207,12 @@ void BScanMarkerWidget::cscanLoaded()
 {
 	bscanChanged(markerManger.getActBScan());
 }
+
+void BScanMarkerWidget::viewOptionsChangedSlot()
+{
+	update();
+}
+
 
 
 void BScanMarkerWidget::wheelEvent(QWheelEvent* wheelE)
