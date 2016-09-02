@@ -29,7 +29,6 @@ BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
 	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &MarkerManager::inkrementBScan);
 
 	connect(&ProgramOptions::bscansShowSegmentationslines, &OptionBool::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
-
 	
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);

@@ -7,10 +7,16 @@
 #include <windows/octmarkermainwindow.h>
 #include "data_structure/programoptions.h"
 
+#include <buildconstants.h>
+
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
 
+	qDebug("Build Type: %s", BuildConstants::buildTyp);
+	qDebug("Git Hash  : %s", BuildConstants::gitSha1);
+	qDebug("Build Date: %s", BuildConstants::buildDate);
+	qDebug("Build Time: %s", BuildConstants::buildTime);
 
 	QTranslator translator, translator2;
 	// translator.load("/usr/share/qt4/translations/qt_" + QLocale::system().name());

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 project(octmarker)
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_module/)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_module/)
 
 
 find_package(Qt5Core)
@@ -11,6 +11,15 @@ find_package(Boost 1.40 COMPONENTS program_options filesystem system REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(LibOctData REQUIRED)
 find_package(CppFramework REQUIRED)
+
+
+
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+add_definitions("-DBUILD_TYPE=${CMAKE_BUILD_TYPE}")
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/buildconstants.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/buildconstants.cpp" @ONLY)
+list(APPEND octmarker_SRCS "${CMAKE_CURRENT_BINARY_DIR}/buildconstants.cpp")
 
 
 set(CMAKE_AUTOMOC ON)
