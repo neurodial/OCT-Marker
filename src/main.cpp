@@ -13,10 +13,12 @@ int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
 
-	qDebug("Build Type: %s", BuildConstants::buildTyp);
-	qDebug("Git Hash  : %s", BuildConstants::gitSha1);
-	qDebug("Build Date: %s", BuildConstants::buildDate);
-	qDebug("Build Time: %s", BuildConstants::buildTime);
+	qDebug("Build Type      : %s", BuildConstants::buildTyp);
+	qDebug("Git Hash        : %s", BuildConstants::gitSha1);
+	qDebug("Build Date      : %s", BuildConstants::buildDate);
+	qDebug("Build Time      : %s", BuildConstants::buildTime);
+	qDebug("Compiler Id     : %s", BuildConstants::compilerId);
+	qDebug("Compiler Version: %s", BuildConstants::compilerVersion);
 
 	QTranslator translator, translator2;
 	// translator.load("/usr/share/qt4/translations/qt_" + QLocale::system().name());

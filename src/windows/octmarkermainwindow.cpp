@@ -18,6 +18,7 @@
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
 #include <manager/markermanager.h>
+#include <buildconstants.h>
 
 #include <octdata/datastruct/sloimage.h>
 #include <octdata/datastruct/bscan.h>
@@ -334,17 +335,18 @@ void OCTMarkerMainWindow::setActionToggel()
 }
 
 
-
-
 void OCTMarkerMainWindow::showAboutDialog()
 {
-	QString text("<h1><b>Info &#252;ber OCTMarker</b></h1>");
+	QString text("<h1><b>Info &#252;ber OCT-Marker</b></h1>");
 
 	// text += "<br />Dieses Programm entstand im Rahmen der Masterarbeit &#8222;Aktive-Konturen-Methoden zur Segmentierung von OCT-Aufnahmen&#8220;";
 	text += "<br /><br />Author: Kay Gawlik";
 	text += "<br /><br />Icons von <a href=\"http://www.famfamfam.com/lab/icons/silk/\">FamFamFam</a>";
-	text += QString("<br /><br />&#220;bersetzungszeit: %1 %2").arg(__DATE__).arg(__TIME__);
+	text += QString("<br /><br />&#220;bersetzungszeit: %1 %2").arg(BuildConstants::buildDate).arg(BuildConstants::buildTime);
 	text += QString("<br />Qt-Version: %1").arg(qVersion());
+	text += QString("<br />Git-Hash  : %1").arg(BuildConstants::gitSha1);
+	text += QString("<br />Build-Typ : %1").arg(BuildConstants::buildTyp);
+	text += QString("<br />Compiler  : %1 %2").arg(BuildConstants::compilerId).arg(BuildConstants::compilerVersion);
 
 
 	QMessageBox::about(this,tr("About"), text);
