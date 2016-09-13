@@ -161,6 +161,7 @@ public:
 	
 	static OptionBool fillEmptyPixelWhite;
 	static OptionBool registerBScans;
+	static OptionBool loadRotateSlo;
 
 	static OptionInt  e2eGrayTransform;
 	

@@ -13,10 +13,16 @@ find_package(LibOctData REQUIRED)
 find_package(CppFramework REQUIRED)
 
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+      "Choose the type of build, options are: Debug Release
+RelWithDebInfo MinSizeRel."
+      FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
 
 include(GetGitRevisionDescription)
 get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-add_definitions("-DBUILD_TYPE=${CMAKE_BUILD_TYPE}")
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/buildconstants.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/buildconstants.cpp" @ONLY)
 list(APPEND octmarker_SRCS "${CMAKE_CURRENT_BINARY_DIR}/buildconstants.cpp")
@@ -34,14 +40,24 @@ include_directories(${LibOctData_INCLUDE_DIRS})
 include_directories(${CppFramework_INCLUDE_DIRS})
 
 
+if (CMAKE_CXX_COMPILER MATCHES ".*clang")
+    set(CMAKE_COMPILER_IS_CLANGXX 1)
+endif ()
+
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(compiler_flags_debug "-Wall -Wextra -Wunreachable-code")        ## Optimize -O3 -Weverything -Weffc++
 	# set(compiler_flags_release "-std=c++11")        ## Optimize -O3 -Weverything
 	set(CMAKE_CXX_FLAGS "-std=c++11")
 endif()
 
+if(CMAKE_COMPILER_IS_CLANGXX)
+	set(compiler_flags_debug "-Wall -Wextra -Wunreachable-code")        ## Optimize -O3 -Weverything -Weffc++
+	# set(compiler_flags_release "-std=c++11")        ## Optimize -O3 -Weverything
+	set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wunreachable-code")
+endif()
 
-set(srcs_directories data_structure octxmlread widgets windows manager markerobjects)
+
+set(srcs_directories data_structure octxmlread widgets windows manager model markerobjects)
 
 foreach(loop_var ${srcs_directories})
 	file(GLOB sources_base "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")

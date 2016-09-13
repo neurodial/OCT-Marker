@@ -8,7 +8,7 @@ class QSpinBox;
 class QAction;
 class QFileDialog;
 class BScanMarkerWidget;
-class MarkerManager;
+class BScanMarkerManager;
 class DWSloImage;
 class CScan;
 
@@ -21,7 +21,7 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	void createMarkerToolbar();
 	
-	MarkerManager* markerManager = nullptr;
+	BScanMarkerManager* markerManager = nullptr;
 
 	DWSloImage*    dwSloImage  = nullptr;
 	BScanMarkerWidget* bscanMarkerWidget = nullptr;

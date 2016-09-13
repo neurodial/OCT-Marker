@@ -9,6 +9,7 @@ namespace OctData
 	class CoordSLOpx;
 	class BScan;
 	class ScaleFactor;
+	class CoordTransform;
 }
 
 class QGraphicsScene;
@@ -16,13 +17,13 @@ class QGraphicsView;
 
 // class QColor;
 class QPainter;
-class MarkerManager;
+class BScanMarkerManager;
 
 class SLOImageWidget : public CVImageWidget
 {
 	Q_OBJECT
 
-	MarkerManager& markerManger;
+	BScanMarkerManager& markerManger;
 	QGraphicsView* gv = nullptr;
 	QGraphicsScene* scene = nullptr;
 	
@@ -32,7 +33,7 @@ class SLOImageWidget : public CVImageWidget
 	void createIntervallColors();
 	void deleteIntervallColors();
 public:
-	SLOImageWidget(MarkerManager& markerManger);
+	SLOImageWidget(BScanMarkerManager& markerManger);
 
     virtual ~SLOImageWidget();
 
@@ -47,8 +48,8 @@ public slots:
 protected:
 	void paintEvent(QPaintEvent* event);
 
-	void paintBScan    (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, int bscanNr, bool paintMarker);
-	void paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, int bscanNr, bool paintMarker);
+	void paintBScan    (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker);
+	void paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker);
 
 private slots:
 	void reladSLOImage();

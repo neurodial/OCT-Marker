@@ -3,16 +3,16 @@
 
 #include <string>
 
-class MarkerManager;
+class BScanMarkerManager;
 
 class MarkersReadWrite
 {
 public:
-	static bool readXML(MarkerManager* manager, std::string filename);
-	static void writeXML(MarkerManager* manager, std::string filename);
+	static bool readXML(BScanMarkerManager* manager, std::string filename);
+	static void writeXML(BScanMarkerManager* manager, std::string filename);
 
-	static bool readJosn(MarkerManager* manager, std::string filename);
-	static void writeJosn(MarkerManager* manager, std::string filename);
+	static bool readJosn(BScanMarkerManager* manager, std::string filename);
+	static void writeJosn(BScanMarkerManager* manager, std::string filename);
 };
 
 #endif // MARKERSXML_H

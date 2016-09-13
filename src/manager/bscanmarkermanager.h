@@ -7,7 +7,7 @@
 
 namespace OctData { class Series; class OCT; }
 
-class MarkerManager : public QObject
+class BScanMarkerManager : public QObject
 {
 public:
 	typedef IntervallMarker::Marker Marker;
@@ -16,8 +16,8 @@ public:
 	enum class Method { Paint, Fill };
 	enum class Fileformat { XML, Josn };
 
-	MarkerManager();
-    virtual ~MarkerManager();
+	BScanMarkerManager();
+    virtual ~BScanMarkerManager();
 
 	int getActBScan() const                                     { return actBScan; }
 

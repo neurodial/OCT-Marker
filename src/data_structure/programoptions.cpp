@@ -10,8 +10,9 @@
 OptionBool ProgramOptions::bscansShowSegmentationslines(true, "bscansShowSegmentationslines");
 
 
-OptionBool ProgramOptions::fillEmptyPixelWhite(true, "fillEmptyPixelWhite");
-OptionBool ProgramOptions::registerBScans     (true, "registerBScans"     );
+OptionBool ProgramOptions::fillEmptyPixelWhite(true , "fillEmptyPixelWhite");
+OptionBool ProgramOptions::registerBScans     (true , "registerBScans"     );
+OptionBool ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      );
 
 OptionInt  ProgramOptions::e2eGrayTransform(1, "e2eGrayTransform");
 

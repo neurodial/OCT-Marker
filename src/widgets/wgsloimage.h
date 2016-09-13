@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 
-class MarkerManager;
+class BScanMarkerManager;
 class SLOImageWidget;
 
 
@@ -13,9 +13,9 @@ class WgSloImage : public QMainWindow
 	Q_OBJECT
 	
 	SLOImageWidget* imageWidget;
-	MarkerManager& markerManger;
+	BScanMarkerManager& markerManger;
 public:
-	explicit WgSloImage(MarkerManager& markerManger);
+	explicit WgSloImage(BScanMarkerManager& markerManger);
 	
 	
 	virtual void resizeEvent(QResizeEvent* event);

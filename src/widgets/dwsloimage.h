@@ -9,7 +9,7 @@ class QWheelEvent;
 class QResizeEvent;
 namespace cv { class Mat; }
 
-class MarkerManager;
+class BScanMarkerManager;
 
 class DWSloImage : public QDockWidget
 {
@@ -18,7 +18,7 @@ class DWSloImage : public QDockWidget
 	WgSloImage* sloWidget;
 
 public:
-	DWSloImage(MarkerManager& markerManger);
+	DWSloImage(BScanMarkerManager& markerManger);
 	~DWSloImage();
 
 	// void setSLOImage(const cv::Mat& image);

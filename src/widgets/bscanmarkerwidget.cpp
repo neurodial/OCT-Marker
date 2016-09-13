@@ -1,6 +1,6 @@
 #include "bscanmarkerwidget.h"
 
-#include <manager/markermanager.h>
+#include <manager/bscanmarkermanager.h>
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
 
@@ -17,16 +17,16 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-BScanMarkerWidget::BScanMarkerWidget(MarkerManager& markerManger)
+BScanMarkerWidget::BScanMarkerWidget(BScanMarkerManager& markerManger)
 : CVImageWidget()
 , markerManger(markerManger)
 {
 
-	connect(&markerManger, &MarkerManager::newCScanLoaded     , this, &BScanMarkerWidget::cscanLoaded         );
-	connect(&markerManger, &MarkerManager::bscanChanged       , this, &BScanMarkerWidget::bscanChanged        );
-	connect(&markerManger, &MarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
+	connect(&markerManger, &BScanMarkerManager::newCScanLoaded     , this, &BScanMarkerWidget::cscanLoaded         );
+	connect(&markerManger, &BScanMarkerManager::bscanChanged       , this, &BScanMarkerWidget::bscanChanged        );
+	connect(&markerManger, &BScanMarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
 
-	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &MarkerManager::inkrementBScan);
+	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &BScanMarkerManager::inkrementBScan);
 
 	connect(&ProgramOptions::bscansShowSegmentationslines, &OptionBool::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 	
@@ -113,7 +113,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 	QPainter painter(this);
 
-	for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers())
+	for(const BScanMarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers())
 	{
 		IntervallMarker::Marker marker = pair.second;
 		if(marker.isDefined())
@@ -124,7 +124,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	}
 	
 
-	if(mouseInWidget && markerManger.getMarkerMethod() == MarkerManager::Method::Paint)
+	if(mouseInWidget && markerManger.getMarkerMethod() == BScanMarkerManager::Method::Paint)
 	{
 		painter.drawLine(mousePos.x(), 0, mousePos.x(), height());
 
@@ -257,14 +257,14 @@ void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 
 	switch(markerManger.getMarkerMethod())
 	{
-		case MarkerManager::Method::Paint:
+		case BScanMarkerManager::Method::Paint:
 			if(clickPos.x() != event->x() && markerActiv)
 			{
 				// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
 				markerManger.setMarker(clickPos.x(), event->x());
 			}
 			break;
-		case MarkerManager::Method::Fill:
+		case BScanMarkerManager::Method::Fill:
 			if(markerActiv)
 				markerManger.fillMarker(clickPos.x());
 			break;
@@ -299,7 +299,7 @@ void BScanMarkerWidget::markersMethodChanged()
 {
 	switch(markerManger.getMarkerMethod())
 	{
-		case MarkerManager::Method::Paint:
+		case BScanMarkerManager::Method::Paint:
 			setMouseTracking(true);
 			break;
 		default:

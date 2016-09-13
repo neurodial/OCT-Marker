@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <manager/markermanager.h>
+#include <manager/bscanmarkermanager.h>
 #include <octdata/datastruct/series.h>
 
 
@@ -20,7 +20,7 @@ namespace bfs = boost::filesystem;
 
 namespace
 {
-	bool parsePTree(const bpt::ptree& ptree, MarkerManager* markerManager)
+	bool parsePTree(const bpt::ptree& ptree, BScanMarkerManager* markerManager)
 	{
 		const char* bscansNodeStr = "OCT";
 		boost::optional<const bpt::ptree&> bscansNode = ptree.get_child_optional(bscansNodeStr);
@@ -69,7 +69,7 @@ namespace
 		return true;
 	}
 
-	void fillPTree(bpt::ptree& markerTree, const MarkerManager* markerManager)
+	void fillPTree(bpt::ptree& markerTree, const BScanMarkerManager* markerManager)
 	{
 
 		int numBscans = markerManager->getSeries().bscanCount();
@@ -79,7 +79,7 @@ namespace
 			bpt::ptree& bscanNode = markerTree.add(nodeName, "");
 			bscanNode.add("ID", boost::lexical_cast<std::string>(bscan));
 
-			for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManager->getMarkers(bscan))
+			for(const BScanMarkerManager::MarkerMap::interval_mapping_type pair : markerManager->getMarkers(bscan))
 			{
 
 				// std::cout << "paintEvent(QPaintEvent* event) " << pair.second << " - " << pair.first << std::endl;
@@ -102,7 +102,7 @@ namespace
 	}
 }
 
-bool MarkersReadWrite::readXML(MarkerManager* markerManger, std::string filename)
+bool MarkersReadWrite::readXML(BScanMarkerManager* markerManger, std::string filename)
 {
 	if(!markerManger)
 		return false;
@@ -116,7 +116,7 @@ bool MarkersReadWrite::readXML(MarkerManager* markerManger, std::string filename
 	return parsePTree(xmltree, markerManger);
 }
 
-bool MarkersReadWrite::readJosn(MarkerManager* markerManger, std::string filename)
+bool MarkersReadWrite::readJosn(BScanMarkerManager* markerManger, std::string filename)
 {
 	if(!markerManger)
 		return false;
@@ -130,7 +130,7 @@ bool MarkersReadWrite::readJosn(MarkerManager* markerManger, std::string filenam
 	return parsePTree(xmltree, markerManger);
 }
 
-void MarkersReadWrite::writeJosn(MarkerManager* markerManger, std::string filename)
+void MarkersReadWrite::writeJosn(BScanMarkerManager* markerManger, std::string filename)
 {
 	if(!markerManger)
 		return;
@@ -142,7 +142,7 @@ void MarkersReadWrite::writeJosn(MarkerManager* markerManger, std::string filena
 }
 
 
-void MarkersReadWrite::writeXML(MarkerManager* markerManger, std::string filename)
+void MarkersReadWrite::writeXML(BScanMarkerManager* markerManger, std::string filename)
 {
 	if(!markerManger)
 		return;
@@ -150,12 +150,14 @@ void MarkersReadWrite::writeXML(MarkerManager* markerManger, std::string filenam
 	bpt::ptree xmltree;
 
 	fillPTree(xmltree, markerManger);
-	
-#if __GNUC__ > 4
+
+// #pragma message(__GNUC__);
+//
+// #if __GNUC__ <= 4 && __GNUC__ > 0
+// 	bpt::xml_writer_settings<char> settings('\t', 1);
+// 	bpt::write_xml(filename, xmltree, std::locale(), settings);
+// #else
 	bpt::write_xml(filename, xmltree, std::locale(), bpt::xml_writer_make_settings<bpt::ptree::key_type>('\t', 1u));
-#else
-	bpt::xml_writer_settings<char> settings('\t', 1);
-	bpt::write_xml(filename, xmltree, std::locale(), settings);
-#endif
+// #endif
 }
 

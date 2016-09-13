@@ -1,4 +1,4 @@
-#include "markermanager.h"
+#include "bscanmarkermanager.h"
 #include <octxmlread/markersreadwrite.h>
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
@@ -17,7 +17,7 @@
 
 #include <QTime>
 
-MarkerManager::MarkerManager()
+BScanMarkerManager::BScanMarkerManager()
 : QObject()
 , series(new OctData::Series)
 {
@@ -25,20 +25,20 @@ MarkerManager::MarkerManager()
 }
 
 
-MarkerManager::~MarkerManager()
+BScanMarkerManager::~BScanMarkerManager()
 {
 	saveMarkerDefault();
 
 	delete oct;
 }
 
-void MarkerManager::saveMarkerDefault()
+void BScanMarkerManager::saveMarkerDefault()
 {
 	if(!xmlFilename.isEmpty() && dataChanged)
 		saveMarkers(xmlFilename+".joctmarkers", Fileformat::Josn);
 }
 
-void MarkerManager::loadMarkerDefault()
+void BScanMarkerManager::loadMarkerDefault()
 {
 	if(!loadMarkers(xmlFilename+".joctmarkers", Fileformat::Josn))
 		loadMarkers(xmlFilename+"_markes.xml", Fileformat::XML);
@@ -48,7 +48,7 @@ void MarkerManager::loadMarkerDefault()
 
 
 
-void MarkerManager::chooseBScan(int bscan)
+void BScanMarkerManager::chooseBScan(int bscan)
 {
 	if(bscan == actBScan)
 		return;
@@ -63,7 +63,7 @@ void MarkerManager::chooseBScan(int bscan)
 }
 
 
-void MarkerManager::loadImage(QString filename)
+void BScanMarkerManager::loadImage(QString filename)
 {
 	saveMarkerDefault();
 
@@ -81,6 +81,7 @@ void MarkerManager::loadImage(QString filename)
 		octOptions.e2eGray             = static_cast<OctData::FileReadOptions::E2eGrayTransform>(ProgramOptions::e2eGrayTransform());
 		octOptions.registerBScanns     = ProgramOptions::registerBScans();
 		octOptions.fillEmptyPixelWhite = ProgramOptions::fillEmptyPixelWhite();
+		octOptions.rotateSlo           = ProgramOptions::loadRotateSlo();
 
 		qDebug("Lese: %s", filename.toStdString().c_str());
 		oct = new OctData::OCT(OctData::OctFileRead::openFile(filename.toStdString(), octOptions));
@@ -88,13 +89,13 @@ void MarkerManager::loadImage(QString filename)
 
 		// TODO: bessere Datenverwertung / Fehlerbehandlung
 		if(oct->size() == 0)
-			throw "MarkerManager::loadImage: oct->size() == 0";
+			throw "BScanMarkerManager::loadImage: oct->size() == 0";
 		OctData::Patient* patient = oct->begin()->second;
 		if(patient->size() == 0)
-			throw "MarkerManager::loadImage: patient->size() == 0";
+			throw "BScanMarkerManager::loadImage: patient->size() == 0";
 		OctData::Study* study = patient->begin()->second;
 		if(study->size() == 0)
-			throw "MarkerManager::loadImage: study->size() == 0";
+			throw "BScanMarkerManager::loadImage: study->size() == 0";
 		series = study->begin()->second;
 		
 		xmlFilename = filename;
@@ -116,7 +117,7 @@ void MarkerManager::loadImage(QString filename)
 	emit(newCScanLoaded());
 }
 
-void MarkerManager::initMarkerMap()
+void BScanMarkerManager::initMarkerMap()
 {
 	std::size_t numBscans = series->bscanCount();
 	markers.clear();
@@ -130,12 +131,12 @@ void MarkerManager::initMarkerMap()
 }
 
 
-bool MarkerManager::cscanLoaded() const
+bool BScanMarkerManager::cscanLoaded() const
 {
 	return series->bscanCount() > 0;
 }
 
-void MarkerManager::setMarker(int x1, int x2, const Marker& type, int bscan)
+void BScanMarkerManager::setMarker(int x1, int x2, const Marker& type, int bscan)
 {
 	if(!cscanLoaded())
 		return;
@@ -143,7 +144,7 @@ void MarkerManager::setMarker(int x1, int x2, const Marker& type, int bscan)
 	if(bscan<0 || bscan >= static_cast<int>(series->bscanCount()))
 		return;
 
-// 	printf("MarkerManager::setMarker(%d, %d, %d)", x1, x2, type);
+// 	printf("BScanMarkerManager::setMarker(%d, %d, %d)", x1, x2, type);
 // 	std::cout << std::endl;
 
 	if(x2 < x1)
@@ -163,7 +164,7 @@ void MarkerManager::setMarker(int x1, int x2, const Marker& type, int bscan)
 	dataChanged = true;
 }
 
-void MarkerManager::fillMarker(int x, const Marker& type)
+void BScanMarkerManager::fillMarker(int x, const Marker& type)
 {
 	int bscan = actBScan;
 
@@ -188,13 +189,13 @@ void MarkerManager::fillMarker(int x, const Marker& type)
 
 
 
-bool MarkerManager::loadMarkers(QString filename, Fileformat format)
+bool BScanMarkerManager::loadMarkers(QString filename, Fileformat format)
 {
 	initMarkerMap();
 	return addMarkers(filename, format);
 }
 
-bool MarkerManager::addMarkers(QString filename, Fileformat format)
+bool BScanMarkerManager::addMarkers(QString filename, Fileformat format)
 {
 	bool result = false;
 	try
@@ -236,7 +237,7 @@ bool MarkerManager::addMarkers(QString filename, Fileformat format)
 }
 
 
-void MarkerManager::saveMarkers(QString filename, Fileformat format)
+void BScanMarkerManager::saveMarkers(QString filename, Fileformat format)
 {
 	switch(format)
 	{

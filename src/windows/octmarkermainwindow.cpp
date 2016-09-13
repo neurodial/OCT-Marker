@@ -15,10 +15,13 @@
 
 #include <widgets/dwsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
+#include <widgets/wgoctdatatree.h>
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
-#include <manager/markermanager.h>
+#include <manager/bscanmarkermanager.h>
+#include <manager/octfilesmanager.h>
 #include <buildconstants.h>
+#include <model/octdatamodel.h>
 
 #include <octdata/datastruct/sloimage.h>
 #include <octdata/datastruct/bscan.h>
@@ -50,7 +53,7 @@ namespace
 
 OCTMarkerMainWindow::OCTMarkerMainWindow()
 : QMainWindow()
-, markerManager      (new MarkerManager      )
+, markerManager      (new BScanMarkerManager      )
 , dwSloImage         (new DWSloImage(*markerManager))
 , bscanMarkerWidget  (new BScanMarkerWidget(*markerManager))
 {
@@ -65,6 +68,16 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 
 	setActionToggel();
 	setAcceptDrops(true);
+
+
+	OctDataModel*  model = new OctDataModel;
+	WGOctDataTree* tree = new WGOctDataTree(model);
+
+	QDockWidget* treeDock = new QDockWidget(tr("Oct Data"), this);
+	treeDock->setWidget(tree);
+	addDockWidget(Qt::RightDockWidgetArea, treeDock);
+
+
 
 	connect(markerManager, SIGNAL(newCScanLoaded()), this, SLOT(newCscanLoaded()));
 
@@ -151,10 +164,13 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* fillEpmtyPixelWhite = ProgramOptions::fillEmptyPixelWhite.getAction();
 	QAction* registerBScans      = ProgramOptions::registerBScans     .getAction();
+	QAction* loadRotateSlo       = ProgramOptions::loadRotateSlo      .getAction();
 	fillEpmtyPixelWhite->setText(tr("Fill empty pixels white"));
 	registerBScans     ->setText(tr("register BScans"));
+	loadRotateSlo      ->setText(tr("rotate SLO"));
 	optionsMenu->addAction(fillEpmtyPixelWhite);
 	optionsMenu->addAction(registerBScans);
+	optionsMenu->addAction(loadRotateSlo);
 
 	QMenu* optionsMenuE2E = new QMenu(this);
 	optionsMenuE2E->setTitle(tr("E2E Gray"));
@@ -290,7 +306,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	paintMarkerAction->setIcon(QIcon(":/icons/paintbrush.png"));
 	paintMarkerAction->setShortcut(Qt::LeftArrow);
 	connect(paintMarkerAction, SIGNAL(triggered()), signalMapperMethod, SLOT(map()));
-	signalMapperMethod->setMapping(paintMarkerAction, static_cast<int>(MarkerManager::Method::Paint));
+	signalMapperMethod->setMapping(paintMarkerAction, static_cast<int>(BScanMarkerManager::Method::Paint));
 	actionGroupMethod->addAction(paintMarkerAction);
 	toolBar->addAction(paintMarkerAction);
 
@@ -300,7 +316,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	fillMarkerAction->setIcon(QIcon(":/icons/paintcan.png"));
 	fillMarkerAction->setShortcut(Qt::LeftArrow);
 	connect(fillMarkerAction, SIGNAL(triggered()), signalMapperMethod, SLOT(map()));
-	signalMapperMethod->setMapping(fillMarkerAction, static_cast<int>(MarkerManager::Method::Fill));
+	signalMapperMethod->setMapping(fillMarkerAction, static_cast<int>(BScanMarkerManager::Method::Fill));
 	actionGroupMethod->addAction(fillMarkerAction);
 	toolBar->addAction(fillMarkerAction);
 
@@ -323,10 +339,10 @@ void OCTMarkerMainWindow::setActionToggel()
 
 	switch(markerManager->getMarkerMethod())
 	{
-		case MarkerManager::Method::Paint:
+		case BScanMarkerManager::Method::Paint:
 			paintMarkerAction->setChecked(true);
 			break;
-		case MarkerManager::Method::Fill:
+		case BScanMarkerManager::Method::Fill:
 			fillMarkerAction->setChecked(true);
 			break;
 		default:
@@ -342,12 +358,14 @@ void OCTMarkerMainWindow::showAboutDialog()
 	// text += "<br />Dieses Programm entstand im Rahmen der Masterarbeit &#8222;Aktive-Konturen-Methoden zur Segmentierung von OCT-Aufnahmen&#8220;";
 	text += "<br /><br />Author: Kay Gawlik";
 	text += "<br /><br />Icons von <a href=\"http://www.famfamfam.com/lab/icons/silk/\">FamFamFam</a>";
-	text += QString("<br /><br />&#220;bersetzungszeit: %1 %2").arg(BuildConstants::buildDate).arg(BuildConstants::buildTime);
-	text += QString("<br />Qt-Version: %1").arg(qVersion());
-	text += QString("<br />Git-Hash  : %1").arg(BuildConstants::gitSha1);
-	text += QString("<br />Build-Typ : %1").arg(BuildConstants::buildTyp);
-	text += QString("<br />Compiler  : %1 %2").arg(BuildConstants::compilerId).arg(BuildConstants::compilerVersion);
 
+	text += "<br/><br/><b>Build-Informationen</b><table>";
+	text += QString("<tr><td>&#220;bersetzungszeit </td><td> %1 %2</td></tr>").arg(BuildConstants::buildDate).arg(BuildConstants::buildTime);
+	text += QString("<tr><td>Qt-Version </td><td> %1</td></tr>").arg(qVersion());
+	text += QString("<tr><td>Git-Hash   </td><td> %1</td></tr>").arg(BuildConstants::gitSha1);
+	text += QString("<tr><td>Build-Typ  </td><td> %1</td></tr>").arg(BuildConstants::buildTyp);
+	text += QString("<tr><td>Compiler   </td><td> %1 %2</td></tr>").arg(BuildConstants::compilerId).arg(BuildConstants::compilerVersion);
+	text += "</table>";
 
 	QMessageBox::about(this,tr("About"), text);
 }
@@ -456,6 +474,7 @@ bool OCTMarkerMainWindow::loadFile(const QString& filename)
 {
 	try
 	{
+		OctFilesManager::getInstance().loadOctData(filename);
 		markerManager->loadImage(filename);
 		return true;
 	}
@@ -503,7 +522,7 @@ void OCTMarkerMainWindow::showAddMarkersDialog()
 	if(fd.exec())
 	{
 		QStringList filenames = fd.selectedFiles();
-		markerManager->addMarkers(filenames[0], MarkerManager::Fileformat::XML);
+		markerManager->addMarkers(filenames[0], BScanMarkerManager::Fileformat::XML);
 	}
 }
 
@@ -515,15 +534,15 @@ void OCTMarkerMainWindow::setMarkersStringList(QStringList& filters)
 
 namespace
 {
-	MarkerManager::Fileformat getMarkerFileFormat(const QString& filter)
+	BScanMarkerManager::Fileformat getMarkerFileFormat(const QString& filter)
 	{
 		QStringList filters;
 		OCTMarkerMainWindow::setMarkersStringList(filters);
 		int index = filters.indexOf(filter);
 		if(index == 0)
-			return MarkerManager::Fileformat::Josn;
+			return BScanMarkerManager::Fileformat::Josn;
 		if(index == 1)
-			return MarkerManager::Fileformat::XML;
+			return BScanMarkerManager::Fileformat::XML;
 
 		throw "unknown filtername";
 	}

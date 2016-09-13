@@ -2,9 +2,9 @@
 
 #include "sloimagewidget.h"
 #include "wgsloimage.h"
-#include <manager/markermanager.h>
 
-DWSloImage::DWSloImage(MarkerManager& markerManger)
+
+DWSloImage::DWSloImage(BScanMarkerManager& markerManger)
 : sloWidget(new WgSloImage(markerManger))
 // : imageWidget(new SLOImageWidget(markerManger))
 // , markerManger(markerManger)

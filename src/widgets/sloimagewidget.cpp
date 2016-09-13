@@ -8,7 +8,7 @@
 #include <octdata/datastruct/coordslo.h>
 #include <octdata/datastruct/bscan.h>
 
-#include <manager/markermanager.h>
+#include <manager/bscanmarkermanager.h>
 
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
@@ -18,7 +18,7 @@
 
 #include <markerobjects/rectitem.h>
 
-SLOImageWidget::SLOImageWidget(MarkerManager& markerManger)
+SLOImageWidget::SLOImageWidget(BScanMarkerManager& markerManger)
 : markerManger(markerManger)
 , drawBScans(ProgramOptions::sloShowBscans())
 {
@@ -88,8 +88,9 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 
 	const OctData::SloImage& sloImage = series.getSloImage();
 
-	const OctData::ScaleFactor factor = sloImage.getScaleFactor() * (1./getImageScaleFactor());
-	const OctData::CoordSLOpx  shift  = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::CoordTransform& transform = sloImage.getTransform();
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
 	if(drawBScans)
@@ -110,20 +111,20 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 			}
 
 			painter.setPen(normalBscan);
-			paintBScan(painter, *bscan, factor, shift, bscanCounter, true);
+			paintBScan(painter, *bscan, factor, shift, transform, bscanCounter, true);
 		}
 
 		if(actBScan)
 		{
 			painter.setPen(activBscan);
-			paintBScan(painter, *actBScan, factor, shift, -1, false);
+			paintBScan(painter, *actBScan, factor, shift, transform, -1, false);
 		}
 	}
 
 	painter.end();
 }
 
-void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, int bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker)
 {
 	if(bscan.getCenter())
 	{
@@ -135,14 +136,14 @@ void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, 
 		painter.drawEllipse(QPointF(center_px.getXf(), center_px.getYf()), radius, radius);
 	}
 	else
-		paintBScanLine(painter, bscan, factor, shift, bscanNr, paintMarker);
+		paintBScanLine(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
 }
 
 
-void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, int bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker)
 {
-	const OctData::CoordSLOpx& start_px = bscan.getStart()*factor + shift;
-	const OctData::CoordSLOpx&   end_px = bscan.getEnd()  *factor + shift;
+	const OctData::CoordSLOpx& start_px = (transform * bscan.getStart())*factor + shift;
+	const OctData::CoordSLOpx&   end_px = (transform * bscan.getEnd()  )*factor + shift;
 
 	painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
 
@@ -152,7 +153,7 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bsc
 
 	if(paintMarker)
 	{
-		for(const MarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers(bscanNr))
+		for(const BScanMarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers(bscanNr))
 		{
 			IntervallMarker::Marker marker = pair.second;
 			if(marker.isDefined())
