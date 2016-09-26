@@ -70,8 +70,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	setAcceptDrops(true);
 
 
-	OctDataModel*  model = new OctDataModel;
-	WGOctDataTree* tree = new WGOctDataTree(model);
+	WGOctDataTree* tree = new WGOctDataTree();
 
 	QDockWidget* treeDock = new QDockWidget(tr("Oct Data"), this);
 	treeDock->setWidget(tree);

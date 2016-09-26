@@ -7,9 +7,9 @@
 #include <QHeaderView>
 
 
-WGOctDataTree::WGOctDataTree(OctDataModel* octDataModel)
+WGOctDataTree::WGOctDataTree()
 : viewTree(new QTreeView(this))
-, model(octDataModel)
+, model(&OctDataModel::getInstance())
 {
 	viewTree->setModel(model);
 	viewTree->setColumnWidth(0, 200);

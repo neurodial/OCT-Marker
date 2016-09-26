@@ -28,6 +28,11 @@ public:
 	virtual int row() const                                     { return parentItem?parentItem->indexOf(this):0; }
 
 
+	virtual bool canRemoveChild() { return false; }
+	virtual bool removeChild(OctDataItemBase* /*item*/)         { return false; }
+
+	virtual bool insertChild(OctDataItemBase* /*item*/, int /*position*/) { return false; }
+
 
 	virtual void itemDoubleClicked() const                      { }
 	virtual void itemClicked()       const                      { }

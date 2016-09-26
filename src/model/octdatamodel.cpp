@@ -12,7 +12,7 @@ OctDataModel::OctDataModel()
 
 OctDataModel::~OctDataModel()
 {
-	delete rootElement;
+	// delete rootElement;
 }
 
 
@@ -87,8 +87,8 @@ QModelIndex OctDataModel::parent(const QModelIndex& index) const
 	if(!index.isValid())
 		return QModelIndex();
 
-	OctDataItemBase *childItem = static_cast<OctDataItemBase*>(index.internalPointer());
-	OctDataItemBase *parentItem = childItem->parent();
+	OctDataItemBase* childItem = static_cast<OctDataItemBase*>(index.internalPointer());
+	OctDataItemBase* parentItem = childItem->parent();
 
 	Q_ASSERT(parentItem != nullptr);
 
@@ -98,6 +98,15 @@ QModelIndex OctDataModel::parent(const QModelIndex& index) const
 
 	return createIndex(parentItem->row(), 0, parentItem);
 }
+
+QModelIndex OctDataModel::getQModelIndex(OctDataItemBase* item) const
+{
+	if(!item || item == rootElement)
+		return QModelIndex();
+
+	return createIndex(item->row(), 0, item);
+}
+
 
 int OctDataModel::rowCount(const QModelIndex& parentIndex) const
 {
@@ -116,14 +125,38 @@ int OctDataModel::rowCount(const QModelIndex& parentIndex) const
 	return 0;
 }
 
-/*
-void OctDataModel::setE2EData(E2E::E2EData* data)
-{
-	emit(beginResetModel());
-	E2ERootItem* ele = new E2ERootItem(&(data->getDataRoot()));
-	delete rootElement;
-	rootElement = ele;
 
-	emit(endResetModel());
+bool OctDataModel::insertItem(OctDataItemBase* item, int position, OctDataItemBase* parentItem)
+{
+	return insertItem(item, position, getQModelIndex(parentItem));
 }
+
+
+
+bool OctDataModel::insertItem(OctDataItemBase* item, int position, const QModelIndex& parent)
+{
+	OctDataItemBase* parentItem = static_cast<OctDataItemBase*>(parent.internalPointer());
+	if(!parentItem)
+		parentItem = rootElement;
+
+	if(position == -1)
+		position = parentItem->childCount();
+	else
+	{
+		if(parentItem->childCount() < position)
+			return false;
+	}
+
+	beginInsertRows(parent, position, position);
+	bool success = parentItem->insertChild(item, position);
+	// success = parentItem->insertChildren(position, rows, rootItem->columnCount());
+	endInsertRows();
+
+/*
+	beginResetModel();
+	endResetModel();
 */
+
+	return success;
+}
+

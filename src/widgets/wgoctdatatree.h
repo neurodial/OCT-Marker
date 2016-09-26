@@ -11,10 +11,10 @@ class WGOctDataTree : public QWidget
 	Q_OBJECT
 
 	QTreeView* viewTree = nullptr;
-	OctDataModel*  model = nullptr;
+	OctDataModel* model = nullptr;
 
 public:
-	WGOctDataTree(OctDataModel* octDataModel);
+	WGOctDataTree();
 
 
 private slots:
