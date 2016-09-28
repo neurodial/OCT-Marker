@@ -10,6 +10,7 @@
 #include <vector>
 
 class ProgramOptions;
+class QSettings;
 
 class Option : public QObject
 {
@@ -177,6 +178,8 @@ public:
 	static void readAllOptions();
 	static void writeAllOptions();
 	static void resetAllOptions();
+
+	static QSettings& getSettings();
 	
 	
 	// static OptionString cacheDir;

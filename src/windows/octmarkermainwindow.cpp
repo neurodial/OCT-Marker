@@ -57,31 +57,39 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 , dwSloImage         (new DWSloImage(*markerManager))
 , bscanMarkerWidget  (new BScanMarkerWidget(*markerManager))
 {
-	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
+	QSettings& settings = ProgramOptions::getSettings();
+	restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
 
+
+	// General Objects
 	setCentralWidget(bscanMarkerWidget);
-
-	setWindowIcon(QIcon(":/icons/image_edit.png"));
 
 	setupMenu();
 	createMarkerToolbar();
-
-	setActionToggel();
-	setAcceptDrops(true);
+	// DockWidgets
+	dwSloImage->setObjectName("DWSloImage");
+	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
 
 
 	WGOctDataTree* tree = new WGOctDataTree();
-
 	QDockWidget* treeDock = new QDockWidget(tr("Oct Data"), this);
+	treeDock->setObjectName("DWOctDataTree");
 	treeDock->setWidget(tree);
 	addDockWidget(Qt::RightDockWidgetArea, treeDock);
 
+
+	// General Config
+	setWindowIcon(QIcon(":/icons/image_edit.png"));
+	setActionToggel();
+	setAcceptDrops(true);
 
 
 	connect(markerManager, SIGNAL(newCScanLoaded()), this, SLOT(newCscanLoaded()));
 
 	if(!ProgramOptions::loadOctdataAtStart().isEmpty())
 		loadFile(ProgramOptions::loadOctdataAtStart());
+
+	restoreState(settings.value("mainWindowState").toByteArray());
 }
 
 
@@ -254,6 +262,7 @@ void OCTMarkerMainWindow::setupMenu()
 	showSeglines->setIcon(QIcon(":/icons/chart_curve.png"));
 
 	QToolBar* toolBar = new QToolBar(tr("B-Scan"));
+	toolBar->setObjectName("ToolBarBScan");
 	toolBar->addAction(previousBScan);
 	toolBar->addAction(nextBScan);
 	toolBar->addSeparator();
@@ -272,6 +281,8 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	QSignalMapper* signalMapperMarker = new QSignalMapper(this) ;
 	QSignalMapper* signalMapperMethod = new QSignalMapper(this) ;
 	QToolBar*      toolBar            = new QToolBar(tr("Marker"));
+
+	toolBar->setObjectName("ToolBarMarker");
 
 	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
 
@@ -331,7 +342,6 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 
 void OCTMarkerMainWindow::setActionToggel()
 {
-
 	int markersId = markerManager->getActMarker().getInternalId();
 	if(markersId >= 0)
 		markersActions.at(markersId)->setChecked(true);
@@ -614,6 +624,12 @@ void OCTMarkerMainWindow::saveMatlabBinCode()
 void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
 {
 	ProgramOptions::writeAllOptions();
+
+	QSettings& settings = ProgramOptions::getSettings();
+
+	settings.setValue("mainWindowGeometry", saveGeometry());
+	settings.setValue("mainWindowState", saveState());
+
 	QWidget::closeEvent(e);
 }
 

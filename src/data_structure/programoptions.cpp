@@ -54,11 +54,17 @@ void ProgramOptions::resetAllOptions()
 }
 
 
+QSettings& ProgramOptions::getSettings()
+{
+	static QSettings settings("becrf", "oct-marker");
+
+	return settings;
+}
 
 
 void ProgramOptions::readAllOptions()
 {
-	QSettings settings("becrf", "oct-marker");
+	QSettings& settings = getSettings();
 	std::vector<Option*> options = ProgramOptions::getAllOptions();
 	
 	settings.beginGroup("ProgramOptions");
@@ -70,7 +76,7 @@ void ProgramOptions::readAllOptions()
 
 void ProgramOptions::writeAllOptions()
 {
-	QSettings settings("becrf", "oct-marker");
+	QSettings& settings = getSettings();
 	std::vector<Option*> options = ProgramOptions::getAllOptions();
 	
 	settings.beginGroup("ProgramOptions");
