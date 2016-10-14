@@ -21,9 +21,8 @@ OptionBool ProgramOptions::sloShowBscans(true , "sloShowBscans");
 OptionBool ProgramOptions::sloShowLabels(false, "sloShowLabels");
 
 
-
-OptionString ProgramOptions::octDirectory(".", "imageDirectory");
-OptionString ProgramOptions::loadOctdataAtStart("", "loadImageAtStart");
+OptionString ProgramOptions::octDirectory      (".", "octDirectory");
+OptionString ProgramOptions::loadOctdataAtStart("" , "loadOctDataAtStart");
 
 
 void OptionColor::showColorDialog()

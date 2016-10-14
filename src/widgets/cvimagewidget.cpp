@@ -14,14 +14,38 @@ CVImageWidget::CVImageWidget(QWidget* parent): QWidget(parent), contextMenu(new 
 	saveAction->setText(tr("Save Image"));
 	saveAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveAction);
-
 	connect(saveAction, SIGNAL(triggered(bool)), this, SLOT(saveImage()));
+
+	contextMenu->addSeparator();
+
 }
 
 CVImageWidget::~CVImageWidget()
 {
 	delete contextMenu;
 }
+
+void CVImageWidget::addZoomItems()
+{
+	QAction* actionZoom1 = new QAction(this);
+	actionZoom1->setText(tr("Zoom %1").arg(1));
+	actionZoom1->setIcon(QIcon(":/icons/zoom.png"));
+	contextMenu->addAction(actionZoom1);
+	connect(actionZoom1, &QAction::triggered, this, &CVImageWidget::setZoom1);
+
+	QAction* actionZoom2 = new QAction(this);
+	actionZoom2->setText(tr("Zoom %2").arg(2));
+	actionZoom2->setIcon(QIcon(":/icons/zoom.png"));
+	contextMenu->addAction(actionZoom2);
+	connect(actionZoom2, &QAction::triggered, this, &CVImageWidget::setZoom2);
+
+	QAction* actionZoom3 = new QAction(this);
+	actionZoom3->setText(tr("Zoom %3").arg(3));
+	actionZoom3->setIcon(QIcon(":/icons/zoom.png"));
+	contextMenu->addAction(actionZoom3);
+	connect(actionZoom3, &QAction::triggered, this, &CVImageWidget::setZoom3);
+}
+
 
 void CVImageWidget::contextMenuEvent(QContextMenuEvent* event)
 {
@@ -40,8 +64,8 @@ void CVImageWidget::showImage(const cv::Mat& image)
 		switch(image.type())
 		{
 			case CV_8UC1:
-				// cvtColor(image, cvImage, CV_GRAY2RGB);
-				cvImage = image.clone();
+				cvtColor(image, cvImage, CV_GRAY2RGB);
+				// cvImage = image.clone();
 				grayCvImage = true;
 				break;
 			case CV_8UC3:
@@ -77,6 +101,20 @@ void CVImageWidget::showImage(const cv::Mat& image)
 	cvImage2qtImage();
 }
 
+void CVImageWidget::updateScaleFactor()
+{
+	if(imageScale.width() > 0 && imageScale.height() > 0)
+	{
+		scaleFactor = std::min(static_cast<double>(height())/cvImage.rows, static_cast<double>(width())/cvImage.cols);
+	}
+	else
+	{
+		setFixedSize(cvImage.cols, cvImage.rows);
+		scaleFactor = 1.;
+	}
+}
+
+
 void CVImageWidget::cvImage2qtImage()
 {
 	if(cvImage.empty())
@@ -89,22 +127,26 @@ void CVImageWidget::cvImage2qtImage()
 	// Assign OpenCV's image buffer to the QImage. Note that the bytesPerLine parameter
 	// (http://qt-project.org/doc/qt-4.8/qimage.html#QImage-6) is 3*width because each pixel
 	// has three bytes.
-	if(grayCvImage)
-		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols, QImage::Format_Grayscale8);
-	else
+// 	if(grayCvImage)
+// 		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols, QImage::Format_Grayscale8);
+// 	else
 		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols*3, QImage::Format_RGB888);
 
-	if(imageScale.width() > 0 && imageScale.height() > 0)
+
+	switch(scaleMethod)
 	{
-		scaleFactor = std::min(static_cast<double>(height())/cvImage.rows, static_cast<double>(width())/cvImage.cols);
-		// qtImage = qtImage.scaled(imageScale,  Qt::KeepAspectRatio);
-		qtImage = qtImage.scaled(cvImage.cols*scaleFactor, cvImage.rows*scaleFactor,  Qt::KeepAspectRatio);
+		case ScaleMethod::Factor:
+			imageScale.setHeight(cvImage.rows * scaleFactor);
+			imageScale.setWidth (cvImage.cols * scaleFactor);
+			setFixedSize(imageScale);
+			break;
+		case ScaleMethod::Size:
+			updateScaleFactor();
+			break;
 	}
-	else
-	{
-		setFixedSize(cvImage.cols, cvImage.rows);
-		scaleFactor = 1.;
-	}
+
+	if(scaleFactor != 1)
+		qtImage = qtImage.scaled(cvImage.cols*scaleFactor, cvImage.rows*scaleFactor,  Qt::KeepAspectRatio, Qt::FastTransformation);
 
 	update();
 }

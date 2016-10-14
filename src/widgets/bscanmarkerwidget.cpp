@@ -22,6 +22,8 @@ BScanMarkerWidget::BScanMarkerWidget(BScanMarkerManager& markerManger)
 , markerManger(markerManger)
 {
 
+	addZoomItems();
+
 	connect(&markerManger, &BScanMarkerManager::newCScanLoaded     , this, &BScanMarkerWidget::cscanLoaded         );
 	connect(&markerManger, &BScanMarkerManager::bscanChanged       , this, &BScanMarkerWidget::bscanChanged        );
 	connect(&markerManger, &BScanMarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
@@ -71,7 +73,7 @@ BScanMarkerWidget::~BScanMarkerWidget()
 
 namespace
 {
-	void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const OctData::BScan::Segmentline& segLine)
+	void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const OctData::BScan::Segmentline& segLine, double factor)
 	{
 		double lastEnt = std::numeric_limits<double>::quiet_NaN();
 		int xCoord = 0;
@@ -80,7 +82,7 @@ namespace
 			// std::cout << value << '\n';
 			if(!std::isnan(lastEnt) && lastEnt < bScanHeight && lastEnt > 0 && value < bScanHeight && value > 0)
 			{
-				segPainter.drawLine(QLineF(xCoord-1, lastEnt, xCoord, value));
+				segPainter.drawLine(QLineF((xCoord-1)*factor, lastEnt*factor, xCoord*factor, value*factor));
 			}
 			lastEnt = value;
 			++xCoord;
@@ -102,12 +104,13 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	pen.setWidth(1);
 	segPainter.setPen(pen);
 	int bScanHeight = actBscan->getHeight();
+	double scaleFactor = getImageScaleFactor();
 
 	if(ProgramOptions::bscansShowSegmentationslines())
 	{
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM));
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::BM));
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::NFL));
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::BM ), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::NFL), scaleFactor);
 	}
 
 
@@ -119,7 +122,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 		if(marker.isDefined())
 		{
 			boost::icl::discrete_interval<int> itv  = pair.first;
-			painter.fillRect(itv.lower(), 0, itv.upper()-itv.lower(), height(), QColor(marker.getRed(), marker.getGreen(), marker.getBlue(),  60));
+			painter.fillRect(itv.lower()*scaleFactor, 0, (itv.upper()-itv.lower())*scaleFactor, height(), QColor(marker.getRed(), marker.getGreen(), marker.getBlue(),  60));
 		}
 	}
 	
@@ -254,6 +257,7 @@ void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 {
 	QWidget::mouseReleaseEvent(event);
+	double scaleFactor = getImageScaleFactor();
 
 	switch(markerManger.getMarkerMethod())
 	{
@@ -261,12 +265,12 @@ void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 			if(clickPos.x() != event->x() && markerActiv)
 			{
 				// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
-				markerManger.setMarker(clickPos.x(), event->x());
+				markerManger.setMarker(clickPos.x()/scaleFactor, event->x()/scaleFactor);
 			}
 			break;
 		case BScanMarkerManager::Method::Fill:
 			if(markerActiv)
-				markerManger.fillMarker(clickPos.x());
+				markerManger.fillMarker(clickPos.x()/scaleFactor);
 			break;
 	}
 	

@@ -18,5 +18,7 @@
 
 	<file>icons/layers.png</file>
 	<file>icons/tag_blue_edit.png</file>
+
+	<file>icons/zoom.png</file>
 </qresource>
 </RCC>

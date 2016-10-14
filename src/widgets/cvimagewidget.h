@@ -16,9 +16,12 @@ class CVImageWidget : public QWidget
 {
 	Q_OBJECT
 	virtual void contextMenuEvent(QContextMenuEvent* event);
+
+	enum class ScaleMethod { Factor, Size };
 	
 	double scaleFactor = 1.;
 	bool grayCvImage;
+	ScaleMethod scaleMethod;
 	
 public:
 	explicit CVImageWidget(QWidget *parent = 0);
@@ -27,7 +30,8 @@ public:
 	QSize sizeHint()        const                               { return qtImage.size(); }
 	QSize minimumSizeHint() const                               { return qtImage.size(); }
 
-	virtual void setImageSize(QSize size)                       { imageScale = size; cvImage2qtImage(); }
+	virtual void setImageSize(QSize size)                       { imageScale  = size  ; scaleMethod = ScaleMethod::Size  ; cvImage2qtImage(); }
+	virtual void setScaleFactor(double factor)                  { scaleFactor = factor; scaleMethod = ScaleMethod::Factor; cvImage2qtImage(); }
 
 	int  imageHight() const;
 	int  imageWidth() const;
@@ -36,6 +40,8 @@ public:
 	int  scaledImageWidth() const                               { return qtImage.width() ; }
 
 	double getImageScaleFactor()                                { return scaleFactor; }
+
+	void addZoomItems();
 
 public slots:
 	void showImage(const cv::Mat& image);
@@ -54,9 +60,15 @@ protected:
 	int fileDialog(QString& filename);
 
 	void cvImage2qtImage();
+	void updateScaleFactor();
 	
 public slots:
 	virtual void saveImage();
+
+
+	void setZoom1()                                              { scaleFactor = 1; cvImage2qtImage(); repaint(); }
+	void setZoom2()                                              { scaleFactor = 2; cvImage2qtImage(); repaint(); }
+	void setZoom3()                                              { scaleFactor = 3; cvImage2qtImage(); repaint(); }
 };
 
 #endif // CVIMAGEWIDGET_H
