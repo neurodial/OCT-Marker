@@ -31,7 +31,7 @@ class MarkerDataManager : public QObject
 	
 	MarkerDataManager() = default;
 public:
-	~MarkerDataManager();
+	virtual ~MarkerDataManager();
 	
 	static MarkerDataManager& getInstance()                         { static MarkerDataManager instance; return instance; }
 

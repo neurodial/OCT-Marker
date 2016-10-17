@@ -27,6 +27,8 @@
 #include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/series.h>
 
+#include <widgets/dwoctinformations.h>
+
 #include <octdata/filereadoptions.h>
 
 #include <boost/exception/exception.hpp>
@@ -76,6 +78,9 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	treeDock->setObjectName("DWOctDataTree");
 	treeDock->setWidget(tree);
 	addDockWidget(Qt::RightDockWidgetArea, treeDock);
+	
+	DwOctInformations* dwoctinformations = new DwOctInformations(this);
+	addDockWidget(Qt::RightDockWidgetArea, dwoctinformations);
 
 
 	// General Config

@@ -51,12 +51,15 @@ foreach(loop_var ${srcs_directories})
 	list(APPEND octmarker_SRCS ${sources} ${sources_base})
 endforeach(loop_var)
 
+file(GLOB ui_forms ${CMAKE_CURRENT_SOURCE_DIR}/ui/*.ui)
+
 
 file(GLOB LANG ${CMAKE_CURRENT_SOURCE_DIR}/language_files/*.ts)
 
 set(octmarker_RESOURCES application.qrc)
 
 
+QT5_WRAP_UI(ui_files_headers ${ui_forms})
 QT5_ADD_RESOURCES(octmarker_RESOURCES_RCC ${octmarker_RESOURCES})
 QT5_ADD_TRANSLATION(TRANSLATIONS ${LANG})
 

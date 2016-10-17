@@ -10,14 +10,28 @@ namespace OctData
 	class Series;
 }
 
-class DwOctInformations : public QDockWidget
+#include <ui_octinformations.h>
+
+class QFormLayout;
+
+
+class DwOctInformations : public QDockWidget, Ui::UiOctInformations
 {
 	Q_OBJECT
+	
+	QFormLayout* patientInformations = nullptr;
+	QFormLayout* studyInformations   = nullptr;
+	QFormLayout* seriesInformations  = nullptr;
+	
+public:
+	explicit DwOctInformations(QWidget *parent = nullptr);
+	virtual ~DwOctInformations() = default;
+	
 
 public slots:
-	void setPatient(OctData::Patient* patient);
-	void setStudy  (OctData::Study  * study  );
-	void setSeries (OctData::Series * series );
+	void setPatient(const OctData::Patient* patient);
+	void setStudy  (const OctData::Study  * study  );
+	void setSeries (const OctData::Series * series );
 };
 
 #endif // DWOCTINFORMATIONS_H
