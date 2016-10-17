@@ -1,0 +1,8 @@
+#ifndef BSCANQUALITYMARKER_H
+#define BSCANQUALITYMARKER_H
+
+class BScanQualityMarker
+{
+};
+
+#endif // BSCANQUALITYMARKER_H

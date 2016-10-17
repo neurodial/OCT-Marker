@@ -3,15 +3,27 @@
 #include <manager/markerdatamanager.h>
 
 
+#include <octdata/datastruct/series.h>
+#include <octdata/datastruct/study.h>
+#include <octdata/datastruct/patient.h>
+#include <octdata/datastruct/oct.h>
+
 OctDataModel::OctDataModel()
 {
+	connect(&MarkerDataManager::getInstance(), &MarkerDataManager::octFileChanged, this, &OctDataModel::setOctData);
 }
 
 
 OctDataModel::~OctDataModel()
 {
-	for(const OctSeriesItem* file : filelist)
-		delete file;
+	clearList();
+}
+
+void OctDataModel::clearList()
+{
+	for(const OctSeriesItem* item : octSeriesList)
+		delete item;
+	octSeriesList.clear();
 }
 
 
@@ -20,13 +32,27 @@ QVariant OctDataModel::data(const QModelIndex& index, int role) const
 	if(!index.isValid())
 		return QVariant();
 
-	if(static_cast<std::size_t>(index.row()) >= filelist.size())
+	if(static_cast<std::size_t>(index.row()) >= octSeriesList.size())
 		return QVariant();
 
 	if(role == Qt::DisplayRole)
-		return filelist.at(index.row())->getFilename();
-	else
-		return QVariant();
+	{
+		OctSeriesItem* item = octSeriesList.at(index.row());
+		
+		switch(index.column())
+		{
+			case 0:
+				return item->getSurename();
+			case 1:
+				return item->getForename();
+			case 2:
+				return item->getStudyId();
+			case 3:
+				return item->getSeriesId();
+		}
+	}
+	
+	return QVariant();
 }
 
 
@@ -36,28 +62,26 @@ QVariant OctDataModel::headerData(int section, Qt::Orientation orientation, int 
 		return QVariant();
 
 	if(orientation == Qt::Horizontal)
-		return QString("Column %1").arg(section);
-	else
-		return QString("Row %1").arg(section);
-}
-
-
-bool OctDataModel::addFile(QString filename)
-{
-	for(const OctSeriesItem* file : filelist)
 	{
-		if(file->sameFile(filename))
-			return false;
+		switch(section)
+		{
+			case 0:
+				return tr("Surename");
+			case 1:
+				return tr("Forename");
+			case 2:
+				return tr("Study");
+			case 3:
+				return tr("Series");
+		}
 	}
-
-	int position = filelist.size();
+	else
+		return QString("%1").arg(section);
 	
-	beginInsertRows(QModelIndex(), position, position);
-	filelist.push_back(new OctSeriesItem(filename));
-	endInsertRows();
-	
-	return true;
+	return QVariant();
 }
+
+
 
 void OctDataModel::slotClicked(QModelIndex index)
 {
@@ -65,11 +89,11 @@ void OctDataModel::slotClicked(QModelIndex index)
 		return;
 	
 	std::size_t row = static_cast<std::size_t>(index.row());
-	if(row >= filelist.size())
+	if(row >= octSeriesList.size())
 		return;
 	
-	OctSeriesItem* file = filelist.at(row);
-	MarkerDataManager::getInstance().openFile(file->getFilename());
+	OctSeriesItem* octItem = octSeriesList.at(row);
+	MarkerDataManager::getInstance().chooseSeries(octItem->getSeries());
 }
 
 void OctDataModel::slotDoubleClicked(QModelIndex index)
@@ -78,13 +102,49 @@ void OctDataModel::slotDoubleClicked(QModelIndex index)
 		return;
 	
 	std::size_t row = static_cast<std::size_t>(index.row());
-	if(row >= filelist.size())
+	if(row >= octSeriesList.size())
 		return;
 	
-	OctSeriesItem* file = filelist.at(row);
+	OctSeriesItem* file = octSeriesList.at(row);
 	
 	
-	qDebug("file doubleclicked: %s", file->getFilename().toStdString().c_str());
+	qDebug("file doubleclicked: %s", file->getForename().toStdString().c_str());
 }
 
+
+void OctDataModel::setOctData(const OctData::OCT* octData)
+{
+	beginResetModel();
+	
+	clearList();
+
+	for(const OctData::OCT::SubstructurePair& patientPair : *octData)
+	{
+		const OctData::Patient* patient = patientPair.second;
+		QString patName = QString("%1, %2").arg(patient->getSurname().c_str()).arg(patient->getForename().c_str());
+		
+		QString surname  = QString::fromStdString(patient->getSurname());
+		QString forename = QString::fromStdString(patient->getForename());
+		
+		for(const OctData::Patient::SubstructurePair& studyPair : *patient)
+		{
+			const OctData::Study* study = studyPair.second;
+			int studyID                 = studyPair.first;
+			for(const OctData::Study::SubstructurePair& seriesPair : *study)
+			{
+				const OctData::Series* series = seriesPair.second;
+				int seriesID = seriesPair.first;
+				
+				QString description = QString("Pat: %1, Study: %2, Series: %3").arg(patName).arg(studyID).arg(seriesID);
+				
+				OctSeriesItem* item = new OctSeriesItem(surname, forename, studyID, seriesID, series);
+				
+				octSeriesList.push_back(item);
+				
+			}
+		}
+	}
+	
+	endResetModel();
+}
 

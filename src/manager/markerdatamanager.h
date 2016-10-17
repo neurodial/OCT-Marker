@@ -25,6 +25,10 @@ class MarkerDataManager : public QObject
 	OctData::OCT* octData = nullptr;
 	QString actFilename;
 	
+	const OctData::Patient* actPatient = nullptr;
+	const OctData::Study*   actStudy   = nullptr;
+	const OctData::Series*  actSeries  = nullptr;
+	
 	MarkerDataManager() = default;
 public:
 	~MarkerDataManager();
@@ -35,13 +39,13 @@ public:
 public slots:
 	void openFile(const QString& filename);
 	
-	void chooseSeries  (OctData::Series* );
+	void chooseSeries  (const OctData::Series* seriesReq);
 
 signals:
-	void octFileChanged(OctData::OCT*    );
-	void patientChanged(OctData::Patient*);
-	void studyChanged  (OctData::Study*  );
-	void seriesChanged (OctData::Series* );
+	void octFileChanged(const OctData::OCT*    );
+	void patientChanged(const OctData::Patient*);
+	void studyChanged  (const OctData::Study*  );
+	void seriesChanged (const OctData::Series* );
 
 };
 

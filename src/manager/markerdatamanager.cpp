@@ -39,18 +39,30 @@ void MarkerDataManager::openFile(const QString& filename)
 		octData = new OctData::OCT(OctData::OctFileRead::openFile(filename.toStdString(), octOptions));
 		qDebug("Dauer: %d ms", t.elapsed());
 
-		// TODO: bessere Datenverwertung / Fehlerbehandlung
+		OctData::Patient* patient = nullptr;
+		OctData::Study* study     = nullptr;
+		OctData::Series* series   = nullptr;
+		
 		if(octData->size() == 0)
 			throw "MarkerManager::loadImage: oct->size() == 0";
-		OctData::Patient* patient = octData->begin()->second;
-		if(patient->size() == 0)
-			throw "MarkerManager::loadImage: patient->size() == 0";
-		OctData::Study* study = patient->begin()->second;
-		if(study->size() == 0)
-			throw "MarkerManager::loadImage: study->size() == 0";
-		// series = study->begin()->second;
+		patient = octData->begin()->second;
+		
+		if(patient->size() > 0)
+		{
+			study = patient->begin()->second;
+			
+			if(study->size() > 0)
+			{
+				series = study->begin()->second;
+			}
+		}
 
+		
 		actFilename = filename;
+		
+		actPatient = patient;
+		actStudy   = study;
+		actSeries  = series;
 	}
 	catch(...)
 	{
@@ -60,12 +72,55 @@ void MarkerDataManager::openFile(const QString& filename)
 	}
 	delete oldOct;
 
+	
 
 	emit(octFileChanged(octData));
+	emit(patientChanged(actPatient));
 }
 
 
-void MarkerDataManager::chooseSeries(OctData::Series*)
+void MarkerDataManager::chooseSeries(const OctData::Series* seriesReq)
 {
+	qDebug("Series requested");
+	
+	if(seriesReq == actSeries)
+		return;
+	
+	if(seriesReq == nullptr)
+		return;
+	
+	// Search series
+	for(const OctData::OCT::SubstructurePair& patientPair : *octData)
+	{
+		const OctData::Patient* patient = patientPair.second;
+		for(const OctData::Patient::SubstructurePair& studyPair : *patient)
+		{
+			const OctData::Study* study = studyPair.second;
+			for(const OctData::Study::SubstructurePair& seriesPair : *study)
+			{
+				const OctData::Series* series = seriesPair.second;
+				if(series == seriesReq)
+				{
+					if(patient != actPatient)
+					{
+						actPatient = patient;
+						emit(patientChanged(patient));
+					}
+					if(study != actStudy)
+					{
+						actStudy = study;
+						emit(studyChanged(study));
+					}
+					if(series != actSeries)
+					{
+						actSeries = series;
+						emit(seriesChanged(series));
+					}
+					qDebug("Series choosed");
+					return;
+				}
+			}
+		}
+	}
 }
 

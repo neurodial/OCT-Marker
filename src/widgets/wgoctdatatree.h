@@ -4,6 +4,7 @@
 #include <QWidget>
 
 class QListView;
+class QTableView;
 class OctDataModel;
 class OctFilesModel;
 
@@ -14,8 +15,8 @@ class WGOctDataTree : public QWidget
 	QListView*  listviewFiles = nullptr;
 	OctFilesModel* modelFiles = nullptr;
 	
-	QListView* listviewOctData = nullptr;
-	OctDataModel* modelOctData = nullptr;
+	QTableView* listviewOctData = nullptr;
+	OctDataModel* modelOctData  = nullptr;
 
 public:
 	WGOctDataTree();

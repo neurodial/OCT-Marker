@@ -1,6 +1,9 @@
-cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 project(octmarker)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_module/)
+
+set_property(GLOBAL PROPERTY CXX_STANDARD 11)
+set_property(GLOBAL PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
 find_package(Qt5Core)
@@ -13,12 +16,7 @@ find_package(LibOctData REQUIRED)
 find_package(CppFramework REQUIRED)
 
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
-      "Choose the type of build, options are: Debug Release
-RelWithDebInfo MinSizeRel."
-      FORCE)
-endif(NOT CMAKE_BUILD_TYPE)
+set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel.")
 
 
 include(GetGitRevisionDescription)
@@ -40,20 +38,8 @@ include_directories(${LibOctData_INCLUDE_DIRS})
 include_directories(${CppFramework_INCLUDE_DIRS})
 
 
-if (CMAKE_CXX_COMPILER MATCHES ".*clang")
-    set(CMAKE_COMPILER_IS_CLANGXX 1)
-endif ()
-
 if(CMAKE_COMPILER_IS_GNUCXX)
-	set(compiler_flags_debug "-Wall -Wextra -Wunreachable-code")        ## Optimize -O3 -Weverything -Weffc++
-	# set(compiler_flags_release "-std=c++11")        ## Optimize -O3 -Weverything
-	set(CMAKE_CXX_FLAGS "-std=c++11")
-endif()
-
-if(CMAKE_COMPILER_IS_CLANGXX)
-	set(compiler_flags_debug "-Wall -Wextra -Wunreachable-code")        ## Optimize -O3 -Weverything -Weffc++
-	# set(compiler_flags_release "-std=c++11")        ## Optimize -O3 -Weverything
-	set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -Wunreachable-code")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wunreachable-code") #  -Wconversion")        ## Optimize -O3 -Weverything -Weffc++
 endif()
 
 
@@ -70,21 +56,9 @@ file(GLOB LANG ${CMAKE_CURRENT_SOURCE_DIR}/language_files/*.ts)
 
 set(octmarker_RESOURCES application.qrc)
 
-# qt5_create_translation(qm_files ${srcs_directories} sources ${LANG})
 
 QT5_ADD_RESOURCES(octmarker_RESOURCES_RCC ${octmarker_RESOURCES})
 QT5_ADD_TRANSLATION(TRANSLATIONS ${LANG})
-
-
-if(compiler_flags_debug)
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${compiler_flags_debug}")
-endif()
-if(compiler_flags_release)
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${compiler_flags_release}")
-endif()
-if(compiler_flags)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${compiler_flags}")
-endif()
 
 
 add_executable(octmarker src/main.cpp ${octmarker_SRCS}
