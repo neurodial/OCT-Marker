@@ -66,7 +66,7 @@ QVariant OctDataModel::headerData(int section, Qt::Orientation orientation, int 
 		switch(section)
 		{
 			case 0:
-				return tr("Surename");
+				return tr("Surname");
 			case 1:
 				return tr("Forename");
 			case 2:
