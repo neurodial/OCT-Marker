@@ -65,3 +65,7 @@ void MarkerDataManager::openFile(const QString& filename)
 }
 
 
+void MarkerDataManager::chooseSeries(OctData::Series*)
+{
+}
+

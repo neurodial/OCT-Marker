@@ -1,21 +1,21 @@
-#include "octdatamodel.h"
+#include "octfilesmodel.h"
 
 #include <manager/markerdatamanager.h>
 
 
-OctDataModel::OctDataModel()
+OctFilesModel::OctFilesModel()
 {
 }
 
 
-OctDataModel::~OctDataModel()
+OctFilesModel::~OctFilesModel()
 {
-	for(const OctSeriesItem* file : filelist)
+	for(const OctFileUnloaded* file : filelist)
 		delete file;
 }
 
 
-QVariant OctDataModel::data(const QModelIndex& index, int role) const
+QVariant OctFilesModel::data(const QModelIndex& index, int role) const
 {
 	if(!index.isValid())
 		return QVariant();
@@ -30,7 +30,7 @@ QVariant OctDataModel::data(const QModelIndex& index, int role) const
 }
 
 
-QVariant OctDataModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant OctFilesModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if(role != Qt::DisplayRole)
 		return QVariant();
@@ -42,9 +42,9 @@ QVariant OctDataModel::headerData(int section, Qt::Orientation orientation, int 
 }
 
 
-bool OctDataModel::addFile(QString filename)
+bool OctFilesModel::addFile(QString filename)
 {
-	for(const OctSeriesItem* file : filelist)
+	for(const OctFileUnloaded* file : filelist)
 	{
 		if(file->sameFile(filename))
 			return false;
@@ -53,13 +53,13 @@ bool OctDataModel::addFile(QString filename)
 	int position = filelist.size();
 	
 	beginInsertRows(QModelIndex(), position, position);
-	filelist.push_back(new OctSeriesItem(filename));
+	filelist.push_back(new OctFileUnloaded(filename));
 	endInsertRows();
 	
 	return true;
 }
 
-void OctDataModel::slotClicked(QModelIndex index)
+void OctFilesModel::slotClicked(QModelIndex index)
 {
 	if(!index.isValid())
 		return;
@@ -68,11 +68,11 @@ void OctDataModel::slotClicked(QModelIndex index)
 	if(row >= filelist.size())
 		return;
 	
-	OctSeriesItem* file = filelist.at(row);
+	OctFileUnloaded* file = filelist.at(row);
 	MarkerDataManager::getInstance().openFile(file->getFilename());
 }
 
-void OctDataModel::slotDoubleClicked(QModelIndex index)
+void OctFilesModel::slotDoubleClicked(QModelIndex index)
 {
 	if(!index.isValid())
 		return;
@@ -81,7 +81,7 @@ void OctDataModel::slotDoubleClicked(QModelIndex index)
 	if(row >= filelist.size())
 		return;
 	
-	OctSeriesItem* file = filelist.at(row);
+	OctFileUnloaded* file = filelist.at(row);
 	
 	
 	qDebug("file doubleclicked: %s", file->getFilename().toStdString().c_str());

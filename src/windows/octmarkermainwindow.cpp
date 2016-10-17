@@ -19,7 +19,7 @@
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
 #include <manager/bscanmarkermanager.h>
-#include <manager/octfilesmanager.h>
+#include <model/octfilesmodel.h>
 #include <buildconstants.h>
 #include <model/octdatamodel.h>
 
@@ -483,7 +483,7 @@ bool OCTMarkerMainWindow::loadFile(const QString& filename)
 {
 	try
 	{
-		OctFilesManager::getInstance().loadOctData(filename);
+		OctFilesModel::getInstance().addFile(filename);
 		markerManager->loadImage(filename);
 		return true;
 	}

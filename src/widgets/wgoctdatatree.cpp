@@ -1,29 +1,33 @@
 #include "wgoctdatatree.h"
 
 #include <model/octdatamodel.h>
-#include <model/octdataitembase.h>
+#include <model/octfilesmodel.h>
 #include <QVBoxLayout>
-#include <QTreeView>
+#include <QListView>
 #include <QHeaderView>
 
 
 WGOctDataTree::WGOctDataTree()
-: viewTree(new QTreeView(this))
-, model(&OctDataModel::getInstance())
+: listviewFiles(new QListView(this))
+, modelFiles(&OctFilesModel::getInstance())
+, listviewOctData(new QListView(this))
+, modelOctData(&OctDataModel::getInstance())
 {
-	viewTree->setModel(model);
-	viewTree->setColumnWidth(0, 200);
-	viewTree->header()->close() ;
+	listviewFiles->setModel(modelFiles);
+	listviewOctData->setModel(modelOctData);
+// 	listview->setColumnWidth(0, 200);
+// 	listview->header()->close() ;
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	// layout->addWidget(label);
-	layout->addWidget(viewTree);
+	layout->addWidget(listviewFiles);
+	layout->addWidget(listviewOctData);
 
 
-	connect(viewTree, &QTreeView::clicked      , this, &WGOctDataTree::slotClicked      );
-	connect(viewTree, &QTreeView::doubleClicked, this, &WGOctDataTree::slotDoubleClicked);
-	connect(viewTree, &QTreeView::activated    , this, &WGOctDataTree::slotClicked      );
-//	connect(viewTree, SIGNAL((QModelIndex)), this, SLOT(slotCliced(QModelIndex)));
+	connect(listviewFiles, &QListView::clicked      , modelFiles, &OctFilesModel::slotClicked      );
+	connect(listviewFiles, &QListView::doubleClicked, modelFiles, &OctFilesModel::slotDoubleClicked);
+	connect(listviewFiles, &QListView::activated    , modelFiles, &OctFilesModel::slotClicked      );
+//	connect(listview, SIGNAL((QModelIndex)), this, SLOT(slotCliced(QModelIndex)));
 
 	//viewTree->header()->setVisible(true);
 
@@ -32,22 +36,3 @@ WGOctDataTree::WGOctDataTree()
 	// viewTree->setFrameStyle(QFrame::NoFrame);
 }
 
-
-void WGOctDataTree::slotClicked(QModelIndex index)
-{
-	if(index.isValid())
-	{
-		OctDataItemBase* item = static_cast<OctDataItemBase*>(index.internalPointer());
-		if(item)
-			item->itemClicked();
-	}
-}
-void WGOctDataTree::slotDoubleClicked(QModelIndex index)
-{
-	if(index.isValid())
-	{
-		OctDataItemBase* item = static_cast<OctDataItemBase*>(index.internalPointer());
-		if(item)
-			item->itemDoubleClicked();
-	}
-}

@@ -1,5 +1,5 @@
-#ifndef OCTDATAMODEL_H
-#define OCTDATAMODEL_H
+#pragma once
+
 
 #include <QVariant>
 #include <QModelIndex>
@@ -8,28 +8,28 @@
 #include <vector>
 
 
-class OctSeriesItem
+class OctFileUnloaded
 {
 	QString filename;
 public:
-	OctSeriesItem(const QString& filename) : filename(filename)   { }
+	OctFileUnloaded(const QString& filename) : filename(filename)   { }
 	
 	const QString& getFilename()       const                        { return filename; }
 	bool sameFile(const QString& file) const                        { return filename == file; }
 };
 
 
-class OctDataModel : public QAbstractListModel
+class OctFilesModel : public QAbstractListModel
 {
 	Q_OBJECT
 
-	std::vector<OctSeriesItem*> filelist;
+	std::vector<OctFileUnloaded*> filelist;
 
-	OctDataModel();
-	virtual ~OctDataModel();
+	OctFilesModel();
+	virtual ~OctFilesModel();
 
 public:
-	static OctDataModel& getInstance()                              { static OctDataModel instance; return instance;}
+	static OctFilesModel& getInstance()                             { static OctFilesModel instance; return instance;}
 	
 	
 	int rowCount(const QModelIndex& /*parent*/ = QModelIndex()) const
@@ -46,6 +46,4 @@ public slots:
     void slotClicked(QModelIndex index);
     void slotDoubleClicked(QModelIndex index);
 };
-
-#endif // OCTDATAMODEL_H
 

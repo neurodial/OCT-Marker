@@ -21,16 +21,21 @@ namespace OctData
 class MarkerDataManager : public QObject
 {
 	Q_OBJECT
-//	std::vector<std::string> filenames;
-
+	
 	OctData::OCT* octData = nullptr;
 	QString actFilename;
+	
+	MarkerDataManager() = default;
 public:
 	~MarkerDataManager();
+	
+	static MarkerDataManager& getInstance()                         { static MarkerDataManager instance; return instance; }
 
 
 public slots:
 	void openFile(const QString& filename);
+	
+	void chooseSeries  (OctData::Series* );
 
 signals:
 	void octFileChanged(OctData::OCT*    );

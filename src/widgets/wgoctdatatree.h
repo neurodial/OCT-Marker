@@ -3,23 +3,23 @@
 
 #include <QWidget>
 
-class QTreeView;
+class QListView;
 class OctDataModel;
+class OctFilesModel;
 
 class WGOctDataTree : public QWidget
 {
 	Q_OBJECT
 
-	QTreeView* viewTree = nullptr;
-	OctDataModel* model = nullptr;
+	QListView*  listviewFiles = nullptr;
+	OctFilesModel* modelFiles = nullptr;
+	
+	QListView* listviewOctData = nullptr;
+	OctDataModel* modelOctData = nullptr;
 
 public:
 	WGOctDataTree();
 
-
-private slots:
-    void slotClicked(QModelIndex index);
-    void slotDoubleClicked(QModelIndex index);
 
 };
 
