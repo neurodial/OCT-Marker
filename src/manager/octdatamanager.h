@@ -1,5 +1,4 @@
-#ifndef MARKERDATAMANAGER_H
-#define MARKERDATAMANAGER_H
+#pragma once
 
 #include <QObject>
 
@@ -18,7 +17,7 @@ namespace OctData
 }
 
 
-class MarkerDataManager : public QObject
+class OctDataManager : public QObject
 {
 	Q_OBJECT
 	
@@ -29,17 +28,28 @@ class MarkerDataManager : public QObject
 	const OctData::Study*   actStudy   = nullptr;
 	const OctData::Series*  actSeries  = nullptr;
 	
-	MarkerDataManager() = default;
+	OctDataManager();
 public:
-	virtual ~MarkerDataManager();
+	enum class Fileformat { XML, Josn };
 	
-	static MarkerDataManager& getInstance()                         { static MarkerDataManager instance; return instance; }
+	virtual ~OctDataManager();
+	
+	static OctDataManager& getInstance()                            { static OctDataManager instance; return instance; }
+	
+	const QString& getLoadedFilename() const                        { return actFilename; }
 
+	const OctData::Series* getSeries() const                        { return actSeries;   }
 
 public slots:
 	void openFile(const QString& filename);
 	
 	void chooseSeries  (const OctData::Series* seriesReq);
+	
+	
+	virtual bool loadMarkers(QString filename, Fileformat format);
+	virtual bool addMarkers (QString filename, Fileformat format);
+	virtual void saveMarkers(QString filename, Fileformat format);
+	
 
 signals:
 	void octFileChanged(const OctData::OCT*    );
@@ -49,4 +59,4 @@ signals:
 
 };
 
-#endif // MARKERDATAMANAGER_H
+

@@ -4,7 +4,7 @@
 #include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/oct.h>
 
-#include <manager/markerdatamanager.h>
+#include <manager/octdatamanager.h>
 
 #include <QFormLayout>
 #include <QLabel>
@@ -36,14 +36,18 @@ namespace
 	{
 		if(!information.empty())
 		{
-			formlayout->addRow(labelText, new QLabel(QString::fromStdString(information)));
+			QLabel* label = new QLabel(QString::fromStdString(information));
+			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			formlayout->addRow(labelText, label);
 		}
 	}
 	void addInformation(QFormLayout* formlayout, const QString& labelText, const QString& information)
 	{
 		if(!information.isEmpty())
 		{
-			formlayout->addRow(labelText, new QLabel(information));
+			QLabel* label = new QLabel(information);
+			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			formlayout->addRow(labelText, label);
 		}
 	}
 }
@@ -54,7 +58,7 @@ DwOctInformations::DwOctInformations::DwOctInformations(QWidget* parent)
 {
 	setupUi(this);
 	
-	MarkerDataManager& dataManager = MarkerDataManager::getInstance();
+	OctDataManager& dataManager = OctDataManager::getInstance();
 	
 	patientInformations = new QFormLayout;
 	studyInformations   = new QFormLayout;
@@ -64,9 +68,9 @@ DwOctInformations::DwOctInformations::DwOctInformations(QWidget* parent)
 	groupBoxStudy  ->setLayout(studyInformations  );
 	groupBoxSeries ->setLayout(seriesInformations );
 		
-	connect(&dataManager, &MarkerDataManager::patientChanged, this, &DwOctInformations::setPatient);
-	connect(&dataManager, &MarkerDataManager::studyChanged  , this, &DwOctInformations::setStudy  );
-	connect(&dataManager, &MarkerDataManager::seriesChanged , this, &DwOctInformations::setSeries );
+	connect(&dataManager, &OctDataManager::patientChanged, this, &DwOctInformations::setPatient);
+	connect(&dataManager, &OctDataManager::studyChanged  , this, &DwOctInformations::setStudy  );
+	connect(&dataManager, &OctDataManager::seriesChanged , this, &DwOctInformations::setSeries );
 }
 
 
@@ -82,8 +86,8 @@ void DwOctInformations::setPatient(const OctData::Patient* patient)
 	
 	addInformation(patientInformations, tr("Surname"  ), patient->getSurname ());
 	addInformation(patientInformations, tr("Forename" ), patient->getForename());
-	addInformation(patientInformations, tr("Title"    ), patient->getTitle());
-	addInformation(patientInformations, tr("ID"       ), patient->getId());
+	addInformation(patientInformations, tr("Title"    ), patient->getTitle()   );
+	addInformation(patientInformations, tr("ID"       ), patient->getId()      );
 	
 	if(!patient->getBirthdate().isEmpty())
 		addInformation(patientInformations, tr("Birthdate"), patient->getBirthdate().str());
@@ -100,17 +104,48 @@ void DwOctInformations::setPatient(const OctData::Patient* patient)
 		case OctData::Patient::Sex::Unknown:
 			break;
 	}
-	addInformation(patientInformations, tr("Sex      "), sex);
+	addInformation(patientInformations, tr("Sex"      ), sex);
+	addInformation(patientInformations, tr("UID"      ), patient->getPatientUID());
 }
 
 
 void DwOctInformations::setStudy(const OctData::Study* study)
 {
-
+	clearQLayout(studyInformations);
+	
+	if(!study)
+		return;
+	
+	addInformation(studyInformations, tr("Operator"), study->getStudyOperator());
+	addInformation(studyInformations, tr("UID"     ), study->getStudyUID()     );
+	if(!study->getStudyDate().isEmpty())
+		addInformation(studyInformations, tr("Study date"), study->getStudyDate().str());
+	
 }
 
 
 void DwOctInformations::setSeries(const OctData::Series* series)
 {
-
+	clearQLayout(seriesInformations);
+	
+	if(!series)
+		return;
+	
+	addInformation(seriesInformations, tr("UID"     ), series->getSeriesUID()     );
+	addInformation(seriesInformations, tr("Ref. UID"), series->getRefSeriesUID()  );
+	
+	QString scanPos;
+	switch(series->getLaterality())
+	{
+		case OctData::Series::Laterality::OS:
+			scanPos = tr("OS");
+			break;
+		case OctData::Series::Laterality::OD:
+			scanPos = tr("OD");
+			break;
+		case OctData::Series::Laterality::undef:
+			break;
+	}
+	addInformation(seriesInformations, tr("Laterality"     ), scanPos     );
+	
 }

@@ -34,7 +34,7 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	std::vector<QAction*> markersActions;
 
-	void setActionToggel();
+	// void setActionToggel();
 	void configBscanChooser();
 
 	static void setMarkersFilters(QFileDialog& fd);

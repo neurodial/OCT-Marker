@@ -1,4 +1,4 @@
-#include "markerdatamanager.h"
+#include "octdatamanager.h"
 #include <data_structure/programoptions.h>
 
 #include <QString>
@@ -13,14 +13,21 @@
 #include <octdata/filereadoptions.h>
 
 
-MarkerDataManager::~MarkerDataManager()
+
+OctDataManager::OctDataManager()
+{
+}
+
+
+
+OctDataManager::~OctDataManager()
 {
 	delete octData;
 }
 
 
 
-void MarkerDataManager::openFile(const QString& filename)
+void OctDataManager::openFile(const QString& filename)
 {
 	OctData::OCT* oldOct = octData;
 	octData    = nullptr;
@@ -72,14 +79,14 @@ void MarkerDataManager::openFile(const QString& filename)
 	}
 	delete oldOct;
 
-	
-
-	emit(octFileChanged(octData));
+	emit(octFileChanged(octData   ));
 	emit(patientChanged(actPatient));
+	emit(studyChanged  (actStudy  ));
+	emit(seriesChanged (actSeries ));
 }
 
 
-void MarkerDataManager::chooseSeries(const OctData::Series* seriesReq)
+void OctDataManager::chooseSeries(const OctData::Series* seriesReq)
 {
 	qDebug("Series requested");
 	
@@ -123,4 +130,17 @@ void MarkerDataManager::chooseSeries(const OctData::Series* seriesReq)
 		}
 	}
 }
+
+bool OctDataManager::addMarkers(QString filename, OctDataManager::Fileformat format)
+{
+}
+
+bool OctDataManager::loadMarkers(QString filename, OctDataManager::Fileformat format)
+{
+}
+
+void OctDataManager::saveMarkers(QString filename, OctDataManager::Fileformat format)
+{
+}
+
 

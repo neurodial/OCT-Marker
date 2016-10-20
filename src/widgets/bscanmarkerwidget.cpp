@@ -1,6 +1,8 @@
 #include "bscanmarkerwidget.h"
 
 #include <manager/bscanmarkermanager.h>
+#include <manager/octdatamanager.h>
+
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
 
@@ -21,12 +23,14 @@ BScanMarkerWidget::BScanMarkerWidget(BScanMarkerManager& markerManger)
 : CVImageWidget()
 , markerManger(markerManger)
 {
+	
+	OctDataManager& octdataManager = OctDataManager::getInstance();
 
 	addZoomItems();
 
-	connect(&markerManger, &BScanMarkerManager::newCScanLoaded     , this, &BScanMarkerWidget::cscanLoaded         );
-	connect(&markerManger, &BScanMarkerManager::bscanChanged       , this, &BScanMarkerWidget::bscanChanged        );
-	connect(&markerManger, &BScanMarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
+	connect(&octdataManager, &OctDataManager::seriesChanged   , this, &BScanMarkerWidget::cscanLoaded         );
+	connect(&markerManger  , &BScanMarkerManager::bscanChanged, this, &BScanMarkerWidget::bscanChanged        );
+	//connect(&markerManger, &BScanMarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
 
 	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &BScanMarkerManager::inkrementBScan);
 
@@ -94,9 +98,15 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 {
 	CVImageWidget::paintEvent(event);
 
-	if(!markerManger.cscanLoaded())
+	
+	OctDataManager& octdataManager = OctDataManager::getInstance();
+	const OctData::Series* series = octdataManager.getSeries();
+	
+	if(!series)
 		return;
 
+	if(!actBscan)
+		return;
 
 	QPainter segPainter(this);
 	QPen pen;
@@ -108,12 +118,21 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 	if(ProgramOptions::bscansShowSegmentationslines())
 	{
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::BM ), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::NFL), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM  ), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::BM   ), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::NFL  ), scaleFactor);
+		
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I3T1 ), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I4T1 ), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I5T1 ), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I6T1 ), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I8T3 ), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I14T1), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I15T1), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I16T1), scaleFactor);
 	}
 
-
+/*
 	QPainter painter(this);
 
 	for(const BScanMarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers())
@@ -147,6 +166,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	}
 
 	painter.end();
+	*/
 }
 
 bool BScanMarkerWidget::existsRaw() const
@@ -186,8 +206,11 @@ void BScanMarkerWidget::updateRawExport()
 
 void BScanMarkerWidget::bscanChanged(int bscanNR)
 {
-	const OctData::Series& series = markerManger.getSeries();
-	actBscan = series.getBScan(bscanNR);
+	const OctData::Series* series = OctDataManager::getInstance().getSeries();
+	if(!series)
+		return;
+	
+	actBscan = series->getBScan(bscanNR);
 	
 	updateRawExport();
 	if(actBscan)
@@ -231,18 +254,21 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	QWidget::mouseMoveEvent(event);
 	
+	/*
 	mouseInWidget = true;
 	// if(markerActiv)
 	{
 		mousePos = event->pos();
 		update();
 	}
+	*/
 }
 
 void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 {
 	QWidget::mousePressEvent(event);
 
+	/*
 	if(event->button() == Qt::LeftButton)
 	{
 		clickPos = event->pos();
@@ -251,12 +277,14 @@ void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 	}
 	else
 		markerActiv = false;
-		
+	*/
 }
 
 void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 {
 	QWidget::mouseReleaseEvent(event);
+	
+	/*
 	double scaleFactor = getImageScaleFactor();
 
 	switch(markerManger.getMarkerMethod())
@@ -276,6 +304,7 @@ void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 	
 	markerActiv = false;
 	repaint();
+	*/
 }
 
 void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
@@ -284,21 +313,24 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 	
 	switch(e->key())
 	{
-		case Qt::Key_Escape:
-			markerActiv = false;
-			repaint();
-			break;
 		case Qt::Key_Left:
 			emit(bscanChangeInkrement(-1));
 			break;
 		case Qt::Key_Right:
 			emit(bscanChangeInkrement( 1));
 			break;
+		default:
+			// TODO: weiterleiten an marker
+			break;
+// 		case Qt::Key_Escape:
+// 			markerActiv = false;
+// 			repaint();
+// 			break;
 	}
 	
 }
 
-
+/*
 void BScanMarkerWidget::markersMethodChanged()
 {
 	switch(markerManger.getMarkerMethod())
@@ -312,6 +344,7 @@ void BScanMarkerWidget::markersMethodChanged()
 	}
 	update();
 }
+*/
 
 void BScanMarkerWidget::saveRawImage()
 {

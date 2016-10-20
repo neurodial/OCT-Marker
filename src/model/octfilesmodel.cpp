@@ -1,6 +1,6 @@
 #include "octfilesmodel.h"
 
-#include <manager/markerdatamanager.h>
+#include <manager/octdatamanager.h>
 
 
 OctFilesModel::OctFilesModel()
@@ -69,7 +69,7 @@ void OctFilesModel::slotClicked(QModelIndex index)
 		return;
 	
 	OctFileUnloaded* file = filelist.at(row);
-	MarkerDataManager::getInstance().openFile(file->getFilename());
+	OctDataManager::getInstance().openFile(file->getFilename());
 }
 
 void OctFilesModel::slotDoubleClicked(QModelIndex index)

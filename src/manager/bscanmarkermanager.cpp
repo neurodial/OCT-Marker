@@ -1,4 +1,5 @@
 #include "bscanmarkermanager.h"
+
 #include <octxmlread/markersreadwrite.h>
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
@@ -16,22 +17,24 @@
 #include <QMessageBox>
 
 #include <QTime>
+#include "octdatamanager.h"
 
 BScanMarkerManager::BScanMarkerManager()
 : QObject()
-, series(new OctData::Series)
 {
+	
+	OctDataManager& dataManager = OctDataManager::getInstance();
+	connect(&dataManager, &OctDataManager::seriesChanged , this, &BScanMarkerManager::showSeries);
 
 }
 
 
 BScanMarkerManager::~BScanMarkerManager()
 {
-	saveMarkerDefault();
-
-	delete oct;
+//	saveMarkerDefault();
 }
 
+/*
 void BScanMarkerManager::saveMarkerDefault()
 {
 	if(!xmlFilename.isEmpty() && dataChanged)
@@ -44,7 +47,7 @@ void BScanMarkerManager::loadMarkerDefault()
 		loadMarkers(xmlFilename+"_markes.xml", Fileformat::XML);
 	dataChanged = false;
 }
-
+*/
 
 
 
@@ -62,61 +65,7 @@ void BScanMarkerManager::chooseBScan(int bscan)
 	emit(bscanChanged(actBScan));
 }
 
-
-void BScanMarkerManager::loadImage(QString filename)
-{
-	saveMarkerDefault();
-
-	OctData::Series* oldSeries = series;
-	OctData::OCT*    oldOct    = oct;
-	series = nullptr;
-	oct    = nullptr;
-
-	try
-	{
-		QTime t;
-		t.start();
-
-		OctData::FileReadOptions octOptions;
-		octOptions.e2eGray             = static_cast<OctData::FileReadOptions::E2eGrayTransform>(ProgramOptions::e2eGrayTransform());
-		octOptions.registerBScanns     = ProgramOptions::registerBScans();
-		octOptions.fillEmptyPixelWhite = ProgramOptions::fillEmptyPixelWhite();
-		octOptions.rotateSlo           = ProgramOptions::loadRotateSlo();
-
-		qDebug("Lese: %s", filename.toStdString().c_str());
-		oct = new OctData::OCT(OctData::OctFileRead::openFile(filename.toStdString(), octOptions));
-		qDebug("Dauer: %d ms", t.elapsed());
-
-		// TODO: bessere Datenverwertung / Fehlerbehandlung
-		if(oct->size() == 0)
-			throw "BScanMarkerManager::loadImage: oct->size() == 0";
-		OctData::Patient* patient = oct->begin()->second;
-		if(patient->size() == 0)
-			throw "BScanMarkerManager::loadImage: patient->size() == 0";
-		OctData::Study* study = patient->begin()->second;
-		if(study->size() == 0)
-			throw "BScanMarkerManager::loadImage: study->size() == 0";
-		series = study->begin()->second;
-		
-		xmlFilename = filename;
-		ProgramOptions::loadOctdataAtStart.setValue(filename);
-	}
-	catch(...)
-	{
-		delete oct;
-		oct    = oldOct;
-		series = oldSeries;
-		throw;
-	}
-	delete oldOct;
-
-	actBScan = 0;
-
-	loadMarkerDefault();
-	
-	emit(newCScanLoaded());
-}
-
+/*
 void BScanMarkerManager::initMarkerMap()
 {
 	std::size_t numBscans = series->bscanCount();
@@ -133,6 +82,8 @@ void BScanMarkerManager::initMarkerMap()
 
 bool BScanMarkerManager::cscanLoaded() const
 {
+	if(!series)
+		return false;
 	return series->bscanCount() > 0;
 }
 
@@ -249,3 +200,15 @@ void BScanMarkerManager::saveMarkers(QString filename, Fileformat format)
 			break;
 	}
 }
+*/
+
+void BScanMarkerManager::showSeries(const OctData::Series* s)
+{
+	series = s;
+	
+	actBScan = 0;
+
+	// loadMarkerDefault();
+	// emit(newCScanLoaded());
+}
+

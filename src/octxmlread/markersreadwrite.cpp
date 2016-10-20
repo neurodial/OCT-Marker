@@ -20,6 +20,7 @@ namespace bfs = boost::filesystem;
 
 namespace
 {
+	/*
 	bool parsePTree(const bpt::ptree& ptree, BScanMarkerManager* markerManager)
 	{
 		const char* bscansNodeStr = "OCT";
@@ -71,8 +72,11 @@ namespace
 
 	void fillPTree(bpt::ptree& markerTree, const BScanMarkerManager* markerManager)
 	{
+		const OctData::Series* serie = markerManager->getSeries();
+		if(!serie)
+			return;
 
-		int numBscans = markerManager->getSeries().bscanCount();
+		int numBscans = serie->bscanCount();
 		for(int bscan = 0; bscan < numBscans; ++bscan)
 		{
 			std::string nodeName = "OCT.BScan";
@@ -100,10 +104,12 @@ namespace
 			}
 		}
 	}
+	*/
 }
 
 bool MarkersReadWrite::readXML(BScanMarkerManager* markerManger, std::string filename)
 {
+	/*
 	if(!markerManger)
 		return false;
 	
@@ -114,10 +120,13 @@ bool MarkersReadWrite::readXML(BScanMarkerManager* markerManger, std::string fil
 	bpt::read_xml(filename, xmltree);
 	
 	return parsePTree(xmltree, markerManger);
+	*/
+	return false;
 }
 
 bool MarkersReadWrite::readJosn(BScanMarkerManager* markerManger, std::string filename)
 {
+	/*
 	if(!markerManger)
 		return false;
 
@@ -128,10 +137,13 @@ bool MarkersReadWrite::readJosn(BScanMarkerManager* markerManger, std::string fi
 	bpt::read_json(filename, xmltree);
 
 	return parsePTree(xmltree, markerManger);
+	*/
+	return false;
 }
 
 void MarkersReadWrite::writeJosn(BScanMarkerManager* markerManger, std::string filename)
 {
+	/*
 	if(!markerManger)
 		return;
 
@@ -139,11 +151,13 @@ void MarkersReadWrite::writeJosn(BScanMarkerManager* markerManger, std::string f
 	fillPTree(xmltree, markerManger);
 
 	bpt::write_json(filename, xmltree);
+	*/
 }
 
 
 void MarkersReadWrite::writeXML(BScanMarkerManager* markerManger, std::string filename)
 {
+	/*
 	if(!markerManger)
 		return;
 	
@@ -159,5 +173,6 @@ void MarkersReadWrite::writeXML(BScanMarkerManager* markerManger, std::string fi
 // #else
 	bpt::write_xml(filename, xmltree, std::locale(), bpt::xml_writer_make_settings<bpt::ptree::key_type>('\t', 1u));
 // #endif
+*/
 }
 

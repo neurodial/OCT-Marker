@@ -9,6 +9,7 @@
 #include <octdata/datastruct/bscan.h>
 
 #include <manager/bscanmarkermanager.h>
+#include <manager/octdatamanager.h>
 
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
@@ -22,8 +23,9 @@ SLOImageWidget::SLOImageWidget(BScanMarkerManager& markerManger)
 : markerManger(markerManger)
 , drawBScans(ProgramOptions::sloShowBscans())
 {
-	connect(&markerManger, SIGNAL(newCScanLoaded()), this, SLOT(reladSLOImage()));
-	connect(&markerManger, SIGNAL(bscanChanged(int)), this, SLOT(bscanChanged(int)));
+	OctDataManager& octDataManager = OctDataManager::getInstance();
+	connect(&octDataManager, &OctDataManager::seriesChanged   , this, &SLOImageWidget::reladSLOImage);
+	connect(&markerManger  , &BScanMarkerManager::bscanChanged, this, &SLOImageWidget::bscanChanged );
 
 	setMinimumSize(150,150);
 	setFocusPolicy(Qt::StrongFocus);
@@ -83,10 +85,13 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	activBscan.setColor(QColor(255,0,0));
 
 	int activBScan                          = markerManger.getActBScan();
-	const OctData::Series& series           = markerManger.getSeries();
-	const OctData::Series::BScanList bscans = series.getBScans();
+	const OctData::Series* series           = OctDataManager::getInstance().getSeries();
+	if(!series)
+		return;
+	
+	const OctData::Series::BScanList bscans = series->getBScans();
 
-	const OctData::SloImage& sloImage = series.getSloImage();
+	const OctData::SloImage& sloImage = series->getSloImage();
 
 	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
 	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
@@ -151,6 +156,7 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bsc
 	QPen pen;
 	pen.setWidth(3);
 
+	/*
 	if(paintMarker)
 	{
 		for(const BScanMarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers(bscanNr))
@@ -175,13 +181,16 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bsc
 			}
 		}
 	}
+	*/
 }
 
 
 void SLOImageWidget::reladSLOImage()
 {
-	const OctData::Series& series = markerManger.getSeries();
-	const OctData::SloImage& sloImage = series.getSloImage();
+	const OctData::Series* series = OctDataManager::getInstance().getSeries();
+	if(!series)
+		return;
+	const OctData::SloImage& sloImage = series->getSloImage();
 	//if(sloImage)
 		showImage(sloImage.getImage());
 

@@ -16,24 +16,28 @@
 #include <widgets/dwsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
 #include <widgets/wgoctdatatree.h>
+#include <widgets/dwoctinformations.h>
+
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
+
 #include <manager/bscanmarkermanager.h>
+#include <manager/octdatamanager.h>
+
 #include <model/octfilesmodel.h>
-#include <buildconstants.h>
 #include <model/octdatamodel.h>
 
 #include <octdata/datastruct/sloimage.h>
 #include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/series.h>
 
-#include <widgets/dwoctinformations.h>
 
 #include <octdata/filereadoptions.h>
 
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
+#include <buildconstants.h>
 
 #include <boost/algorithm/string/join.hpp>
 
@@ -42,15 +46,6 @@
 #include <cpp_framework/cvmat/treestructbin.h>
 
 
-namespace
-{
-	QIcon createColorIcon(const QColor& color)
-	{
-		QPixmap pixmap(15, 15);
-		pixmap.fill(color);
-		return QIcon(pixmap);
-	}
-}
 
 
 OCTMarkerMainWindow::OCTMarkerMainWindow()
@@ -67,7 +62,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	setCentralWidget(bscanMarkerWidget);
 
 	setupMenu();
-	createMarkerToolbar();
+	// createMarkerToolbar();
 	// DockWidgets
 	dwSloImage->setObjectName("DWSloImage");
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
@@ -85,11 +80,10 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 
 	// General Config
 	setWindowIcon(QIcon(":/icons/image_edit.png"));
-	setActionToggel();
+	// setActionToggel();
 	setAcceptDrops(true);
 
-
-	connect(markerManager, SIGNAL(newCScanLoaded()), this, SLOT(newCscanLoaded()));
+	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged   , this, &OCTMarkerMainWindow::newCscanLoaded);
 
 	if(!ProgramOptions::loadOctdataAtStart().isEmpty())
 		loadFile(ProgramOptions::loadOctdataAtStart());
@@ -279,6 +273,7 @@ void OCTMarkerMainWindow::setupMenu()
 	addToolBar(toolBar);
 }
 
+/*
 void OCTMarkerMainWindow::createMarkerToolbar()
 {
 	QActionGroup*  actionGroupMarker  = new QActionGroup (this);
@@ -363,6 +358,7 @@ void OCTMarkerMainWindow::setActionToggel()
 			qDebug("Undefined Action in %s %d", __FILE__, __LINE__);
 	}
 }
+*/
 
 
 void OCTMarkerMainWindow::showAboutDialog()
@@ -489,7 +485,6 @@ bool OCTMarkerMainWindow::loadFile(const QString& filename)
 	try
 	{
 		OctFilesModel::getInstance().addFile(filename);
-		markerManager->loadImage(filename);
 		return true;
 	}
 	catch(boost::exception& e)
@@ -536,7 +531,7 @@ void OCTMarkerMainWindow::showAddMarkersDialog()
 	if(fd.exec())
 	{
 		QStringList filenames = fd.selectedFiles();
-		markerManager->addMarkers(filenames[0], BScanMarkerManager::Fileformat::XML);
+		OctDataManager::getInstance().addMarkers(filenames[0], OctDataManager::Fileformat::XML);
 	}
 }
 
@@ -548,15 +543,15 @@ void OCTMarkerMainWindow::setMarkersStringList(QStringList& filters)
 
 namespace
 {
-	BScanMarkerManager::Fileformat getMarkerFileFormat(const QString& filter)
+	OctDataManager::Fileformat getMarkerFileFormat(const QString& filter)
 	{
 		QStringList filters;
 		OCTMarkerMainWindow::setMarkersStringList(filters);
 		int index = filters.indexOf(filter);
 		if(index == 0)
-			return BScanMarkerManager::Fileformat::Josn;
+			return OctDataManager::Fileformat::Josn;
 		if(index == 1)
-			return BScanMarkerManager::Fileformat::XML;
+			return OctDataManager::Fileformat::XML;
 
 		throw "unknown filtername";
 	}
@@ -583,7 +578,7 @@ void OCTMarkerMainWindow::showLoadMarkersDialog()
 	if(fd.exec())
 	{
 		QStringList filenames = fd.selectedFiles();
-		markerManager->loadMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
+		OctDataManager::getInstance().loadMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
 	}
 }
 
@@ -599,19 +594,24 @@ void OCTMarkerMainWindow::showSaveMarkersDialog()
 	if(fd.exec())
 	{
 		QStringList filenames = fd.selectedFiles();
-		markerManager->saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
+		OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
 	}
 }
 
 void OCTMarkerMainWindow::newCscanLoaded()
 {
-	setWindowTitle(tr("OCT-Marker - %1").arg(markerManager->getFilename()));
+	setWindowTitle(tr("OCT-Marker - %1").arg(OctDataManager::getInstance().getLoadedFilename()));
 	configBscanChooser();
 }
 
 void OCTMarkerMainWindow::configBscanChooser()
 {
-	int maxBscan = markerManager->getSeries().bscanCount()-1;
+	const OctData::Series* series = OctDataManager::getInstance().getSeries();
+	
+	int maxBscan = 0;
+	if(series)
+		maxBscan = series->bscanCount()-1;
+	
 	bscanChooser->setMaximum(maxBscan);
 	bscanChooser->setValue(markerManager->getActBScan());
 
@@ -628,12 +628,15 @@ void OCTMarkerMainWindow::saveMatlabBinCode()
 
 void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
 {
+	ProgramOptions::loadOctdataAtStart.setValue(OctDataManager::getInstance().getLoadedFilename());
+	
 	ProgramOptions::writeAllOptions();
 
 	QSettings& settings = ProgramOptions::getSettings();
+	
 
 	settings.setValue("mainWindowGeometry", saveGeometry());
-	settings.setValue("mainWindowState", saveState());
+	settings.setValue("mainWindowState"   , saveState()   );
 
 	QWidget::closeEvent(e);
 }

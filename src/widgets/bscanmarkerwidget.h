@@ -55,7 +55,7 @@ private slots:
 
 	void viewOptionsChangedSlot();
 
-	void markersMethodChanged();
+	// void markersMethodChanged();
 	
 
 public slots:

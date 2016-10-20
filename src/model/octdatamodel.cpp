@@ -1,6 +1,6 @@
 #include "octdatamodel.h"
 
-#include <manager/markerdatamanager.h>
+#include <manager/octdatamanager.h>
 
 
 #include <octdata/datastruct/series.h>
@@ -10,7 +10,7 @@
 
 OctDataModel::OctDataModel()
 {
-	connect(&MarkerDataManager::getInstance(), &MarkerDataManager::octFileChanged, this, &OctDataModel::setOctData);
+	connect(&OctDataManager::getInstance(), &OctDataManager::octFileChanged, this, &OctDataModel::setOctData);
 }
 
 
@@ -93,7 +93,7 @@ void OctDataModel::slotClicked(QModelIndex index)
 		return;
 	
 	OctSeriesItem* octItem = octSeriesList.at(row);
-	MarkerDataManager::getInstance().chooseSeries(octItem->getSeries());
+	OctDataManager::getInstance().chooseSeries(octItem->getSeries());
 }
 
 void OctDataModel::slotDoubleClicked(QModelIndex index)
