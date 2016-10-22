@@ -14,12 +14,12 @@ class BScanMarkerManager;
 class BScanMarkerWidget : public CVImageWidget
 {
 	Q_OBJECT
-
+/*
 	QPoint clickPos;
 	QPoint mousePos;
 
 	bool markerActiv = false;
-	bool mouseInWidget = false;
+	bool mouseInWidget = false;*/
 
 	BScanMarkerManager& markerManger;
 	

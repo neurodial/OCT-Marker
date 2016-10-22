@@ -23,6 +23,7 @@
 
 #include <manager/bscanmarkermanager.h>
 #include <manager/octdatamanager.h>
+#include <manager/bscanmarker/bscanmarkerbase.h>
 
 #include <model/octfilesmodel.h>
 #include <model/octdatamodel.h>
@@ -87,6 +88,13 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 
 	if(!ProgramOptions::loadOctdataAtStart().isEmpty())
 		loadFile(ProgramOptions::loadOctdataAtStart());
+	
+	for(BscanMarkerBase* marker : markerManager->getMarker())
+	{
+		QToolBar* toolbar = marker->createToolbar(this);
+		if(toolbar)
+			addToolBar(toolbar);
+	}
 
 	restoreState(settings.value("mainWindowState").toByteArray());
 }

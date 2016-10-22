@@ -2,16 +2,15 @@
 #define MARKERMANAGER_H
 
 #include <QObject>
-#include <boost/icl/interval_map.hpp>
-#include <data_structure/intervallmarker.h>
+#include <vector>
 
-namespace OctData { class Series; class OCT; }
+namespace OctData { class Series; }
+
+class BscanMarkerBase;
 
 class BScanMarkerManager : public QObject
 {
 public:
-	typedef IntervallMarker::Marker Marker;
-	typedef boost::icl::interval_map<int, Marker, boost::icl::partial_enricher> MarkerMap;
 
 //	enum class Method { Paint, Fill };
 //	enum class Fileformat { XML, Josn };
@@ -21,31 +20,30 @@ public:
 
 	int getActBScan() const                                     { return actBScan; }
 
-//	const OctData::Series* getSeries() const                    { return series;   }
+	const OctData::Series* getSeries() const                    { return series;   }
 
-// 	const MarkerMap& getMarkers() const                         { return markers.at(actBScan); }
-// 	const MarkerMap& getMarkers(int bscan) const                { return markers.at(bscan); }
 
-// 	void setMarker(int x1, int x2)                              { setMarker(x1, x2, aktMarker, actBScan); }
-// 	void setMarker(int x1, int x2, const Marker& type)          { setMarker(x1, x2, type     , actBScan); }
-// 	void setMarker(int x1, int x2, const Marker& type, int bscan);
-// 
-// 	void fillMarker(int x)                                      { fillMarker(x, aktMarker); }
-// 	void fillMarker(int x, const Marker& type);
+
 
 //	bool cscanLoaded() const;
 	
 	// const QString& getFilename() const                          { return xmlFilename; }
 	
-//	const Marker& getActMarker() const                          { return aktMarker; }
 
 //	Method getMarkerMethod() const                              { return markerMethod; }
+
+	BscanMarkerBase* getActMarker()                                 { return actMarker; }
+	
+	const std::vector<BscanMarkerBase*>& getMarker() const          { return markerObj; }
 
 
 private:
 	int                    actBScan = 0;
 	const OctData::Series* series   = nullptr;
-	// OctData::OCT*    oct    = nullptr;
+	
+	std::vector<BscanMarkerBase*> markerObj;
+	BscanMarkerBase* actMarker = nullptr;
+	
 	// Marker           aktMarker;
 // 	bool             dataChanged = false;
 // 
@@ -65,9 +63,6 @@ public slots:
 
 	virtual void nextBScan()                                    { inkrementBScan(+1); }
 	virtual void previousBScan()                                { inkrementBScan(-1); }
-/*
-	virtual void chooseMarkerID(int id)                         { aktMarker = IntervallMarker::getInstance().getMarkerFromID(id); }
-	virtual void chooseMethodID(int id)                         { markerMethod = static_cast<Method>(id); emit(markerMethodChanged(markerMethod)); }*/
 
 	// virtual void loadImage(QString filename);
 	virtual void showSeries(const OctData::Series* series);
@@ -75,12 +70,15 @@ public slots:
 // 	virtual bool loadMarkers(QString filename, Fileformat format);
 // 	virtual bool addMarkers (QString filename, Fileformat format);
 // 	virtual void saveMarkers(QString filename, Fileformat format);
+	
+	virtual void setMarker(int id);
 
 signals:
 	void bscanChanged(int bscan);
 // 	void newCScanLoaded();
 // 
 // 	void markerMethodChanged(Method);
+	void newSeriesShowed(const OctData::Series* series);
 private:
 	Q_OBJECT
 };

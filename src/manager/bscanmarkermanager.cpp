@@ -19,6 +19,9 @@
 #include <QTime>
 #include "octdatamanager.h"
 
+#include <manager/bscanmarker/bscanmarkerbase.h>
+#include <manager/bscanmarker/bscanintervallmarker.h>
+
 BScanMarkerManager::BScanMarkerManager()
 : QObject()
 {
@@ -26,11 +29,17 @@ BScanMarkerManager::BScanMarkerManager()
 	OctDataManager& dataManager = OctDataManager::getInstance();
 	connect(&dataManager, &OctDataManager::seriesChanged , this, &BScanMarkerManager::showSeries);
 
+	markerObj.push_back(new BScanIntervallMarker(this));
+	
+	
+	actMarker = markerObj.front();
 }
 
 
 BScanMarkerManager::~BScanMarkerManager()
 {
+	for(BscanMarkerBase* obj : markerObj)
+		delete obj;
 //	saveMarkerDefault();
 }
 
@@ -85,34 +94,6 @@ bool BScanMarkerManager::cscanLoaded() const
 	if(!series)
 		return false;
 	return series->bscanCount() > 0;
-}
-
-void BScanMarkerManager::setMarker(int x1, int x2, const Marker& type, int bscan)
-{
-	if(!cscanLoaded())
-		return;
-	
-	if(bscan<0 || bscan >= static_cast<int>(series->bscanCount()))
-		return;
-
-// 	printf("BScanMarkerManager::setMarker(%d, %d, %d)", x1, x2, type);
-// 	std::cout << std::endl;
-
-	if(x2 < x1)
-		std::swap(x1, x2);
-
-	int maxWidth = series->getBScan(bscan)->getWidth();
-
-	if(x2 < 0 || x1 > maxWidth)
-		return;
-
-	if(x1 < 0)
-		x1 = 0;
-	if(x2 >= maxWidth)
-		x2 = maxWidth - 1;
-
-	markers.at(bscan).set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
-	dataChanged = true;
 }
 
 void BScanMarkerManager::fillMarker(int x, const Marker& type)
@@ -209,6 +190,17 @@ void BScanMarkerManager::showSeries(const OctData::Series* s)
 	actBScan = 0;
 
 	// loadMarkerDefault();
-	// emit(newCScanLoaded());
+	
+	emit(newSeriesShowed(s));
 }
+
+
+void BScanMarkerManager::setMarker(int id)
+{
+	if(id < 0 || id >= markerObj.size())
+		actMarker = nullptr;
+	else
+		actMarker = markerObj.at(id);
+}
+
 

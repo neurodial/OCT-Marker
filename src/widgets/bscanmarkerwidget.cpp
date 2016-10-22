@@ -3,6 +3,8 @@
 #include <manager/bscanmarkermanager.h>
 #include <manager/octdatamanager.h>
 
+#include <manager/bscanmarker/bscanmarkerbase.h>
+
 #include <data_structure/intervallmarker.h>
 #include <data_structure/programoptions.h>
 
@@ -131,9 +133,15 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I15T1), scaleFactor);
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::BScan::SegmentlineType::I16T1), scaleFactor);
 	}
+	
+	
+	QPainter painter(this);
+	
+	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	if(actMarker)
+		actMarker->drawMarker(painter, this);
 
 /*
-	QPainter painter(this);
 
 	for(const BScanMarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers())
 	{
@@ -165,8 +173,8 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 		}
 	}
 
-	painter.end();
 	*/
+	painter.end();
 }
 
 bool BScanMarkerWidget::existsRaw() const
@@ -223,8 +231,6 @@ void BScanMarkerWidget::leaveEvent(QEvent* e)
 {
 	QWidget::leaveEvent(e);
 
-	mouseInWidget = false;
-	update();
 }
 
 
@@ -254,57 +260,34 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	QWidget::mouseMoveEvent(event);
 	
-	/*
-	mouseInWidget = true;
-	// if(markerActiv)
-	{
-		mousePos = event->pos();
-		update();
-	}
-	*/
+	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	if(actMarker)
+		if(actMarker->mouseMoveEvent(event, this))
+			update();
+
 }
 
 void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 {
 	QWidget::mousePressEvent(event);
 
-	/*
-	if(event->button() == Qt::LeftButton)
-	{
-		clickPos = event->pos();
-		mousePos = event->pos();
-		markerActiv = true;
-	}
-	else
-		markerActiv = false;
-	*/
+	
+	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	if(actMarker)
+		if(actMarker->mousePressEvent(event, this))
+			update();
+	
 }
 
 void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 {
 	QWidget::mouseReleaseEvent(event);
 	
-	/*
-	double scaleFactor = getImageScaleFactor();
-
-	switch(markerManger.getMarkerMethod())
-	{
-		case BScanMarkerManager::Method::Paint:
-			if(clickPos.x() != event->x() && markerActiv)
-			{
-				// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
-				markerManger.setMarker(clickPos.x()/scaleFactor, event->x()/scaleFactor);
-			}
-			break;
-		case BScanMarkerManager::Method::Fill:
-			if(markerActiv)
-				markerManger.fillMarker(clickPos.x()/scaleFactor);
-			break;
-	}
+	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	if(actMarker)
+		if(actMarker->mouseReleaseEvent(event, this))
+			update();
 	
-	markerActiv = false;
-	repaint();
-	*/
 }
 
 void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
@@ -320,12 +303,12 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 			emit(bscanChangeInkrement( 1));
 			break;
 		default:
+			BscanMarkerBase* actMarker = markerManger.getActMarker();
+			if(actMarker)
+				if(actMarker->keyPressEvent(e, this))
+					update();
 			// TODO: weiterleiten an marker
 			break;
-// 		case Qt::Key_Escape:
-// 			markerActiv = false;
-// 			repaint();
-// 			break;
 	}
 	
 }

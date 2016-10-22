@@ -56,6 +56,8 @@ bool OctFilesModel::addFile(QString filename)
 	filelist.push_back(new OctFileUnloaded(filename));
 	endInsertRows();
 	
+	OctDataManager::getInstance().openFile(filename);
+	
 	return true;
 }
 
