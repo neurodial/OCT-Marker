@@ -227,10 +227,14 @@ void BScanMarkerWidget::bscanChanged(int bscanNR)
 		update();
 }
 
-void BScanMarkerWidget::leaveEvent(QEvent* e)
+void BScanMarkerWidget::leaveEvent(QEvent* event)
 {
-	QWidget::leaveEvent(e);
+	QWidget::leaveEvent(event);
 
+	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	if(actMarker)
+		if(actMarker->leaveWidgetEvent(event, this))
+			update();
 }
 
 

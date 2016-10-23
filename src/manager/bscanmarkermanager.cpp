@@ -21,6 +21,7 @@
 
 #include <manager/bscanmarker/bscanmarkerbase.h>
 #include <manager/bscanmarker/bscanintervallmarker.h>
+#include <manager/bscanmarker/bscansegmentation.h>
 
 BScanMarkerManager::BScanMarkerManager()
 : QObject()
@@ -29,6 +30,7 @@ BScanMarkerManager::BScanMarkerManager()
 	OctDataManager& dataManager = OctDataManager::getInstance();
 	connect(&dataManager, &OctDataManager::seriesChanged , this, &BScanMarkerManager::showSeries);
 
+	markerObj.push_back(new BScanSegmentation(this));
 	markerObj.push_back(new BScanIntervallMarker(this));
 	
 	

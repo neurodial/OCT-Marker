@@ -48,7 +48,7 @@ QToolBar* BScanIntervallMarker::createToolbar(QObject* parent)
 	QSignalMapper* signalMapperMethod = new QSignalMapper(parent);
 	QToolBar*      toolBar            = new QToolBar(tr("Marker"));
 
-	toolBar->setObjectName(tr("ToolBarMarker"));
+	toolBar->setObjectName(tr("ToolBarIntervallMarker"));
 
 	const IntervallMarker& intervallMarker = IntervallMarker::getInstance();
 

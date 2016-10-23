@@ -9,7 +9,6 @@
 
 #include <QPoint>
 
-class QToolBar;
 class QAction;
 
 class BScanMarkerManager;
