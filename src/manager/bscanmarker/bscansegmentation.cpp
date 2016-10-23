@@ -39,6 +39,8 @@ namespace
 BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 {
+	name = tr("Segmentation marker");
+	
 	connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanSegmentation::newSeriesLoaded);
 }
 

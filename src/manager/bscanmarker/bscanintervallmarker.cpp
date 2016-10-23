@@ -35,6 +35,8 @@ namespace
 BScanIntervallMarker::BScanIntervallMarker(BScanMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 {
+	name = tr("Intervall marker");
+	
 	connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanIntervallMarker::newSeriesLoaded);
 }
 
@@ -62,8 +64,8 @@ QToolBar* BScanIntervallMarker::createToolbar(QObject* parent)
 		markerAction->setCheckable(true);
 		markerAction->setText(QString::fromStdString(marker.getName()));
 		markerAction->setIcon(icon);
-		connect(markerAction, SIGNAL(triggered()), signalMapperMarker, SLOT(map()));
-		signalMapperMarker->setMapping(markerAction, marker.getInternalId()) ;
+		connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
+		signalMapperMarker->setMapping(markerAction, marker.getInternalId());
 
 		actionGroupMarker->addAction(markerAction);
 		toolBar->addAction(markerAction);
@@ -81,7 +83,7 @@ QToolBar* BScanIntervallMarker::createToolbar(QObject* parent)
 	paintMarkerAction->setText(tr("paint marker"));
 	paintMarkerAction->setIcon(QIcon(":/icons/paintbrush.png"));
 	paintMarkerAction->setShortcut(Qt::LeftArrow);
-	connect(paintMarkerAction, SIGNAL(triggered()), signalMapperMethod, SLOT(map()));
+	connect(paintMarkerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
 	signalMapperMethod->setMapping(paintMarkerAction, static_cast<int>(Method::Paint));
 	actionGroupMethod->addAction(paintMarkerAction);
 	toolBar->addAction(paintMarkerAction);
@@ -91,7 +93,7 @@ QToolBar* BScanIntervallMarker::createToolbar(QObject* parent)
 	fillMarkerAction->setText(tr("fill marker"));
 	fillMarkerAction->setIcon(QIcon(":/icons/paintcan.png"));
 	fillMarkerAction->setShortcut(Qt::LeftArrow);
-	connect(fillMarkerAction, SIGNAL(triggered()), signalMapperMethod, SLOT(map()));
+	connect(fillMarkerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
 	signalMapperMethod->setMapping(fillMarkerAction, static_cast<int>(Method::Fill));
 	actionGroupMethod->addAction(fillMarkerAction);
 	toolBar->addAction(fillMarkerAction);
@@ -100,8 +102,8 @@ QToolBar* BScanIntervallMarker::createToolbar(QObject* parent)
 	actionGroupMarker->setExclusive(true);
 	actionGroupMethod->setExclusive(true);
 
-	connect(signalMapperMarker, SIGNAL(mapped(int)), this, SLOT(chooseMarkerID(int)));
-	connect(signalMapperMethod, SIGNAL(mapped(int)), this, SLOT(chooseMethodID(int)));
+	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), this, &BScanIntervallMarker::chooseMarkerID);
+	connect(signalMapperMethod, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), this, &BScanIntervallMarker::chooseMethodID);
 
 	return toolBar;
 }

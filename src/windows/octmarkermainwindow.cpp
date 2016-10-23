@@ -57,13 +57,17 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 {
 	QSettings& settings = ProgramOptions::getSettings();
 	restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
-
+	
+	
+	QScrollArea* bscanMarkerWidgetScrollArea = new QScrollArea(this);
+	bscanMarkerWidgetScrollArea->setWidget(bscanMarkerWidget);
+	// bscanMarkerWidgetScrollArea->setFocusPolicy(Qt::NoFocus);
 
 	// General Objects
-	setCentralWidget(bscanMarkerWidget);
+	setCentralWidget(bscanMarkerWidgetScrollArea);
 
 	setupMenu();
-	// createMarkerToolbar();
+	createMarkerToolbar();
 	// DockWidgets
 	dwSloImage->setObjectName("DWSloImage");
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
@@ -76,6 +80,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	addDockWidget(Qt::RightDockWidgetArea, treeDock);
 	
 	DwOctInformations* dwoctinformations = new DwOctInformations(this);
+	treeDock->setObjectName("DwOctInformations");
 	addDockWidget(Qt::RightDockWidgetArea, dwoctinformations);
 
 
@@ -280,6 +285,34 @@ void OCTMarkerMainWindow::setupMenu()
 
 	addToolBar(toolBar);
 }
+
+void OCTMarkerMainWindow::createMarkerToolbar()
+{
+	const std::vector<BscanMarkerBase*>& markers = markerManager->getMarker();
+	
+	QToolBar*      toolBar            = new QToolBar(tr("Marker"));
+	QActionGroup*  actionGroupMarker  = new QActionGroup(this);
+	QSignalMapper* signalMapperMarker = new QSignalMapper(this);
+	
+	int id = 0;
+	for(BscanMarkerBase* marker : markers)
+	{
+		QAction* markerAction = new QAction(this);
+		markerAction->setCheckable(true);
+		markerAction->setText(marker->getName());
+		markerAction->setIcon(marker->getIcon());
+		connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
+		signalMapperMarker->setMapping(markerAction, id);
+
+		actionGroupMarker->addAction(markerAction);
+		toolBar->addAction(markerAction);
+		++id;
+	}
+	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), markerManager, &BScanMarkerManager::setMarker);
+	
+	addToolBar(toolBar);
+}
+
 
 
 void OCTMarkerMainWindow::showAboutDialog()

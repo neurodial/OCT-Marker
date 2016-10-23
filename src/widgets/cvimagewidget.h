@@ -21,7 +21,7 @@ class CVImageWidget : public QWidget
 	
 	double scaleFactor = 1.;
 	bool grayCvImage;
-	ScaleMethod scaleMethod;
+	ScaleMethod scaleMethod = ScaleMethod::Factor;
 	
 public:
 	explicit CVImageWidget(QWidget *parent = 0);

@@ -2,6 +2,7 @@
 
 
 #include <QObject>
+#include <QIcon>
 
 class QPainter;
 class QMouseEvent;
@@ -38,6 +39,9 @@ public:
 	
 	virtual QToolBar* createToolbar(QObject*)                        { return nullptr; }
 	
+	virtual const QString& getName()                                 { return name; }
+	virtual const QIcon&   getIcon()                                 { return icon; }
+	
 protected:
 	BScanMarkerManager* const markerManager;
 	
@@ -46,6 +50,8 @@ protected:
 	
 	const OctData::Series* getSeries() const;
 	
+	QString name;
+	QIcon  icon;
 	
 };
 
