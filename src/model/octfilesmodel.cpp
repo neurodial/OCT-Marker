@@ -47,7 +47,10 @@ bool OctFilesModel::addFile(QString filename)
 	for(const OctFileUnloaded* file : filelist)
 	{
 		if(file->sameFile(filename))
+		{
+			OctDataManager::getInstance().openFile(filename);
 			return false;
+		}
 	}
 
 	int position = filelist.size();

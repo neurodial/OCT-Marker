@@ -44,8 +44,50 @@ BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 	connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanSegmentation::newSeriesLoaded);
 }
 
+
+void BScanSegmentation::drawSegmentLine2(QPainter& painter, int factor)
+{
+	cv::Mat* map = segments.at(getActBScan());
+	if(!map || map->empty())
+		return;
+
+
+	
+	QPen pen(Qt::red);
+	painter.setPen(pen);
+	
+	int height = map->rows;
+	int width  = map->cols;
+	
+	for(int h = 0; h < height-1; ++h)
+	{
+		uint8_t* p00 = map->ptr<uint8_t>(h);
+		uint8_t* p10 = p00+1;
+		uint8_t* p01 = map->ptr<uint8_t>(h+1);
+		
+		for(int w = 0; w < width-1; ++w)
+		{
+			if(*p00 != *p10)
+				painter.drawLine((w+1)*factor, (h)*factor, (w+1)*factor, (h+1)*factor);
+			if(*p00 != *p01)
+				painter.drawLine((w)*factor, (h+1)*factor, (w+1)*factor, (h+1)*factor);
+			
+			++p00;
+			++p10;
+			++p01;
+		}
+	}
+}
+
+
 void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor)
 {
+	if(factor > 1)
+	{
+		drawSegmentLine2(painter, factor);
+		return;
+	}
+	
 	cv::Mat* map = segments.at(getActBScan());
 	if(!map || map->empty())
 		return;

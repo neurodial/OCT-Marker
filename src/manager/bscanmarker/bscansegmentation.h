@@ -39,6 +39,7 @@ class BScanSegmentation : public BscanMarkerBase
 	
 	void clearSegments();
 	void drawSegmentLine(QPainter&, int factor);
+	void drawSegmentLine2(QPainter&, int factor);
 	
 	bool setOnCoord(int x, int y, int factor);
 	internalMatType valueOnCoord(int x, int y, int factor);

@@ -131,8 +131,20 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 	if(!series)
 		return;
 	
-	addInformation(seriesInformations, tr("UID"     ), series->getSeriesUID()     );
-	addInformation(seriesInformations, tr("Ref. UID"), series->getRefSeriesUID()  );
+	if(!series->getScanDate().isEmpty())
+		addInformation(seriesInformations, tr("Scan date"), series->getScanDate().timeDateStr());
+	
+	const std::string&    seriesUID = series->getSeriesUID()   ;
+	const std::string& refSeriesUID = series->getRefSeriesUID();
+	
+	addInformation(seriesInformations, tr("UID"     ),    seriesUID);
+	addInformation(seriesInformations, tr("Ref. UID"), refSeriesUID);
+	
+	if(!seriesUID.empty() && !refSeriesUID.empty())
+	{
+		addInformation(seriesInformations, tr("Baseline scan"), (seriesUID == refSeriesUID)?tr("true"):tr("false"));
+	}
+	
 	
 	QString scanPos;
 	switch(series->getLaterality())
