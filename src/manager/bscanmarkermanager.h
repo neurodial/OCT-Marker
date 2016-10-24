@@ -33,6 +33,7 @@ public:
 //	Method getMarkerMethod() const                              { return markerMethod; }
 
 	BscanMarkerBase* getActMarker()                                 { return actMarker; }
+	int getActMarkerId() const                                      { return actMarkerId; }
 	
 	const std::vector<BscanMarkerBase*>& getMarker() const          { return markerObj; }
 
@@ -43,6 +44,7 @@ private:
 	
 	std::vector<BscanMarkerBase*> markerObj;
 	BscanMarkerBase* actMarker = nullptr;
+	int actMarkerId = -1;
 	
 	// Marker           aktMarker;
 // 	bool             dataChanged = false;

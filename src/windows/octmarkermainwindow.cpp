@@ -293,6 +293,16 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	QToolBar*      toolBar            = new QToolBar(tr("Marker"));
 	QActionGroup*  actionGroupMarker  = new QActionGroup(this);
 	QSignalMapper* signalMapperMarker = new QSignalMapper(this);
+
+	QAction* markerAction = new QAction(this);
+	markerAction->setCheckable(true);
+	markerAction->setText(tr("no marker"));
+	markerAction->setIcon(QIcon(":/icons/image.png"));
+	markerAction->setChecked(markerManager->getActMarkerId() == -1);
+	connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
+	signalMapperMarker->setMapping(markerAction, -1);
+	actionGroupMarker->addAction(markerAction);
+	toolBar->addAction(markerAction);
 	
 	int id = 0;
 	for(BscanMarkerBase* marker : markers)
@@ -301,6 +311,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		markerAction->setCheckable(true);
 		markerAction->setText(marker->getName());
 		markerAction->setIcon(marker->getIcon());
+		markerAction->setChecked(markerManager->getActMarkerId() == id);
 		connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
 		signalMapperMarker->setMapping(markerAction, id);
 

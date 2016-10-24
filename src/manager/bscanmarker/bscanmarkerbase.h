@@ -37,13 +37,21 @@ public:
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) { return false; }
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) { return false; }
 	
-	virtual QToolBar* createToolbar(QObject*)                        { return nullptr; }
+	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
 	
-	virtual const QString& getName()                                 { return name; }
-	virtual const QIcon&   getIcon()                                 { return icon; }
+	virtual const QString& getName()                                { return name; }
+	virtual const QIcon&   getIcon()                                { return icon; }
+	
+	virtual void activate(bool);
+	
+signals:
+	void enabledToolbar(bool b);
+	
 	
 protected:
 	BScanMarkerManager* const markerManager;
+	
+	void connectToolBar(QToolBar* toolbar);
 	
 	int getActBScan() const;
 	int getBScanWidth() const;
@@ -52,6 +60,7 @@ protected:
 	
 	QString name;
 	QIcon  icon;
+	bool isActivated = false;
 	
 };
 

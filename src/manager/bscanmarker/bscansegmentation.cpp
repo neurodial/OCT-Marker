@@ -41,6 +41,8 @@ BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 {
 	name = tr("Segmentation marker");
 	
+	icon = QIcon(":/icons/segline_edit.png");
+	
 	connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanSegmentation::newSeriesLoaded);
 }
 
@@ -156,6 +158,7 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	addAreaAction->setText(tr("Add"));
 	addAreaAction->setIcon(createMonocromeIcon(paintArea0Value*255));
 	connect(addAreaAction, &QAction::triggered, this, &BScanSegmentation::paintArea0Slot);
+	connect(this, &BScanSegmentation::paintArea0Selected, addAreaAction, &QAction::setChecked);
 	toolBar->addAction(addAreaAction);
 	actionGroupMethod->addAction(addAreaAction);
 
@@ -165,6 +168,7 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	autoRemoveAddAreaAction->setText(tr("Auto"));
 	autoRemoveAddAreaAction->setIcon(createMonocromeIcon(124));
 	connect(autoRemoveAddAreaAction, &QAction::triggered, this, &BScanSegmentation::autoAddRemoveArea);
+	connect(this, &BScanSegmentation::paintAutoAreaSelected, autoRemoveAddAreaAction, &QAction::setChecked);
 	toolBar->addAction(autoRemoveAddAreaAction);
 	actionGroupMethod->addAction(autoRemoveAddAreaAction);
 	
@@ -173,6 +177,7 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	removeAreaAction->setText(tr("Add"));
 	removeAreaAction->setIcon(createMonocromeIcon(paintArea1Value*255));
 	connect(removeAreaAction, &QAction::triggered, this, &BScanSegmentation::paintArea1Slot);
+	connect(this, &BScanSegmentation::paintArea1Selected, removeAreaAction, &QAction::setChecked);
 	toolBar->addAction(removeAreaAction);
 	actionGroupMethod->addAction(removeAreaAction);
 	
@@ -180,9 +185,20 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	
 	QAction* actionInitFromIlm = new QAction(parent);
 	actionInitFromIlm->setText(tr("Init from ILM"));
-	actionInitFromIlm->setIcon(QIcon(":/icons/chart_curve.png"));
+	actionInitFromIlm->setIcon(QIcon(":/icons/wand.png"));
 	connect(actionInitFromIlm, &QAction::triggered, this, &BScanSegmentation::initFromSegmentline);
+	connect(this, &BScanSegmentation::paintArea1Selected, actionInitFromIlm, &QAction::setChecked);
 	toolBar->addAction(actionInitFromIlm);
+	
+	
+	QAction* actionInitFromTrashold = new QAction(parent);
+	actionInitFromTrashold->setText(tr("Init from ILM"));
+	actionInitFromTrashold->setIcon(QIcon(":/icons/wand.png"));
+	connect(actionInitFromTrashold, &QAction::triggered, this, &BScanSegmentation::initFromThreshold);
+	connect(this, &BScanSegmentation::paintArea1Selected, actionInitFromTrashold, &QAction::setChecked);
+	toolBar->addAction(actionInitFromTrashold);
+	
+	connectToolBar(toolBar);
 	
 	return toolBar;
 }
@@ -233,8 +249,21 @@ bool BScanSegmentation::leaveWidgetEvent(QEvent*, BScanMarkerWidget*)
 	return true;
 }
 
-bool BScanSegmentation::keyPressEvent(QKeyEvent*, BScanMarkerWidget*)
+bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 {
+	switch(e->key())
+	{
+		case Qt::Key_1:
+			paintArea0Slot();
+			return true;
+		case Qt::Key_2:
+			autoAddRemoveArea();
+			return true;
+		case Qt::Key_3:
+			paintArea1Slot();
+			return true;
+	}
+	
 	return false;
 }
 
@@ -312,6 +341,83 @@ void BScanSegmentation::initFromSegmentline()
 				}
 				
 				++colIt;
+			}
+		}
+		++segMatIt;
+	}
+}
+
+void BScanSegmentation::initFromThreshold()
+{
+	const OctData::Series* series = getSeries();
+	SegMats::iterator segMatIt = segments.begin();
+	
+	double factor = 0.40;
+	
+	for(const OctData::BScan* bscan : series->getBScans())
+	{
+		const cv::Mat& image = bscan->getImage();
+		cv::Mat* mat = *segMatIt;
+		
+		if(mat && !mat->empty())
+		{
+			internalMatType* colIt = mat->ptr<internalMatType>();
+			const uint8_t* imageColIt = image.ptr<uint8_t>();
+			
+			std::size_t colSize = static_cast<std::size_t>(mat->cols);
+			std::size_t rowSize = static_cast<std::size_t>(mat->rows);
+			// TODO: size check
+			
+			for(std::size_t col = 0; col < colSize; ++col)
+			{
+				const uint8_t* imageRowIt = imageColIt;
+				uint8_t maxValue = 0;
+				
+				for(std::size_t row = 0; row < rowSize; ++row)
+				{
+					if(*imageRowIt > maxValue)
+						maxValue = *imageRowIt;
+					imageRowIt += colSize;
+				}
+				
+				internalMatType* rowIt = colIt;
+				imageRowIt = imageColIt;
+				
+				uint8_t searchValue = maxValue*factor;
+				std::size_t row = 0;
+				std::size_t strikes = 0;
+				for(; row < rowSize; ++row)
+				{
+					if(*imageRowIt > searchValue)
+					{
+						++strikes;
+						if(strikes > 8)
+							break;
+					}
+					else
+						strikes = 0;
+					
+					*rowIt =  1;
+					rowIt      += colSize;
+					imageRowIt += colSize;
+				}
+				
+				if(row < rowSize)
+				{
+					row        -= strikes;
+					rowIt      -= colSize*strikes;
+					imageRowIt -= colSize*strikes;
+				}
+				
+				for(; row < rowSize; ++row)
+				{
+					*rowIt = 0;
+					rowIt      += colSize;
+					imageRowIt += colSize;
+				}
+				
+				++colIt;
+				++imageColIt;
 			}
 		}
 		++segMatIt;

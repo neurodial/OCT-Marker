@@ -58,16 +58,21 @@ public:
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) override;
 	
+signals:
+	virtual void paintArea0Selected(bool = true);
+	virtual void paintArea1Selected(bool = true);
+	virtual void paintAutoAreaSelected(bool = true);
 	
 private slots:
 	virtual void newSeriesLoaded(const OctData::Series* series);
 	
-	virtual void paintArea0Slot()                                   { paintValue  = paintArea0Value; autoPaintValue = false; }
-	virtual void paintArea1Slot()                                   { paintValue  = paintArea1Value; autoPaintValue = false; }
-	virtual void autoAddRemoveArea()                                { autoPaintValue = true; }
+	virtual void paintArea0Slot()                                   { paintValue  = paintArea0Value; autoPaintValue = false; paintArea0Selected(); }
+	virtual void paintArea1Slot()                                   { paintValue  = paintArea1Value; autoPaintValue = false; paintArea1Selected(); }
+	virtual void autoAddRemoveArea()                                { autoPaintValue = true; paintAutoAreaSelected(); }
 	virtual void setPaintRadius(int r)                              { paintRadius = r; }
 	
 	virtual void initFromSegmentline();
+	virtual void initFromThreshold();
 	
 };
 

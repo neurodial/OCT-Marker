@@ -20,5 +20,11 @@
 	<file>icons/tag_blue_edit.png</file>
 
 	<file>icons/zoom.png</file>
+	
+	<file>icons/image.png</file>
+	<file>icons/wand.png</file>
+	<file>icons/vector.png</file>
+	<file>icons/segline_edit.png</file>
+	<file>icons/intervall_edit.png</file>
 </qresource>
 </RCC>

@@ -33,8 +33,10 @@ BScanMarkerManager::BScanMarkerManager()
 	markerObj.push_back(new BScanSegmentation(this));
 	markerObj.push_back(new BScanIntervallMarker(this));
 	
+	for(BscanMarkerBase* obj : markerObj)
+		obj->activate(false);
 	
-	actMarker = markerObj.front();
+	setMarker(0);
 }
 
 
@@ -199,10 +201,24 @@ void BScanMarkerManager::showSeries(const OctData::Series* s)
 
 void BScanMarkerManager::setMarker(int id)
 {
+	BscanMarkerBase* newMarker = nullptr;
+		
 	if(id < 0 || id >= markerObj.size())
-		actMarker = nullptr;
+		newMarker = nullptr;
 	else
-		actMarker = markerObj.at(id);
+		newMarker = markerObj.at(id);
+	
+	if(newMarker != actMarker)
+	{
+		actMarkerId = id;
+		if(actMarker)
+			actMarker->activate(false);
+		if(newMarker)
+			newMarker->activate(true);
+		
+		actMarker = newMarker;
+		emit(bscanChanged(actBScan));
+	}
 }
 
 

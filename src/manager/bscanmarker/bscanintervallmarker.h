@@ -30,10 +30,10 @@ public:
 	void setMarker(int x1, int x2, const Marker& type)           ;
 	void setMarker(int x1, int x2, const Marker& type, int bscan);
 
-	void fillMarker(int x)                                          { fillMarker(x, aktMarker); }
+	void fillMarker(int x)                                          { fillMarker(x, actMarker); }
 	void fillMarker(int x, const Marker& type);
 	
-	const Marker& getActMarker() const                              { return aktMarker; }
+	const Marker& getActMarker() const                              { return actMarker; }
 	
 	QToolBar* createToolbar(QObject* parent) override;
 	
@@ -51,10 +51,15 @@ public:
 	const MarkerMap& getMarkers(int bscan) const                    { return markers.at(bscan); }
 	
 private slots:
-	virtual void chooseMarkerID(int id)                             { aktMarker = IntervallMarker::getInstance().getMarkerFromID(id); }
-	virtual void chooseMethodID(int id)                             { markerMethod = static_cast<Method>(id); /* emit(markerMethodChanged(markerMethod)); TODO*/ }
+	virtual void chooseMarkerID(int id)                             { actMarker = IntervallMarker::getInstance().getMarkerFromID(id); markerIdChanged(id); }
+	virtual void chooseMethodID(int id)                             { markerMethod = static_cast<Method>(id); markerMethodChanged(id); }
+	virtual void chooseMethodID(Method id)                          { markerMethod = id; markerMethodChanged(static_cast<int>(id)); }
 	
 	virtual void newSeriesLoaded(const OctData::Series* series);
+	
+signals:
+	virtual void markerIdChanged(int id);
+	virtual void markerMethodChanged(int id);
 	
 private:
 	
@@ -65,10 +70,10 @@ private:
 	bool mouseInWidget = false;
 	
 	std::vector<QAction*> markersActions;
-	QAction* fillMarkerAction  = nullptr;
-	QAction* paintMarkerAction = nullptr;
+// 	QAction* fillMarkerAction  = nullptr;
+// 	QAction* paintMarkerAction = nullptr;
 	
-	Marker           aktMarker;
+	Marker           actMarker;
 	bool             dataChanged = false;
 
 	Method markerMethod = Method::Paint;
