@@ -21,6 +21,8 @@
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
 
+#include "bscanintervalptree.h"
+
 namespace
 {
 	QIcon createColorIcon(const QColor& color)
@@ -35,7 +37,8 @@ namespace
 BScanIntervalMarker::BScanIntervalMarker(BScanMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 {
-	name = tr("Intervall marker");
+	name = tr("Interval marker");
+	id   = "IntervalMarker";
 	icon = QIcon(":/icons/intervall_edit.png");
 	
 	connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanIntervalMarker::newSeriesLoaded);
@@ -297,5 +300,21 @@ void BScanIntervalMarker::newSeriesLoaded(const OctData::Series* series)
 		int bscanWidth = series->getBScan(i)->getWidth();
 		markers[i].set(std::make_pair(boost::icl::discrete_interval<int>::closed(0, bscanWidth), IntervalMarker::Marker()));
 	}
+}
+
+
+void BScanIntervalMarker::saveState(boost::property_tree::ptree& markerTree)
+{
+	BScanIntervalPTree::fillPTree(markerTree, this);
+}
+
+
+void BScanIntervalMarker::loadState(boost::property_tree::ptree& markerTree)
+{
+	std::size_t numBscans = markers.size();
+	markers.clear();
+	markers.resize(numBscans);
+
+	BScanIntervalPTree::parsePTree(markerTree, this);
 }
 

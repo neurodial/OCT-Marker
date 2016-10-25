@@ -292,6 +292,8 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	QToolBar*      toolBar            = new QToolBar(tr("Marker"));
 	QActionGroup*  actionGroupMarker  = new QActionGroup(this);
 	QSignalMapper* signalMapperMarker = new QSignalMapper(this);
+	
+	toolBar->setObjectName("ToolBarMarkerChoose");
 
 	QAction* markerAction = new QAction(this);
 	markerAction->setCheckable(true);

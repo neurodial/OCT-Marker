@@ -12,7 +12,7 @@
 #include <octdata/octfileread.h>
 #include <octdata/filereadoptions.h>
 
-
+#include <helper/ptreehelper.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -103,6 +103,8 @@ void OctDataManager::openFile(const QString& filename)
 
 void OctDataManager::chooseSeries(const OctData::Series* seriesReq)
 {
+	saveMarkerState(actSeries);
+
 	qDebug("Series requested");
 	
 	if(seriesReq == actSeries)
@@ -125,39 +127,6 @@ void OctDataManager::chooseSeries(const OctData::Series* seriesReq)
 	emit(seriesChanged(seriesReq));
 }
 
-namespace
-{
-	template<typename T>
-	bpt::ptree& get_put(bpt::ptree& tree, T path)
-	{
-		boost::optional<bpt::ptree&> child = tree.get_child_optional(path);
-		if(child)
-			return *child;
-		return tree.add_child(path);
-	}
-
-	bpt::ptree& getNodeWithId(bpt::ptree& tree, const std::string& searchNode, int id)
-	{
-		for(std::pair<const std::string, bpt::ptree>& treePair : tree)
-		{
-			if(treePair.first != searchNode)
-				continue;
-
-			boost::optional<bpt::ptree&> child = treePair.second.get_child_optional("ID");
-			if(child)
-			{
-				if(id == (*child).get_value<int>(id+1))
-					return treePair.second;
-			}
-		}
-
-		bpt::ptree& node = tree.add(searchNode, "");
-		node.add("ID", id);
-
-		return node;
-	}
-
-}
 
 boost::property_tree::ptree* OctDataManager::getMarkerTreeSeries(const OctData::Series* seriesReq)
 {
@@ -175,9 +144,9 @@ boost::property_tree::ptree* OctDataManager::getMarkerTreeSeries(const OctData::
 	if(!patient || !study || !series)
 		return nullptr;
 
-	bpt::ptree& patNode    = getNodeWithId(*markerstree, "Patient", patient->getInternalId());
-	bpt::ptree& studyNode  = getNodeWithId(patNode     , "Study"  , study  ->getInternalId());
-	bpt::ptree& seriesNode = getNodeWithId(studyNode   , "Series" , series ->getInternalId());
+	bpt::ptree& patNode    = PTreeHelper::getNodeWithId(*markerstree, "Patient", patient->getInternalId());
+	bpt::ptree& studyNode  = PTreeHelper::getNodeWithId(patNode     , "Study"  , study  ->getInternalId());
+	bpt::ptree& seriesNode = PTreeHelper::getNodeWithId(studyNode   , "Series" , series ->getInternalId());
 
 	return &seriesNode;
 }
@@ -186,14 +155,25 @@ boost::property_tree::ptree* OctDataManager::getMarkerTreeSeries(const OctData::
 
 bool OctDataManager::addMarkers(QString filename, OctDataManager::Fileformat format)
 {
+	return false;
 }
 
 bool OctDataManager::loadMarkers(QString filename, OctDataManager::Fileformat format)
 {
+	markerstree->clear();
+	bpt::read_xml(filename.toStdString(), *markerstree, bpt::xml_parser::trim_whitespace);
+	loadMarkerState(actSeries);
+	return true;
 }
 
 void OctDataManager::saveMarkers(QString filename, OctDataManager::Fileformat format)
 {
+	saveMarkerState(actSeries);
+
+	bpt::write_xml(filename.toStdString(), *markerstree, std::locale(), bpt::xml_writer_make_settings<bpt::ptree::key_type>('\t', 1u));
+
+	// bpt::xml_writer_settings<char> settings('\t', 1);
+//	bpt::write_xml(filename, *markerstree, std::locale(), settings);
 }
 
 

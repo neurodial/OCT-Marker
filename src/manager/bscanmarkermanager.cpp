@@ -23,12 +23,20 @@
 #include <markermodules/bscanintervalmarker/bscanintervalmarker.h>
 #include <markermodules/bscansegmentation//bscansegmentation.h>
 
+#include <helper/ptreehelper.h>
+
+#include <boost/property_tree/ptree.hpp>
+namespace bpt = boost::property_tree;
+
+
 BScanMarkerManager::BScanMarkerManager()
 : QObject()
 {
 	
 	OctDataManager& dataManager = OctDataManager::getInstance();
-	connect(&dataManager, &OctDataManager::seriesChanged , this, &BScanMarkerManager::showSeries);
+	connect(&dataManager, &OctDataManager::seriesChanged  , this, &BScanMarkerManager::showSeries         );
+	connect(&dataManager, &OctDataManager::saveMarkerState, this, &BScanMarkerManager::saveMarkerStateSlot);
+	connect(&dataManager, &OctDataManager::loadMarkerState, this, &BScanMarkerManager::loadMarkerStateSlot);
 
 	markerObj.push_back(new BScanSegmentation(this));
 	markerObj.push_back(new BScanIntervalMarker(this));
@@ -47,21 +55,6 @@ BScanMarkerManager::~BScanMarkerManager()
 //	saveMarkerDefault();
 }
 
-/*
-void BScanMarkerManager::saveMarkerDefault()
-{
-	if(!xmlFilename.isEmpty() && dataChanged)
-		saveMarkers(xmlFilename+".joctmarkers", Fileformat::Josn);
-}
-
-void BScanMarkerManager::loadMarkerDefault()
-{
-	if(!loadMarkers(xmlFilename+".joctmarkers", Fileformat::Josn))
-		loadMarkers(xmlFilename+"_markes.xml", Fileformat::XML);
-	dataChanged = false;
-}
-*/
-
 
 
 void BScanMarkerManager::chooseBScan(int bscan)
@@ -78,122 +71,17 @@ void BScanMarkerManager::chooseBScan(int bscan)
 	emit(bscanChanged(actBScan));
 }
 
-/*
-void BScanMarkerManager::initMarkerMap()
-{
-	std::size_t numBscans = series->bscanCount();
-	markers.clear();
-	markers.resize(numBscans);
-
-	for(std::size_t i = 0; i<numBscans; ++i)
-	{
-		int bscanWidth = series->getBScan(i)->getWidth();
-		markers[i].set(std::make_pair(boost::icl::discrete_interval<int>::closed(0, bscanWidth), IntervallMarker::Marker()));
-	}
-}
-
-
-bool BScanMarkerManager::cscanLoaded() const
-{
-	if(!series)
-		return false;
-	return series->bscanCount() > 0;
-}
-
-void BScanMarkerManager::fillMarker(int x, const Marker& type)
-{
-	int bscan = actBScan;
-
-	if(!cscanLoaded())
-		return;
-
-	if(bscan<0 || bscan >= static_cast<int>(series->bscanCount()))
-		return;
-
-	MarkerMap& map = markers.at(bscan);
-	MarkerMap::const_iterator it = map.find(x);
-
-	boost::icl::discrete_interval<int> intervall = it->first;
-
-	if(intervall.upper() > 0)
-	{
-		markers.at(bscan).set(std::make_pair(boost::icl::discrete_interval<int>::closed(intervall.lower(), intervall.upper()), type));
-		dataChanged = true;
-	}
-
-}
-
-
-
-bool BScanMarkerManager::loadMarkers(QString filename, Fileformat format)
-{
-	initMarkerMap();
-	return addMarkers(filename, format);
-}
-
-bool BScanMarkerManager::addMarkers(QString filename, Fileformat format)
-{
-	bool result = false;
-	try
-	{
-		switch(format)
-		{
-			case Fileformat::XML:
-				result = MarkersReadWrite::readXML(this, filename.toStdString());
-				break;
-			case Fileformat::Josn:
-				result = MarkersReadWrite::readJosn(this, filename.toStdString());
-				break;
-		}
-		dataChanged = true;
-		emit(bscanChanged(actBScan)); // TODO: implementiere eigenes Signal
-	}
-	catch(boost::exception& e)
-	{
-		QMessageBox msgBox;
-		msgBox.setText(QString::fromStdString(boost::diagnostic_information(e)));
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
-	}
-	catch(std::exception& e)
-	{
-		QMessageBox msgBox;
-		msgBox.setText(QString::fromStdString(e.what()));
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
-	}
-	catch(...)
-	{
-		QMessageBox msgBox;
-		msgBox.setText(QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__));
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
-	}
-	return result;
-}
-
-
-void BScanMarkerManager::saveMarkers(QString filename, Fileformat format)
-{
-	switch(format)
-	{
-		case Fileformat::XML:
-			MarkersReadWrite::writeXML(this, filename.toStdString());
-			break;
-		case Fileformat::Josn:
-			MarkersReadWrite::writeJosn(this, filename.toStdString());
-			break;
-	}
-}
-*/
 
 void BScanMarkerManager::showSeries(const OctData::Series* s)
 {
 	series = s;
+	markerTree = OctDataManager::getInstance().getMarkerTree(s);
 	
 	actBScan = 0;
 
 	// loadMarkerDefault();
+
+	// TODO: werte laden
 	
 	emit(newSeriesShowed(s));
 }
@@ -221,4 +109,41 @@ void BScanMarkerManager::setMarker(int id)
 	}
 }
 
+
+void BScanMarkerManager::saveMarkerStateSlot(const OctData::Series* s)
+{
+	if(series != s)
+		return;
+
+	if(!markerTree)
+		return;
+
+
+	for(BscanMarkerBase* obj : markerObj)
+	{
+		const QString& markerId = obj->getMarkerId();
+		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
+		obj->saveState(subtree);
+	}
+}
+
+
+void BScanMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
+{
+	if(series != s)
+		return;
+
+	markerTree = OctDataManager::getInstance().getMarkerTree(s);
+
+	if(!markerTree)
+		return;
+
+
+	for(BscanMarkerBase* obj : markerObj)
+	{
+		const QString& markerId = obj->getMarkerId();
+		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
+		obj->loadState(subtree);
+	}
+}
 

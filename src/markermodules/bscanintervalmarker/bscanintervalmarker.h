@@ -46,6 +46,8 @@ public:
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) override;
 	
+	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
+	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
 	
 	const MarkerMap& getMarkers() const                             { return markers.at(getActBScan()); }
 	const MarkerMap& getMarkers(int bscan) const                    { return markers.at(bscan); }
@@ -60,8 +62,8 @@ private slots:
 	virtual void newSeriesLoaded(const OctData::Series* series);
 	
 signals:
-	virtual void markerIdChanged(int id);
-	virtual void markerMethodChanged(int id);
+	void markerIdChanged(int id);
+	void markerMethodChanged(int id);
 	
 private:
 	

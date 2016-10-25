@@ -17,6 +17,8 @@
 
 #include <opencv/cv.h>
 
+#include "bscansegmentationptree.h"
+
 namespace
 {
 	QIcon createColorIcon(const QColor& color)
@@ -40,6 +42,7 @@ BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 {
 	name = tr("Segmentation marker");
+	id   = "SegmentationMarker";
 	
 	icon = QIcon(":/icons/segline_edit.png");
 	
@@ -295,7 +298,7 @@ void BScanSegmentation::newSeriesLoaded(const OctData::Series* series)
 	
 	for(const OctData::BScan* bscan : series->getBScans())
 	{
-		cv::Mat* mat = new cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(0));
+		cv::Mat* mat = new cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(initialValue));
 		segments.push_back(mat);
 	}
 }
@@ -424,3 +427,20 @@ void BScanSegmentation::initFromThreshold()
 	}
 }
 
+void BScanSegmentation::saveState(boost::property_tree::ptree& markerTree)
+{
+	BScanSegmentationPtree::fillPTree(markerTree, this);
+}
+
+void BScanSegmentation::loadState(boost::property_tree::ptree& markerTree)
+{
+	for(cv::Mat* mat : segments)
+	{
+		if(mat)
+		{
+			mat->setTo(cv::Scalar(initialValue));
+		}
+	}
+
+	BScanSegmentationPtree::parsePTree(markerTree, this);
+}

@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QIcon>
 
+#include <boost/property_tree/ptree_fwd.hpp>
+
 class QPainter;
 class QMouseEvent;
 class BScanMarkerWidget;
@@ -12,6 +14,7 @@ class QEvent;
 class QToolBar;
 
 class BScanMarkerManager;
+
 
 
 namespace OctData
@@ -40,9 +43,12 @@ public:
 	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
 	
 	virtual const QString& getName()                                { return name; }
+	virtual const QString& getMarkerId()                            { return id;   }
 	virtual const QIcon&   getIcon()                                { return icon; }
 	
 	virtual void activate(bool);
+	virtual void saveState(boost::property_tree::ptree&)            {}
+	virtual void loadState(boost::property_tree::ptree&)            {}
 	
 signals:
 	void enabledToolbar(bool b);
@@ -59,6 +65,7 @@ protected:
 	const OctData::Series* getSeries() const;
 	
 	QString name;
+	QString id;
 	QIcon  icon;
 	bool isActivated = false;
 	

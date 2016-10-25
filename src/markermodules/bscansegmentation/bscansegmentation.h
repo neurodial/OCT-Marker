@@ -20,19 +20,23 @@ namespace cv { class Mat; }
 class BScanSegmentation : public BscanMarkerBase
 {
 	Q_OBJECT
+
+	friend class BScanSegmentationPtree;
 	
 	typedef uint8_t internalMatType;
 	typedef std::vector<cv::Mat*> SegMats;
 	
 	static const internalMatType paintArea0Value = 0;
 	static const internalMatType paintArea1Value = 1;
+
+	static const internalMatType initialValue = paintArea0Value;
 	
 	bool inWidget = false;
 	QPoint mousePoint;
 	
 	bool paint = false;
 	int paintRadius = 10;
-	internalMatType paintValue = 0;
+	internalMatType paintValue = initialValue;
 	bool autoPaintValue = true;
 	
 	SegMats segments;
@@ -57,11 +61,16 @@ public:
 	virtual bool mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) override;
+
+	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
+	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
+
+	std::size_t getNumBScans() const                                { return segments.size(); }
 	
 signals:
-	virtual void paintArea0Selected(bool = true);
-	virtual void paintArea1Selected(bool = true);
-	virtual void paintAutoAreaSelected(bool = true);
+	void paintArea0Selected(bool = true);
+	void paintArea1Selected(bool = true);
+	void paintAutoAreaSelected(bool = true);
 	
 private slots:
 	virtual void newSeriesLoaded(const OctData::Series* series);

@@ -48,6 +48,8 @@ public:
 
 	const OctData::Series* getSeries() const                        { return actSeries;   }
 
+	boost::property_tree::ptree* getMarkerTree(const OctData::Series* series)
+	                                                                { return getMarkerTreeSeries(series); }
 public slots:
 	void openFile(const QString& filename);
 	
@@ -64,6 +66,9 @@ signals:
 	void patientChanged(const OctData::Patient*);
 	void studyChanged  (const OctData::Study*  );
 	void seriesChanged (const OctData::Series* );
+
+	void saveMarkerState(const OctData::Series*);
+	void loadMarkerState(const OctData::Series*);
 
 };
 
