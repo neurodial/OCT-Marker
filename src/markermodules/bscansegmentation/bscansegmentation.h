@@ -2,10 +2,10 @@
 #define BSCANSEGMENTATION_H
 
 
-#include "bscanmarkerbase.h"
+#include "../bscanmarkerbase.h"
 
 #include <boost/icl/interval_map.hpp>
-#include <data_structure/intervallmarker.h>
+#include <data_structure/intervalmarker.h>
 #include <vector>
 
 #include <QPoint>

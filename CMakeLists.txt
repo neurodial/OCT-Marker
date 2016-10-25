@@ -43,7 +43,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 
-set(srcs_directories data_structure octxmlread widgets windows manager model markerobjects helper)
+set(srcs_directories data_structure octxmlread widgets windows manager markermodules model markerobjects helper)
 
 foreach(loop_var ${srcs_directories})
 	file(GLOB sources_base "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")

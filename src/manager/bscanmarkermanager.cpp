@@ -1,7 +1,7 @@
 #include "bscanmarkermanager.h"
 
 #include <octxmlread/markersreadwrite.h>
-#include <data_structure/intervallmarker.h>
+#include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
 
 #include <octdata/datastruct/series.h>
@@ -19,9 +19,9 @@
 #include <QTime>
 #include "octdatamanager.h"
 
-#include <manager/bscanmarker/bscanmarkerbase.h>
-#include <manager/bscanmarker/bscanintervallmarker.h>
-#include <manager/bscanmarker/bscansegmentation.h>
+#include <markermodules/bscanmarkerbase.h>
+#include <markermodules/bscanintervalmarker/bscanintervalmarker.h>
+#include <markermodules/bscansegmentation//bscansegmentation.h>
 
 BScanMarkerManager::BScanMarkerManager()
 : QObject()
@@ -31,7 +31,7 @@ BScanMarkerManager::BScanMarkerManager()
 	connect(&dataManager, &OctDataManager::seriesChanged , this, &BScanMarkerManager::showSeries);
 
 	markerObj.push_back(new BScanSegmentation(this));
-	markerObj.push_back(new BScanIntervallMarker(this));
+	markerObj.push_back(new BScanIntervalMarker(this));
 	
 	for(BscanMarkerBase* obj : markerObj)
 		obj->activate(false);

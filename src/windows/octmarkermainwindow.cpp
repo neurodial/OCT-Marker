@@ -18,12 +18,12 @@
 #include <widgets/wgoctdatatree.h>
 #include <widgets/dwoctinformations.h>
 
-#include <data_structure/intervallmarker.h>
+#include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
 
 #include <manager/bscanmarkermanager.h>
 #include <manager/octdatamanager.h>
-#include <manager/bscanmarker/bscanmarkerbase.h>
+#include <markermodules/bscanmarkerbase.h>
 
 #include <model/octfilesmodel.h>
 #include <model/octdatamodel.h>
@@ -61,7 +61,6 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	
 	QScrollArea* bscanMarkerWidgetScrollArea = new QScrollArea(this);
 	bscanMarkerWidgetScrollArea->setWidget(bscanMarkerWidget);
-	// bscanMarkerWidgetScrollArea->setFocusPolicy(Qt::NoFocus);
 
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);

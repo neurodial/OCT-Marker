@@ -1,12 +1,12 @@
-#include "intervallmarker.h"
+#include "intervalmarker.h"
 
 
 #include <stdexcept>
 
-std::size_t IntervallMarker::Marker::markerCounter = 0;
+std::size_t IntervalMarker::Marker::markerCounter = 0;
 
 
-IntervallMarker::IntervallMarker()
+IntervalMarker::IntervalMarker()
 {
 	markerList.push_back(Marker());
 	markerList.push_back(Marker("good" ,   0, 255,   0));
@@ -14,7 +14,7 @@ IntervallMarker::IntervallMarker()
 	markerList.push_back(Marker("bad"  , 255,   0,   0));
 }
 
-IntervallMarker::Marker::Marker()
+IntervalMarker::Marker::Marker()
 : internalId(0)
 , name("undefined")
 , defined(false)
@@ -25,7 +25,7 @@ IntervallMarker::Marker::Marker()
 }
 
 
-IntervallMarker::Marker::Marker(const std::string& name, uint8_t red, uint8_t green, uint8_t blue)
+IntervalMarker::Marker::Marker(const std::string& name, uint8_t red, uint8_t green, uint8_t blue)
 : internalId(++markerCounter)
 , name(name)
 , defined(true)
@@ -35,7 +35,7 @@ IntervallMarker::Marker::Marker(const std::string& name, uint8_t red, uint8_t gr
 	color.blue  = blue ;
 }
 
-const IntervallMarker::Marker& IntervallMarker::getMarkerFromString(const std::string& str) const
+const IntervalMarker::Marker& IntervalMarker::getMarkerFromString(const std::string& str) const
 {
 	for(const Marker& marker : markerList)
 		if(marker.getName() == str)
@@ -44,7 +44,7 @@ const IntervallMarker::Marker& IntervallMarker::getMarkerFromString(const std::s
 	throw(std::out_of_range(str + " is not in marker list"));
 }
 
-const IntervallMarker::Marker& IntervallMarker::getMarkerFromID(int id) const
+const IntervalMarker::Marker& IntervalMarker::getMarkerFromID(int id) const
 {
 	if(id>=0 && id < static_cast<int>(markerList.size()))
 		return markerList[id];

@@ -142,7 +142,7 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	QActionGroup*  actionGroupMethod  = new QActionGroup(parent);
 	QToolBar*      toolBar            = new QToolBar(tr("Segmentation"));
 	
-	toolBar->setObjectName(tr("ToolBarSegmentationMarker"));
+	toolBar->setObjectName("ToolBarSegmentationMarker");
 	
 	QWidget* parentWidget = dynamic_cast<QWidget*>(parent);
 	
@@ -192,7 +192,7 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	
 	
 	QAction* actionInitFromTrashold = new QAction(parent);
-	actionInitFromTrashold->setText(tr("Init from ILM"));
+	actionInitFromTrashold->setText(tr("Init from threshold"));
 	actionInitFromTrashold->setIcon(QIcon(":/icons/wand.png"));
 	connect(actionInitFromTrashold, &QAction::triggered, this, &BScanSegmentation::initFromThreshold);
 	connect(this, &BScanSegmentation::paintArea1Selected, actionInitFromTrashold, &QAction::setChecked);
@@ -390,9 +390,9 @@ void BScanSegmentation::initFromThreshold()
 				{
 					if(*imageRowIt > searchValue)
 					{
-						++strikes;
-						if(strikes > 8)
+						if(strikes > 6 || *imageRowIt == maxValue)
 							break;
+						++strikes;
 					}
 					else
 						strikes = 0;

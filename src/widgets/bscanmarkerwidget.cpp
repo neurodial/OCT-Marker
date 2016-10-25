@@ -3,9 +3,9 @@
 #include <manager/bscanmarkermanager.h>
 #include <manager/octdatamanager.h>
 
-#include <manager/bscanmarker/bscanmarkerbase.h>
+#include <markermodules/bscanmarkerbase.h>
 
-#include <data_structure/intervallmarker.h>
+#include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
 
 #include <octdata/datastruct/series.h>
@@ -257,6 +257,8 @@ void BScanMarkerWidget::wheelEvent(QWheelEvent* wheelE)
 		emit(bscanChangeInkrement(-1));
 	else
 		emit(bscanChangeInkrement(+1));
+
+	wheelE->accept();
 }
 
 
@@ -410,3 +412,4 @@ int BScanMarkerWidget::fdSaveRaw(QString& filename)
 	}
 	return result;
 }
+

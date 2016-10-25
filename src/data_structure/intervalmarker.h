@@ -5,13 +5,13 @@
 #include <cstdint>
 #include <vector>
 
-class IntervallMarker
+class IntervalMarker
 {
-	IntervallMarker();
+	IntervalMarker();
 public:
 	class Marker
 	{
-		friend class IntervallMarker;
+		friend class IntervalMarker;
 
 		static std::size_t markerCounter;
 
@@ -45,18 +45,18 @@ public:
 		static std::size_t getMaxInternalId()                   { return markerCounter; }
 	};
 
-	typedef std::vector<Marker> IntervallMarkerList;
+	typedef std::vector<Marker> IntervalMarkerList;
 
 
-	static IntervallMarker& getInstance()                       { static IntervallMarker instance; return instance; }
+	static IntervalMarker& getInstance()                        { static IntervalMarker instance; return instance; }
 
-	const IntervallMarkerList& getIntervallMarkerList() const   { return markerList;        }
+	const IntervalMarkerList& getIntervalMarkerList() const     { return markerList;        }
 	std::size_t size() const                                    { return markerList.size(); }
 
 	const Marker& getMarkerFromString(const std::string&) const;
 	const Marker& getMarkerFromID    (int id) const;
 private:
-	IntervallMarkerList markerList;
+	IntervalMarkerList markerList;
 };
 
 #endif // INTERVALLMARKER_H
