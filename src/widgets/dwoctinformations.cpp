@@ -83,11 +83,12 @@ void DwOctInformations::setPatient(const OctData::Patient* patient)
 	if(!patient)
 		return;
 	
+	addInformation(patientInformations, tr("internal Id"), QString("%1").arg(patient->getInternalId()));
 	
-	addInformation(patientInformations, tr("Surname"  ), patient->getSurname ());
-	addInformation(patientInformations, tr("Forename" ), patient->getForename());
-	addInformation(patientInformations, tr("Title"    ), patient->getTitle()   );
-	addInformation(patientInformations, tr("ID"       ), patient->getId()      );
+	addInformation(patientInformations, tr("Surname"    ), patient->getSurname ());
+	addInformation(patientInformations, tr("Forename"   ), patient->getForename());
+	addInformation(patientInformations, tr("Title"      ), patient->getTitle()   );
+	addInformation(patientInformations, tr("ID"         ), patient->getId()      );
 	
 	if(!patient->getBirthdate().isEmpty())
 		addInformation(patientInformations, tr("Birthdate"), patient->getBirthdate().str());
@@ -116,8 +117,9 @@ void DwOctInformations::setStudy(const OctData::Study* study)
 	if(!study)
 		return;
 	
-	addInformation(studyInformations, tr("Operator"), study->getStudyOperator());
-	addInformation(studyInformations, tr("UID"     ), study->getStudyUID()     );
+	addInformation(studyInformations, tr("internal Id"), QString("%1").arg(study->getInternalId())   );
+	addInformation(studyInformations, tr("Operator"   ), study->getStudyOperator());
+	addInformation(studyInformations, tr("UID"        ), study->getStudyUID()     );
 	if(!study->getStudyDate().isEmpty())
 		addInformation(studyInformations, tr("Study date"), study->getStudyDate().str());
 	
@@ -131,6 +133,8 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 	if(!series)
 		return;
 	
+	addInformation(seriesInformations, tr("internal Id"), QString("%1").arg(series->getInternalId()));
+
 	if(!series->getScanDate().isEmpty())
 		addInformation(seriesInformations, tr("Scan date"), series->getScanDate().timeDateStr());
 	

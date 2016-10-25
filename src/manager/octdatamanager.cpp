@@ -14,7 +14,19 @@
 
 
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+#include <boost/lexical_cast.hpp>
+
+namespace bpt = boost::property_tree;
+namespace bfs = boost::filesystem;
+
+
+
 OctDataManager::OctDataManager()
+: markerstree(new bpt::ptree)
 {
 }
 
@@ -23,6 +35,7 @@ OctDataManager::OctDataManager()
 OctDataManager::~OctDataManager()
 {
 	delete octData;
+	delete markerstree;
 }
 
 
@@ -75,9 +88,11 @@ void OctDataManager::openFile(const QString& filename)
 	{
 		delete octData;
 		octData = oldOct;
+
 		throw;
 	}
 	delete oldOct;
+	markerstree->clear();
 
 	emit(octFileChanged(octData   ));
 	emit(patientChanged(actPatient));
@@ -93,43 +108,81 @@ void OctDataManager::chooseSeries(const OctData::Series* seriesReq)
 	if(seriesReq == actSeries)
 		return;
 	
-	if(seriesReq == nullptr)
+	const OctData::Patient* patient;
+	const OctData::Study  * study;
+	octData->findSeries(seriesReq, patient, study);
+
+	if(!patient || !study)
 		return;
-	
-	// Search series
-	for(const OctData::OCT::SubstructurePair& patientPair : *octData)
+
+	actPatient = patient;
+	emit(patientChanged(patient));
+
+	actStudy = study;
+	emit(studyChanged(study));
+
+	actSeries = seriesReq;
+	emit(seriesChanged(seriesReq));
+}
+
+namespace
+{
+	template<typename T>
+	bpt::ptree& get_put(bpt::ptree& tree, T path)
 	{
-		const OctData::Patient* patient = patientPair.second;
-		for(const OctData::Patient::SubstructurePair& studyPair : *patient)
+		boost::optional<bpt::ptree&> child = tree.get_child_optional(path);
+		if(child)
+			return *child;
+		return tree.add_child(path);
+	}
+
+	bpt::ptree& getNodeWithId(bpt::ptree& tree, const std::string& searchNode, int id)
+	{
+		for(std::pair<const std::string, bpt::ptree>& treePair : tree)
 		{
-			const OctData::Study* study = studyPair.second;
-			for(const OctData::Study::SubstructurePair& seriesPair : *study)
+			if(treePair.first != searchNode)
+				continue;
+
+			boost::optional<bpt::ptree&> child = treePair.second.get_child_optional("ID");
+			if(child)
 			{
-				const OctData::Series* series = seriesPair.second;
-				if(series == seriesReq)
-				{
-					if(patient != actPatient)
-					{
-						actPatient = patient;
-						emit(patientChanged(patient));
-					}
-					if(study != actStudy)
-					{
-						actStudy = study;
-						emit(studyChanged(study));
-					}
-					if(series != actSeries)
-					{
-						actSeries = series;
-						emit(seriesChanged(series));
-					}
-					qDebug("Series choosed");
-					return;
-				}
+				if(id == (*child).get_value<int>(id+1))
+					return treePair.second;
 			}
 		}
+
+		bpt::ptree& node = tree.add(searchNode, "");
+		node.add("ID", id);
+
+		return node;
 	}
+
 }
+
+boost::property_tree::ptree* OctDataManager::getMarkerTreeSeries(const OctData::Series* seriesReq)
+{
+	if(!seriesReq)
+		return nullptr;
+	const OctData::Patient* patient;
+	const OctData::Study  * study;
+	octData->findSeries(seriesReq, patient, study);
+
+	return getMarkerTreeSeries(patient, study, seriesReq);
+}
+
+boost::property_tree::ptree* OctDataManager::getMarkerTreeSeries(const OctData::Patient* patient, const OctData::Study* study, const OctData::Series* series)
+{
+	if(!patient || !study || !series)
+		return nullptr;
+
+	bpt::ptree& patNode    = getNodeWithId(*markerstree, "Patient", patient->getInternalId());
+	bpt::ptree& studyNode  = getNodeWithId(patNode     , "Study"  , study  ->getInternalId());
+	bpt::ptree& seriesNode = getNodeWithId(studyNode   , "Series" , series ->getInternalId());
+
+	return &seriesNode;
+}
+
+
 
 bool OctDataManager::addMarkers(QString filename, OctDataManager::Fileformat format)
 {

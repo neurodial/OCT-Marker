@@ -6,6 +6,9 @@
 #include <string>
 
 
+#include <boost/property_tree/ptree_fwd.hpp>
+
+
 class QString;
 
 namespace OctData
@@ -21,6 +24,8 @@ class OctDataManager : public QObject
 {
 	Q_OBJECT
 	
+	boost::property_tree::ptree* markerstree;
+
 	OctData::OCT* octData = nullptr;
 	QString actFilename;
 	
@@ -29,6 +34,9 @@ class OctDataManager : public QObject
 	const OctData::Series*  actSeries  = nullptr;
 	
 	OctDataManager();
+
+	boost::property_tree::ptree* getMarkerTreeSeries(const OctData::Series* series);
+	boost::property_tree::ptree* getMarkerTreeSeries(const OctData::Patient* pat, const OctData::Study* study, const OctData::Series*  series);
 public:
 	enum class Fileformat { XML, Josn };
 	
@@ -43,7 +51,7 @@ public:
 public slots:
 	void openFile(const QString& filename);
 	
-	void chooseSeries  (const OctData::Series* seriesReq);
+	void chooseSeries(const OctData::Series* seriesReq);
 	
 	
 	virtual bool loadMarkers(QString filename, Fileformat format);
