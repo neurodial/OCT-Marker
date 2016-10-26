@@ -21,6 +21,8 @@ class BScanSegmentation : public BscanMarkerBase
 {
 	Q_OBJECT
 
+	enum class PaintMethod { Disc, Quadrat };
+
 	friend class BScanSegmentationPtree;
 	
 	typedef uint8_t internalMatType;
@@ -33,6 +35,7 @@ class BScanSegmentation : public BscanMarkerBase
 	
 	bool inWidget = false;
 	QPoint mousePoint;
+	PaintMethod paintMethod = PaintMethod::Disc;
 	
 	bool paint = false;
 	int paintRadius = 10;
@@ -88,6 +91,8 @@ private slots:
 	virtual void opencloseBScan();
 	virtual void medianBScan();
 	
+	virtual void setPaintMethodDisc();
+	virtual void setPaintMethodQuadrat();
 };
 
 #endif // BSCANSEGMENTATION_H

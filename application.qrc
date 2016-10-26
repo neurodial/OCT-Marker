@@ -30,5 +30,7 @@
 	<file>icons/vector.png</file>
 	<file>icons/segline_edit.png</file>
 	<file>icons/intervall_edit.png</file>
+	<file>icons/paint_disc.png</file>
+	<file>icons/paint_quadrat.png</file>
 </qresource>
 </RCC>

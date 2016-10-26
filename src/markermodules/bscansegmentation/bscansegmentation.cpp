@@ -137,12 +137,26 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget)
 	QPen pen(Qt::green);
 	p.setPen(pen);
 	if(inWidget)
-		p.drawEllipse(mousePoint, paintRadius*factor, paintRadius*factor);
+	{
+		switch(paintMethod)
+		{
+			case PaintMethod::Disc:
+				p.drawEllipse(mousePoint, paintRadius*factor, paintRadius*factor);
+				break;
+			case PaintMethod::Quadrat:
+			{
+				int size = paintRadius*factor;
+				p.drawRect(mousePoint.x()-size, mousePoint.y()-size, size*2, size*2);
+				break;
+			}
+		}
+	}
 }
 
 QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 {
 	QActionGroup*  actionGroupMethod  = new QActionGroup(parent);
+	QActionGroup*  actionPaintMethod  = new QActionGroup(parent);
 	QToolBar*      toolBar            = new QToolBar(tr("Segmentation"));
 	
 	toolBar->setObjectName("ToolBarSegmentationMarker");
@@ -154,7 +168,29 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	paintSizeSpinBox->setValue(paintRadius);
 	connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BScanSegmentation::setPaintRadius);
 	toolBar->addWidget(paintSizeSpinBox);
-	
+
+	QAction* actionPaintMethodDisc = new QAction(parent);
+	actionPaintMethodDisc->setCheckable(true);
+	actionPaintMethodDisc->setChecked(paintMethod == PaintMethod::Disc);
+	actionPaintMethodDisc->setText(tr("Disc"));
+	actionPaintMethodDisc->setIcon(QIcon(":/icons/paint_disc.png"));
+	connect(actionPaintMethodDisc, &QAction::triggered, this, &BScanSegmentation::setPaintMethodDisc);
+	connect(this, &BScanSegmentation::paintArea1Selected, actionPaintMethodDisc, &QAction::setChecked);
+	toolBar->addAction(actionPaintMethodDisc);
+	actionPaintMethod->addAction(actionPaintMethodDisc);
+
+
+	QAction* actionPaintMethodQuadrat = new QAction(parent);
+	actionPaintMethodQuadrat->setCheckable(true);
+	actionPaintMethodQuadrat->setText(tr("Quadrat"));
+	actionPaintMethodQuadrat->setChecked(paintMethod == PaintMethod::Quadrat);
+	actionPaintMethodQuadrat->setIcon(QIcon(":/icons/paint_quadrat.png"));
+	connect(actionPaintMethodQuadrat, &QAction::triggered, this, &BScanSegmentation::setPaintMethodQuadrat);
+	connect(this, &BScanSegmentation::paintArea1Selected, actionPaintMethodQuadrat, &QAction::setChecked);
+	toolBar->addAction(actionPaintMethodQuadrat);
+	actionPaintMethod->addAction(actionPaintMethodQuadrat);
+
+	toolBar->addSeparator();
 	
 	QAction* addAreaAction = new QAction(parent);
 	addAreaAction->setCheckable(true);
@@ -174,7 +210,7 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	connect(this, &BScanSegmentation::paintAutoAreaSelected, autoRemoveAddAreaAction, &QAction::setChecked);
 	toolBar->addAction(autoRemoveAddAreaAction);
 	actionGroupMethod->addAction(autoRemoveAddAreaAction);
-	
+
 	QAction* removeAreaAction = new QAction(parent);
 	removeAreaAction->setCheckable(true);
 	removeAreaAction->setText(tr("Add"));
@@ -183,9 +219,9 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	connect(this, &BScanSegmentation::paintArea1Selected, removeAreaAction, &QAction::setChecked);
 	toolBar->addAction(removeAreaAction);
 	actionGroupMethod->addAction(removeAreaAction);
-	
+
 	toolBar->addSeparator();
-	
+
 	QAction* actionInitFromIlm = new QAction(parent);
 	actionInitFromIlm->setText(tr("Init from ILM"));
 	actionInitFromIlm->setIcon(QIcon(":/icons/wand.png"));
@@ -246,7 +282,16 @@ bool BScanSegmentation::setOnCoord(int x, int y, int factor)
 	cv::Mat* map = segments.at(getActBScan());
 	if(!map || map->empty())
 		return false;
-	cv::circle(*map, cv::Point(x/factor, y/factor), paintRadius, paintValue, CV_FILLED, 8, 0);
+
+	switch(paintMethod)
+	{
+		case PaintMethod::Disc:
+			cv::circle(*map, cv::Point(x/factor, y/factor), paintRadius, paintValue, CV_FILLED, 8, 0);
+			break;
+		case PaintMethod::Quadrat:
+			rectangle(*map, cv::Point(x/factor-paintRadius, y/factor-paintRadius), cv::Point(x/factor+paintRadius, y/factor+paintRadius), paintValue, CV_FILLED, 8, 0);
+			break;
+	}
 	return true;
 }
 
@@ -508,7 +553,6 @@ void BScanSegmentation::medianBScan()
 	if(!map || map->empty())
 		return;
 
-	int iterations = 1;
 	medianBlur(*map, *map, 3);
 
 	requestUpdate();
@@ -533,3 +577,18 @@ void BScanSegmentation::loadState(boost::property_tree::ptree& markerTree)
 
 	BScanSegmentationPtree::parsePTree(markerTree, this);
 }
+
+void BScanSegmentation::setPaintMethodDisc()
+{
+	paintMethod = PaintMethod::Disc;
+	if(inWidget)
+		requestUpdate();
+}
+
+void BScanSegmentation::setPaintMethodQuadrat()
+{
+	paintMethod = PaintMethod::Quadrat;
+	if(inWidget)
+		requestUpdate();
+}
+
