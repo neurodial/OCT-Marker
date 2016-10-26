@@ -54,6 +54,7 @@ public:
 	                                                                {}
 signals:
 	void enabledToolbar(bool b);
+	void requestUpdate();
 	
 	
 protected:

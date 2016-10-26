@@ -42,7 +42,10 @@ BScanMarkerManager::BScanMarkerManager()
 	markerObj.push_back(new BScanIntervalMarker(this));
 	
 	for(BscanMarkerBase* obj : markerObj)
+	{
 		obj->activate(false);
+		connect(obj, &BscanMarkerBase::requestUpdate, this, &BScanMarkerManager::udateFromMarkerModul);
+	}
 	
 	setMarker(0);
 }
@@ -149,5 +152,15 @@ void BScanMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->loadState(subtree);
 	}
+}
+
+
+void BScanMarkerManager::udateFromMarkerModul()
+{
+	 QObject* obj = sender();
+	 if(obj == actMarker)
+	 {
+		 emit(bscanChanged(actBScan));
+	 }
 }
 

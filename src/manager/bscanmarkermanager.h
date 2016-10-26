@@ -15,7 +15,7 @@ class BScanMarkerManager : public QObject
 public:
 
 	BScanMarkerManager();
-    virtual ~BScanMarkerManager();
+	virtual ~BScanMarkerManager();
 
 	int getActBScan() const                                         { return actBScan; }
 
@@ -41,6 +41,8 @@ private:
 private slots:
 	virtual void saveMarkerStateSlot(const OctData::Series* series);
 	virtual void loadMarkerStateSlot(const OctData::Series* series);
+
+	virtual void udateFromMarkerModul();
 
 public slots:
 	virtual void chooseBScan(int bscan);

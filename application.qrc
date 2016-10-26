@@ -19,6 +19,10 @@
 	<file>icons/layers.png</file>
 	<file>icons/tag_blue_edit.png</file>
 
+	<file>icons/arrow_in.png</file>
+	<file>icons/arrow_out.png</file>
+	<file>icons/arrow_inout.png</file>
+
 	<file>icons/zoom.png</file>
 	
 	<file>icons/image.png</file>

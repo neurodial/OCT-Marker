@@ -82,6 +82,11 @@ private slots:
 	
 	virtual void initFromSegmentline();
 	virtual void initFromThreshold();
+
+	virtual void erodeBScan();
+	virtual void dilateBScan();
+	virtual void opencloseBScan();
+	virtual void medianBScan();
 	
 };
 

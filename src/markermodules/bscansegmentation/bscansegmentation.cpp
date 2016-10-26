@@ -201,6 +201,38 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	connect(this, &BScanSegmentation::paintArea1Selected, actionInitFromTrashold, &QAction::setChecked);
 	toolBar->addAction(actionInitFromTrashold);
 	
+	toolBar->addSeparator();
+
+	QAction* actionErodeBScan = new QAction(parent);
+	actionErodeBScan->setText(tr("Erode"));
+	actionErodeBScan->setIcon(QIcon(":/icons/arrow_in.png"));
+	connect(actionErodeBScan, &QAction::triggered, this, &BScanSegmentation::erodeBScan);
+	connect(this, &BScanSegmentation::paintArea1Selected, actionErodeBScan, &QAction::setChecked);
+	toolBar->addAction(actionErodeBScan);
+
+
+	QAction* actionDilateBScan = new QAction(parent);
+	actionDilateBScan->setText(tr("Dilate"));
+	actionDilateBScan->setIcon(QIcon(":/icons/arrow_out.png"));
+	connect(actionDilateBScan, &QAction::triggered, this, &BScanSegmentation::dilateBScan);
+	connect(this, &BScanSegmentation::paintArea1Selected, actionDilateBScan, &QAction::setChecked);
+	toolBar->addAction(actionDilateBScan);
+
+	QAction* actionOpenCloseBScan = new QAction(parent);
+	actionOpenCloseBScan->setText(tr("Open/Close"));
+	actionOpenCloseBScan->setIcon(QIcon(":/icons/arrow_inout.png"));
+	connect(actionOpenCloseBScan, &QAction::triggered, this, &BScanSegmentation::opencloseBScan);
+	connect(this, &BScanSegmentation::paintArea1Selected, actionOpenCloseBScan, &QAction::setChecked);
+	toolBar->addAction(actionOpenCloseBScan);
+
+	QAction* actionMedianBScan = new QAction(parent);
+	actionMedianBScan->setText(tr("Median"));
+	actionMedianBScan->setIcon(QIcon(":/icons/arrow_inout.png"));
+	connect(actionMedianBScan, &QAction::triggered, this, &BScanSegmentation::medianBScan);
+	connect(this, &BScanSegmentation::paintArea1Selected, actionMedianBScan, &QAction::setChecked);
+	toolBar->addAction(actionMedianBScan);
+
+
 	connectToolBar(toolBar);
 	
 	return toolBar;
@@ -350,6 +382,7 @@ void BScanSegmentation::initFromSegmentline()
 		}
 		++segMatIt;
 	}
+	requestUpdate();
 }
 
 void BScanSegmentation::initFromThreshold()
@@ -427,7 +460,61 @@ void BScanSegmentation::initFromThreshold()
 		}
 		++segMatIt;
 	}
+	requestUpdate();
 }
+
+void BScanSegmentation::dilateBScan()
+{
+	cv::Mat* map = segments.at(getActBScan());
+	if(!map || map->empty())
+		return;
+
+	int iterations = 1;
+	cv::dilate(*map, *map, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
+
+	requestUpdate();
+}
+
+void BScanSegmentation::erodeBScan()
+{
+	cv::Mat* map = segments.at(getActBScan());
+	if(!map || map->empty())
+		return;
+
+	int iterations = 1;
+	cv::erode(*map, *map, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
+
+	requestUpdate();
+}
+
+void BScanSegmentation::opencloseBScan()
+{
+	cv::Mat* map = segments.at(getActBScan());
+	if(!map || map->empty())
+		return;
+
+	int iterations = 1;
+	cv::erode (*map, *map, cv::Mat(), cv::Point(-1, -1), iterations  , cv::BORDER_REFLECT_101, 1);
+	cv::dilate(*map, *map, cv::Mat(), cv::Point(-1, -1), iterations*2, cv::BORDER_REFLECT_101, 1);
+	cv::erode (*map, *map, cv::Mat(), cv::Point(-1, -1), iterations  , cv::BORDER_REFLECT_101, 1);
+
+	requestUpdate();
+}
+
+
+void BScanSegmentation::medianBScan()
+{
+	cv::Mat* map = segments.at(getActBScan());
+	if(!map || map->empty())
+		return;
+
+	int iterations = 1;
+	medianBlur(*map, *map, 3);
+
+	requestUpdate();
+}
+
+
 
 void BScanSegmentation::saveState(boost::property_tree::ptree& markerTree)
 {
