@@ -29,6 +29,7 @@ class SLOImageWidget : public CVImageWidget
 	
 	// std::vector<QColor*> intervallColors;
 	bool drawBScans = true;
+	bool drawOnylActBScan = true;
 
 	void createIntervallColors();
 	void deleteIntervallColors();
@@ -43,6 +44,7 @@ public:
 
 public slots:
 	void showBScans(bool show);
+	void showOnylActBScan(bool show);
 	void showLabels(bool show);
 
 protected:

@@ -25,6 +25,11 @@ WgSloImage::WgSloImage(BScanMarkerManager& markerManger)
 	connect(showBScans, &QAction::toggled, imageWidget, &SLOImageWidget::showBScans);
 	bar->addAction(showBScans);
 
+	QAction* showOnylActBScan = ProgramOptions::sloShowOnylActBScan.getAction();
+	showOnylActBScan->setText(tr("show only actual BScans"));
+	showOnylActBScan->setIcon(QIcon(":/icons/layers.png"));
+	connect(showOnylActBScan, &QAction::toggled, imageWidget, &SLOImageWidget::showOnylActBScan);
+	bar->addAction(showOnylActBScan);
 
 	QAction* showLabels = ProgramOptions::sloShowLabels.getAction();
 	showLabels->setText(tr("show Labels"));

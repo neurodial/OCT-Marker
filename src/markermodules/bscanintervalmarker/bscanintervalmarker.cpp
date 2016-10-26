@@ -41,7 +41,7 @@ BScanIntervalMarker::BScanIntervalMarker(BScanMarkerManager* markerManager)
 	id   = "IntervalMarker";
 	icon = QIcon(":/icons/intervall_edit.png");
 	
-	connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanIntervalMarker::newSeriesLoaded);
+	// connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanIntervalMarker::newSeriesLoaded);
 }
 
 
@@ -286,7 +286,7 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 	}
 }
 
-void BScanIntervalMarker::newSeriesLoaded(const OctData::Series* series)
+void BScanIntervalMarker::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
 {
 	if(!series)
 		return;
@@ -300,6 +300,8 @@ void BScanIntervalMarker::newSeriesLoaded(const OctData::Series* series)
 		int bscanWidth = series->getBScan(i)->getWidth();
 		markers[i].set(std::make_pair(boost::icl::discrete_interval<int>::closed(0, bscanWidth), IntervalMarker::Marker()));
 	}
+	
+	BScanIntervalPTree::parsePTree(markerTree, this);
 }
 
 

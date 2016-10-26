@@ -46,7 +46,7 @@ BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 	
 	icon = QIcon(":/icons/segline_edit.png");
 	
-	connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanSegmentation::newSeriesLoaded);
+	// connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanSegmentation::newSeriesLoaded);
 }
 
 
@@ -289,7 +289,7 @@ bool BScanSegmentation::mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*)
 	return false;
 }
 
-void BScanSegmentation::newSeriesLoaded(const OctData::Series* series)
+void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
 {
 	clearSegments();
 	
@@ -301,6 +301,8 @@ void BScanSegmentation::newSeriesLoaded(const OctData::Series* series)
 		cv::Mat* mat = new cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(initialValue));
 		segments.push_back(mat);
 	}
+	
+	BScanSegmentationPtree::parsePTree(markerTree, this);
 }
 
 void BScanSegmentation::clearSegments()

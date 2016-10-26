@@ -167,6 +167,7 @@ public:
 	static OptionInt  e2eGrayTransform;
 	
 	static OptionBool sloShowBscans;
+	static OptionBool sloShowOnylActBScan;
 	static OptionBool sloShowLabels;
 	
 	static OptionString octDirectory;

@@ -151,13 +151,13 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(loadMarkersAction, SIGNAL(triggered()), SLOT(showLoadMarkersDialog()));
 	fileMenu->addAction(loadMarkersAction);
 
-
+/*
 	QAction* addMarkersAction = new QAction(this);
 	addMarkersAction->setText(tr("add markers"));
 	addMarkersAction->setIcon(QIcon(":/icons/folder_add.png"));
 	connect(addMarkersAction, SIGNAL(triggered()), SLOT(showAddMarkersDialog()));
 	fileMenu->addAction(addMarkersAction);
-
+*/
 
 	QAction* saveMarkersAction = new QAction(this);
 	saveMarkersAction->setText(tr("save markers"));
@@ -483,7 +483,7 @@ bool OCTMarkerMainWindow::loadFile(const QString& filename)
 	}
 	return false;
 }
-
+/*
 
 void OCTMarkerMainWindow::showAddMarkersDialog()
 {
@@ -500,11 +500,12 @@ void OCTMarkerMainWindow::showAddMarkersDialog()
 		OctDataManager::getInstance().addMarkers(filenames[0], OctDataManager::Fileformat::XML);
 	}
 }
+*/
 
 void OCTMarkerMainWindow::setMarkersStringList(QStringList& filters)
 {
-	filters << tr("OCT Markers Josn file (*.joctmarkers)");
-	filters << tr("OCT Markers XML file (*_markes.xml)");
+	filters << tr("OCT Markers Josn file (*.%1)").arg("joctmarkers");
+	filters << tr("OCT Markers XML file (*.%1)").arg("xoctmarkers");
 }
 
 namespace

@@ -79,10 +79,14 @@ void BScanMarkerManager::showSeries(const OctData::Series* s)
 	
 	actBScan = 0;
 
-	// loadMarkerDefault();
 
-	// TODO: werte laden
-	
+	for(BscanMarkerBase* obj : markerObj)
+	{
+		const QString& markerId = obj->getMarkerId();
+		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
+		obj->newSeriesLoaded(s, subtree);
+	}
+		
 	emit(newSeriesShowed(s));
 }
 
@@ -91,7 +95,7 @@ void BScanMarkerManager::setMarker(int id)
 {
 	BscanMarkerBase* newMarker = nullptr;
 		
-	if(id < 0 || id >= markerObj.size())
+	if(id < 0 || static_cast<std::size_t>(id) >= markerObj.size())
 		newMarker = nullptr;
 	else
 		newMarker = markerObj.at(id);

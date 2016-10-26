@@ -304,16 +304,17 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 	{
 		case Qt::Key_Left:
 			emit(bscanChangeInkrement(-1));
+			e->accept();
 			break;
 		case Qt::Key_Right:
 			emit(bscanChangeInkrement( 1));
+			e->accept();
 			break;
 		default:
 			BscanMarkerBase* actMarker = markerManger.getActMarker();
 			if(actMarker)
 				if(actMarker->keyPressEvent(e, this))
 					update();
-			// TODO: weiterleiten an marker
 			break;
 	}
 	

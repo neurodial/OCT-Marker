@@ -54,12 +54,13 @@ public:
 
 	std::size_t getNumBScans() const                                { return markers.size(); }
 	
+	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree) override;
+	
 private slots:
 	virtual void chooseMarkerID(int id)                             { actMarker = IntervalMarker::getInstance().getMarkerFromID(id); markerIdChanged(id); }
 	virtual void chooseMethodID(int id)                             { markerMethod = static_cast<Method>(id); markerMethodChanged(id); }
 	virtual void chooseMethodID(Method id)                          { markerMethod = id; markerMethodChanged(static_cast<int>(id)); }
 	
-	virtual void newSeriesLoaded(const OctData::Series* series);
 	
 signals:
 	void markerIdChanged(int id);

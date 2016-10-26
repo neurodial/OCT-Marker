@@ -18,6 +18,7 @@ OptionInt  ProgramOptions::e2eGrayTransform(1, "e2eGrayTransform");
 
 
 OptionBool ProgramOptions::sloShowBscans(true , "sloShowBscans");
+OptionBool ProgramOptions::sloShowOnylActBScan(false, "sloShowOnylActBScan");
 OptionBool ProgramOptions::sloShowLabels(false, "sloShowLabels");
 
 
@@ -39,7 +40,7 @@ void OptionColor::showColorDialog()
 
 std::vector<Option*> ProgramOptions::getAllOptions()
 {
-	std::vector<Option*> options = {&bscansShowSegmentationslines, &fillEmptyPixelWhite, &registerBScans, &e2eGrayTransform, &sloShowBscans, &sloShowLabels, &octDirectory, &loadOctdataAtStart};
+	std::vector<Option*> options = {&bscansShowSegmentationslines, &fillEmptyPixelWhite, &registerBScans, &e2eGrayTransform, &sloShowBscans, &sloShowLabels, &octDirectory, &loadOctdataAtStart, &sloShowOnylActBScan};
 	
 	return options;
 }

@@ -22,6 +22,7 @@
 SLOImageWidget::SLOImageWidget(BScanMarkerManager& markerManger)
 : markerManger(markerManger)
 , drawBScans(ProgramOptions::sloShowBscans())
+, drawOnylActBScan(ProgramOptions::sloShowOnylActBScan())
 {
 	OctDataManager& octDataManager = OctDataManager::getInstance();
 	connect(&octDataManager, &OctDataManager::seriesChanged   , this, &SLOImageWidget::reladSLOImage);
@@ -115,8 +116,11 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 				continue;
 			}
 
-			painter.setPen(normalBscan);
-			paintBScan(painter, *bscan, factor, shift, transform, bscanCounter, true);
+			if(!drawOnylActBScan)
+			{
+				painter.setPen(normalBscan);
+				paintBScan(painter, *bscan, factor, shift, transform, bscanCounter, true);
+			}
 		}
 
 		if(actBScan)
@@ -207,6 +211,13 @@ void SLOImageWidget::showBScans(bool show)
 	drawBScans = show;
 	update();
 }
+
+void SLOImageWidget::showOnylActBScan(bool show)
+{
+	drawOnylActBScan = show;
+	update();
+}
+
 
 void SLOImageWidget::showLabels(bool show)
 {

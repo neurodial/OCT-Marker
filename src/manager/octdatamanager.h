@@ -23,20 +23,6 @@ namespace OctData
 class OctDataManager : public QObject
 {
 	Q_OBJECT
-	
-	boost::property_tree::ptree* markerstree;
-
-	OctData::OCT* octData = nullptr;
-	QString actFilename;
-	
-	const OctData::Patient* actPatient = nullptr;
-	const OctData::Study*   actStudy   = nullptr;
-	const OctData::Series*  actSeries  = nullptr;
-	
-	OctDataManager();
-
-	boost::property_tree::ptree* getMarkerTreeSeries(const OctData::Series* series);
-	boost::property_tree::ptree* getMarkerTreeSeries(const OctData::Patient* pat, const OctData::Study* study, const OctData::Series*  series);
 public:
 	enum class Fileformat { XML, Josn };
 	
@@ -50,6 +36,8 @@ public:
 
 	boost::property_tree::ptree* getMarkerTree(const OctData::Series* series)
 	                                                                { return getMarkerTreeSeries(series); }
+	
+	const char* getFileExtension(Fileformat format);
 public slots:
 	void openFile(const QString& filename);
 	
@@ -57,7 +45,7 @@ public slots:
 	
 	
 	virtual bool loadMarkers(QString filename, Fileformat format);
-	virtual bool addMarkers (QString filename, Fileformat format);
+	// virtual bool addMarkers (QString filename, Fileformat format);
 	virtual void saveMarkers(QString filename, Fileformat format);
 	
 
@@ -70,6 +58,25 @@ signals:
 	void saveMarkerState(const OctData::Series*);
 	void loadMarkerState(const OctData::Series*);
 
+private:
+	Fileformat defaultFileFormat = Fileformat::Josn;
+	
+	boost::property_tree::ptree* markerstree;
+
+	OctData::OCT* octData = nullptr;
+	QString actFilename;
+	
+	const OctData::Patient* actPatient = nullptr;
+	const OctData::Study*   actStudy   = nullptr;
+	const OctData::Series*  actSeries  = nullptr;
+	
+	OctDataManager();
+	
+	void saveDefaultMarker();
+	void loadDefaultMarker();
+
+	boost::property_tree::ptree* getMarkerTreeSeries(const OctData::Series* series);
+	boost::property_tree::ptree* getMarkerTreeSeries(const OctData::Patient* pat, const OctData::Study* study, const OctData::Series*  series);
 };
 
 

@@ -50,6 +50,8 @@ public:
 	virtual void saveState(boost::property_tree::ptree&)            {}
 	virtual void loadState(boost::property_tree::ptree&)            {}
 	
+	virtual void newSeriesLoaded(const OctData::Series*, boost::property_tree::ptree&)
+	                                                                {}
 signals:
 	void enabledToolbar(bool b);
 	

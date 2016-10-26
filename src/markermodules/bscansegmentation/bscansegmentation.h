@@ -67,13 +67,13 @@ public:
 
 	std::size_t getNumBScans() const                                { return segments.size(); }
 	
+	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree) override;
 signals:
 	void paintArea0Selected(bool = true);
 	void paintArea1Selected(bool = true);
 	void paintAutoAreaSelected(bool = true);
 	
 private slots:
-	virtual void newSeriesLoaded(const OctData::Series* series);
 	
 	virtual void paintArea0Slot()                                   { paintValue  = paintArea0Value; autoPaintValue = false; paintArea0Selected(); }
 	virtual void paintArea1Slot()                                   { paintValue  = paintArea1Value; autoPaintValue = false; paintArea1Selected(); }

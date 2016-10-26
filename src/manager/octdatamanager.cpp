@@ -20,6 +20,8 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include <boost/filesystem.hpp>
+
 namespace bpt = boost::property_tree;
 namespace bfs = boost::filesystem;
 
@@ -44,6 +46,8 @@ void OctDataManager::openFile(const QString& filename)
 {
 	OctData::OCT* oldOct = octData;
 	octData    = nullptr;
+	
+	saveDefaultMarker();
 
 	try
 	{
@@ -93,7 +97,9 @@ void OctDataManager::openFile(const QString& filename)
 	}
 	delete oldOct;
 	markerstree->clear();
-
+	
+	loadDefaultMarker();
+	
 	emit(octFileChanged(octData   ));
 	emit(patientChanged(actPatient));
 	emit(studyChanged  (actStudy  ));
@@ -152,11 +158,12 @@ boost::property_tree::ptree* OctDataManager::getMarkerTreeSeries(const OctData::
 }
 
 
-
+/*
 bool OctDataManager::addMarkers(QString filename, OctDataManager::Fileformat format)
 {
 	return false;
 }
+*/
 
 bool OctDataManager::loadMarkers(QString filename, OctDataManager::Fileformat format)
 {
@@ -174,6 +181,44 @@ void OctDataManager::saveMarkers(QString filename, OctDataManager::Fileformat fo
 
 	// bpt::xml_writer_settings<char> settings('\t', 1);
 //	bpt::write_xml(filename, *markerstree, std::locale(), settings);
+}
+
+void OctDataManager::loadDefaultMarker()
+{
+	try
+	{
+		bfs::path file = actFilename.toStdString() + "." + getFileExtension(defaultFileFormat);
+		if(!bfs::exists(file))
+			return;
+		
+		loadMarkers(QString::fromStdString(file.generic_string()), defaultFileFormat);
+	}
+	catch(...)
+	{
+	}
+}
+
+void OctDataManager::saveDefaultMarker()
+{
+	try
+	{
+		
+	}
+	catch(...)
+	{
+	}
+}
+
+const char* OctDataManager::getFileExtension(OctDataManager::Fileformat format)
+{
+	switch(format)
+	{
+		case Fileformat::Josn:
+			return "joctmarker";
+		case Fileformat::XML:
+			return "xoctmarker";
+	}
+	return "";
 }
 
 
