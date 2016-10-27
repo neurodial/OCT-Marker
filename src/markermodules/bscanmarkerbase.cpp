@@ -14,12 +14,17 @@ int BscanMarkerBase::getActBScan() const
 	return markerManager->getActBScan();
 }
 
-int BscanMarkerBase::getBScanWidth() const
+int BscanMarkerBase::getBScanWidth(int nr) const
 {
 	const OctData::Series* series = getSeries();
 	if(series)
-		return series->getBScan(getActBScan())->getWidth();
+		return series->getBScan(nr)->getWidth();
 	return 0;
+}
+
+int BscanMarkerBase::getBScanWidth() const
+{
+	return getBScanWidth(getActBScan());
 }
 
 const OctData::Series* BscanMarkerBase::getSeries() const

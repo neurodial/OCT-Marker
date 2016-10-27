@@ -251,7 +251,7 @@ bool BScanIntervalMarker::leaveWidgetEvent(QEvent* ,BScanMarkerWidget*)
 	return true;
 }
 
-void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widget)
+void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widget) const
 {
 	double scaleFactor = widget->getImageScaleFactor();
 	
@@ -285,6 +285,34 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 		}
 	}
 }
+
+void BScanIntervalMarker::drawBScanSLOLine(QPainter& painter, int bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& end_px, SLOImageWidget*) const
+{
+	double bscanWidth = getBScanWidth();
+	QPen pen;
+	pen.setWidth(3);
+
+	for(const MarkerMap::interval_mapping_type pair : getMarkers(bscanNr))
+	{
+		IntervalMarker::Marker marker = pair.second;
+		if(marker.isDefined())
+		{
+			boost::icl::discrete_interval<int> itv  = pair.first;
+
+			double f1 = static_cast<double>(itv.lower())/bscanWidth;
+			double f2 = static_cast<double>(itv.upper())/bscanWidth;
+
+			const OctData::CoordSLOpx p1 = start_px*(1.-f1) + end_px*f1;
+			const OctData::CoordSLOpx p2 = start_px*(1.-f2) + end_px*f2;
+
+			// pen.setColor(*(intervallColors.at(markerQ)));
+			pen.setColor(QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
+			painter.setPen(pen);
+			painter.drawLine(QPointF(p1.getXf(), p1.getYf()), QPointF(p2.getXf(), p2.getYf()));
+		}
+	}
+}
+
 
 void BScanIntervalMarker::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
 {

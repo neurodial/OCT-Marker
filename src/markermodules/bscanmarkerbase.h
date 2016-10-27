@@ -14,12 +14,13 @@ class QEvent;
 class QToolBar;
 
 class BScanMarkerManager;
-
+class SLOImageWidget;
 
 
 namespace OctData
 {
 	class Series;
+	class CoordSLOpx;
 };
 
 
@@ -30,7 +31,9 @@ public:
 	BscanMarkerBase(BScanMarkerManager* markerManager) : markerManager(markerManager) {}
 	virtual ~BscanMarkerBase()                                      {}
 	
-	virtual void drawMarker(QPainter&, BScanMarkerWidget*)          {}
+	virtual void drawBScanSLOLine(QPainter&, int /*bscanNr*/, const OctData::CoordSLOpx& /*start_px*/, const OctData::CoordSLOpx& /*end_px*/, SLOImageWidget*) const
+	                                                                {}
+	virtual void drawMarker(QPainter&, BScanMarkerWidget*) const    {}
 	virtual bool drawBScan() const                                  { return true;  }
 	
 	virtual bool mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) { return false; } // when return true, a update is necessary
@@ -41,6 +44,7 @@ public:
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) { return false; }
 	
 	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
+	virtual QWidget*  createWidget (QObject*)                       { return nullptr; }
 	
 	virtual const QString& getName()                                { return name; }
 	virtual const QString& getMarkerId()                            { return id;   }
@@ -64,6 +68,7 @@ protected:
 	
 	int getActBScan() const;
 	int getBScanWidth() const;
+	int getBScanWidth(int nr) const;
 	
 	const OctData::Series* getSeries() const;
 	

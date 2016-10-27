@@ -11,8 +11,6 @@
 
 class QAction;
 
-class BScanMarkerManager;
-
 class BScanIntervalMarker : public BscanMarkerBase
 {
 	Q_OBJECT
@@ -37,7 +35,8 @@ public:
 	
 	QToolBar* createToolbar(QObject* parent) override;
 	
-	virtual void drawMarker(QPainter&, BScanMarkerWidget*) override;
+	virtual void drawBScanSLOLine(QPainter&, int /*bscanNr*/, const OctData::CoordSLOpx& /*start_px*/, const OctData::CoordSLOpx& /*end_px*/, SLOImageWidget*) const override;
+	virtual void drawMarker(QPainter&, BScanMarkerWidget*) const override;
 	virtual bool drawBScan() const                         override { return true;  }
 	
 	virtual bool mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;

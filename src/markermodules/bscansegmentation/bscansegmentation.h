@@ -12,8 +12,6 @@
 
 class QAction;
 
-class BScanMarkerManager;
-
 namespace cv { class Mat; }
 
 
@@ -45,8 +43,8 @@ class BScanSegmentation : public BscanMarkerBase
 	SegMats segments;
 	
 	void clearSegments();
-	void drawSegmentLine(QPainter&, int factor);
-	void drawSegmentLine2(QPainter&, int factor);
+	void drawSegmentLine(QPainter&, int factor) const;
+	void drawSegmentLine2(QPainter&, int factor) const;
 	
 	bool setOnCoord(int x, int y, int factor);
 	internalMatType valueOnCoord(int x, int y, int factor);
@@ -56,7 +54,7 @@ public:
 
 	QToolBar* createToolbar(QObject* parent) override;
 	
-	virtual void drawMarker(QPainter&, BScanMarkerWidget*) override;
+	virtual void drawMarker(QPainter&, BScanMarkerWidget*) const override;
 	virtual bool drawBScan() const                         override { return true;  }
 	
 	virtual bool mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;

@@ -11,6 +11,8 @@
 #include <manager/bscanmarkermanager.h>
 #include <manager/octdatamanager.h>
 
+#include <markermodules/bscanmarkerbase.h>
+
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
 
@@ -156,36 +158,12 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bsc
 
 	painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
 
-	double bscanWidth = bscan.getWidth();
-	QPen pen;
-	pen.setWidth(3);
-
-	/*
 	if(paintMarker)
 	{
-		for(const BScanMarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers(bscanNr))
-		{
-			IntervallMarker::Marker marker = pair.second;
-			if(marker.isDefined())
-			{
-				boost::icl::discrete_interval<int> itv  = pair.first;
-
-				double f1 = static_cast<double>(itv.lower())/bscanWidth;
-				double f2 = static_cast<double>(itv.upper())/bscanWidth;
-
-				const OctData::CoordSLOpx p1 = start_px*(1.-f1) + end_px*f1;
-				const OctData::CoordSLOpx p2 = start_px*(1.-f2) + end_px*f2;
-
-				// pen.setColor(*(intervallColors.at(markerQ)));
-				pen.setColor(QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
-				painter.setPen(pen);
-				painter.drawLine(QPointF(p1.getXf(), p1.getYf()), QPointF(p2.getXf(), p2.getYf()));
-
-				// painter.fillRect(itv.lower(), 0, itv.upper()-itv.lower(), height(), *(intervallColors.at(markerQ)));
-			}
-		}
+		BscanMarkerBase* actMarker = markerManger.getActMarker();
+		if(actMarker)
+			actMarker->drawBScanSLOLine(painter, bscanNr, start_px, end_px, this);
 	}
-	*/
 }
 
 

@@ -50,7 +50,7 @@ BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 }
 
 
-void BScanSegmentation::drawSegmentLine2(QPainter& painter, int factor)
+void BScanSegmentation::drawSegmentLine2(QPainter& painter, int factor) const
 {
 	cv::Mat* map = segments.at(getActBScan());
 	if(!map || map->empty())
@@ -85,7 +85,7 @@ void BScanSegmentation::drawSegmentLine2(QPainter& painter, int factor)
 }
 
 
-void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor)
+void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor) const
 {
 	if(factor > 1)
 	{
@@ -126,7 +126,7 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor)
 }
 
 
-void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget)
+void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget) const
 {
 	int factor = widget->getImageScaleFactor();
 	if(factor == 0)
@@ -480,11 +480,12 @@ void BScanSegmentation::initFromThreshold()
 					else
 						strikes = 0;
 					
-					*rowIt =  1;
+					*rowIt =  paintArea0Value;
 					rowIt      += colSize;
 					imageRowIt += colSize;
 				}
 				
+				// go back to the begin of the founded shape
 				if(row < rowSize)
 				{
 					row        -= strikes;
@@ -494,7 +495,7 @@ void BScanSegmentation::initFromThreshold()
 				
 				for(; row < rowSize; ++row)
 				{
-					*rowIt = 0;
+					*rowIt = paintArea1Value;
 					rowIt      += colSize;
 					imageRowIt += colSize;
 				}
