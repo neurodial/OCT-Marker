@@ -43,11 +43,14 @@ class BScanSegmentation : public BscanMarkerBase
 	SegMats segments;
 	
 	void clearSegments();
-	void drawSegmentLine(QPainter&, int factor) const;
-	void drawSegmentLine2(QPainter&, int factor) const;
+
+	template<typename T>
+	void drawSegmentLine(QPainter&, int factor, const QRect&) const;
 	
 	bool setOnCoord(int x, int y, int factor);
 	internalMatType valueOnCoord(int x, int y, int factor);
+
+	QRect getWidgetPaintSize(QPoint p1, QPoint p2, int factor);
 public:
 	BScanSegmentation(BScanMarkerManager* markerManager);
 	virtual ~BScanSegmentation()                                    { clearSegments(); }

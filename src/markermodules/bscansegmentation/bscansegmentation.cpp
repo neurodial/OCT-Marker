@@ -50,89 +50,92 @@ BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 }
 
 
-void BScanSegmentation::drawSegmentLine2(QPainter& painter, int factor) const
+namespace
 {
-	cv::Mat* map = segments.at(getActBScan());
-	if(!map || map->empty())
-		return;
-
-
-	
-	QPen pen(Qt::red);
-	painter.setPen(pen);
-	
-	int height = map->rows;
-	int width  = map->cols;
-	
-	for(int h = 0; h < height-1; ++h)
+	struct PaintFactor1
 	{
-		uint8_t* p00 = map->ptr<uint8_t>(h);
-		uint8_t* p10 = p00+1;
-		uint8_t* p01 = map->ptr<uint8_t>(h+1);
-		
-		for(int w = 0; w < width-1; ++w)
-		{
-			if(*p00 != *p10)
-				painter.drawLine((w+1)*factor, (h)*factor, (w+1)*factor, (h+1)*factor);
-			if(*p00 != *p01)
-				painter.drawLine((w)*factor, (h+1)*factor, (w+1)*factor, (h+1)*factor);
-			
-			++p00;
-			++p10;
-			++p01;
-		}
-	}
-}
-
-
-void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor) const
-{
-	if(factor > 1)
-	{
-		drawSegmentLine2(painter, factor);
-		return;
-	}
-	
-	cv::Mat* map = segments.at(getActBScan());
-	if(!map || map->empty())
-		return;
-	
-	
-	QPen pen(Qt::red);
-	painter.setPen(pen);
-	
-	int height = map->rows;
-	int width  = map->cols;
-	
-	for(int h = 0; h < height-1; ++h)
-	{
-		uint8_t* p00 = map->ptr<uint8_t>(h);
-		uint8_t* p10 = p00+1;
-		uint8_t* p01 = map->ptr<uint8_t>(h+1);
-		
-		for(int w = 0; w < width-1; ++w)
+		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, int factor)
 		{
 			if(*p00 != *p10)
 				painter.drawPoint(w*factor, h*factor);
 			else if(*p00 != *p01)
 				painter.drawPoint(w*factor, h*factor);
-			
+		}
+	};
+
+	struct PaintFactorN
+	{
+		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, int factor)
+		{
+			if(*p00 != *p10)
+				painter.drawLine((w+1)*factor, (h)*factor, (w+1)*factor, (h+1)*factor);
+			if(*p00 != *p01)
+				painter.drawLine((w)*factor, (h+1)*factor, (w+1)*factor, (h+1)*factor);
+		}
+	};
+}
+
+
+template<typename T>
+void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor, const QRect& rect) const
+{
+	cv::Mat* map = segments.at(getActBScan());
+	if(!map || map->empty())
+		return;
+
+	if(factor <= 0)
+		return;
+
+	int drawX      = (rect.x()     )/factor-1;
+	int drawY      = (rect.y()     )/factor-1;
+	int drawWidth  = (rect.width() )/factor+2;
+	int drawHeight = (rect.height())/factor+2;
+
+	QPen pen(Qt::red);
+	painter.setPen(pen);
+
+	int mapHeight = map->rows-1;
+	int mapWidth  = map->cols-1;
+
+	int startH = std::max(drawY, 0);
+	int endH   = std::min(drawY+drawHeight, mapHeight);
+	int startW = std::max(drawX, 0);
+	int endW   = std::min(drawX+drawWidth , mapWidth);
+
+	for(int h = startH; h < endH; ++h)
+	{
+		uint8_t* p00 = map->ptr<uint8_t>(h);
+		uint8_t* p10 = p00+1;
+		uint8_t* p01 = map->ptr<uint8_t>(h+1);
+
+		p00 += startW;
+		p10 += startW;
+		p01 += startW;
+
+		for(int w = startW; w < endW; ++w)
+		{
+			T::paint(painter, p00, p10, p01, w, h, factor);
+
 			++p00;
 			++p10;
 			++p01;
 		}
 	}
-	
 }
 
 
-void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const QRect&) const
+
+void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const QRect& rect) const
 {
 	int factor = widget->getImageScaleFactor();
-	if(factor == 0)
+	if(factor <= 0)
 		return;
 	
-	drawSegmentLine(p, factor);
+	if(factor == 1)
+		drawSegmentLine<PaintFactor1>(p, factor, rect);
+	else
+		drawSegmentLine<PaintFactorN>(p, factor, rect);
+
 	
 	QPen pen(Qt::green);
 	p.setPen(pen);
@@ -306,6 +309,16 @@ uint8_t BScanSegmentation::valueOnCoord(int x, int y, int factor)
 }
 
 
+QRect BScanSegmentation::getWidgetPaintSize(QPoint p1, QPoint p2, int factor)
+{
+	int drawRad = (paintRadius+1)*factor;
+	QRect rect = QRect(p1, p2).normalized(); // old and new pos
+	rect.adjust(-drawRad, -drawRad, drawRad, drawRad);
+
+	return rect;
+}
+
+
 BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e, BScanMarkerWidget* widget)
 {
 	RedrawRequest result;
@@ -316,10 +329,8 @@ BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e,
 	inWidget = true;
 	int factor = widget->getImageScaleFactor();
 
-	int drawRad = paintRadius*factor+1;
 	result.redraw = true;
-	result.rect   = QRect(mousePoint, e->pos()).normalized(); // old and new pos
-	result.rect.adjust(-drawRad, -drawRad, drawRad, drawRad);
+	result.rect   = getWidgetPaintSize(mousePoint, e->pos(), factor);
 
 	mousePoint = e->pos();
 	int x = e->x();
