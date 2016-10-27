@@ -6,7 +6,11 @@
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
-namespace OctData { class Series; }
+namespace OctData
+{
+	class Series;
+	class BScan;
+}
 
 class BscanMarkerBase;
 
@@ -58,6 +62,7 @@ public slots:
 signals:
 	void bscanChanged(int bscan);
 	void newSeriesShowed(const OctData::Series* series);
+	void newBScanShowed (const OctData::BScan * series);
 
 private:
 	Q_OBJECT

@@ -6,6 +6,8 @@
 
 #include <manager/octdatamanager.h>
 
+#include <manager/bscanmarkermanager.h>
+
 #include <QFormLayout>
 #include <QLabel>
 
@@ -50,10 +52,54 @@ namespace
 			formlayout->addRow(labelText, label);
 		}
 	}
+
+	class LayoutFiller
+	{
+		int counter = 0;
+	public:
+		void setInformation(QFormLayout* formlayout, const QString& labelText, const QString& information, DwOctInformations::OctInfoField& octInfo)
+		{
+			if(octInfo.labelDesc == nullptr)
+				octInfo.labelDesc = new QLabel(labelText);
+
+			if(octInfo.labelInfo == nullptr)
+			{
+				octInfo.labelInfo = new QLabel();
+				octInfo.labelInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			}
+
+			if(!information.isEmpty())
+			{
+				if(octInfo.showed)
+				{
+					octInfo.labelInfo->setText(information);
+				}
+				else
+				{
+					formlayout->insertRow(counter, octInfo.labelDesc, octInfo.labelInfo);
+					octInfo.labelDesc->show();
+					octInfo.labelInfo->show();
+					octInfo.showed = true;
+				}
+				++counter;
+			}
+			else
+			{
+				if(octInfo.showed)
+				{
+					octInfo.labelDesc->hide();
+					octInfo.labelInfo->hide();
+					formlayout->removeWidget(octInfo.labelDesc);
+					formlayout->removeWidget(octInfo.labelInfo);
+					octInfo.showed = false;
+				}
+			}
+		}
+	};
 }
 
 
-DwOctInformations::DwOctInformations::DwOctInformations(QWidget* parent)
+DwOctInformations::DwOctInformations(QWidget* parent)
 :QDockWidget(parent)
 {
 	setupUi(this);
@@ -63,18 +109,33 @@ DwOctInformations::DwOctInformations::DwOctInformations(QWidget* parent)
 	patientInformations = new QFormLayout;
 	studyInformations   = new QFormLayout;
 	seriesInformations  = new QFormLayout;
+	bscanInformations   = new QFormLayout;
 	
 	groupBoxPatient->setLayout(patientInformations);
 	groupBoxStudy  ->setLayout(studyInformations  );
 	groupBoxSeries ->setLayout(seriesInformations );
+	groupBoxBScan  ->setLayout(bscanInformations );
 		
 	connect(&dataManager, &OctDataManager::patientChanged, this, &DwOctInformations::setPatient);
 	connect(&dataManager, &OctDataManager::studyChanged  , this, &DwOctInformations::setStudy  );
 	connect(&dataManager, &OctDataManager::seriesChanged , this, &DwOctInformations::setSeries );
+
+	groupBoxBScan->setVisible(false);
 }
 
 
 
+void DwOctInformations::setBScanMarkerManager(BScanMarkerManager* const manager)
+{
+	if(markerManager)
+		disconnect(markerManager, &BScanMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan);
+	if(manager)
+		connect(manager, &BScanMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan);
+
+	groupBoxBScan->setVisible(manager != nullptr);
+
+	markerManager = manager;
+}
 
 void DwOctInformations::setPatient(const OctData::Patient* patient)
 {
@@ -164,4 +225,56 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 	}
 	addInformation(seriesInformations, tr("Laterality"     ), scanPos     );
 	
+	QString scanPattern;
+	switch(series->getScanPattern())
+	{
+		case OctData::Series::ScanPattern::SingleLine:
+			scanPattern = tr("Single line scan");
+			break;
+		case OctData::Series::ScanPattern::Circular:
+			scanPattern = tr("Circular scan");
+			break;
+		case OctData::Series::ScanPattern::Volume:
+			scanPattern = tr("Volume scan");
+			break;
+		case OctData::Series::ScanPattern::FastVolume:
+			scanPattern = tr("Fast volume scan");
+			break;
+		case OctData::Series::ScanPattern::Radial:
+			scanPattern = tr("Radial scan");
+			break;
+		case OctData::Series::ScanPattern::Unknown:
+			break;
+	}
+	addInformation(seriesInformations, tr("Scan pattern"   ), scanPattern  );
+
 }
+
+void DwOctInformations::setBScan(const OctData::BScan* bscan)
+{
+	LayoutFiller filler;
+
+	// clearQLayout(bscanInformations);
+
+	if(!bscan)
+		return;
+
+	QString imageQuality;
+	if(bscan->getImageQuality() > 0 && bscan->getImageQuality() < 1e10)
+		imageQuality = QString("%1").arg(bscan->getImageQuality());
+
+	QString imageAverage;
+	if(bscan->getNumAverage() > 0)
+		imageAverage = QString("%1").arg(bscan->getNumAverage());
+
+	QString imageAcquisitionTime;
+	if(!bscan->getAcquisitionTime().isEmpty())
+		imageAcquisitionTime = QString::fromStdString(bscan->getAcquisitionTime().timeDateStr('.', ':', true));
+
+
+	filler.setInformation(bscanInformations, tr("Acquisition time"), imageAcquisitionTime, bscanAcquisitionTime  );
+	filler.setInformation(bscanInformations, tr("Image quality"   ), imageQuality        , bscanImageQuality     );
+	filler.setInformation(bscanInformations, tr("Images average"  ), imageAverage        , bscanNumAverage       );
+
+}
+

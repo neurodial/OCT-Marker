@@ -55,6 +55,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="groupBoxBScan">
+          <property name="title">
+           <string>BScan</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>

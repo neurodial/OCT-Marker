@@ -79,6 +79,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	addDockWidget(Qt::RightDockWidgetArea, treeDock);
 	
 	DwOctInformations* dwoctinformations = new DwOctInformations(this);
+	dwoctinformations->setBScanMarkerManager(markerManager);
 	treeDock->setObjectName("DwOctInformations");
 	addDockWidget(Qt::RightDockWidgetArea, dwoctinformations);
 

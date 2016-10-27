@@ -71,6 +71,7 @@ void BScanMarkerManager::chooseBScan(int bscan)
 
 	actBScan = bscan;
 
+	emit(newBScanShowed(series->getBScan(actBScan)));
 	emit(bscanChanged(actBScan));
 }
 
@@ -89,7 +90,9 @@ void BScanMarkerManager::showSeries(const OctData::Series* s)
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->newSeriesLoaded(s, subtree);
 	}
-		
+
+
+	emit(newBScanShowed(series->getBScan(actBScan)));
 	emit(newSeriesShowed(s));
 }
 
