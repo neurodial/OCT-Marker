@@ -28,15 +28,23 @@ class BscanMarkerBase : public QObject
 {
 	Q_OBJECT
 public:
+	class RedrawRequest
+	{
+	public:
+		bool redraw = false;
+		QRect rect;
+	};
+
+
 	BscanMarkerBase(BScanMarkerManager* markerManager) : markerManager(markerManager) {}
 	virtual ~BscanMarkerBase()                                      {}
 	
 	virtual void drawBScanSLOLine(QPainter&, int /*bscanNr*/, const OctData::CoordSLOpx& /*start_px*/, const OctData::CoordSLOpx& /*end_px*/, SLOImageWidget*) const
 	                                                                {}
-	virtual void drawMarker(QPainter&, BScanMarkerWidget*) const    {}
+	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect& /*drawrect*/) const    {}
 	virtual bool drawBScan() const                                  { return true;  }
 	
-	virtual bool mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) { return false; } // when return true, a update is necessary
+	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) { return RedrawRequest(); } // when return true, a update is necessary
 	virtual bool mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) { return false; } // when return true, a update is necessary
 	virtual bool mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) { return false; } // when return true, a update is necessary
 	

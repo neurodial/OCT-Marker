@@ -64,8 +64,8 @@ void CVImageWidget::showImage(const cv::Mat& image)
 		switch(image.type())
 		{
 			case CV_8UC1:
-				cvtColor(image, cvImage, CV_GRAY2RGB);
-				// cvImage = image.clone();
+				// cvtColor(image, cvImage, CV_GRAY2RGB);
+				cvImage = image.clone();
 				grayCvImage = true;
 				break;
 			case CV_8UC3:
@@ -127,9 +127,9 @@ void CVImageWidget::cvImage2qtImage()
 	// Assign OpenCV's image buffer to the QImage. Note that the bytesPerLine parameter
 	// (http://qt-project.org/doc/qt-4.8/qimage.html#QImage-6) is 3*width because each pixel
 	// has three bytes.
-// 	if(grayCvImage)
-// 		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols, QImage::Format_Grayscale8);
-// 	else
+	if(grayCvImage)
+		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols, QImage::Format_Grayscale8);
+	else
 		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols*3, QImage::Format_RGB888);
 
 
@@ -173,11 +173,14 @@ void CVImageWidget::saveImage()
 	}
 }
 
-void CVImageWidget::paintEvent(QPaintEvent* /*event*/)
+void CVImageWidget::paintEvent(QPaintEvent* event)
 {
 	// Display the image
 	QPainter painter(this);
-	painter.drawImage(QPoint(0,0), qtImage);
+	if(event)
+		painter.drawImage(event->rect(), qtImage, event->rect());
+	else
+		painter.drawImage(QPoint(0,0), qtImage);
 	painter.end();
 }
 

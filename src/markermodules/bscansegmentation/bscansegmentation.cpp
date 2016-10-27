@@ -126,7 +126,7 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor) const
 }
 
 
-void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget) const
+void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const QRect&) const
 {
 	int factor = widget->getImageScaleFactor();
 	if(factor == 0)
@@ -175,7 +175,6 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	actionPaintMethodDisc->setText(tr("Disc"));
 	actionPaintMethodDisc->setIcon(QIcon(":/icons/paint_disc.png"));
 	connect(actionPaintMethodDisc, &QAction::triggered, this, &BScanSegmentation::setPaintMethodDisc);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionPaintMethodDisc, &QAction::setChecked);
 	toolBar->addAction(actionPaintMethodDisc);
 	actionPaintMethod->addAction(actionPaintMethodDisc);
 
@@ -186,7 +185,6 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	actionPaintMethodQuadrat->setChecked(paintMethod == PaintMethod::Quadrat);
 	actionPaintMethodQuadrat->setIcon(QIcon(":/icons/paint_quadrat.png"));
 	connect(actionPaintMethodQuadrat, &QAction::triggered, this, &BScanSegmentation::setPaintMethodQuadrat);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionPaintMethodQuadrat, &QAction::setChecked);
 	toolBar->addAction(actionPaintMethodQuadrat);
 	actionPaintMethod->addAction(actionPaintMethodQuadrat);
 
@@ -308,19 +306,29 @@ uint8_t BScanSegmentation::valueOnCoord(int x, int y, int factor)
 }
 
 
-bool BScanSegmentation::mouseMoveEvent(QMouseEvent* e, BScanMarkerWidget* widget)
+BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e, BScanMarkerWidget* widget)
 {
+	RedrawRequest result;
+
 	if(!(e->buttons() & Qt::LeftButton))
 		paint = false;
 		
 	inWidget = true;
-	mousePoint = e->pos();
-	
 	int factor = widget->getImageScaleFactor();
+
+	int drawRad = paintRadius*factor+1;
+	result.redraw = true;
+	result.rect   = QRect(mousePoint, e->pos()).normalized(); // old and new pos
+	result.rect.adjust(-drawRad, -drawRad, drawRad, drawRad);
+
+	mousePoint = e->pos();
+	int x = e->x();
+	int y = e->y();
 	
 	if(paint)
-		return setOnCoord(e->x(), e->y(), factor);
-	return true;
+		setOnCoord(x, y, factor);
+
+	return result;
 }
 
 bool BScanSegmentation::leaveWidgetEvent(QEvent*, BScanMarkerWidget*)

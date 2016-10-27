@@ -29,10 +29,9 @@ list(APPEND octmarker_SRCS "${CMAKE_CURRENT_BINARY_DIR}/buildconstants.cpp")
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-message(${LibOctData_INCLUDE_DIRS})
 
-# include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR}) # ${Boost_INCLUDE_DIR})
 include_directories(SYSTEM ${QT_INCLUDES} ${CMAKE_BINARY_DIR})
+include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/src/)
 include_directories(${LibOctData_INCLUDE_DIRS})
 include_directories(${CppFramework_INCLUDE_DIRS})

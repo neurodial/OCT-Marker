@@ -36,10 +36,10 @@ public:
 	QToolBar* createToolbar(QObject* parent) override;
 	
 	virtual void drawBScanSLOLine(QPainter&, int /*bscanNr*/, const OctData::CoordSLOpx& /*start_px*/, const OctData::CoordSLOpx& /*end_px*/, SLOImageWidget*) const override;
-	virtual void drawMarker(QPainter&, BScanMarkerWidget*) const override;
+	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect&) const override;
 	virtual bool drawBScan() const                         override { return true;  }
 	
-	virtual bool mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
+	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual bool mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual bool mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;

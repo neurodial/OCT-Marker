@@ -139,7 +139,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	
 	BscanMarkerBase* actMarker = markerManger.getActMarker();
 	if(actMarker)
-		actMarker->drawMarker(painter, this);
+		actMarker->drawMarker(painter, this, event->rect());
 
 /*
 
@@ -268,8 +268,16 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 	
 	BscanMarkerBase* actMarker = markerManger.getActMarker();
 	if(actMarker)
-		if(actMarker->mouseMoveEvent(event, this))
-			update();
+	{
+		BscanMarkerBase::RedrawRequest result = actMarker->mouseMoveEvent(event, this);
+		if(result.redraw)
+		{
+			if(result.rect.isValid())
+				update(result.rect);
+			else
+				update();
+		}
+	}
 
 }
 
