@@ -309,9 +309,9 @@ uint8_t BScanSegmentation::valueOnCoord(int x, int y, int factor)
 }
 
 
-QRect BScanSegmentation::getWidgetPaintSize(QPoint p1, QPoint p2, int factor)
+QRect BScanSegmentation::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor)
 {
-	int drawRad = (paintRadius+1)*factor;
+	int drawRad = (paintRadius+2)*factor;
 	QRect rect = QRect(p1, p2).normalized(); // old and new pos
 	rect.adjust(-drawRad, -drawRad, drawRad, drawRad);
 

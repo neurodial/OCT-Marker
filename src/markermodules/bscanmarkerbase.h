@@ -76,6 +76,7 @@ protected:
 	
 	int getActBScan() const;
 	int getBScanWidth() const;
+	int getBScanHight() const;
 	int getBScanWidth(int nr) const;
 	
 	const OctData::Series* getSeries() const;

@@ -113,13 +113,18 @@ QToolBar* BScanIntervalMarker::createToolbar(QObject* parent)
 }
 
 
-BscanMarkerBase::RedrawRequest  BScanIntervalMarker::mouseMoveEvent(QMouseEvent* event, BScanMarkerWidget*)
+BscanMarkerBase::RedrawRequest  BScanIntervalMarker::mouseMoveEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
-	mouseInWidget = true;
-	mousePos = event->pos();
-
 	RedrawRequest result;
 	result.redraw = true;
+
+	if(markerActiv)
+		result.rect = getWidgetPaintSize(event->pos(), mousePos, widget->getImageScaleFactor(), &clickPos);
+	else
+		result.rect = getWidgetPaintSize(event->pos(), mousePos, widget->getImageScaleFactor());
+
+	mouseInWidget = true;
+	mousePos = event->pos();
 
 	return result;
 }
@@ -347,5 +352,30 @@ void BScanIntervalMarker::loadState(boost::property_tree::ptree& markerTree)
 	markers.resize(numBscans);
 
 	BScanIntervalPTree::parsePTree(markerTree, this);
+}
+
+
+QRect BScanIntervalMarker::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor, const QPoint* p3)
+{
+	const int broder = 5;
+	int x1 = p1.x();
+	int x2 = p2.x();
+
+	int minX = std::min(x1, x2);
+	int maxX = std::max(x1, x2);
+
+	if(p3)
+	{
+		int x3 = p3->x();
+		if(minX > x3)
+			minX = x3;
+		if(maxX < x3)
+			maxX = x3;
+	}
+
+	// QRect rect = QRect(p1.x(), 0, p2.x(), getBScanHight()*factor).normalized(); // old and new pos
+	QRect rect = QRect(minX-broder, 0, maxX-minX+2*broder, getBScanHight()*factor); // old and new pos
+
+	return rect;
 }
 

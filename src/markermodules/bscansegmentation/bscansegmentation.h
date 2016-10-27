@@ -50,7 +50,7 @@ class BScanSegmentation : public BscanMarkerBase
 	bool setOnCoord(int x, int y, int factor);
 	internalMatType valueOnCoord(int x, int y, int factor);
 
-	QRect getWidgetPaintSize(QPoint p1, QPoint p2, int factor);
+	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor);
 public:
 	BScanSegmentation(BScanMarkerManager* markerManager);
 	virtual ~BScanSegmentation()                                    { clearSegments(); }

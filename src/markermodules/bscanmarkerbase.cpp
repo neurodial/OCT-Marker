@@ -27,6 +27,14 @@ int BscanMarkerBase::getBScanWidth() const
 	return getBScanWidth(getActBScan());
 }
 
+int BscanMarkerBase::getBScanHight() const
+{
+	const OctData::Series* series = getSeries();
+	if(series)
+		return series->getBScan(getActBScan())->getHeight();
+	return 0;
+}
+
 const OctData::Series* BscanMarkerBase::getSeries() const
 {
 	return markerManager->getSeries();

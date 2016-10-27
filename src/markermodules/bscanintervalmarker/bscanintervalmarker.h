@@ -84,6 +84,7 @@ private:
 
 	std::vector<MarkerMap> markers;
 
+	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor, const QPoint* p3 = nullptr);
 };
 
 #endif // BSCANQUALITYMARKER_H
