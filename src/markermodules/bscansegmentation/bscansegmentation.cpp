@@ -7,6 +7,7 @@
 #include <QAction>
 #include <QToolBar>
 #include <QSpinBox>
+#include <QWidget>
 
 #include <manager/bscanmarkermanager.h>
 
@@ -18,6 +19,8 @@
 #include <opencv/cv.h>
 
 #include "bscansegmentationptree.h"
+
+#include "wgsegmentation.h"
 
 namespace
 {
@@ -40,13 +43,23 @@ namespace
 
 BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
+, widget(new WGSegmentation(this))
 {
+	widgetPtr2WGSegmentation = widget;
+
 	name = tr("Segmentation marker");
 	id   = "SegmentationMarker";
 	
 	icon = QIcon(":/icons/segline_edit.png");
 	
 	// connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanSegmentation::newSeriesLoaded);
+}
+
+BScanSegmentation::~BScanSegmentation()
+{
+	clearSegments();
+
+	delete widget;
 }
 
 
@@ -94,8 +107,8 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor, const QRe
 	QPen pen(Qt::red);
 	painter.setPen(pen);
 
-	int mapHeight = map->rows-1;
-	int mapWidth  = map->cols-1;
+	int mapHeight = map->rows-1; // -1 for p01
+	int mapWidth  = map->cols-1; // -1 for p10
 
 	int startH = std::max(drawY, 0);
 	int endH   = std::min(drawY+drawHeight, mapHeight);
@@ -136,6 +149,15 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 	else
 		drawSegmentLine<PaintFactorN>(p, factor, rect);
 
+	QPoint paintPoint = mousePoint;
+	if(factor > 1)
+	{
+		int x = std::round(static_cast<double>(mousePoint.x())/factor)*factor;
+		int y = std::round(static_cast<double>(mousePoint.y())/factor)*factor;
+		paintPoint = QPoint(x, y);
+	}
+
+
 	
 	QPen pen(Qt::green);
 	p.setPen(pen);
@@ -144,17 +166,27 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 		switch(paintMethod)
 		{
 			case PaintMethod::Disc:
-				p.drawEllipse(mousePoint, paintRadius*factor, paintRadius*factor);
+				p.drawEllipse(paintPoint + QPoint(factor/2, factor/2), static_cast<int>((paintRadius+0.5)*factor), static_cast<int>((paintRadius+0.5)*factor));
 				break;
 			case PaintMethod::Quadrat:
 			{
 				int size = paintRadius*factor;
-				p.drawRect(mousePoint.x()-size, mousePoint.y()-size, size*2, size*2);
+				p.drawRect(paintPoint.x()-size, paintPoint.y()-size, size*2, size*2);
 				break;
 			}
 		}
 	}
 }
+
+QWidget* BScanSegmentation::createWidget(QWidget* parent)
+{
+	QWidget* widget = new QWidget(parent);
+
+
+	return widget;
+}
+
+
 
 QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 {
@@ -279,18 +311,23 @@ bool BScanSegmentation::setOnCoord(int x, int y, int factor)
 {
 	if(factor == 0)
 		return false;
+
 	
 	cv::Mat* map = segments.at(getActBScan());
 	if(!map || map->empty())
 		return false;
 
+	double factorD = factor;
+	double xD = std::round(x/factorD);
+	double yD = std::round(y/factorD);
+
 	switch(paintMethod)
 	{
 		case PaintMethod::Disc:
-			cv::circle(*map, cv::Point(x/factor, y/factor), paintRadius, paintValue, CV_FILLED, 8, 0);
+			cv::circle(*map, cv::Point(xD, yD), paintRadius, paintValue, CV_FILLED, 8, 0);
 			break;
 		case PaintMethod::Quadrat:
-			rectangle(*map, cv::Point(x/factor-paintRadius, y/factor-paintRadius), cv::Point(x/factor+paintRadius, y/factor+paintRadius), paintValue, CV_FILLED, 8, 0);
+			rectangle(*map, cv::Point(xD-paintRadius, yD-paintRadius), cv::Point(xD+paintRadius-1, yD+paintRadius-1), paintValue, CV_FILLED, 8, 0);
 			break;
 	}
 	return true;

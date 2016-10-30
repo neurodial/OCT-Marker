@@ -49,6 +49,8 @@ private:
 
 	BScanMarkerManager* markerManager = nullptr;
 
+
+	// BScan informations
 	OctInfoField bscanImageQuality;
 	OctInfoField bscanNumAverage;
 	OctInfoField bscanAcquisitionTime;

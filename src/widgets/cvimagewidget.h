@@ -69,6 +69,8 @@ public slots:
 	void setZoom1()                                              { scaleFactor = 1; cvImage2qtImage(); }
 	void setZoom2()                                              { scaleFactor = 2; cvImage2qtImage(); }
 	void setZoom3()                                              { scaleFactor = 3; cvImage2qtImage(); }
+	void setZoom4()                                              { scaleFactor = 4; cvImage2qtImage(); }
+	void setZoom5()                                              { scaleFactor = 5; cvImage2qtImage(); }
 };
 
 #endif // CVIMAGEWIDGET_H

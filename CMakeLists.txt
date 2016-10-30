@@ -75,4 +75,3 @@ target_link_libraries(octmarker ${CppFramework_LIBRARIES})
 
 install(TARGETS octmarker RUNTIME DESTINATION bin)
 
-

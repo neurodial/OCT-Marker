@@ -70,11 +70,8 @@ namespace
 
 			if(!information.isEmpty())
 			{
-				if(octInfo.showed)
-				{
-					octInfo.labelInfo->setText(information);
-				}
-				else
+				octInfo.labelInfo->setText(information);
+				if(!octInfo.showed)
 				{
 					formlayout->insertRow(counter, octInfo.labelDesc, octInfo.labelInfo);
 					octInfo.labelDesc->show();

@@ -17,6 +17,7 @@
 #include <widgets/bscanmarkerwidget.h>
 #include <widgets/wgoctdatatree.h>
 #include <widgets/dwoctinformations.h>
+#include <widgets/dwmarkerwidgets.h>
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
@@ -80,8 +81,12 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	
 	DwOctInformations* dwoctinformations = new DwOctInformations(this);
 	dwoctinformations->setBScanMarkerManager(markerManager);
-	treeDock->setObjectName("DwOctInformations");
+	dwoctinformations->setObjectName("DwOctInformations");
 	addDockWidget(Qt::RightDockWidgetArea, dwoctinformations);
+
+// 	DWMarkerWidgets* dwmarkerwidgets = new DWMarkerWidgets(markerManager, this);
+// 	dwmarkerwidgets->setObjectName("DwMarkerWidgets");
+// 	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
 
 
 	// General Config

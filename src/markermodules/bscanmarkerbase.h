@@ -52,7 +52,8 @@ public:
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) { return false; }
 	
 	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
-	virtual QWidget*  createWidget (QObject*)                       { return nullptr; }
+	virtual QWidget*  createWidget (QWidget*)                       { return nullptr; }
+	virtual QWidget*  getWidget ()                                  { return nullptr; }
 	
 	virtual const QString& getName()                                { return name; }
 	virtual const QString& getMarkerId()                            { return id;   }

@@ -11,6 +11,7 @@
 #include <QPoint>
 
 class QAction;
+class WGSegmentation;
 
 namespace cv { class Mat; }
 
@@ -39,9 +40,12 @@ class BScanSegmentation : public BscanMarkerBase
 	int paintRadius = 10;
 	internalMatType paintValue = initialValue;
 	bool autoPaintValue = true;
+
+	WGSegmentation* widget = nullptr;
+	QWidget* widgetPtr2WGSegmentation = nullptr;
 	
 	SegMats segments;
-	
+
 	void clearSegments();
 
 	template<typename T>
@@ -52,10 +56,13 @@ class BScanSegmentation : public BscanMarkerBase
 
 	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor);
 public:
+
 	BScanSegmentation(BScanMarkerManager* markerManager);
-	virtual ~BScanSegmentation()                                    { clearSegments(); }
+	virtual ~BScanSegmentation();
 
 	QToolBar* createToolbar(QObject* parent) override;
+	virtual QWidget* createWidget(QWidget*)  override;
+	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGSegmentation; }
 	
 	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect&) const override;
 	virtual bool drawBScan() const                         override { return true;  }

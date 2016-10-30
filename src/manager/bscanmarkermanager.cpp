@@ -116,6 +116,7 @@ void BScanMarkerManager::setMarker(int id)
 		
 		actMarker = newMarker;
 		emit(bscanChanged(actBScan));
+		emit(markerChanged(actMarker));
 	}
 }
 

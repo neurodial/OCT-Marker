@@ -152,12 +152,12 @@ bool BScanIntervalMarker::mouseReleaseEvent(QMouseEvent* event, BScanMarkerWidge
 			if(clickPos.x() != event->x() && markerActiv)
 			{
 				// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
-				setMarker(clickPos.x()/scaleFactor, event->x()/scaleFactor);
+				setMarker(std::round(clickPos.x()/scaleFactor), std::round(event->x()/scaleFactor));
 			}
 			break;
 		case Method::Fill:
 			if(markerActiv)
-				fillMarker(clickPos.x()/scaleFactor);
+				fillMarker(std::round(clickPos.x()/scaleFactor));
 			break;
 	}
 	

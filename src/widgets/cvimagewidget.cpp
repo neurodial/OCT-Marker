@@ -34,16 +34,28 @@ void CVImageWidget::addZoomItems()
 	connect(actionZoom1, &QAction::triggered, this, &CVImageWidget::setZoom1);
 
 	QAction* actionZoom2 = new QAction(this);
-	actionZoom2->setText(tr("Zoom %2").arg(2));
+	actionZoom2->setText(tr("Zoom %1").arg(2));
 	actionZoom2->setIcon(QIcon(":/icons/zoom.png"));
 	contextMenu->addAction(actionZoom2);
 	connect(actionZoom2, &QAction::triggered, this, &CVImageWidget::setZoom2);
 
 	QAction* actionZoom3 = new QAction(this);
-	actionZoom3->setText(tr("Zoom %3").arg(3));
+	actionZoom3->setText(tr("Zoom %1").arg(3));
 	actionZoom3->setIcon(QIcon(":/icons/zoom.png"));
 	contextMenu->addAction(actionZoom3);
 	connect(actionZoom3, &QAction::triggered, this, &CVImageWidget::setZoom3);
+
+	QAction* actionZoom4 = new QAction(this);
+	actionZoom4->setText(tr("Zoom %1").arg(4));
+	actionZoom4->setIcon(QIcon(":/icons/zoom.png"));
+	contextMenu->addAction(actionZoom4);
+	connect(actionZoom4, &QAction::triggered, this, &CVImageWidget::setZoom4);
+
+	QAction* actionZoom5 = new QAction(this);
+	actionZoom5->setText(tr("Zoom %1").arg(5));
+	actionZoom5->setIcon(QIcon(":/icons/zoom.png"));
+	contextMenu->addAction(actionZoom5);
+	connect(actionZoom5, &QAction::triggered, this, &CVImageWidget::setZoom5);
 }
 
 

@@ -1,0 +1,1 @@
+#include "bscansegalgorithm.h"
