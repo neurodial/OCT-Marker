@@ -50,7 +50,7 @@ QToolBar* BScanIntervalMarker::createToolbar(QObject* parent)
 {
 	QActionGroup*  actionGroupMarker  = new QActionGroup (parent);
 	QActionGroup*  actionGroupMethod  = new QActionGroup (parent);
-	QToolBar*      toolBar            = new QToolBar(tr("Intervall marker"));
+	QToolBar*      toolBar            = new QToolBar(tr("Interval marker"));
 
 	std::size_t actMarkerId = actMarker.getInternalId();
 	toolBar->setObjectName("ToolBarIntervalMarker");
