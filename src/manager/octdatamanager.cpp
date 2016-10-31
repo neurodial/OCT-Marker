@@ -180,18 +180,13 @@ bool OctDataManager::addMarkers(QString filename, OctDataManager::Fileformat for
 bool OctDataManager::loadMarkers(QString filename, OctMarkerFileformat format)
 {
 	markerstree->clear();
-	bpt::read_xml(filename.toStdString(), *markerstree, bpt::xml_parser::trim_whitespace);
-	loadMarkerState(actSeries);
+	markerIO->loadMarkers(filename.toStdString(), format);
 	return true;
 }
 
 void OctDataManager::saveMarkers(QString filename, OctMarkerFileformat format)
 {
 	saveMarkerState(actSeries);
-
-	bpt::write_xml(filename.toStdString(), *markerstree, std::locale(), bpt::xml_writer_make_settings<bpt::ptree::key_type>('\t', 1u));
-
-	// bpt::xml_writer_settings<char> settings('\t', 1);
-//	bpt::write_xml(filename, *markerstree, std::locale(), settings);
+	markerIO->saveMarkers(filename.toStdString(), format);
 }
 
