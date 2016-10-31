@@ -38,6 +38,7 @@ BScanMarkerManager::BScanMarkerManager()
 	connect(&dataManager, &OctDataManager::seriesChanged  , this, &BScanMarkerManager::showSeries         );
 	connect(&dataManager, &OctDataManager::saveMarkerState, this, &BScanMarkerManager::saveMarkerStateSlot);
 	connect(&dataManager, &OctDataManager::loadMarkerState, this, &BScanMarkerManager::loadMarkerStateSlot);
+	connect(&dataManager, &OctDataManager::loadMarkerStateAll, this, &BScanMarkerManager::reloadMarkerStateSlot);
 
 	markerObj.push_back(new BScanSegmentation(this));
 	markerObj.push_back(new BScanIntervalMarker(this));

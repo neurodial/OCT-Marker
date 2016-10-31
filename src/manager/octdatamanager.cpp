@@ -183,6 +183,7 @@ bool OctDataManager::loadMarkers(QString filename, OctMarkerFileformat format)
 {
 	markerstree->clear();
 	markerIO->loadMarkers(filename.toStdString(), format);
+	emit(loadMarkerStateAll());
 	return true;
 }
 

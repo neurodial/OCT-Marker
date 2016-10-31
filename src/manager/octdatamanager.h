@@ -60,6 +60,8 @@ signals:
 	void saveMarkerState(const OctData::Series*);
 	void loadMarkerState(const OctData::Series*);
 
+	void loadMarkerStateAll();
+
 private:
 	
 	boost::property_tree::ptree* const markerstree = nullptr;

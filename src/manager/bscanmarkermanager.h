@@ -43,6 +43,7 @@ private:
 private slots:
 	virtual void saveMarkerStateSlot(const OctData::Series* series);
 	virtual void loadMarkerStateSlot(const OctData::Series* series);
+	virtual void reloadMarkerStateSlot()                            { loadMarkerStateSlot(series); }
 
 	virtual void udateFromMarkerModul();
 
