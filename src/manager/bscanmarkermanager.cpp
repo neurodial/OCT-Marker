@@ -26,6 +26,7 @@
 #include <helper/ptreehelper.h>
 
 #include <boost/property_tree/ptree.hpp>
+
 namespace bpt = boost::property_tree;
 
 
@@ -79,8 +80,11 @@ void BScanMarkerManager::chooseBScan(int bscan)
 void BScanMarkerManager::showSeries(const OctData::Series* s)
 {
 	series = s;
-	markerTree = OctDataManager::getInstance().getMarkerTree(s);
+	bpt::ptree* markerTree = OctDataManager::getInstance().getMarkerTree(s);
 	
+	if(!markerTree)
+		return;
+
 	actBScan = 0;
 
 
@@ -126,6 +130,8 @@ void BScanMarkerManager::saveMarkerStateSlot(const OctData::Series* s)
 	if(series != s)
 		return;
 
+	bpt::ptree* markerTree = OctDataManager::getInstance().getMarkerTree(s);
+
 	if(!markerTree)
 		return;
 
@@ -144,7 +150,7 @@ void BScanMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 	if(series != s)
 		return;
 
-	markerTree = OctDataManager::getInstance().getMarkerTree(s);
+	bpt::ptree* markerTree = OctDataManager::getInstance().getMarkerTree(s);
 
 	if(!markerTree)
 		return;

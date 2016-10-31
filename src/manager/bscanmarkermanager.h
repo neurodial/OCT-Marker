@@ -4,7 +4,7 @@
 #include <QObject>
 #include <vector>
 
-#include <boost/property_tree/ptree_fwd.hpp>
+// #include <boost/property_tree/ptree_fwd.hpp>
 
 namespace OctData
 {
@@ -40,8 +40,6 @@ private:
 	BscanMarkerBase* actMarker = nullptr;
 	int actMarkerId = -1;
 
-	boost::property_tree::ptree* markerTree = nullptr;
-	
 private slots:
 	virtual void saveMarkerStateSlot(const OctData::Series* series);
 	virtual void loadMarkerStateSlot(const OctData::Series* series);
