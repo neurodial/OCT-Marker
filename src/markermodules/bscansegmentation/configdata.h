@@ -14,4 +14,23 @@ namespace BScanSegmentationMarker
 		double relativeFrac  = 45;
 	};
 
+	struct LocalData
+	{
+		enum class Method      { Threshold, Paint, Operation };
+		enum class PaintMethod { Circle, Rect };
+		enum class PaintColor  { Area0, Auto, Area1 };
+		enum class Operation   { Erode, Dilate };
+
+		Method method;
+
+		// Threshold
+		ThresholdData thresholdData;
+
+		// Paint
+		PaintMethod paintMethod;
+		PaintColor  paintColor;
+		int paintSize = 10;
+
+		Operation operation;
+	};
 }

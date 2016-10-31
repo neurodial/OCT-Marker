@@ -86,9 +86,9 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	dwoctinformations->setObjectName("DwOctInformations");
 	addDockWidget(Qt::RightDockWidgetArea, dwoctinformations);
 
-// 	DWMarkerWidgets* dwmarkerwidgets = new DWMarkerWidgets(markerManager, this);
-// 	dwmarkerwidgets->setObjectName("DwMarkerWidgets");
-// 	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
+	DWMarkerWidgets* dwmarkerwidgets = new DWMarkerWidgets(markerManager, this);
+	dwmarkerwidgets->setObjectName("DwMarkerWidgets");
+	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
 
 
 	// General Config
