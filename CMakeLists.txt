@@ -39,6 +39,9 @@ include_directories(${CppFramework_INCLUDE_DIRS})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wunreachable-code") #  -Wconversion")        ## Optimize -O3 -Weverything -Weffc++
+	if(WIN32)
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -mwindows")
+	endif()
 endif()
 
 
@@ -68,6 +71,10 @@ add_executable(octmarker src/main.cpp ${octmarker_SRCS}
 	${TRANSLATIONS}
 	${octmarker_RESOURCES_RCC}
 	${TRANSLATIONS})
+
+if(WIN32 AND MSVC)
+	set_target_properties(octmarker PROPERTIES LINK_FLAGS_RELEASE "/subsystem:windows /ENTRY:mainCRTStartup")
+endif()
 
 target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 target_link_libraries(octmarker ${LibOctData_LIBRARIES})
