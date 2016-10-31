@@ -25,6 +25,9 @@ OptionBool ProgramOptions::sloShowLabels(false, "sloShowLabels");
 OptionString ProgramOptions::octDirectory      (".", "octDirectory");
 OptionString ProgramOptions::loadOctdataAtStart("" , "loadOctDataAtStart");
 
+OptionBool ProgramOptions::autoSaveOctMarkers         (true, "autoSaveOctMarkers");
+OptionInt  ProgramOptions::defaultFileformatOctMarkers(-1  , "defaultFileformatOctMarkers");
+
 
 void OptionColor::showColorDialog()
 {
@@ -40,7 +43,7 @@ void OptionColor::showColorDialog()
 
 std::vector<Option*> ProgramOptions::getAllOptions()
 {
-	std::vector<Option*> options = {&bscansShowSegmentationslines, &fillEmptyPixelWhite, &registerBScans, &e2eGrayTransform, &sloShowBscans, &sloShowLabels, &octDirectory, &loadOctdataAtStart, &sloShowOnylActBScan};
+	std::vector<Option*> options = {&bscansShowSegmentationslines, &fillEmptyPixelWhite, &registerBScans, &e2eGrayTransform, &sloShowBscans, &sloShowLabels, &octDirectory, &loadOctdataAtStart, &sloShowOnylActBScan, &autoSaveOctMarkers, &defaultFileformatOctMarkers};
 	
 	return options;
 }

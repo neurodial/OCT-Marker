@@ -1,9 +1,12 @@
 #include "octdatamanager.h"
 #include <data_structure/programoptions.h>
 
+#include <iostream>
+
 #include <QString>
 #include <QTime>
 
+#include "octmarkerio.h"
 
 
 #include <octdata/datastruct/series.h>
@@ -29,6 +32,7 @@ namespace bfs = boost::filesystem;
 
 OctDataManager::OctDataManager()
 : markerstree(new bpt::ptree)
+, markerIO(new OctMarkerIO(markerstree, this))
 {
 }
 
@@ -36,8 +40,18 @@ OctDataManager::OctDataManager()
 
 OctDataManager::~OctDataManager()
 {
+	try
+	{
+		markerIO->saveDefaultMarker();
+	}
+	catch(...)
+	{
+		std::cerr << "Error: Marker not saved";
+	}
+	
 	delete octData;
 	delete markerstree;
+	delete markerIO;
 }
 
 
@@ -47,7 +61,7 @@ void OctDataManager::openFile(const QString& filename)
 	OctData::OCT* oldOct = octData;
 	octData    = nullptr;
 	
-	saveDefaultMarker();
+	markerIO->saveDefaultMarker();
 
 	try
 	{
@@ -98,7 +112,7 @@ void OctDataManager::openFile(const QString& filename)
 	delete oldOct;
 	markerstree->clear();
 	
-	loadDefaultMarker();
+	markerIO->loadDefaultMarker();
 	
 	emit(octFileChanged(octData   ));
 	emit(patientChanged(actPatient));
@@ -110,8 +124,7 @@ void OctDataManager::openFile(const QString& filename)
 void OctDataManager::chooseSeries(const OctData::Series* seriesReq)
 {
 	saveMarkerState(actSeries);
-
-	qDebug("Series requested");
+	
 	
 	if(seriesReq == actSeries)
 		return;
@@ -165,7 +178,7 @@ bool OctDataManager::addMarkers(QString filename, OctDataManager::Fileformat for
 }
 */
 
-bool OctDataManager::loadMarkers(QString filename, OctDataManager::Fileformat format)
+bool OctDataManager::loadMarkers(QString filename, OctMarkerFileformat format)
 {
 	markerstree->clear();
 	bpt::read_xml(filename.toStdString(), *markerstree, bpt::xml_parser::trim_whitespace);
@@ -173,7 +186,7 @@ bool OctDataManager::loadMarkers(QString filename, OctDataManager::Fileformat fo
 	return true;
 }
 
-void OctDataManager::saveMarkers(QString filename, OctDataManager::Fileformat format)
+void OctDataManager::saveMarkers(QString filename, OctMarkerFileformat format)
 {
 	saveMarkerState(actSeries);
 
@@ -182,43 +195,4 @@ void OctDataManager::saveMarkers(QString filename, OctDataManager::Fileformat fo
 	// bpt::xml_writer_settings<char> settings('\t', 1);
 //	bpt::write_xml(filename, *markerstree, std::locale(), settings);
 }
-
-void OctDataManager::loadDefaultMarker()
-{
-	try
-	{
-		bfs::path file = actFilename.toStdString() + "." + getFileExtension(defaultFileFormat);
-		if(!bfs::exists(file))
-			return;
-		
-		loadMarkers(QString::fromStdString(file.generic_string()), defaultFileFormat);
-	}
-	catch(...)
-	{
-	}
-}
-
-void OctDataManager::saveDefaultMarker()
-{
-	try
-	{
-		
-	}
-	catch(...)
-	{
-	}
-}
-
-const char* OctDataManager::getFileExtension(OctDataManager::Fileformat format)
-{
-	switch(format)
-	{
-		case Fileformat::Josn:
-			return "joctmarker";
-		case Fileformat::XML:
-			return "xoctmarker";
-	}
-	return "";
-}
-
 

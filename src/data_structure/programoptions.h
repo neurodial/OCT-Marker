@@ -173,6 +173,9 @@ public:
 	static OptionString octDirectory;
 	static OptionString loadOctdataAtStart;
 	
+	static OptionBool autoSaveOctMarkers;
+	static OptionInt  defaultFileformatOctMarkers;
+	
 	
 	static std::vector<Option*> getAllOptions();
 	

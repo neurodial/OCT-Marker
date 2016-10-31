@@ -99,10 +99,10 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor, const QRe
 	if(factor <= 0)
 		return;
 
-	int drawX      = (rect.x()     )/factor-1;
-	int drawY      = (rect.y()     )/factor-1;
-	int drawWidth  = (rect.width() )/factor+2;
-	int drawHeight = (rect.height())/factor+2;
+	int drawX      = (rect.x()     )/factor-2;
+	int drawY      = (rect.y()     )/factor-2;
+	int drawWidth  = (rect.width() )/factor+4;
+	int drawHeight = (rect.height())/factor+4;
 
 	QPen pen(Qt::red);
 	painter.setPen(pen);

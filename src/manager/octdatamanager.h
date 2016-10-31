@@ -8,8 +8,11 @@
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
+#include <globaldefinitons.h>
+
 
 class QString;
+class OctMarkerIO;
 
 namespace OctData
 {
@@ -24,29 +27,25 @@ class OctDataManager : public QObject
 {
 	Q_OBJECT
 public:
-	enum class Fileformat { XML, Josn };
 	
 	virtual ~OctDataManager();
 	
 	static OctDataManager& getInstance()                            { static OctDataManager instance; return instance; }
 	
 	const QString& getLoadedFilename() const                        { return actFilename; }
-
 	const OctData::Series* getSeries() const                        { return actSeries;   }
-
 	boost::property_tree::ptree* getMarkerTree(const OctData::Series* series)
 	                                                                { return getMarkerTreeSeries(series); }
 	
-	const char* getFileExtension(Fileformat format);
 public slots:
 	void openFile(const QString& filename);
 	
 	void chooseSeries(const OctData::Series* seriesReq);
 	
 	
-	virtual bool loadMarkers(QString filename, Fileformat format);
+	virtual bool loadMarkers(QString filename, OctMarkerFileformat format);
 	// virtual bool addMarkers (QString filename, Fileformat format);
-	virtual void saveMarkers(QString filename, Fileformat format);
+	virtual void saveMarkers(QString filename, OctMarkerFileformat format);
 	
 
 signals:
@@ -59,9 +58,9 @@ signals:
 	void loadMarkerState(const OctData::Series*);
 
 private:
-	Fileformat defaultFileFormat = Fileformat::Josn;
 	
-	boost::property_tree::ptree* markerstree;
+	boost::property_tree::ptree* const markerstree = nullptr;
+	OctMarkerIO*                 const markerIO    = nullptr;
 
 	OctData::OCT* octData = nullptr;
 	QString actFilename;
@@ -70,11 +69,10 @@ private:
 	const OctData::Study*   actStudy   = nullptr;
 	const OctData::Series*  actSeries  = nullptr;
 	
+	
+	
 	OctDataManager();
 	
-	void saveDefaultMarker();
-	void loadDefaultMarker();
-
 	boost::property_tree::ptree* getMarkerTreeSeries(const OctData::Series* series);
 	boost::property_tree::ptree* getMarkerTreeSeries(const OctData::Patient* pat, const OctData::Study* study, const OctData::Series*  series);
 };

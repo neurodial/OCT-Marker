@@ -24,6 +24,7 @@
 
 #include <manager/bscanmarkermanager.h>
 #include <manager/octdatamanager.h>
+#include <manager/octmarkerio.h>
 #include <markermodules/bscanmarkerbase.h>
 
 #include <model/octfilesmodel.h>
@@ -510,22 +511,35 @@ void OCTMarkerMainWindow::showAddMarkersDialog()
 
 void OCTMarkerMainWindow::setMarkersStringList(QStringList& filters)
 {
-	filters << tr("OCT Markers Josn file (*.%1)").arg("joctmarkers");
-	filters << tr("OCT Markers XML file (*.%1)").arg("xoctmarkers");
+	const char* josnExt = OctMarkerIO::getFileExtension(OctMarkerFileformat::Josn);
+	const char*  xmlExt = OctMarkerIO::getFileExtension(OctMarkerFileformat::XML);
+	const char* infoExt = OctMarkerIO::getFileExtension(OctMarkerFileformat::INFO);
+	
+	filters << tr("OCT Markers")+QString(" (*.%1 *.%2 *.%3)").arg(josnExt).arg(xmlExt).arg(infoExt);
+	filters << tr("OCT Markers Josn file")+QString(" (*.%1)").arg(josnExt);
+	filters << tr("OCT Markers XML file" )+QString(" (*.%1)").arg(xmlExt);
+	filters << tr("OCT Markers INFO file")+QString(" (*.%1)").arg(infoExt);
 }
 
 namespace
 {
-	OctDataManager::Fileformat getMarkerFileFormat(const QString& filter)
+	OctMarkerFileformat getMarkerFileFormat(const QString& filter)
 	{
 		QStringList filters;
 		OCTMarkerMainWindow::setMarkersStringList(filters);
 		int index = filters.indexOf(filter);
+		
+		static const OctMarkerFileformat formats[] = {OctMarkerFileformat::Josn, OctMarkerFileformat::XML, OctMarkerFileformat::INFO};
+		
 		if(index == 0)
-			return OctDataManager::Fileformat::Josn;
-		if(index == 1)
-			return OctDataManager::Fileformat::XML;
-
+		   return OctMarkerFileformat::Auto;
+		
+		--index;
+		if(index < sizeof(formats)/sizeof(formats[0]))
+		{
+			return formats[index];
+		}
+		
 		throw "unknown filtername";
 	}
 }
