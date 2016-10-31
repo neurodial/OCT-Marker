@@ -40,18 +40,16 @@ OctDataManager::OctDataManager()
 
 OctDataManager::~OctDataManager()
 {
-	try
-	{
-		markerIO->saveDefaultMarker();
-	}
-	catch(...)
-	{
-		std::cerr << "Error: Marker not saved";
-	}
-	
 	delete octData;
 	delete markerstree;
 	delete markerIO;
+}
+
+
+void OctDataManager::saveMarkersDefault()
+{
+	saveMarkerState(actSeries);
+	markerIO->saveDefaultMarker();
 }
 
 
@@ -61,6 +59,7 @@ void OctDataManager::openFile(const QString& filename)
 	OctData::OCT* oldOct = octData;
 	octData    = nullptr;
 	
+	saveMarkerState(actSeries);
 	markerIO->saveDefaultMarker();
 
 	try

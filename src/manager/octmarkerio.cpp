@@ -16,6 +16,15 @@
 namespace bpt = boost::property_tree;
 namespace bfs = boost::filesystem;
 
+namespace
+{
+	namespace Constants
+	{
+		const char* mainNodeName = "OctMarker";
+		const int   version      = 1;
+	}
+}
+
 
 OctMarkerIO::OctMarkerIO(boost::property_tree::ptree* markerTree, const OctDataManager* dataManager)
 : markerstree(markerTree)
@@ -133,21 +142,41 @@ bool OctMarkerIO::loadMarkers(const std::string& markersFilename, OctMarkerFilef
 	if(format == OctMarkerFileformat::Unknown)
 		return false;
 	
+	bpt::ptree loadTree;
+
 	switch(format)
 	{
 		case OctMarkerFileformat::Josn:
-			bpt::read_json(markersFilename, *markerstree);
+			bpt::read_json(markersFilename, loadTree);
 			break;
 		case OctMarkerFileformat::XML:
-			bpt::read_xml(markersFilename, *markerstree, bpt::xml_parser::trim_whitespace);
+			bpt::read_xml(markersFilename, loadTree, bpt::xml_parser::trim_whitespace);
 			break;
 		case OctMarkerFileformat::INFO:
-			bpt::read_info(markersFilename, *markerstree);
+			bpt::read_info(markersFilename, loadTree);
 			break;
 		case OctMarkerFileformat::Auto:
 		case OctMarkerFileformat::Unknown:
 			return false;
 	}
+
+	boost::optional<bpt::ptree&> nodeMain = loadTree.get_child_optional(Constants::mainNodeName);
+	if(!nodeMain)
+		return false;
+
+	boost::optional<bpt::ptree&> nodeVersion = nodeMain->get_child_optional("Version");
+	if(!nodeVersion)
+		return false;
+
+	if(nodeVersion->get_value<int>(0) != Constants::version)
+		return false;
+
+
+	boost::optional<bpt::ptree&> nodeMarkers = nodeMain->get_child_optional("Markers");
+	if(!nodeMarkers)
+		return false;
+
+	*markerstree = *nodeMarkers;
 	
 	return true;
 }
@@ -160,21 +189,21 @@ bool OctMarkerIO::saveMarkers(const std::string& markersFilename, OctMarkerFilef
 		return false;
 	
 	bpt::ptree saveTree;
-	bpt::ptree& markerTree = saveTree.put("OctMarker", "");
-	markerTree.put("Version","1");
+	bpt::ptree& markerTree = saveTree.put(Constants::mainNodeName, "");
+	markerTree.put("Version", Constants::version);
     markerTree.add_child("Markers", *markerstree);
 	
 	
 	switch(format)
 	{
 		case OctMarkerFileformat::Josn:
-			bpt::write_json(markersFilename, *markerstree);
+			bpt::write_json(markersFilename, saveTree);
 			break;
 		case OctMarkerFileformat::XML:
-			bpt::write_xml(markersFilename, *markerstree, std::locale(), bpt::xml_writer_make_settings<bpt::ptree::key_type>('\t', 1u));
+			bpt::write_xml(markersFilename, saveTree, std::locale(), bpt::xml_writer_make_settings<bpt::ptree::key_type>('\t', 1u));
 			break;
 		case OctMarkerFileformat::INFO:
-			bpt::write_info(markersFilename, *markerstree, std::locale(), bpt::info_writer_settings<char>('\t', 1u));
+			bpt::write_info(markersFilename, saveTree, std::locale(), bpt::info_writer_settings<char>('\t', 1u));
 			break;
 		case OctMarkerFileformat::Unknown:
 		case OctMarkerFileformat::Auto:

@@ -615,6 +615,43 @@ void OCTMarkerMainWindow::saveMatlabBinCode()
 
 void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
 {
+	// save Markers
+	bool saveSuccessful = true;
+	std::string errorStr;
+	try
+	{
+		OctDataManager::getInstance().saveMarkersDefault();
+	}
+	catch(boost::exception& e)
+	{
+		saveSuccessful = false;
+		errorStr = boost::diagnostic_information(e);
+	}
+	catch(std::exception& e)
+	{
+		saveSuccessful = false;
+		errorStr = e.what();
+	}
+	catch(const char* str)
+	{
+		saveSuccessful = false;
+		errorStr = str;
+	}
+	catch(...)
+	{
+		saveSuccessful = false;
+		errorStr = tr("Unknown error on autosave").toStdString();
+	}
+	if(!saveSuccessful)
+	{
+		int ret = QMessageBox::critical(this, tr("Error on autosave"), tr("Autosave fail with message: %1 <br />Quit program?").arg(errorStr.c_str()), QMessageBox::Yes | QMessageBox::No);
+		if(ret == QMessageBox::No)
+			return e->ignore();
+	}
+
+
+
+	// save programoptions
 	ProgramOptions::loadOctdataAtStart.setValue(OctDataManager::getInstance().getLoadedFilename());
 	
 	ProgramOptions::writeAllOptions();

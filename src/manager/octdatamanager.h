@@ -37,6 +37,8 @@ public:
 	boost::property_tree::ptree* getMarkerTree(const OctData::Series* series)
 	                                                                { return getMarkerTreeSeries(series); }
 	
+	void saveMarkersDefault();
+
 public slots:
 	void openFile(const QString& filename);
 	
@@ -47,6 +49,7 @@ public slots:
 	// virtual bool addMarkers (QString filename, Fileformat format);
 	virtual void saveMarkers(QString filename, OctMarkerFileformat format);
 	
+
 
 signals:
 	void octFileChanged(const OctData::OCT*    );

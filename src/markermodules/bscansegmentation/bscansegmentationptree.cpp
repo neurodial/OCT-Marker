@@ -144,8 +144,11 @@ bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree
 			{
 				if(row == segmentChangeCol)
 				{
-					segmentChangeCol = *it;
-					++it;
+					if(it != itEnd)
+					{
+						segmentChangeCol = *it;
+						++it;
+					}
 
 					if(value == BScanSegmentation::paintArea0Value)
 						value = BScanSegmentation::paintArea1Value;
