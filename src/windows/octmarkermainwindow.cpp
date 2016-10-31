@@ -48,6 +48,7 @@
 
 #include <cpp_framework/cvmat/treestructbin.h>
 
+#include <globaldefinitions.h>
 
 
 
@@ -209,6 +210,26 @@ void OCTMarkerMainWindow::setupMenu()
 	static SendInt e2eGrayVol   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::vol));
 	addMenuProgramOptionGroup(tr("Vol emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayVol  , e2eGrayTransformGroup, this);
 
+	optionsMenu->addSeparator();
+
+
+
+	QAction* autoSaveOctMarkers       = ProgramOptions::autoSaveOctMarkers.getAction();
+	autoSaveOctMarkers->setText(tr("Autosave markers"));
+	optionsMenu->addAction(autoSaveOctMarkers);
+
+
+	QMenu* optionsMenuMarkersFileFormat = new QMenu(this);
+	optionsMenuMarkersFileFormat->setTitle(tr("Default filetype"));
+	optionsMenu->addMenu(optionsMenuMarkersFileFormat);
+
+	QActionGroup* markersFileFormatGroup = new QActionGroup(this);
+	static SendInt markerFFxml(static_cast<int>(OctMarkerFileformat::XML));
+	addMenuProgramOptionGroup(tr("XML" ), ProgramOptions::e2eGrayTransform, optionsMenuMarkersFileFormat, markerFFxml, markersFileFormatGroup, this);
+	static SendInt markerFFjsom(static_cast<int>(OctMarkerFileformat::Json));
+	addMenuProgramOptionGroup(tr("JSOM"), ProgramOptions::e2eGrayTransform, optionsMenuMarkersFileFormat, markerFFjsom  , markersFileFormatGroup, this);
+	static SendInt markerFFinfo(static_cast<int>(OctMarkerFileformat::INFO));
+	addMenuProgramOptionGroup(tr("INFO"), ProgramOptions::e2eGrayTransform, optionsMenuMarkersFileFormat, markerFFinfo  , markersFileFormatGroup, this);
 
 	// ----------
 	// Extras
@@ -511,12 +532,12 @@ void OCTMarkerMainWindow::showAddMarkersDialog()
 
 void OCTMarkerMainWindow::setMarkersStringList(QStringList& filters)
 {
-	const char* josnExt = OctMarkerIO::getFileExtension(OctMarkerFileformat::Josn);
+	const char* josnExt = OctMarkerIO::getFileExtension(OctMarkerFileformat::Json);
 	const char*  xmlExt = OctMarkerIO::getFileExtension(OctMarkerFileformat::XML);
 	const char* infoExt = OctMarkerIO::getFileExtension(OctMarkerFileformat::INFO);
 	
 	filters << tr("OCT Markers")+QString(" (*.%1 *.%2 *.%3)").arg(josnExt).arg(xmlExt).arg(infoExt);
-	filters << tr("OCT Markers Josn file")+QString(" (*.%1)").arg(josnExt);
+	filters << tr("OCT Markers Json file")+QString(" (*.%1)").arg(josnExt);
 	filters << tr("OCT Markers XML file" )+QString(" (*.%1)").arg(xmlExt);
 	filters << tr("OCT Markers INFO file")+QString(" (*.%1)").arg(infoExt);
 }
@@ -529,7 +550,7 @@ namespace
 		OCTMarkerMainWindow::setMarkersStringList(filters);
 		int index = filters.indexOf(filter);
 		
-		static const OctMarkerFileformat formats[] = {OctMarkerFileformat::Josn, OctMarkerFileformat::XML, OctMarkerFileformat::INFO};
+		static const OctMarkerFileformat formats[] = {OctMarkerFileformat::Json, OctMarkerFileformat::XML, OctMarkerFileformat::INFO};
 		
 		if(index == 0)
 		   return OctMarkerFileformat::Auto;

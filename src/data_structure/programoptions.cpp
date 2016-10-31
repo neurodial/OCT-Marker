@@ -7,6 +7,9 @@
 #include <QSettings>
 
 
+#include <globaldefinitions.h>
+
+
 OptionBool ProgramOptions::bscansShowSegmentationslines(true, "bscansShowSegmentationslines");
 
 
@@ -26,7 +29,7 @@ OptionString ProgramOptions::octDirectory      (".", "octDirectory");
 OptionString ProgramOptions::loadOctdataAtStart("" , "loadOctDataAtStart");
 
 OptionBool ProgramOptions::autoSaveOctMarkers         (true, "autoSaveOctMarkers");
-OptionInt  ProgramOptions::defaultFileformatOctMarkers(-1  , "defaultFileformatOctMarkers");
+OptionInt  ProgramOptions::defaultFileformatOctMarkers(static_cast<int>(OctMarkerFileformat::INFO)  , "defaultFileformatOctMarkers");
 
 
 void OptionColor::showColorDialog()

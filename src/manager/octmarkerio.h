@@ -5,7 +5,7 @@
 
 #include<boost/property_tree/ptree_fwd.hpp>
 
-#include<globaldefinitons.h>
+#include<globaldefinitions.h>
 
 // namespace boost{ namespace filesystem{ class path; }}
 
@@ -13,8 +13,8 @@ class OctDataManager;
 
 class OctMarkerIO
 {
-	static const OctMarkerFileformat defaultFileFormat = OctMarkerFileformat::Josn;
-	OctMarkerFileformat defaultLoadedFormat = OctMarkerFileformat::Josn;
+	static const OctMarkerFileformat defaultFileFormat = OctMarkerFileformat::Json;
+	OctMarkerFileformat defaultLoadedFormat = OctMarkerFileformat::Json;
 	
 	boost::property_tree::ptree* markerstree = nullptr;
 	const OctDataManager* octDataManager = nullptr;

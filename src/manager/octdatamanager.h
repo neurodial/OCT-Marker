@@ -8,7 +8,7 @@
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
-#include <globaldefinitons.h>
+#include <globaldefinitions.h>
 
 
 class QString;

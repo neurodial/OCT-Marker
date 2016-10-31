@@ -39,8 +39,8 @@ int OctMarkerIO::fileformat2Int(OctMarkerFileformat format)
 	{
 		case OctMarkerFileformat::XML:
 			return static_cast<int>(OctMarkerFileformat::XML);
-		case OctMarkerFileformat::Josn:
-			return static_cast<int>(OctMarkerFileformat::Josn);
+		case OctMarkerFileformat::Json:
+			return static_cast<int>(OctMarkerFileformat::Json);
 		case OctMarkerFileformat::INFO:
 			return static_cast<int>(OctMarkerFileformat::INFO);
 		case OctMarkerFileformat::Unknown:
@@ -56,8 +56,8 @@ OctMarkerFileformat OctMarkerIO::int2Fileformat(int formatId)
 	{
 		case static_cast<int>(OctMarkerFileformat::XML):
 			return OctMarkerFileformat::XML;
-		case static_cast<int>(OctMarkerFileformat::Josn):
-			return OctMarkerFileformat::Josn;
+		case static_cast<int>(OctMarkerFileformat::Json):
+			return OctMarkerFileformat::Json;
 		case static_cast<int>(OctMarkerFileformat::INFO):
 			return OctMarkerFileformat::INFO;
 	}
@@ -70,10 +70,10 @@ OctMarkerFileformat OctMarkerIO::getFormatFromExtension(const std::string& filen
 {
 
 	bfs::path file(filename);
-	std::string extension = file.extension().generic_string();
+	std::string extension = file.extension().generic_string().substr(1);
 	
-	if(extension == getFileExtension(OctMarkerFileformat::Josn))
-		return OctMarkerFileformat::Josn;
+	if(extension == getFileExtension(OctMarkerFileformat::Json))
+		return OctMarkerFileformat::Json;
 	if(extension == getFileExtension(OctMarkerFileformat::XML))
 		return OctMarkerFileformat::XML;
 	if(extension == getFileExtension(OctMarkerFileformat::INFO))
@@ -87,7 +87,7 @@ const char* OctMarkerIO::getFileExtension(OctMarkerFileformat format)
 {
 	switch(format)
 	{
-		case OctMarkerFileformat::Josn:
+		case OctMarkerFileformat::Json:
 			return "joctmarker";
 		case OctMarkerFileformat::XML:
 			return "xoctmarker";
@@ -111,7 +111,7 @@ bool OctMarkerIO::loadDefaultMarker()
 {
 	std::string octFilename = octDataManager->getLoadedFilename().toStdString();
 	
-	OctMarkerFileformat formats[] = { OctMarkerFileformat::Josn,
+	OctMarkerFileformat formats[] = { OctMarkerFileformat::Json,
 	                                  OctMarkerFileformat::XML,
 	                                  OctMarkerFileformat::INFO };
 	
@@ -146,7 +146,7 @@ bool OctMarkerIO::loadMarkers(const std::string& markersFilename, OctMarkerFilef
 
 	switch(format)
 	{
-		case OctMarkerFileformat::Josn:
+		case OctMarkerFileformat::Json:
 			bpt::read_json(markersFilename, loadTree);
 			break;
 		case OctMarkerFileformat::XML:
@@ -196,7 +196,7 @@ bool OctMarkerIO::saveMarkers(const std::string& markersFilename, OctMarkerFilef
 	
 	switch(format)
 	{
-		case OctMarkerFileformat::Josn:
+		case OctMarkerFileformat::Json:
 			bpt::write_json(markersFilename, saveTree);
 			break;
 		case OctMarkerFileformat::XML:

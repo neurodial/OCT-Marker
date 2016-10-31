@@ -48,8 +48,11 @@ OctDataManager::~OctDataManager()
 
 void OctDataManager::saveMarkersDefault()
 {
-	saveMarkerState(actSeries);
-	markerIO->saveDefaultMarker();
+	if(ProgramOptions::autoSaveOctMarkers())
+	{
+		saveMarkerState(actSeries);
+		markerIO->saveDefaultMarker();
+	}
 }
 
 
@@ -59,8 +62,7 @@ void OctDataManager::openFile(const QString& filename)
 	OctData::OCT* oldOct = octData;
 	octData    = nullptr;
 	
-	saveMarkerState(actSeries);
-	markerIO->saveDefaultMarker();
+	saveMarkersDefault();
 
 	try
 	{
