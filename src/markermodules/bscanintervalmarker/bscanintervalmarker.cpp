@@ -167,12 +167,12 @@ bool BScanIntervalMarker::mouseReleaseEvent(QMouseEvent* event, BScanMarkerWidge
 
 void BScanIntervalMarker::setMarker(int x1, int x2)
 {
-	setMarker(x1, x2, actMarker, getActBScan());
+	setMarker(x1, x2, actMarker, getActBScanNr());
 }
 
 void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type)
 {
-	setMarker(x1, x2, type     , getActBScan());
+	setMarker(x1, x2, type     , getActBScanNr());
 }
 
 void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, int bscan)
@@ -203,7 +203,7 @@ void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, int bsca
 
 void BScanIntervalMarker::fillMarker(int x, const Marker& type)
 {
-	int bscan = getActBScan();
+	int bscan = getActBScanNr();
 
 
 	if(bscan<0 || bscan >= static_cast<int>(markers.size()))

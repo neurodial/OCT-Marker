@@ -20,6 +20,7 @@ class SLOImageWidget;
 namespace OctData
 {
 	class Series;
+	class BScan;
 	class CoordSLOpx;
 };
 
@@ -75,12 +76,13 @@ protected:
 	
 	void connectToolBar(QToolBar* toolbar);
 	
-	int getActBScan() const;
+	int getActBScanNr() const;
 	int getBScanWidth() const;
 	int getBScanHight() const;
 	int getBScanWidth(int nr) const;
 	
 	const OctData::Series* getSeries() const;
+	const OctData::BScan * getActBScan() const;
 	
 	QString name;
 	QString id;

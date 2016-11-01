@@ -53,8 +53,12 @@ public:
 	
 	static void setMarkersStringList(QStringList& filters);
 
+signals:
+	void loadLastFile();
+
 private slots:
-	virtual void newCscanLoaded();
+	void newCscanLoaded();
+	void loadLastFileSlot();
 
 public slots:
 

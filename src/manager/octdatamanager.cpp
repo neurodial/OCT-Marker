@@ -59,10 +59,10 @@ void OctDataManager::saveMarkersDefault()
 
 void OctDataManager::openFile(const QString& filename)
 {
+	saveMarkersDefault();
+
 	OctData::OCT* oldOct = octData;
 	octData    = nullptr;
-	
-	saveMarkersDefault();
 
 	try
 	{

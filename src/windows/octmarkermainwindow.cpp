@@ -97,9 +97,8 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	setAcceptDrops(true);
 
 	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged   , this, &OCTMarkerMainWindow::newCscanLoaded);
+	connect(this, &OCTMarkerMainWindow::loadLastFile, this, &OCTMarkerMainWindow::loadLastFileSlot, Qt::QueuedConnection);
 
-	if(!ProgramOptions::loadOctdataAtStart().isEmpty())
-		loadFile(ProgramOptions::loadOctdataAtStart());
 	
 	for(BscanMarkerBase* marker : markerManager->getMarker())
 	{
@@ -109,6 +108,15 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	}
 
 	restoreState(settings.value("mainWindowState").toByteArray());
+
+	if(!ProgramOptions::loadOctdataAtStart().isEmpty())
+		emit(loadLastFile());
+}
+
+void OCTMarkerMainWindow::loadLastFileSlot()
+{
+	if(!ProgramOptions::loadOctdataAtStart().isEmpty())
+		loadFile(ProgramOptions::loadOctdataAtStart());
 }
 
 

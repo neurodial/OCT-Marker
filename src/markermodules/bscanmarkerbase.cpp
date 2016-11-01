@@ -9,7 +9,7 @@
 
 #include <manager/bscanmarkermanager.h>
 
-int BscanMarkerBase::getActBScan() const
+int BscanMarkerBase::getActBScanNr() const
 {
 	return markerManager->getActBScan();
 }
@@ -24,20 +24,28 @@ int BscanMarkerBase::getBScanWidth(int nr) const
 
 int BscanMarkerBase::getBScanWidth() const
 {
-	return getBScanWidth(getActBScan());
+	return getBScanWidth(getActBScanNr());
 }
 
 int BscanMarkerBase::getBScanHight() const
 {
 	const OctData::Series* series = getSeries();
 	if(series)
-		return series->getBScan(getActBScan())->getHeight();
+		return series->getBScan(getActBScanNr())->getHeight();
 	return 0;
 }
 
 const OctData::Series* BscanMarkerBase::getSeries() const
 {
 	return markerManager->getSeries();
+}
+
+const OctData::BScan* BscanMarkerBase::getActBScan() const
+{
+	const OctData::Series* series = getSeries();
+	if(series)
+		return series->getBScan(getActBScanNr());
+	return nullptr;
 }
 
 void BscanMarkerBase::activate(bool b)

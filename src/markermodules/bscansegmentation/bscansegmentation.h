@@ -14,30 +14,37 @@ class QAction;
 class WGSegmentation;
 
 namespace cv { class Mat; }
+namespace BScanSegmentationMarker { class ThresholdData; }
 
 
 class BScanSegmentation : public BscanMarkerBase
 {
 	Q_OBJECT
 
-	enum class PaintMethod { Disc, Quadrat };
-
-	friend class BScanSegmentationPtree;
-	
+public:
 	typedef uint8_t internalMatType;
-	typedef std::vector<cv::Mat*> SegMats;
-	
+
 	static const internalMatType paintArea0Value = 0;
 	static const internalMatType paintArea1Value = 1;
 
 	static const internalMatType initialValue = paintArea0Value;
+
+private:
+
+	enum class PaintMethod { Disc, Quadrat };
+
+	friend class BScanSegmentationPtree;
 	
+	
+	typedef std::vector<cv::Mat*> SegMats;
+
 	bool inWidget = false;
 	QPoint mousePoint;
 	PaintMethod paintMethod = PaintMethod::Disc;
 	
 	bool paint = false;
-	int paintRadius = 10;
+	int localOperatorSize = 10;
+
 	internalMatType paintValue = initialValue;
 	bool autoPaintValue = true;
 
@@ -79,17 +86,29 @@ public:
 	std::size_t getNumBScans() const                                { return segments.size(); }
 	
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree) override;
+
+
+	void setPaintData();
+	void setThresholdData();
+
+	void initBScanFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
+
+public slots:
+	void setLocalOperatorSize(int size);
+
 signals:
 	void paintArea0Selected(bool = true);
 	void paintArea1Selected(bool = true);
 	void paintAutoAreaSelected(bool = true);
+
+	void localOperatorSizeChanged(int size);
 	
 private slots:
 	
 	virtual void paintArea0Slot()                                   { paintValue  = paintArea0Value; autoPaintValue = false; paintArea0Selected(); }
 	virtual void paintArea1Slot()                                   { paintValue  = paintArea1Value; autoPaintValue = false; paintArea1Selected(); }
 	virtual void autoAddRemoveArea()                                { autoPaintValue = true; paintAutoAreaSelected(); }
-	virtual void setPaintRadius(int r)                              { paintRadius = r; }
+	// virtual void setPaintRadius(int r)                              { paintRadius = r; }
 	
 	virtual void initFromSegmentline();
 	virtual void initFromThreshold();

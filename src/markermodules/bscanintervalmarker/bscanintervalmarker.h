@@ -48,7 +48,7 @@ public:
 	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
 	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
 	
-	const MarkerMap& getMarkers() const                             { return markers.at(getActBScan()); }
+	const MarkerMap& getMarkers() const                             { return markers.at(getActBScanNr()); }
 	const MarkerMap& getMarkers(int bscan) const                    { return markers.at(bscan); }
 
 	std::size_t getNumBScans() const                                { return markers.size(); }

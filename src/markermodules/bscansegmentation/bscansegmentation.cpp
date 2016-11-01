@@ -21,6 +21,7 @@
 #include "bscansegmentationptree.h"
 
 #include "wgsegmentation.h"
+#include "bscansegalgorithm.h"
 
 namespace
 {
@@ -92,7 +93,7 @@ namespace
 template<typename T>
 void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor, const QRect& rect) const
 {
-	cv::Mat* map = segments.at(getActBScan());
+	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return;
 
@@ -166,11 +167,11 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 		switch(paintMethod)
 		{
 			case PaintMethod::Disc:
-				p.drawEllipse(paintPoint + QPoint(factor/2, factor/2), static_cast<int>((paintRadius+0.5)*factor), static_cast<int>((paintRadius+0.5)*factor));
+				p.drawEllipse(paintPoint + QPoint(factor/2, factor/2), static_cast<int>((localOperatorSize+0.5)*factor), static_cast<int>((localOperatorSize+0.5)*factor));
 				break;
 			case PaintMethod::Quadrat:
 			{
-				int size = paintRadius*factor;
+				int size = localOperatorSize*factor;
 				p.drawRect(paintPoint.x()-size, paintPoint.y()-size, size*2, size*2);
 				break;
 			}
@@ -200,8 +201,9 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	
 	QSpinBox* paintSizeSpinBox = new QSpinBox(parentWidget);
 	paintSizeSpinBox->setMinimum(1);
-	paintSizeSpinBox->setValue(paintRadius);
-	connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BScanSegmentation::setPaintRadius);
+	paintSizeSpinBox->setValue(localOperatorSize);
+	connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this            , &BScanSegmentation::setLocalOperatorSize);
+	connect(this            , &BScanSegmentation::localOperatorSizeChanged                , paintSizeSpinBox, &QSpinBox::setValue                     );
 	toolBar->addWidget(paintSizeSpinBox);
 
 	QAction* actionPaintMethodDisc = new QAction(parent);
@@ -255,6 +257,7 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 
 	toolBar->addSeparator();
 
+	/*
 	QAction* actionInitFromIlm = new QAction(parent);
 	actionInitFromIlm->setText(tr("Init from ILM"));
 	actionInitFromIlm->setIcon(QIcon(":/icons/wand.png"));
@@ -269,8 +272,9 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 	connect(actionInitFromTrashold, &QAction::triggered, this, &BScanSegmentation::initFromThreshold);
 	connect(this, &BScanSegmentation::paintArea1Selected, actionInitFromTrashold, &QAction::setChecked);
 	toolBar->addAction(actionInitFromTrashold);
-	
+
 	toolBar->addSeparator();
+	*/
 
 	QAction* actionErodeBScan = new QAction(parent);
 	actionErodeBScan->setText(tr("Erode"));
@@ -313,7 +317,7 @@ bool BScanSegmentation::setOnCoord(int x, int y, int factor)
 		return false;
 
 	
-	cv::Mat* map = segments.at(getActBScan());
+	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return false;
 
@@ -324,10 +328,10 @@ bool BScanSegmentation::setOnCoord(int x, int y, int factor)
 	switch(paintMethod)
 	{
 		case PaintMethod::Disc:
-			cv::circle(*map, cv::Point(xD, yD), paintRadius, paintValue, CV_FILLED, 8, 0);
+			cv::circle(*map, cv::Point(xD, yD), localOperatorSize, paintValue, CV_FILLED, 8, 0);
 			break;
 		case PaintMethod::Quadrat:
-			rectangle(*map, cv::Point(xD-paintRadius, yD-paintRadius), cv::Point(xD+paintRadius-1, yD+paintRadius-1), paintValue, CV_FILLED, 8, 0);
+			rectangle(*map, cv::Point(xD-localOperatorSize, yD-localOperatorSize), cv::Point(xD+localOperatorSize-1, yD+localOperatorSize-1), paintValue, CV_FILLED, 8, 0);
 			break;
 	}
 	return true;
@@ -338,7 +342,7 @@ uint8_t BScanSegmentation::valueOnCoord(int x, int y, int factor)
 	if(factor == 0)
 		return 0;
 	
-	cv::Mat* map = segments.at(getActBScan());
+	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return 0;
 	
@@ -348,7 +352,7 @@ uint8_t BScanSegmentation::valueOnCoord(int x, int y, int factor)
 
 QRect BScanSegmentation::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor)
 {
-	int drawRad = (paintRadius+2)*factor;
+	int drawRad = (localOperatorSize+2)*factor;
 	QRect rect = QRect(p1, p2).normalized(); // old and new pos
 	rect.adjust(-drawRad, -drawRad, drawRad, drawRad);
 
@@ -567,7 +571,7 @@ void BScanSegmentation::initFromThreshold()
 
 void BScanSegmentation::dilateBScan()
 {
-	cv::Mat* map = segments.at(getActBScan());
+	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return;
 
@@ -579,7 +583,7 @@ void BScanSegmentation::dilateBScan()
 
 void BScanSegmentation::erodeBScan()
 {
-	cv::Mat* map = segments.at(getActBScan());
+	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return;
 
@@ -591,7 +595,7 @@ void BScanSegmentation::erodeBScan()
 
 void BScanSegmentation::opencloseBScan()
 {
-	cv::Mat* map = segments.at(getActBScan());
+	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return;
 
@@ -606,7 +610,7 @@ void BScanSegmentation::opencloseBScan()
 
 void BScanSegmentation::medianBScan()
 {
-	cv::Mat* map = segments.at(getActBScan());
+	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return;
 
@@ -648,4 +652,38 @@ void BScanSegmentation::setPaintMethodQuadrat()
 	if(inWidget)
 		requestUpdate();
 }
+
+void BScanSegmentation::setLocalOperatorSize(int size)
+{
+	localOperatorSize = size;
+	emit(localOperatorSizeChanged(size));
+
+	if(inWidget)
+		requestUpdate();
+}
+
+void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::ThresholdData& data)
+{
+
+	cv::Mat* map = segments.at(getActBScanNr());
+	if(!map || map->empty())
+		return;
+
+
+	const OctData::Series* series = getSeries();
+	if(!series)
+		return;
+
+	const OctData::BScan* bscan = series->getBScan(getActBScanNr());
+
+	const cv::Mat& image = bscan->getImage();
+	if(image.empty())
+		return;
+
+
+	BScanSegAlgorithm::initFromThreshold(image, *map, data);
+
+	requestUpdate();
+}
+
 
