@@ -27,6 +27,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	thresSeries.setRelativeBox  (boxSeriesThresRelative   );
 	thresSeries.setStrikesBox   (boxSeriesThresStrikes    );
 	thresSeries.setupWidgets();
+	thresSeries.setThresholdData(BScanSegmentationMarker::ThresholdData());
 
 
 
@@ -42,6 +43,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	thresBScan.setRelativeBox  (boxBScanThresRelative   );
 	thresBScan.setStrikesBox   (boxBScanThresStrikes    );
 	thresBScan.setupWidgets();
+	thresBScan.setThresholdData(BScanSegmentationMarker::ThresholdData());
 
 
 	thresLocal.setButtonUp     (buttonLocalThresholdUp   );
@@ -56,7 +58,10 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	thresLocal.setRelativeBox  (localThresholdRelativeSpinBox);
 	thresLocal.setStrikesBox   (localThresholdStrikes);
 	thresLocal.setupWidgets();
+	thresLocal.setThresholdData(BScanSegmentationMarker::ThresholdData());
 
+
+	localSizeSpinBox->setValue(segmentation->getLocalOperatorSize());
 
 	// Button groups for local
 
@@ -93,10 +98,16 @@ void WGSegmentation::createConnections()
 	connect(buttonSeriesInitFromThreshold, &QPushButton::pressed, this, &WGSegmentation::slotSeriesInitFromThresh);
 
 	connect(buttonBScanInitFromThreshold , &QPushButton::pressed, this, &WGSegmentation::slotBscanInitFromThresh );
-	connect(buttonBScanErode             , &QPushButton::pressed, this, &WGSegmentation::slotBscanErode          );
-	connect(buttonBScanDilate            , &QPushButton::pressed, this, &WGSegmentation::slotBscanDilate         );
-	connect(buttonBScanOpenClose         , &QPushButton::pressed, this, &WGSegmentation::slotBscanOpenClose      );
-	connect(buttonBScanMedian            , &QPushButton::pressed, this, &WGSegmentation::slotBscanMedian         );
+// 	connect(buttonBScanErode             , &QPushButton::pressed, this, &WGSegmentation::slotBscanErode          );
+// 	connect(buttonBScanDilate            , &QPushButton::pressed, this, &WGSegmentation::slotBscanDilate         );
+// 	connect(buttonBScanOpenClose         , &QPushButton::pressed, this, &WGSegmentation::slotBscanOpenClose      );
+// 	connect(buttonBScanMedian            , &QPushButton::pressed, this, &WGSegmentation::slotBscanMedian         );
+
+	connect(buttonBScanErode             , &QPushButton::pressed, segmentation, &BScanSegmentation::erodeBScan          );
+	connect(buttonBScanDilate            , &QPushButton::pressed, segmentation, &BScanSegmentation::dilateBScan         );
+	connect(buttonBScanOpenClose         , &QPushButton::pressed, segmentation, &BScanSegmentation::opencloseBScan      );
+	connect(buttonBScanMedian            , &QPushButton::pressed, segmentation, &BScanSegmentation::medianBScan         );
+
 
 
 	// set local threshold
@@ -193,21 +204,31 @@ void WGSegmentationThreshold::setupWidgets()
 		methodBG->addButton(buttonRelativ);
 	}
 
-	connect(absoluteBox, static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::absoluteSpinBoxChanged);
-	connect(relativeBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::relativeSpinBoxChanged);
+	if(absoluteBox)
+		connect(absoluteBox, static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::absoluteSpinBoxChanged);
+	if(relativeBox)
+		connect(relativeBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::relativeSpinBoxChanged);
 
+	if(absoluteBox)
+		connect(absoluteBox, static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
+	if(relativeBox)
+		connect(relativeBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::widgetActivated);
+	if(strikesBox)
+		connect(strikesBox , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
 
-	connect(absoluteBox, static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
-	connect(relativeBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::widgetActivated);
-	connect(strikesBox , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonUp)
+		connect(buttonUp     , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonDown)
+		connect(buttonDown   , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonLeft)
+		connect(buttonLeft   , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonRight)
+		connect(buttonRight  , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
 
-	connect(buttonUp     , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
-	connect(buttonDown   , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
-	connect(buttonLeft   , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
-	connect(buttonRight  , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
-
-	connect(buttonAbsolut, &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
-	connect(buttonRelativ, &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonAbsolut)
+		connect(buttonAbsolut, &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonRelativ)
+		connect(buttonRelativ, &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
 
 }
 
@@ -234,6 +255,46 @@ void WGSegmentationThreshold::getThresholdData(BScanSegmentationMarker::Threshol
 	if(strikesBox)
 		data.neededStrikes = strikesBox ->value();
 }
+
+void WGSegmentationThreshold::setThresholdData(const BScanSegmentationMarker::ThresholdData& data)
+{
+	switch(data.direction)
+	{
+		case BScanSegmentationMarker::ThresholdData::Direction::up:
+			if(buttonUp)
+				buttonUp->setChecked(true);
+			break;
+		case BScanSegmentationMarker::ThresholdData::Direction::down:
+			if(buttonDown)
+				buttonDown->setChecked(true);
+			break;
+		case BScanSegmentationMarker::ThresholdData::Direction::left:
+			if(buttonLeft)
+				buttonLeft->setChecked(true);
+			break;
+		case BScanSegmentationMarker::ThresholdData::Direction::right:
+			if(buttonRight)
+				buttonRight->setChecked(true);
+			break;
+	}
+	switch(data.method)
+	{
+		case BScanSegmentationMarker::ThresholdData::Method::Absolute:
+			if(buttonAbsolut)
+				buttonAbsolut->setChecked(true);
+		case BScanSegmentationMarker::ThresholdData::Method::Relative:
+			if(buttonRelativ)
+				buttonRelativ->setChecked(true);
+	}
+
+	if(absoluteBox)
+		absoluteBox->setValue(data.absoluteValue);
+	if(relativeBox)
+		relativeBox->setValue(data.relativeFrac );
+	if(strikesBox)
+		strikesBox ->setValue(data.neededStrikes);
+}
+
 
 void WGSegmentationThreshold::absoluteSpinBoxChanged()
 {

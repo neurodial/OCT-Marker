@@ -11,10 +11,10 @@ namespace BScanSegmentationMarker
 		enum class Method { Absolute, Relative };
 
 		Direction   direction     = Direction::down;
-		Method      method        = Method::Relative;
-		std::size_t neededStrikes = 1;
-		int         absoluteValue = 80;
-		double      relativeFrac  = 45;
+		Method      method        = Method::Absolute;
+		std::size_t neededStrikes = 10;
+		int         absoluteValue = 70;
+		double      relativeFrac  = 0.4;
 	};
 
 	struct PaintData

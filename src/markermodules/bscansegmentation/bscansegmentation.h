@@ -93,8 +93,13 @@ public:
 
 	void initBScanFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
 
+	int getLocalOperatorSize() const                                { return localOperatorSize; }
 public slots:
 	void setLocalOperatorSize(int size);
+	virtual void erodeBScan();
+	virtual void dilateBScan();
+	virtual void opencloseBScan();
+	virtual void medianBScan();
 
 signals:
 	void paintArea0Selected(bool = true);
@@ -113,10 +118,6 @@ private slots:
 	virtual void initFromSegmentline();
 	virtual void initFromThreshold();
 
-	virtual void erodeBScan();
-	virtual void dilateBScan();
-	virtual void opencloseBScan();
-	virtual void medianBScan();
 	
 	virtual void setPaintMethodDisc();
 	virtual void setPaintMethodQuadrat();

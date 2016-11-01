@@ -318,6 +318,25 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addSeparator();
 	toolBar->addAction(showSeglines);
 
+
+
+
+
+	toolBar->addSeparator();
+	QAction* zoomIn = new QAction(this);
+	zoomIn->setText(tr("Zoom +"));
+	zoomIn->setIcon(QIcon(":/icons/zoom_in.png"));
+	connect(zoomIn, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
+	toolBar->addAction(zoomIn);
+
+	QAction* zoomOut = new QAction(this);
+	zoomOut->setText(tr("Zoom -"));
+	zoomOut->setIcon(QIcon(":/icons/zoom_out.png"));
+	connect(zoomOut, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
+	toolBar->addAction(zoomOut);
+
+
+
 	addToolBar(toolBar);
 }
 
