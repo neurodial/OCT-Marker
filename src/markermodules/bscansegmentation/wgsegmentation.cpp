@@ -31,6 +31,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 
 
 
+	// Button groups for BScan
 	thresBScan.setButtonUp     (radioBScanThresFromBelow);
 	thresBScan.setButtonDown   (radioBScanThresFromAbove);
 //	thresBScan.setButtonLeft   ();
@@ -45,7 +46,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	thresBScan.setupWidgets();
 	thresBScan.setThresholdData(BScanSegmentationMarker::ThresholdData());
 
-
+	// Button groups for Local
 	thresLocal.setButtonUp     (buttonLocalThresholdUp   );
 	thresLocal.setButtonDown   (buttonLocalThresholdDown );
 	thresLocal.setButtonLeft   (buttonLocalThresholdLeft );
@@ -73,15 +74,18 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	QButtonGroup* localPaintMethodBG = new QButtonGroup(this);
 	localPaintMethodBG->addButton(buttonLocalPaintCircle);
 	localPaintMethodBG->addButton(buttonLocalPaintRec   );
+	connect(localPaintMethodBG, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalPaint);
 
 	QButtonGroup* localPaintAreaBG = new QButtonGroup(this);
 	localPaintAreaBG->addButton(buttonLocalPaintArea0   );
 	localPaintAreaBG->addButton(buttonLocalPaintAreaAuto);
 	localPaintAreaBG->addButton(buttonLocalPaintArea1   );
+	connect(localPaintAreaBG, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalPaint);
 
 	QButtonGroup* localOperationBG = new QButtonGroup(this);
 	localOperationBG->addButton(buttonLocalOperationErode );
 	localOperationBG->addButton(buttonLocalOperationDilate);
+	connect(localOperationBG, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalOperation);
 
 	createConnections();
 }
@@ -122,28 +126,28 @@ void WGSegmentation::createConnections()
 
 	connect(localSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), segmentation    , &BScanSegmentation::setLocalOperatorSize);
 	connect(segmentation    , &BScanSegmentation::localOperatorSizeChanged                , localSizeSpinBox, &QSpinBox::setValue                     );
+
+	connect(radioLocalThreshold, &QRadioButton::toggled, this, &WGSegmentation::slotLocalThresh   );
+	connect(radioLocalPaint    , &QRadioButton::toggled, this, &WGSegmentation::slotLocalPaint    );
+	connect(radioLocalOperation, &QRadioButton::toggled, this, &WGSegmentation::slotLocalOperation);
 }
 
 
 
 void WGSegmentation::slotSeriesInitFromSeg()
 {
+	// TODO
 }
 
 void WGSegmentation::slotSeriesInitFromThresh()
 {
+	BScanSegmentationMarker::ThresholdData data;
+	thresSeries.getThresholdData(data);
+	segmentation->initSeriesFromThreshold(data);
 }
 
 
 
-
-void WGSegmentation::slotBscanDilate()
-{
-}
-
-void WGSegmentation::slotBscanErode()
-{
-}
 
 void WGSegmentation::slotBscanInitFromThresh()
 {
@@ -152,28 +156,48 @@ void WGSegmentation::slotBscanInitFromThresh()
 	segmentation->initBScanFromThreshold(data);
 }
 
-void WGSegmentation::slotBscanMedian()
+
+
+void WGSegmentation::slotLocalThresh(bool checked)
 {
+	if(!checked)
+		return;
+
+	qDebug("slotLocalThresh");
 }
 
-void WGSegmentation::slotBscanOpenClose()
+void WGSegmentation::slotLocalPaint(bool checked)
 {
+	if(!checked)
+		return;
+
+	qDebug("slotLocalPaint");
+}
+
+void WGSegmentation::slotLocalOperation(bool checked)
+{
+	if(!checked)
+		return;
+
+	qDebug("slotLocalOperation");
 }
 
 
 
-void WGSegmentation::slotLocalThresh()
+void WGSegmentation::activateLocalThresh()
 {
+	radioLocalThreshold->setChecked(true);
 }
 
-void WGSegmentation::slotLocalPaint()
+void WGSegmentation::activateLocalPaint()
 {
+	radioLocalPaint->setChecked(true);
 }
 
-void WGSegmentation::slotLocalOperation()
+void WGSegmentation::activateLocalOperation()
 {
+	radioLocalOperation->setChecked(true);
 }
-
 
 
 
@@ -205,9 +229,19 @@ void WGSegmentationThreshold::setupWidgets()
 	}
 
 	if(absoluteBox)
+	{
 		connect(absoluteBox, static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::absoluteSpinBoxChanged);
+		absoluteBox->setSingleStep(5);
+		absoluteBox->setMinimum(0);
+		absoluteBox->setMaximum(255);
+	}
 	if(relativeBox)
+	{
 		connect(relativeBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::relativeSpinBoxChanged);
+		relativeBox->setSingleStep(0.05);
+		relativeBox->setMinimum(0);
+		relativeBox->setMaximum(1);
+	}
 
 	if(absoluteBox)
 		connect(absoluteBox, static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
@@ -217,18 +251,18 @@ void WGSegmentationThreshold::setupWidgets()
 		connect(strikesBox , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
 
 	if(buttonUp)
-		connect(buttonUp     , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+		connect(buttonUp     , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
 	if(buttonDown)
-		connect(buttonDown   , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+		connect(buttonDown   , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
 	if(buttonLeft)
-		connect(buttonLeft   , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+		connect(buttonLeft   , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
 	if(buttonRight)
-		connect(buttonRight  , &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+		connect(buttonRight  , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
 
 	if(buttonAbsolut)
-		connect(buttonAbsolut, &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+		connect(buttonAbsolut, &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
 	if(buttonRelativ)
-		connect(buttonRelativ, &QAbstractButton::toggled, this, &WGSegmentationThreshold::widgetActivated);
+		connect(buttonRelativ, &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
 
 }
 

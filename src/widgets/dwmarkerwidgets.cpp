@@ -10,6 +10,8 @@ DWMarkerWidgets::DWMarkerWidgets(BScanMarkerManager* markerManager, QWidget* par
 {
 	setWindowTitle(tr("Marker widgets"));
 	connect(markerManager, &BScanMarkerManager::markerChanged, this, &DWMarkerWidgets::markerChanged);
+
+	markerChanged(markerManager->getActMarker());
 }
 
 DWMarkerWidgets::~DWMarkerWidgets()

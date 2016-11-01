@@ -80,14 +80,14 @@ private slots:
 	void slotSeriesInitFromThresh();
 
 	void slotBscanInitFromThresh();
-	void slotBscanErode();
-	void slotBscanDilate();
-	void slotBscanOpenClose();
-	void slotBscanMedian();
 
-	void slotLocalThresh();
-	void slotLocalPaint();
-	void slotLocalOperation();
+	void activateLocalPaint();
+	void activateLocalThresh();
+	void activateLocalOperation();
+
+	void slotLocalThresh(bool);
+	void slotLocalPaint(bool);
+	void slotLocalOperation(bool);
 };
 
 #endif // WGSEGMENTATION_H

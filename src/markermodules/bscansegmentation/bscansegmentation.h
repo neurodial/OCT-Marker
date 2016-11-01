@@ -3,6 +3,7 @@
 
 
 #include "../bscanmarkerbase.h"
+#include "configdata.h"
 
 #include <boost/icl/interval_map.hpp>
 #include <data_structure/intervalmarker.h>
@@ -14,7 +15,6 @@ class QAction;
 class WGSegmentation;
 
 namespace cv { class Mat; }
-namespace BScanSegmentationMarker { class ThresholdData; }
 
 
 class BScanSegmentation : public BscanMarkerBase
@@ -40,6 +40,10 @@ private:
 
 	bool inWidget = false;
 	QPoint mousePoint;
+
+	// Local operation data
+	BScanSegmentationMarker::ThresholdData localThresholdData;
+
 	PaintMethod paintMethod = PaintMethod::Disc;
 	
 	bool paint = false;
@@ -92,6 +96,7 @@ public:
 	void setThresholdData();
 
 	void initBScanFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
+	void initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
 
 	int getLocalOperatorSize() const                                { return localOperatorSize; }
 public slots:
@@ -116,7 +121,7 @@ private slots:
 	// virtual void setPaintRadius(int r)                              { paintRadius = r; }
 	
 	virtual void initFromSegmentline();
-	virtual void initFromThreshold();
+//	virtual void initFromThreshold();
 
 	
 	virtual void setPaintMethodDisc();

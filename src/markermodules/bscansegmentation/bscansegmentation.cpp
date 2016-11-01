@@ -490,84 +490,6 @@ void BScanSegmentation::initFromSegmentline()
 	requestUpdate();
 }
 
-void BScanSegmentation::initFromThreshold()
-{
-	const OctData::Series* series = getSeries();
-	SegMats::iterator segMatIt = segments.begin();
-	
-	double factor = 0.40;
-	
-	for(const OctData::BScan* bscan : series->getBScans())
-	{
-		const cv::Mat& image = bscan->getImage();
-		cv::Mat* mat = *segMatIt;
-		
-		if(mat && !mat->empty())
-		{
-			internalMatType* colIt = mat->ptr<internalMatType>();
-			const uint8_t* imageColIt = image.ptr<uint8_t>();
-			
-			std::size_t colSize = static_cast<std::size_t>(mat->cols);
-			std::size_t rowSize = static_cast<std::size_t>(mat->rows);
-			// TODO: size check
-			
-			for(std::size_t col = 0; col < colSize; ++col)
-			{
-				const uint8_t* imageRowIt = imageColIt;
-				uint8_t maxValue = 0;
-				
-				for(std::size_t row = 0; row < rowSize; ++row)
-				{
-					if(*imageRowIt > maxValue)
-						maxValue = *imageRowIt;
-					imageRowIt += colSize;
-				}
-				
-				internalMatType* rowIt = colIt;
-				imageRowIt = imageColIt;
-				
-				uint8_t searchValue = maxValue*factor;
-				std::size_t row = 0;
-				std::size_t strikes = 0;
-				for(; row < rowSize; ++row)
-				{
-					if(*imageRowIt > searchValue)
-					{
-						if(strikes > 6 || *imageRowIt == maxValue)
-							break;
-						++strikes;
-					}
-					else
-						strikes = 0;
-					
-					*rowIt =  paintArea0Value;
-					rowIt      += colSize;
-					imageRowIt += colSize;
-				}
-				
-				// go back to the begin of the founded shape
-				if(row < rowSize)
-				{
-					row        -= strikes;
-					rowIt      -= colSize*strikes;
-					imageRowIt -= colSize*strikes;
-				}
-				
-				for(; row < rowSize; ++row)
-				{
-					*rowIt = paintArea1Value;
-					rowIt      += colSize;
-					imageRowIt += colSize;
-				}
-				
-				++colIt;
-				++imageColIt;
-			}
-		}
-		++segMatIt;
-	}
-	requestUpdate();
-}
 
 void BScanSegmentation::dilateBScan()
 {
@@ -662,13 +584,12 @@ void BScanSegmentation::setLocalOperatorSize(int size)
 		requestUpdate();
 }
 
+
 void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::ThresholdData& data)
 {
-
 	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return;
-
 
 	const OctData::Series* series = getSeries();
 	if(!series)
@@ -687,3 +608,21 @@ void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::Th
 }
 
 
+void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdData& data)
+{
+	const OctData::Series* series = getSeries();
+	SegMats::iterator segMatIt = segments.begin();
+
+
+	for(const OctData::BScan* bscan : series->getBScans())
+	{
+		const cv::Mat& image = bscan->getImage();
+		cv::Mat* mat = *segMatIt;
+
+		if(mat && !mat->empty())
+			BScanSegAlgorithm::initFromThreshold(image, *mat, data);
+
+		++segMatIt;
+	}
+	requestUpdate();
+}

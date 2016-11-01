@@ -141,39 +141,6 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	if(actMarker)
 		actMarker->drawMarker(painter, this, event->rect());
 
-/*
-
-	for(const BScanMarkerManager::MarkerMap::interval_mapping_type pair : markerManger.getMarkers())
-	{
-		IntervallMarker::Marker marker = pair.second;
-		if(marker.isDefined())
-		{
-			boost::icl::discrete_interval<int> itv  = pair.first;
-			painter.fillRect(itv.lower()*scaleFactor, 0, (itv.upper()-itv.lower())*scaleFactor, height(), QColor(marker.getRed(), marker.getGreen(), marker.getBlue(),  60));
-		}
-	}
-	
-
-	if(mouseInWidget && markerManger.getMarkerMethod() == BScanMarkerManager::Method::Paint)
-	{
-		painter.drawLine(mousePos.x(), 0, mousePos.x(), height());
-
-		if(markerActiv)
-		{
-			const IntervallMarker::Marker& marker = markerManger.getActMarker();
-			if(mousePos.x() != clickPos.x())
-			{
-				painter.drawLine(clickPos.x(), 0, clickPos.x(), height());
-				QPen pen;
-				pen.setColor(QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
-				pen.setWidth(5);
-				painter.setPen(pen);
-				painter.drawLine(mousePos, clickPos);
-			}
-		}
-	}
-
-	*/
 	painter.end();
 }
 

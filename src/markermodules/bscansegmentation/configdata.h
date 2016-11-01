@@ -17,6 +17,9 @@ namespace BScanSegmentationMarker
 		double      relativeFrac  = 0.4;
 	};
 
+	enum class Method      { Threshold, Paint, Operation };
+	enum class Operation   { Erode, Dilate };
+
 	struct PaintData
 	{
 		enum class PaintMethod { Circle, Rect };
@@ -24,13 +27,11 @@ namespace BScanSegmentationMarker
 
 		PaintMethod paintMethod;
 		PaintColor  paintColor;
-		int paintSize = 10;
 	};
 
+	/*
 	struct LocalData
 	{
-		enum class Method      { Threshold, Paint, Operation };
-		enum class Operation   { Erode, Dilate };
 
 		Method method;
 
@@ -41,4 +42,5 @@ namespace BScanSegmentationMarker
 
 		Operation operation;
 	};
+	*/
 }
