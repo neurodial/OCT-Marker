@@ -35,12 +35,14 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 
 	QWidget* parentWidget = dynamic_cast<QWidget*>(parent);
 
+	/*
 	QSpinBox* paintSizeSpinBox = new QSpinBox(parentWidget);
 	paintSizeSpinBox->setMinimum(1);
 	paintSizeSpinBox->setValue(seg->getLocalOperatorSize());
 	connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), seg             , &BScanSegmentation::setLocalOperatorSize);
 	connect(seg             , &BScanSegmentation::localOperatorSizeChanged                , paintSizeSpinBox, &QSpinBox::setValue                     );
 	addWidget(paintSizeSpinBox);
+	*/
 
 	/*
 	QAction* actionPaintMethodDisc = new QAction(parent);

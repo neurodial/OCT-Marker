@@ -13,8 +13,9 @@ namespace BScanSegmentationMarker
 		static const internalMatType markermatInitialValue = paintArea0Value;
 
 
-	struct ThresholdData
+	class ThresholdData
 	{
+	public:
 		enum class Direction { left, right, up, down };
 		enum class Method { Absolute, Relative };
 
@@ -23,6 +24,15 @@ namespace BScanSegmentationMarker
 		std::size_t neededStrikes = 10;
 		int         absoluteValue = 70;
 		double      relativeFrac  = 0.4;
+
+		bool operator==(const ThresholdData& other) const
+		{
+			return direction     == other.direction
+			    && method        == other.method
+			    && neededStrikes == other.neededStrikes
+			    && absoluteValue == other.absoluteValue
+			    && relativeFrac  == other.relativeFrac ;
+		}
 	};
 
 	enum class LocalMethod { Threshold, Paint, Operation };
@@ -33,8 +43,14 @@ namespace BScanSegmentationMarker
 		enum class PaintMethod { Circle, Rect };
 		enum class PaintColor  { Area0, Auto, Area1 };
 
-		PaintMethod paintMethod;
-		PaintColor  paintColor;
+		PaintMethod paintMethod = PaintMethod::Circle;
+		PaintColor  paintColor  = PaintColor::Auto;
+
+		bool operator==(const PaintData& other) const
+		{
+			return paintMethod == other.paintMethod
+			    && paintColor  == other.paintColor;
+		}
 	};
 
 	/*

@@ -7,6 +7,11 @@
 
 class BScanSegmentation;
 
+class BScanSegLocalOpPaint;
+class BScanSegLocalOpThreshold;
+class BScanSegLocalOpOperation;
+
+
 namespace BScanSegmentationMarker { class ThresholdData; }
 
 class WGSegmentation;
@@ -68,10 +73,15 @@ class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 	WGSegmentationThreshold thresLocal ;
 
 
+	BScanSegLocalOpPaint*     localOpPaint     = nullptr;
+	BScanSegLocalOpThreshold* localOpThreshold = nullptr;
+	BScanSegLocalOpOperation* localOpOperation = nullptr;
+
+
 	void createConnections();
 
 public:
-	WGSegmentation(::BScanSegmentation* parent);
+	WGSegmentation(BScanSegmentation* parent);
 	virtual ~WGSegmentation();
 
 

@@ -26,6 +26,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QGroupBox" name="groupBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -292,29 +295,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QToolButton" name="buttonBScanOpenClose">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../application.qrc">
-              <normaloff>:/icons/arrow_inout.png</normaloff>:/icons/arrow_inout.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QToolButton" name="buttonBScanMedian">
-            <property name="text">
-             <string>Median</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../application.qrc">
-              <normaloff>:/icons/arrow_inout.png</normaloff>:/icons/arrow_inout.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
+          <item row="0" column="4">
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -326,6 +307,28 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="0" column="2">
+           <widget class="QToolButton" name="buttonBScanOpenClose">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/arrow_inout.png</normaloff>:/icons/arrow_inout.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QToolButton" name="buttonBScanMedian">
+            <property name="text">
+             <string>Median</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/arrow_inout.png</normaloff>:/icons/arrow_inout.png</iconset>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -350,14 +353,65 @@
        <string>Local</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="8" column="1">
+       <item row="15" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QSpinBox" name="localSizeOperationWidthSpinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>x</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="localSizeOperationHeightSpinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="6" column="1">
         <widget class="QRadioButton" name="radioLocalThresholdRelative">
          <property name="text">
           <string>Relative</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="2">
+       <item row="19" column="1">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="2">
         <layout class="QGridLayout" name="gridLayout_6">
          <property name="margin">
           <number>0</number>
@@ -449,20 +503,7 @@
          </item>
         </layout>
        </item>
-       <item row="21" column="1">
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="8" column="2">
+       <item row="6" column="2">
         <widget class="QDoubleSpinBox" name="localThresholdRelativeSpinBox">
          <property name="maximum">
           <double>1.000000000000000</double>
@@ -472,14 +513,14 @@
          </property>
         </widget>
        </item>
-       <item row="13" column="0" colspan="3">
-        <widget class="QRadioButton" name="radioLocalPaint">
+       <item row="15" column="0" colspan="2">
+        <widget class="QRadioButton" name="radioLocalOperation">
          <property name="text">
-          <string>Paint</string>
+          <string>Operation</string>
          </property>
         </widget>
        </item>
-       <item row="11" column="2">
+       <item row="9" column="2">
         <widget class="QSpinBox" name="localThresholdStrikes">
          <property name="minimum">
           <number>1</number>
@@ -492,7 +533,14 @@
          </property>
         </widget>
        </item>
-       <item row="15" column="1" colspan="2">
+       <item row="1" column="0" colspan="2">
+        <widget class="QRadioButton" name="radioLocalThreshold">
+         <property name="text">
+          <string>Threshold</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="1" colspan="2">
         <widget class="QWidget" name="widget_2" native="true">
          <layout class="QGridLayout" name="gridLayout_7">
           <property name="margin">
@@ -572,7 +620,7 @@
          </layout>
         </widget>
        </item>
-       <item row="18" column="1" rowspan="2" colspan="2">
+       <item row="16" column="1" rowspan="2" colspan="2">
         <widget class="QWidget" name="widget" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="margin">
@@ -625,7 +673,7 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="2" column="0">
         <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -641,82 +689,116 @@
          </property>
         </spacer>
        </item>
-       <item row="6" column="1">
+       <item row="4" column="1">
         <widget class="QRadioButton" name="radioLocalThresholdAbsolut">
          <property name="text">
           <string>Absolute</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="2">
-        <widget class="QSpinBox" name="localThresholdAboluteSpinbox">
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1" rowspan="2">
+       <item row="8" column="1" rowspan="2">
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>Strikes</string>
          </property>
         </widget>
        </item>
-       <item row="17" column="0" colspan="3">
-        <widget class="QRadioButton" name="radioLocalOperation">
-         <property name="text">
-          <string>Operation</string>
+       <item row="4" column="2">
+        <widget class="QSpinBox" name="localThresholdAboluteSpinbox">
+         <property name="maximum">
+          <number>255</number>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="2" column="1">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Direction</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Size</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="3">
-        <widget class="QRadioButton" name="radioLocalThreshold">
-         <property name="text">
-          <string>Threshold</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QSpinBox" name="localSizeSpinBox">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="3">
-        <widget class="Line" name="line_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="0" colspan="3">
+       <item row="10" column="0" colspan="3">
         <widget class="Line" name="line_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="16" column="0" colspan="3">
+       <item row="14" column="0" colspan="3">
         <widget class="Line" name="line_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
+       </item>
+       <item row="1" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QSpinBox" name="localSizeThresholdWidthSpinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>x</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="localSizeThresholdHeightSpinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_9">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="11" column="0" colspan="2">
+        <widget class="QRadioButton" name="radioLocalPaint">
+         <property name="text">
+          <string>Paint</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QSpinBox" name="localSizePaintSpinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -725,7 +807,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>comboBox</tabstop>
   <tabstop>buttonSeriesInitFromSeg</tabstop>
   <tabstop>seriesThresholdDirectionDown</tabstop>
@@ -746,9 +827,6 @@
   <tabstop>buttonBScanInitFromThreshold</tabstop>
   <tabstop>buttonBScanDilate</tabstop>
   <tabstop>buttonBScanErode</tabstop>
-  <tabstop>buttonBScanOpenClose</tabstop>
-  <tabstop>buttonBScanMedian</tabstop>
-  <tabstop>localSizeSpinBox</tabstop>
   <tabstop>radioLocalThreshold</tabstop>
   <tabstop>buttonLocalThresholdUp</tabstop>
   <tabstop>buttonLocalThresholdLeft</tabstop>

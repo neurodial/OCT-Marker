@@ -2,6 +2,8 @@
 
 #include "bscansegmentation.h"
 #include "configdata.h"
+#include "bscanseglocalop.h"
+
 
 #include <QButtonGroup>
 
@@ -12,6 +14,38 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 , thresLocal (this)
 {
 	setupUi(this);
+
+
+	localOpPaint     = segmentation->getLocalOpPaint    ();
+	localOpThreshold = segmentation->getLocalOpThreshold();
+	localOpOperation = segmentation->getLocalOpOperation();
+
+
+
+	switch(segmentation->getLocalMethod())
+	{
+		case BScanSegmentationMarker::LocalMethod::Paint:
+			radioLocalPaint->setChecked(true);
+			break;
+		case BScanSegmentationMarker::LocalMethod::Threshold:
+			radioLocalThreshold->setChecked(true);
+			break;
+		case BScanSegmentationMarker::LocalMethod::Operation:
+			radioLocalOperation->setChecked(true);
+			break;
+	}
+
+
+	// Paint values:
+	localSizePaintSpinBox->setValue(localOpPaint->getOperatorHeight());
+
+	// Operator values
+	localSizeOperationWidthSpinBox ->setValue(localOpOperation->getOperatorWidth());
+	localSizeOperationHeightSpinBox->setValue(localOpOperation->getOperatorHeight());
+
+	// Threshold values
+	localSizeThresholdWidthSpinBox ->setValue(localOpThreshold->getOperatorWidth());
+	localSizeThresholdHeightSpinBox->setValue(localOpThreshold->getOperatorHeight());
 
 
 	// Button groups for series
@@ -62,7 +96,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	thresLocal.setThresholdData(BScanSegmentationMarker::ThresholdData());
 
 
-	localSizeSpinBox->setValue(segmentation->getLocalOperatorSize());
+	localSizePaintSpinBox->setValue(localOpPaint->getOperatorHeight());
 
 	// Button groups for local
 
@@ -74,18 +108,37 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	QButtonGroup* localPaintMethodBG = new QButtonGroup(this);
 	localPaintMethodBG->addButton(buttonLocalPaintCircle);
 	localPaintMethodBG->addButton(buttonLocalPaintRec   );
+	buttonLocalPaintCircle->setChecked(localOpPaint->getPaintData().paintMethod == BScanSegmentationMarker::PaintData::PaintMethod::Circle);
+	buttonLocalPaintRec   ->setChecked(localOpPaint->getPaintData().paintMethod == BScanSegmentationMarker::PaintData::PaintMethod::Rect  );
 	connect(localPaintMethodBG, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalPaint);
 
 	QButtonGroup* localPaintAreaBG = new QButtonGroup(this);
 	localPaintAreaBG->addButton(buttonLocalPaintArea0   );
 	localPaintAreaBG->addButton(buttonLocalPaintAreaAuto);
 	localPaintAreaBG->addButton(buttonLocalPaintArea1   );
+	buttonLocalPaintArea0   ->setChecked(localOpPaint->getPaintData().paintColor == BScanSegmentationMarker::PaintData::PaintColor::Area0);
+	buttonLocalPaintAreaAuto->setChecked(localOpPaint->getPaintData().paintColor == BScanSegmentationMarker::PaintData::PaintColor::Auto );
+	buttonLocalPaintArea1   ->setChecked(localOpPaint->getPaintData().paintColor == BScanSegmentationMarker::PaintData::PaintColor::Area1);
 	connect(localPaintAreaBG, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalPaint);
 
 	QButtonGroup* localOperationBG = new QButtonGroup(this);
 	localOperationBG->addButton(buttonLocalOperationErode );
 	localOperationBG->addButton(buttonLocalOperationDilate);
-	connect(localOperationBG, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalOperation);
+	buttonLocalOperationErode ->setChecked(localOpOperation->getOperationData() == BScanSegmentationMarker::Operation::Erode );
+	buttonLocalOperationDilate->setChecked(localOpOperation->getOperationData() == BScanSegmentationMarker::Operation::Dilate);
+	connect(localOperationBG               , static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalOperation);
+
+
+	connect(localSizePaintSpinBox          , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalPaint);
+
+	connect(localSizeThresholdWidthSpinBox , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalThresh);
+	connect(localSizeThresholdHeightSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalThresh);
+
+	connect(localSizeOperationWidthSpinBox , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalOperation);
+	connect(localSizeOperationHeightSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalOperation);
+
+
+
 
 	createConnections();
 }
@@ -120,9 +173,9 @@ void WGSegmentation::createConnections()
 	//connect(
 
 
-
+/*
 	connect(localSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), segmentation    , &BScanSegmentation::setLocalOperatorSize);
-	connect(segmentation    , &BScanSegmentation::localOperatorSizeChanged                , localSizeSpinBox, &QSpinBox::setValue                     );
+	connect(segmentation    , &BScanSegmentation::localOperatorSizeChanged                , localSizeSpinBox, &QSpinBox::setValue                     );*/
 
 	connect(radioLocalThreshold, &QRadioButton::toggled, this, &WGSegmentation::slotLocalThresh   );
 	connect(radioLocalPaint    , &QRadioButton::toggled, this, &WGSegmentation::slotLocalPaint    );
@@ -163,7 +216,10 @@ void WGSegmentation::slotLocalThresh(bool checked)
 	BScanSegmentationMarker::ThresholdData data;
 	thresLocal.getThresholdData(data);
 
-	segmentation->setLocalThreshold(data);
+	localOpThreshold->setThresholdData(data);
+	localOpThreshold->setOperatorSizeWidth (localSizeThresholdWidthSpinBox ->value());
+	localOpThreshold->setOperatorSizeHeight(localSizeThresholdHeightSpinBox->value());
+
 	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::Threshold);
 }
 
@@ -186,7 +242,8 @@ void WGSegmentation::slotLocalPaint(bool checked)
 	else
 		data.paintMethod = BScanSegmentationMarker::PaintData::PaintMethod::Rect;
 
-	segmentation->setLocalPaintData(data);
+	localOpPaint->setPaintData(data);
+	localOpPaint->setOperatorSize(localSizePaintSpinBox->value());
 	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::Paint);
 }
 
@@ -196,9 +253,11 @@ void WGSegmentation::slotLocalOperation(bool checked)
 		return;
 
 	if(buttonLocalOperationErode->isChecked())
-		segmentation->setLocalOperation(BScanSegmentationMarker::Operation::Erode);
+		localOpOperation->setOperationData(BScanSegmentationMarker::Operation::Erode);
 	else
-		segmentation->setLocalOperation(BScanSegmentationMarker::Operation::Dilate);
+		localOpOperation->setOperationData(BScanSegmentationMarker::Operation::Dilate);
+	localOpOperation->setOperatorSizeWidth (localSizeOperationWidthSpinBox ->value());
+	localOpOperation->setOperatorSizeHeight(localSizeOperationHeightSpinBox->value());
 
 	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::Operation);
 }

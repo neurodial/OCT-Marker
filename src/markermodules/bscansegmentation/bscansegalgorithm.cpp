@@ -48,13 +48,13 @@ namespace
 	struct OpRight : public FieldAccHorizontal
 	{
 		template<typename T>
-		static constexpr T* op(T* p, std::size_t, std::size_t num = 1) { return p += num; }
+		static constexpr T* op(T* p, std::size_t, std::size_t num = 1) { return p + num; }
 		static constexpr const bool posDirection = true;
 	};
 	struct OpLeft : public FieldAccHorizontal
 	{
 		template<typename T>
-		static constexpr T* op(T* p, std::size_t, std::size_t num = 1) { return p -= num; }
+		static constexpr T* op(T* p, std::size_t, std::size_t num = 1) { return p - num; }
 		static constexpr const bool posDirection = false;
 	};
 
