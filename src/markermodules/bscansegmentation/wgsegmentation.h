@@ -53,7 +53,7 @@ private slots:
 	void widgetActivated();
 
 signals:
-	void blockAction(bool);
+	void blockAction();
 };
 
 

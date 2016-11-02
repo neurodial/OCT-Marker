@@ -21,20 +21,9 @@ class BScanSegmentation : public BscanMarkerBase
 {
 	Q_OBJECT
 
-public:
-	typedef uint8_t internalMatType;
-
-	static const internalMatType paintArea0Value = 0;
-	static const internalMatType paintArea1Value = 1;
-
-	static const internalMatType initialValue = paintArea0Value;
-
-private:
-
-	enum class PaintMethod { Disc, Quadrat };
+	// enum class PaintMethod { Disc, Quadrat };
 
 	friend class BScanSegmentationPtree;
-	
 	
 	typedef std::vector<cv::Mat*> SegMats;
 
@@ -42,15 +31,19 @@ private:
 	QPoint mousePoint;
 
 	// Local operation data
+	BScanSegmentationMarker::LocalMethod   localMethod;
 	BScanSegmentationMarker::ThresholdData localThresholdData;
+	BScanSegmentationMarker::Operation     localOperation;
+	BScanSegmentationMarker::PaintData     localPaintData;
 
-	PaintMethod paintMethod = PaintMethod::Disc;
+
+	// PaintMethod paintMethod = PaintMethod::Disc;
 	
 	bool paint = false;
 	int localOperatorSize = 10;
 
-	internalMatType paintValue = initialValue;
-	bool autoPaintValue = true;
+	BScanSegmentationMarker::internalMatType paintValue = BScanSegmentationMarker::markermatInitialValue;
+	// bool autoPaintValue = true;
 
 	WGSegmentation* widget = nullptr;
 	QWidget* widgetPtr2WGSegmentation = nullptr;
@@ -61,11 +54,26 @@ private:
 
 	template<typename T>
 	void drawSegmentLine(QPainter&, int factor, const QRect&) const;
+
+	void transformCoordWidget2Mat(int xWidget, int yWidget, int factor, int& xMat, int& yMat);
 	
+
+	bool startOnCoord(int x, int y, int factor);
+	bool startOnCoordPaint(int x, int y, int factor);
+	bool startOnCoordOperation(int x, int y, int factor);
+	bool startOnCoordThreshold(int x, int y, int factor);
+
+
 	bool setOnCoord(int x, int y, int factor);
-	internalMatType valueOnCoord(int x, int y, int factor);
+	bool paintOnCoord(cv::Mat* map, int xD, int yD);
+	BScanSegmentationMarker::internalMatType valueOnCoord(int x, int y, int factor);
 
 	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor);
+
+	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, int factor) const;
+	void drawMarkerOperation(QPainter& painter, const QPoint& centerDrawPoint, int factor) const;
+	void drawMarkerThreshold(QPainter& painter, const QPoint& centerDrawPoint, int factor) const;
+
 public:
 
 	BScanSegmentation(BScanMarkerManager* markerManager);
@@ -92,19 +100,24 @@ public:
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree) override;
 
 
-	void setPaintData();
-	void setThresholdData();
 
 	void initBScanFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
 	void initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
 
 	int getLocalOperatorSize() const                                { return localOperatorSize; }
+
+	virtual void setLocalPaintData(const BScanSegmentationMarker::PaintData& data);
+	virtual void setLocalOperation(const BScanSegmentationMarker::Operation& data);
+	virtual void setLocalThreshold(const BScanSegmentationMarker::ThresholdData& data);
+
 public slots:
 	void setLocalOperatorSize(int size);
 	virtual void erodeBScan();
 	virtual void dilateBScan();
 	virtual void opencloseBScan();
 	virtual void medianBScan();
+
+	virtual void setLocalMethod(BScanSegmentationMarker::LocalMethod method);
 
 signals:
 	void paintArea0Selected(bool = true);
@@ -115,17 +128,17 @@ signals:
 	
 private slots:
 	
-	virtual void paintArea0Slot()                                   { paintValue  = paintArea0Value; autoPaintValue = false; paintArea0Selected(); }
-	virtual void paintArea1Slot()                                   { paintValue  = paintArea1Value; autoPaintValue = false; paintArea1Selected(); }
-	virtual void autoAddRemoveArea()                                { autoPaintValue = true; paintAutoAreaSelected(); }
+//	virtual void paintArea0Slot()                                   { paintValue  = BScanSegmentationMarker::paintArea0Value; autoPaintValue = false; paintArea0Selected(); }
+//	virtual void paintArea1Slot()                                   { paintValue  = BScanSegmentationMarker::paintArea1Value; autoPaintValue = false; paintArea1Selected(); }
+//	virtual void autoAddRemoveArea()                                { autoPaintValue = true; paintAutoAreaSelected(); }
 	// virtual void setPaintRadius(int r)                              { paintRadius = r; }
 	
-	virtual void initFromSegmentline();
+//	virtual void initFromSegmentline();
 //	virtual void initFromThreshold();
 
-	
+/*
 	virtual void setPaintMethodDisc();
-	virtual void setPaintMethodQuadrat();
+	virtual void setPaintMethodQuadrat();*/
 };
 
 #endif // BSCANSEGMENTATION_H

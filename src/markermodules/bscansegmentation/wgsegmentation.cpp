@@ -115,10 +115,7 @@ void WGSegmentation::createConnections()
 
 
 	// set local threshold
-	connect(&thresLocal       , &WGSegmentationThreshold::blockAction, radioLocalThreshold, &QRadioButton::setChecked);
-// 	connect(buttonLocalThresholdDown     , &QPushButton::toggled, radioLocalThreshold, &QRadioButton::setChecked);
-// 	connect(buttonLocalThresholdLeft     , &QPushButton::toggled, radioLocalThreshold, &QRadioButton::setChecked);
-// 	connect(buttonLocalThresholdRight    , &QPushButton::toggled, radioLocalThreshold, &QRadioButton::setChecked);
+	connect(&thresLocal       , &WGSegmentationThreshold::blockAction, this, &WGSegmentation::activateLocalThresh);
 
 	//connect(
 
@@ -163,7 +160,11 @@ void WGSegmentation::slotLocalThresh(bool checked)
 	if(!checked)
 		return;
 
-	qDebug("slotLocalThresh");
+	BScanSegmentationMarker::ThresholdData data;
+	thresLocal.getThresholdData(data);
+
+	segmentation->setLocalThreshold(data);
+	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::Threshold);
 }
 
 void WGSegmentation::slotLocalPaint(bool checked)
@@ -171,7 +172,22 @@ void WGSegmentation::slotLocalPaint(bool checked)
 	if(!checked)
 		return;
 
-	qDebug("slotLocalPaint");
+	BScanSegmentationMarker::PaintData data;
+
+	if(buttonLocalPaintArea0->isChecked())
+		data.paintColor = BScanSegmentationMarker::PaintData::PaintColor::Area0;
+	else if(buttonLocalPaintArea1->isChecked())
+		data.paintColor = BScanSegmentationMarker::PaintData::PaintColor::Area1;
+	else
+		data.paintColor = BScanSegmentationMarker::PaintData::PaintColor::Auto;
+
+	if(buttonLocalPaintCircle->isChecked())
+		data.paintMethod = BScanSegmentationMarker::PaintData::PaintMethod::Circle;
+	else
+		data.paintMethod = BScanSegmentationMarker::PaintData::PaintMethod::Rect;
+
+	segmentation->setLocalPaintData(data);
+	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::Paint);
 }
 
 void WGSegmentation::slotLocalOperation(bool checked)
@@ -179,23 +195,37 @@ void WGSegmentation::slotLocalOperation(bool checked)
 	if(!checked)
 		return;
 
-	qDebug("slotLocalOperation");
+	if(buttonLocalOperationErode->isChecked())
+		segmentation->setLocalOperation(BScanSegmentationMarker::Operation::Erode);
+	else
+		segmentation->setLocalOperation(BScanSegmentationMarker::Operation::Dilate);
+
+	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::Operation);
 }
 
 
 
 void WGSegmentation::activateLocalThresh()
 {
-	radioLocalThreshold->setChecked(true);
+	if(radioLocalThreshold->isChecked())
+		slotLocalThresh(true);
+	else
+		radioLocalThreshold->setChecked(true);
 }
 
 void WGSegmentation::activateLocalPaint()
 {
-	radioLocalPaint->setChecked(true);
+	if(radioLocalPaint->isChecked())
+		slotLocalPaint(true);
+	else
+		radioLocalPaint->setChecked(true);
 }
 
 void WGSegmentation::activateLocalOperation()
 {
+	if(radioLocalOperation->isChecked())
+		slotLocalOperation(true);
+	else
 	radioLocalOperation->setChecked(true);
 }
 
@@ -345,7 +375,7 @@ void WGSegmentationThreshold::relativeSpinBoxChanged()
 
 void WGSegmentationThreshold::widgetActivated()
 {
-	emit(blockAction(true));
+	emit(blockAction());
 }
 
 

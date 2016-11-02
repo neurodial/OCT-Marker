@@ -72,7 +72,7 @@ namespace
 		                            , const std::size_t itLineNum
 		                            , const std::size_t neededStrikes)
 		{
-			BScanSegmentation::internalMatType* levelSetIt  = Operator::template startIt      <BScanSegmentation::internalMatType>(*levelSetData, startInner, posOuter);
+			BScanSegmentationMarker::internalMatType* levelSetIt  = Operator::template startIt      <BScanSegmentationMarker::internalMatType>(*levelSetData, startInner, posOuter);
 			const uint8_t*                      imgIt       = Operator::template startIt_const<uint8_t>(img          , startInner, posOuter);
 
 			std::size_t strikes  = 0;
@@ -89,7 +89,7 @@ namespace
 				else
 					strikes = 0;
 
-				*levelSetIt =  BScanSegmentation::paintArea0Value;
+				*levelSetIt =  BScanSegmentationMarker::paintArea0Value;
 				levelSetIt  = Operator::op(levelSetIt, itLineNum);
 				imgIt       = Operator::op(imgIt     , itLineNum);
 			}
@@ -101,13 +101,13 @@ namespace
 
 			for(; innerPos < numInner; ++innerPos)
 			{
-				*levelSetIt =  BScanSegmentation::paintArea1Value;
+				*levelSetIt =  BScanSegmentationMarker::paintArea1Value;
 				levelSetIt  = Operator::op(levelSetIt, itLineNum);
 				imgIt       = Operator::op(imgIt     , itLineNum);
 			}
 		}
 
-		static void iterateAbsolute(cv::Mat* levelSetData, const cv::Mat& img, const BScanSegmentation::internalMatType grayValue, const std::size_t neededStrikes)
+		static void iterateAbsolute(cv::Mat* levelSetData, const cv::Mat& img, const BScanSegmentationMarker::internalMatType grayValue, const std::size_t neededStrikes)
 		{
 			const std::size_t numInner   = Operator::numInner(levelSetData); // levelSetData->getSizeY();
 			const std::size_t numOuter   = Operator::numOuter(levelSetData); // levelSetData->getSizeX();
@@ -185,4 +185,48 @@ void BScanSegAlgorithm::initFromThreshold(const cv::Mat& image, cv::Mat& segMat,
 			break;
 	}
 }
+
+
+/*
+void BScanSegmentation::initFromSegmentline()
+{
+	const OctData::Series* series = getSeries();
+
+	SegMats::iterator segMatIt = segments.begin();
+
+	for(const OctData::BScan* bscan : series->getBScans())
+	{
+		const OctData::BScan::Segmentline& segline = bscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM);
+		cv::Mat* mat = *segMatIt;
+		if(mat && !mat->empty())
+		{
+			internalMatType* colIt = mat->ptr<internalMatType>();
+			std::size_t colSize = static_cast<std::size_t>(mat->cols);
+			std::size_t rowSize = static_cast<std::size_t>(mat->rows);
+			for(double value : segline)
+			{
+				const std::size_t rowCh = std::min(static_cast<std::size_t>(value), rowSize);
+				internalMatType* rowIt = colIt;
+
+				for(std::size_t row = 0; row < rowCh; ++row)
+				{
+					*rowIt =  1;
+					rowIt += colSize;
+				}
+
+				for(std::size_t row = rowCh; row < rowSize; ++row)
+				{
+					*rowIt = 0;
+					rowIt += colSize;
+				}
+
+				++colIt;
+			}
+		}
+		++segMatIt;
+	}
+	requestUpdate();
+}
+*/
+
 

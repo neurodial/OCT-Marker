@@ -233,11 +233,11 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QActionGroup* markersFileFormatGroup = new QActionGroup(this);
 	static SendInt markerFFxml(static_cast<int>(OctMarkerFileformat::XML));
-	addMenuProgramOptionGroup(tr("XML" ), ProgramOptions::e2eGrayTransform, optionsMenuMarkersFileFormat, markerFFxml, markersFileFormatGroup, this);
+	addMenuProgramOptionGroup(tr("XML" ), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFxml, markersFileFormatGroup, this);
 	static SendInt markerFFjsom(static_cast<int>(OctMarkerFileformat::Json));
-	addMenuProgramOptionGroup(tr("JSOM"), ProgramOptions::e2eGrayTransform, optionsMenuMarkersFileFormat, markerFFjsom  , markersFileFormatGroup, this);
+	addMenuProgramOptionGroup(tr("JSOM"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFjsom  , markersFileFormatGroup, this);
 	static SendInt markerFFinfo(static_cast<int>(OctMarkerFileformat::INFO));
-	addMenuProgramOptionGroup(tr("INFO"), ProgramOptions::e2eGrayTransform, optionsMenuMarkersFileFormat, markerFFinfo  , markersFileFormatGroup, this);
+	addMenuProgramOptionGroup(tr("INFO"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFinfo  , markersFileFormatGroup, this);
 
 	// ----------
 	// Extras

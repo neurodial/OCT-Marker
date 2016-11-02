@@ -2,11 +2,9 @@
 
 #include <QPainter>
 #include <QMouseEvent>
-#include <QIcon>
-#include <QActionGroup>
-#include <QAction>
-#include <QToolBar>
-#include <QSpinBox>
+// #include <QIcon>
+// #include <QActionGroup>
+// #include <QAction>
 #include <QWidget>
 
 #include <manager/bscanmarkermanager.h>
@@ -22,24 +20,7 @@
 
 #include "wgsegmentation.h"
 #include "bscansegalgorithm.h"
-
-namespace
-{
-	QIcon createColorIcon(const QColor& color)
-	{
-		QPixmap pixmap(15, 15);
-		pixmap.fill(color);
-		return QIcon(pixmap);
-	}
-	
-	QIcon createMonocromeIcon(uint8_t grayvalue)
-	{
-		return createColorIcon(QColor::fromRgb(grayvalue, grayvalue, grayvalue));
-	}
-}
-
-
-
+#include "bscansegtoolbar.h"
 
 
 BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
@@ -63,6 +44,25 @@ BScanSegmentation::~BScanSegmentation()
 	delete widget;
 }
 
+
+QWidget* BScanSegmentation::createWidget(QWidget* parent)
+{
+	return new QWidget(parent);;
+}
+
+QToolBar* BScanSegmentation::createToolbar(QObject* parent)
+{
+	BScanSegToolBar* toolBar = new BScanSegToolBar(this, parent);
+	connectToolBar(toolBar);
+
+	return toolBar;
+}
+
+
+
+// ----------------------
+// Draw segmentation line
+// ----------------------
 
 namespace
 {
@@ -137,6 +137,42 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor, const QRe
 	}
 }
 
+void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, int factor, int& xMat, int& yMat)
+{
+	double factorD = factor;
+	xMat = static_cast<int>(std::round(xWidget/factorD));
+	yMat = static_cast<int>(std::round(yWidget/factorD));
+}
+
+
+void BScanSegmentation::drawMarkerOperation(QPainter& painter, const QPoint& centerDrawPoint, int factor) const
+{
+	int size = localOperatorSize*factor;
+	painter.drawRect(centerDrawPoint.x()-size, centerDrawPoint.y()-size, size*2, size*2);
+}
+
+void BScanSegmentation::drawMarkerThreshold(QPainter& painter, const QPoint& centerDrawPoint, int factor) const
+{
+	int size = localOperatorSize*factor;
+	painter.drawRect(centerDrawPoint.x()-size, centerDrawPoint.y()-size, size*2, size*2);
+}
+
+
+void BScanSegmentation::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, int factor) const
+{
+	switch(localPaintData.paintMethod)
+	{
+		case BScanSegmentationMarker::PaintData::PaintMethod::Circle:
+			painter.drawEllipse(centerDrawPoint + QPoint(factor/2, factor/2), static_cast<int>((localOperatorSize+0.5)*factor), static_cast<int>((localOperatorSize+0.5)*factor));
+			break;
+		case BScanSegmentationMarker::PaintData::PaintMethod::Rect:
+		{
+			int size = localOperatorSize*factor;
+			painter.drawRect(centerDrawPoint.x()-size, centerDrawPoint.y()-size, size*2, size*2);
+			break;
+		}
+	}
+}
 
 
 void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const QRect& rect) const
@@ -158,184 +194,183 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 		paintPoint = QPoint(x, y);
 	}
 
-
-	
 	QPen pen(Qt::green);
 	p.setPen(pen);
 	if(inWidget)
 	{
-		switch(paintMethod)
+		switch(localMethod)
 		{
-			case PaintMethod::Disc:
-				p.drawEllipse(paintPoint + QPoint(factor/2, factor/2), static_cast<int>((localOperatorSize+0.5)*factor), static_cast<int>((localOperatorSize+0.5)*factor));
+			case BScanSegmentationMarker::LocalMethod::Paint:
+				drawMarkerPaint(p, paintPoint, factor);
 				break;
-			case PaintMethod::Quadrat:
-			{
-				int size = localOperatorSize*factor;
-				p.drawRect(paintPoint.x()-size, paintPoint.y()-size, size*2, size*2);
+			case BScanSegmentationMarker::LocalMethod::Threshold:
+				drawMarkerThreshold(p, paintPoint, factor);
 				break;
-			}
+			case BScanSegmentationMarker::LocalMethod::Operation:
+				drawMarkerOperation(p, paintPoint, factor);
+				break;
 		}
 	}
 }
 
-QWidget* BScanSegmentation::createWidget(QWidget* parent)
+bool BScanSegmentation::paintOnCoord(cv::Mat* map, int xD, int yD)
 {
-	QWidget* widget = new QWidget(parent);
+	if(!map || map->empty())
+		return false;
 
-
-	return widget;
+	switch(localPaintData.paintMethod)
+	{
+		case BScanSegmentationMarker::PaintData::PaintMethod::Circle:
+			cv::circle(*map, cv::Point(xD, yD), localOperatorSize, paintValue, CV_FILLED, 8, 0);
+			break;
+		case BScanSegmentationMarker::PaintData::PaintMethod::Rect:
+			cv::rectangle(*map, cv::Point(xD-localOperatorSize, yD-localOperatorSize), cv::Point(xD+localOperatorSize-1, yD+localOperatorSize-1), paintValue, CV_FILLED, 8, 0);
+			break;
+	}
+	return true;
 }
 
-
-
-QToolBar* BScanSegmentation::createToolbar(QObject* parent)
-{
-	QActionGroup*  actionGroupMethod  = new QActionGroup(parent);
-	QActionGroup*  actionPaintMethod  = new QActionGroup(parent);
-	QToolBar*      toolBar            = new QToolBar(tr("Segmentation"));
-	
-	toolBar->setObjectName("ToolBarSegmentationMarker");
-	
-	QWidget* parentWidget = dynamic_cast<QWidget*>(parent);
-	
-	QSpinBox* paintSizeSpinBox = new QSpinBox(parentWidget);
-	paintSizeSpinBox->setMinimum(1);
-	paintSizeSpinBox->setValue(localOperatorSize);
-	connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this            , &BScanSegmentation::setLocalOperatorSize);
-	connect(this            , &BScanSegmentation::localOperatorSizeChanged                , paintSizeSpinBox, &QSpinBox::setValue                     );
-	toolBar->addWidget(paintSizeSpinBox);
-
-	QAction* actionPaintMethodDisc = new QAction(parent);
-	actionPaintMethodDisc->setCheckable(true);
-	actionPaintMethodDisc->setChecked(paintMethod == PaintMethod::Disc);
-	actionPaintMethodDisc->setText(tr("Disc"));
-	actionPaintMethodDisc->setIcon(QIcon(":/icons/paint_disc.png"));
-	connect(actionPaintMethodDisc, &QAction::triggered, this, &BScanSegmentation::setPaintMethodDisc);
-	toolBar->addAction(actionPaintMethodDisc);
-	actionPaintMethod->addAction(actionPaintMethodDisc);
-
-
-	QAction* actionPaintMethodQuadrat = new QAction(parent);
-	actionPaintMethodQuadrat->setCheckable(true);
-	actionPaintMethodQuadrat->setText(tr("Quadrat"));
-	actionPaintMethodQuadrat->setChecked(paintMethod == PaintMethod::Quadrat);
-	actionPaintMethodQuadrat->setIcon(QIcon(":/icons/paint_quadrat.png"));
-	connect(actionPaintMethodQuadrat, &QAction::triggered, this, &BScanSegmentation::setPaintMethodQuadrat);
-	toolBar->addAction(actionPaintMethodQuadrat);
-	actionPaintMethod->addAction(actionPaintMethodQuadrat);
-
-	toolBar->addSeparator();
-	
-	QAction* addAreaAction = new QAction(parent);
-	addAreaAction->setCheckable(true);
-	addAreaAction->setText(tr("Add"));
-	addAreaAction->setIcon(createMonocromeIcon(paintArea0Value*255));
-	connect(addAreaAction, &QAction::triggered, this, &BScanSegmentation::paintArea0Slot);
-	connect(this, &BScanSegmentation::paintArea0Selected, addAreaAction, &QAction::setChecked);
-	toolBar->addAction(addAreaAction);
-	actionGroupMethod->addAction(addAreaAction);
-
-	QAction* autoRemoveAddAreaAction = new QAction(parent);
-	autoRemoveAddAreaAction->setCheckable(true);
-	autoRemoveAddAreaAction->setChecked(autoPaintValue);
-	autoRemoveAddAreaAction->setText(tr("Auto"));
-	autoRemoveAddAreaAction->setIcon(createMonocromeIcon(124));
-	connect(autoRemoveAddAreaAction, &QAction::triggered, this, &BScanSegmentation::autoAddRemoveArea);
-	connect(this, &BScanSegmentation::paintAutoAreaSelected, autoRemoveAddAreaAction, &QAction::setChecked);
-	toolBar->addAction(autoRemoveAddAreaAction);
-	actionGroupMethod->addAction(autoRemoveAddAreaAction);
-
-	QAction* removeAreaAction = new QAction(parent);
-	removeAreaAction->setCheckable(true);
-	removeAreaAction->setText(tr("Add"));
-	removeAreaAction->setIcon(createMonocromeIcon(paintArea1Value*255));
-	connect(removeAreaAction, &QAction::triggered, this, &BScanSegmentation::paintArea1Slot);
-	connect(this, &BScanSegmentation::paintArea1Selected, removeAreaAction, &QAction::setChecked);
-	toolBar->addAction(removeAreaAction);
-	actionGroupMethod->addAction(removeAreaAction);
-
-	toolBar->addSeparator();
-
-	/*
-	QAction* actionInitFromIlm = new QAction(parent);
-	actionInitFromIlm->setText(tr("Init from ILM"));
-	actionInitFromIlm->setIcon(QIcon(":/icons/wand.png"));
-	connect(actionInitFromIlm, &QAction::triggered, this, &BScanSegmentation::initFromSegmentline);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionInitFromIlm, &QAction::setChecked);
-	toolBar->addAction(actionInitFromIlm);
-	
-	
-	QAction* actionInitFromTrashold = new QAction(parent);
-	actionInitFromTrashold->setText(tr("Init from threshold"));
-	actionInitFromTrashold->setIcon(QIcon(":/icons/wand.png"));
-	connect(actionInitFromTrashold, &QAction::triggered, this, &BScanSegmentation::initFromThreshold);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionInitFromTrashold, &QAction::setChecked);
-	toolBar->addAction(actionInitFromTrashold);
-
-	toolBar->addSeparator();
-	*/
-
-	QAction* actionErodeBScan = new QAction(parent);
-	actionErodeBScan->setText(tr("Erode"));
-	actionErodeBScan->setIcon(QIcon(":/icons/arrow_in.png"));
-	connect(actionErodeBScan, &QAction::triggered, this, &BScanSegmentation::erodeBScan);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionErodeBScan, &QAction::setChecked);
-	toolBar->addAction(actionErodeBScan);
-
-
-	QAction* actionDilateBScan = new QAction(parent);
-	actionDilateBScan->setText(tr("Dilate"));
-	actionDilateBScan->setIcon(QIcon(":/icons/arrow_out.png"));
-	connect(actionDilateBScan, &QAction::triggered, this, &BScanSegmentation::dilateBScan);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionDilateBScan, &QAction::setChecked);
-	toolBar->addAction(actionDilateBScan);
-
-	QAction* actionOpenCloseBScan = new QAction(parent);
-	actionOpenCloseBScan->setText(tr("Open/Close"));
-	actionOpenCloseBScan->setIcon(QIcon(":/icons/arrow_inout.png"));
-	connect(actionOpenCloseBScan, &QAction::triggered, this, &BScanSegmentation::opencloseBScan);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionOpenCloseBScan, &QAction::setChecked);
-	toolBar->addAction(actionOpenCloseBScan);
-
-	QAction* actionMedianBScan = new QAction(parent);
-	actionMedianBScan->setText(tr("Median"));
-	actionMedianBScan->setIcon(QIcon(":/icons/arrow_inout.png"));
-	connect(actionMedianBScan, &QAction::triggered, this, &BScanSegmentation::medianBScan);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionMedianBScan, &QAction::setChecked);
-	toolBar->addAction(actionMedianBScan);
-
-
-	connectToolBar(toolBar);
-	
-	return toolBar;
-}
 
 bool BScanSegmentation::setOnCoord(int x, int y, int factor)
 {
 	if(factor == 0)
 		return false;
 
-	
 	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return false;
 
-	double factorD = factor;
-	double xD = std::round(x/factorD);
-	double yD = std::round(y/factorD);
+	int xD, yD;
+	transformCoordWidget2Mat(x, y, factor, xD, yD);
 
-	switch(paintMethod)
+	switch(localMethod)
 	{
-		case PaintMethod::Disc:
-			cv::circle(*map, cv::Point(xD, yD), localOperatorSize, paintValue, CV_FILLED, 8, 0);
+		case BScanSegmentationMarker::LocalMethod::Paint:
+			paintOnCoord(map, xD, yD);
 			break;
-		case PaintMethod::Quadrat:
-			rectangle(*map, cv::Point(xD-localOperatorSize, yD-localOperatorSize), cv::Point(xD+localOperatorSize-1, yD+localOperatorSize-1), paintValue, CV_FILLED, 8, 0);
+		case BScanSegmentationMarker::LocalMethod::Threshold:
+		case BScanSegmentationMarker::LocalMethod::Operation:
 			break;
 	}
 	return true;
 }
+
+
+
+bool BScanSegmentation::startOnCoordPaint(int x, int y, int factor)
+{
+	switch(localPaintData.paintColor)
+	{
+		case BScanSegmentationMarker::PaintData::PaintColor::Auto:
+			paintValue = valueOnCoord(x, y, factor);
+			break;
+		case BScanSegmentationMarker::PaintData::PaintColor::Area0:
+			paintValue = BScanSegmentationMarker::paintArea0Value;
+			break;
+		case BScanSegmentationMarker::PaintData::PaintColor::Area1:
+			paintValue = BScanSegmentationMarker::paintArea1Value;
+			break;
+	}
+	return true;
+}
+
+
+bool BScanSegmentation::startOnCoordOperation(int x, int y, int factor)
+{
+
+	cv::Mat* map = segments.at(getActBScanNr());
+	if(!map || map->empty())
+		return false;
+
+	int dx, dy;
+	transformCoordWidget2Mat(x, y, factor, dx, dy);
+
+	int rows = map->rows;
+	int cols = map->cols;
+
+	int x0 = std::max(dx - localOperatorSize, 0);
+	int x1 = std::min(dx + localOperatorSize, cols-1);
+	int y0 = std::max(dy - localOperatorSize, 0);
+	int y1 = std::min(dy + localOperatorSize, rows-1);
+
+	if(x0>=x1)
+		return false;
+	if(y0>=y1)
+		return false;
+
+	cv::Mat tmp = (*map)(cv::Rect(x0, y0, x1-x0, y1-y0));
+
+	int iterations = 1;
+
+	switch(localOperation)
+	{
+		case BScanSegmentationMarker::Operation::Dilate:
+			cv::dilate(tmp, tmp, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
+			break;
+		case BScanSegmentationMarker::Operation::Erode:
+			cv::erode(tmp, tmp, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
+			break;
+	}
+
+	return true;
+}
+
+
+bool BScanSegmentation::startOnCoordThreshold(int x, int y, int factor)
+{
+	cv::Mat* map = segments.at(getActBScanNr());
+	if(!map || map->empty())
+		return false;
+
+	int dx, dy;
+	transformCoordWidget2Mat(x, y, factor, dx, dy);
+
+	int rows = map->rows;
+	int cols = map->cols;
+
+	int x0 = std::max(dx - localOperatorSize, 0);
+	int x1 = std::min(dx + localOperatorSize, cols-1);
+	int y0 = std::max(dy - localOperatorSize, 0);
+	int y1 = std::min(dy + localOperatorSize, rows-1);
+
+	if(x0>=x1)
+		return false;
+	if(y0>=y1)
+		return false;
+
+	const OctData::BScan* bscan = getActBScan();
+	if(!bscan)
+		return false;
+
+	cv::Mat tmp = (*map)(cv::Rect(x0, y0, x1-x0, y1-y0));
+	cv::Mat tmpImages = bscan->getImage()(cv::Rect(x0, y0, x1-x0, y1-y0));
+
+	BScanSegAlgorithm::initFromThreshold(tmpImages, tmp, localThresholdData);
+
+	return true;
+}
+
+
+bool BScanSegmentation::startOnCoord(int x, int y, int factor)
+{
+	switch(localMethod)
+	{
+		case BScanSegmentationMarker::LocalMethod::Paint:
+			startOnCoordPaint(x, y, factor);
+			break;
+		case BScanSegmentationMarker::LocalMethod::Threshold:
+			startOnCoordThreshold(x, y, factor);
+			break;
+		case BScanSegmentationMarker::LocalMethod::Operation:
+			startOnCoordOperation(x, y, factor);
+			break;
+	}
+
+	return true;
+}
+
+
+
 
 uint8_t BScanSegmentation::valueOnCoord(int x, int y, int factor)
 {
@@ -345,8 +380,11 @@ uint8_t BScanSegmentation::valueOnCoord(int x, int y, int factor)
 	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
 		return 0;
+
+	int dx, dy;
+	transformCoordWidget2Mat(x, y, factor, dx, dy);
 	
-	return map->at<uint8_t>(cv::Point(x/factor, y/factor));
+	return map->at<uint8_t>(cv::Point(dx, dy));
 }
 
 
@@ -383,37 +421,14 @@ BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e,
 	return result;
 }
 
-bool BScanSegmentation::leaveWidgetEvent(QEvent*, BScanMarkerWidget*)
-{
-	inWidget = false;
-	return true;
-}
-
-bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
-{
-	switch(e->key())
-	{
-		case Qt::Key_1:
-			paintArea0Slot();
-			return true;
-		case Qt::Key_2:
-			autoAddRemoveArea();
-			return true;
-		case Qt::Key_3:
-			paintArea1Slot();
-			return true;
-	}
-	
-	return false;
-}
-
 bool BScanSegmentation::mousePressEvent(QMouseEvent* e, BScanMarkerWidget* widget)
 {
 	paint = (e->buttons() == Qt::LeftButton);
 	if(paint)
 	{
-		if(autoPaintValue)
-			paintValue = valueOnCoord(e->x(), e->y(), widget->getImageScaleFactor());
+		startOnCoord(e->x(), e->y(), widget->getImageScaleFactor());
+		// if(autoPaintValue)
+		//	paintValue = valueOnCoord(e->x(), e->y(), widget->getImageScaleFactor());
 		
 		return setOnCoord(e->x(), e->y(), widget->getImageScaleFactor());
 	}
@@ -426,69 +441,38 @@ bool BScanSegmentation::mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*)
 	return false;
 }
 
-void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
+
+
+
+bool BScanSegmentation::leaveWidgetEvent(QEvent*, BScanMarkerWidget*)
 {
-	clearSegments();
-	
-	if(!series)
-		return;
-	
-	for(const OctData::BScan* bscan : series->getBScans())
+	inWidget = false;
+	return true;
+}
+
+
+bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
+{
+	/*
+	switch(e->key())
 	{
-		cv::Mat* mat = new cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(initialValue));
-		segments.push_back(mat);
+		case Qt::Key_1:
+			paintArea0Slot();
+			return true;
+		case Qt::Key_2:
+			autoAddRemoveArea();
+			return true;
+		case Qt::Key_3:
+			paintArea1Slot();
+			return true;
 	}
-	
-	BScanSegmentationPtree::parsePTree(markerTree, this);
+	*/
+
+	return false;
 }
 
-void BScanSegmentation::clearSegments()
-{
-	for(cv::Mat* mat : segments)
-		delete mat;
-	
-	segments.clear();
-}
 
-void BScanSegmentation::initFromSegmentline()
-{
-	const OctData::Series* series = getSeries();
-	
-	SegMats::iterator segMatIt = segments.begin();
-	
-	for(const OctData::BScan* bscan : series->getBScans())
-	{
-		const OctData::BScan::Segmentline& segline = bscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM);
-		cv::Mat* mat = *segMatIt;
-		if(mat && !mat->empty())
-		{
-			internalMatType* colIt = mat->ptr<internalMatType>();
-			std::size_t colSize = static_cast<std::size_t>(mat->cols);
-			std::size_t rowSize = static_cast<std::size_t>(mat->rows);
-			for(double value : segline)
-			{
-				const std::size_t rowCh = std::min(static_cast<std::size_t>(value), rowSize);
-				internalMatType* rowIt = colIt;
 
-				for(std::size_t row = 0; row < rowCh; ++row)
-				{
-					*rowIt =  1;
-					rowIt += colSize;
-				}
-				
-				for(std::size_t row = rowCh; row < rowSize; ++row)
-				{
-					*rowIt = 0;
-					rowIt += colSize;
-				}
-				
-				++colIt;
-			}
-		}
-		++segMatIt;
-	}
-	requestUpdate();
-}
 
 
 void BScanSegmentation::dilateBScan()
@@ -543,6 +527,30 @@ void BScanSegmentation::medianBScan()
 
 
 
+void BScanSegmentation::clearSegments()
+{
+	for(cv::Mat* mat : segments)
+		delete mat;
+
+	segments.clear();
+}
+
+void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
+{
+	clearSegments();
+
+	if(!series)
+		return;
+
+	for(const OctData::BScan* bscan : series->getBScans())
+	{
+		cv::Mat* mat = new cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(BScanSegmentationMarker::markermatInitialValue));
+		segments.push_back(mat);
+	}
+
+	BScanSegmentationPtree::parsePTree(markerTree, this);
+}
+
 void BScanSegmentation::saveState(boost::property_tree::ptree& markerTree)
 {
 	BScanSegmentationPtree::fillPTree(markerTree, this);
@@ -554,13 +562,14 @@ void BScanSegmentation::loadState(boost::property_tree::ptree& markerTree)
 	{
 		if(mat)
 		{
-			mat->setTo(cv::Scalar(initialValue));
+			mat->setTo(cv::Scalar(BScanSegmentationMarker::markermatInitialValue));
 		}
 	}
 
 	BScanSegmentationPtree::parsePTree(markerTree, this);
 }
 
+/*
 void BScanSegmentation::setPaintMethodDisc()
 {
 	paintMethod = PaintMethod::Disc;
@@ -574,6 +583,7 @@ void BScanSegmentation::setPaintMethodQuadrat()
 	if(inWidget)
 		requestUpdate();
 }
+*/
 
 void BScanSegmentation::setLocalOperatorSize(int size)
 {
@@ -626,3 +636,25 @@ void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::T
 	}
 	requestUpdate();
 }
+
+
+void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod method)
+{
+	localMethod = method;
+}
+
+void BScanSegmentation::setLocalPaintData(const BScanSegmentationMarker::PaintData& data)
+{
+	localPaintData = data;
+}
+
+void BScanSegmentation::setLocalOperation(const BScanSegmentationMarker::Operation& data)
+{
+	localOperation = data;
+}
+
+void BScanSegmentation::setLocalThreshold(const BScanSegmentationMarker::ThresholdData& data)
+{
+	localThresholdData = data;
+}
+

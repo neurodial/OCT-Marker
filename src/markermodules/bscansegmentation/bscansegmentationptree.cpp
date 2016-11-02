@@ -116,7 +116,7 @@ bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree
 		oa >> segments;
 
 
-		BScanSegmentation::internalMatType* colIt = map->ptr<BScanSegmentation::internalMatType>();
+		BScanSegmentationMarker::internalMatType* colIt = map->ptr<BScanSegmentationMarker::internalMatType>();
 		int rowSize = map->rows;
 		int colSize = map->cols;
 
@@ -136,8 +136,8 @@ bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree
 			int segmentChangeCol = *it;
 			++it;
 
-			BScanSegmentation::internalMatType value  = BScanSegmentation::initialValue;
-			BScanSegmentation::internalMatType* rowIt = colIt;
+			BScanSegmentationMarker::internalMatType value  = BScanSegmentationMarker::markermatInitialValue;
+			BScanSegmentationMarker::internalMatType* rowIt = colIt;
 			ColSegments colSegments(col);
 
 			for(int row = 0; row < rowSize; ++row)
@@ -150,10 +150,10 @@ bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree
 						++it;
 					}
 
-					if(value == BScanSegmentation::paintArea0Value)
-						value = BScanSegmentation::paintArea1Value;
+					if(value == BScanSegmentationMarker::paintArea0Value)
+						value = BScanSegmentationMarker::paintArea1Value;
 					else
-						value = BScanSegmentation::paintArea0Value;
+						value = BScanSegmentationMarker::paintArea0Value;
 				}
 				*rowIt = value;
 				rowIt += colSize;
@@ -178,14 +178,14 @@ void BScanSegmentationPtree::fillPTree(boost::property_tree::ptree& markerTree, 
 
 		if(map && !map->empty())
 		{
-			BScanSegmentation::internalMatType* colIt = map->ptr<BScanSegmentation::internalMatType>();
+			BScanSegmentationMarker::internalMatType* colIt = map->ptr<BScanSegmentationMarker::internalMatType>();
 			int rowSize = map->rows;
 			int colSize = map->cols;
 
 			for(int col = 0; col < colSize; ++col)
 			{
-				BScanSegmentation::internalMatType value  = BScanSegmentation::initialValue;
-				BScanSegmentation::internalMatType* rowIt = colIt;
+				BScanSegmentationMarker::internalMatType value  = BScanSegmentationMarker::markermatInitialValue;
+				BScanSegmentationMarker::internalMatType* rowIt = colIt;
 				ColSegments colSegments(col);
 
 				for(int row = 0; row < rowSize; ++row)
