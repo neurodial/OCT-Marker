@@ -5,22 +5,6 @@
 #include "bscansegmentation.h"
 
 
-namespace
-{
-	QIcon createColorIcon(const QColor& color)
-	{
-		QPixmap pixmap(15, 15);
-		pixmap.fill(color);
-		return QIcon(pixmap);
-	}
-
-	QIcon createMonocromeIcon(uint8_t grayvalue)
-	{
-		return createColorIcon(QColor::fromRgb(grayvalue, grayvalue, grayvalue));
-	}
-
-}
-
 
 
 

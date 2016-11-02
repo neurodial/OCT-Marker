@@ -143,6 +143,11 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	connect(switchSizeLocalOperationButton, &QAbstractButton::clicked, this, &WGSegmentation::switchSizeLocalOperation);
 
 
+	// Icons
+	buttonLocalPaintArea0   ->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor::Area0));
+	buttonLocalPaintAreaAuto->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor::Auto ));
+	buttonLocalPaintArea1   ->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor::Area1));
+
 	createConnections();
 }
 

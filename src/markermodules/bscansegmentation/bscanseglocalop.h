@@ -76,6 +76,7 @@ public:
 	void setPaintData(const BScanSegmentationMarker::PaintData& data);
 
 	const BScanSegmentationMarker::PaintData& getPaintData() const  { return localPaintData; }
+	QIcon getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor color) const;
 };
 
 
@@ -111,7 +112,7 @@ public:
 
 class BScanSegLocalOpOperation : public BScanSegLocalOp
 {
-	BScanSegmentationMarker::Operation     localOperation;
+	BScanSegmentationMarker::Operation localOperation = BScanSegmentationMarker::Operation::Dilate;
 	int paintSizeWidth  = 10;
 	int paintSizeHeight = 10;
 public:

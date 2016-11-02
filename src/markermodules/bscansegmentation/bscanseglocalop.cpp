@@ -46,6 +46,24 @@ namespace
 
 
 
+namespace
+{
+	QIcon createColorIcon(const QColor& color)
+	{
+		QPixmap pixmap(15, 15);
+		pixmap.fill(color);
+		return QIcon(pixmap);
+	}
+
+	QIcon createMonocromeIcon(uint8_t grayvalue)
+	{
+		return createColorIcon(QColor::fromRgb(grayvalue, grayvalue, grayvalue));
+	}
+
+}
+
+
+
 
 void BScanSegLocalOpPaint::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, int factor) const
 {
@@ -109,6 +127,20 @@ void BScanSegLocalOpPaint::setPaintData(const BScanSegmentationMarker::PaintData
 {
 	if(assignUpdateNecessary(localPaintData, data))
 		updateCursor();
+}
+
+QIcon BScanSegLocalOpPaint::getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor color) const
+{
+	switch(color)
+	{
+		case BScanSegmentationMarker::PaintData::PaintColor::Area0:
+			return createMonocromeIcon(255);
+		case BScanSegmentationMarker::PaintData::PaintColor::Auto:
+			return createMonocromeIcon(124);
+		case BScanSegmentationMarker::PaintData::PaintColor::Area1:
+			return createMonocromeIcon(0);
+	}
+	return QIcon();
 }
 
 
