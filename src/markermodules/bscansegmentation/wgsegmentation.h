@@ -98,6 +98,9 @@ private slots:
 	void slotLocalThresh(bool);
 	void slotLocalPaint(bool);
 	void slotLocalOperation(bool);
+
+	void switchSizeLocalThreshold();
+	void switchSizeLocalOperation();
 };
 
 #endif // WGSEGMENTATION_H

@@ -139,6 +139,9 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 
 
 
+	connect(switchSizeLocalThresholdButton, &QAbstractButton::clicked, this, &WGSegmentation::switchSizeLocalThreshold);
+	connect(switchSizeLocalOperationButton, &QAbstractButton::clicked, this, &WGSegmentation::switchSizeLocalOperation);
+
 
 	createConnections();
 }
@@ -287,6 +290,25 @@ void WGSegmentation::activateLocalOperation()
 	else
 	radioLocalOperation->setChecked(true);
 }
+
+void WGSegmentation::switchSizeLocalOperation()
+{
+	int val1 = localSizeOperationWidthSpinBox ->value();
+	int val2 = localSizeOperationHeightSpinBox->value();
+
+	localSizeOperationWidthSpinBox ->setValue(val2);
+	localSizeOperationHeightSpinBox->setValue(val1);
+}
+
+void WGSegmentation::switchSizeLocalThreshold()
+{
+	int val1 = localSizeThresholdWidthSpinBox ->value();
+	int val2 = localSizeThresholdHeightSpinBox->value();
+
+	localSizeThresholdWidthSpinBox ->setValue(val2);
+	localSizeThresholdHeightSpinBox->setValue(val1);
+}
+
 
 
 
