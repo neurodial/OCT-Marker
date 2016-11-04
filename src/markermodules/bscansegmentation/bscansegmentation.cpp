@@ -191,9 +191,9 @@ bool BScanSegmentation::setOnCoord(int x, int y, int factor)
 	transformCoordWidget2Mat(x, y, factor, xD, yD);
 
 	if(actLocalOperator)
-		actLocalOperator->drawOnCoord(xD, yD);
+		return actLocalOperator->drawOnCoord(xD, yD);
 
-	return true;
+	return false;
 }
 
 
@@ -255,50 +255,65 @@ BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e,
 	inWidget = true;
 	int factor = widget->getImageScaleFactor();
 
-	result.redraw = true;
+	result.redraw = false; // cursor need redraw
 	result.rect   = getWidgetPaintSize(mousePoint, e->pos(), factor);
 
 	mousePoint = e->pos();
 	int x = e->x();
 	int y = e->y();
 	
-	if(paint)
-		setOnCoord(x, y, factor);
+	if(actLocalOperator)
+	{
+		if(paint)
+			result.redraw = setOnCoord(x, y, factor);
+
+		result.redraw |= actLocalOperator->drawMarker();
+	}
 
 	return result;
 }
 
-bool BScanSegmentation::mousePressEvent(QMouseEvent* e, BScanMarkerWidget* widget)
+BscanMarkerBase::RedrawRequest  BScanSegmentation::mousePressEvent(QMouseEvent* e, BScanMarkerWidget* widget)
 {
+	int factor = widget->getImageScaleFactor();
+
+	RedrawRequest result;
+	result.redraw = false;
+	result.rect   = getWidgetPaintSize(mousePoint, e->pos(), factor);
+
 	paint = (e->buttons() == Qt::LeftButton);
 	if(paint)
 	{
-		startOnCoord(e->x(), e->y(), widget->getImageScaleFactor());
+		startOnCoord(e->x(), e->y(), factor);
 		// if(autoPaintValue)
 		//	paintValue = valueOnCoord(e->x(), e->y(), widget->getImageScaleFactor());
 		
-		return setOnCoord(e->x(), e->y(), widget->getImageScaleFactor());
+		result.redraw = setOnCoord(e->x(), e->y(), factor);
 	}
-	return false;
+	return result;
 }
 
-bool BScanSegmentation::mouseReleaseEvent(QMouseEvent* e, BScanMarkerWidget* widget)
+BscanMarkerBase::RedrawRequest  BScanSegmentation::mouseReleaseEvent(QMouseEvent* e, BScanMarkerWidget* widget)
 {
-	bool result = false;
+	int factor = widget->getImageScaleFactor();
+
+	RedrawRequest result;
+	result.redraw = false;
+	result.rect   = getWidgetPaintSize(mousePoint, e->pos(), factor);
+
 	paint = false;
+	if(factor == 0)
+		return result;
 
 	if(actLocalOperator)
 	{
-		int factor = widget->getImageScaleFactor();
 		int x = e->x();
 		int y = e->y();
-		if(factor == 0)
-			return false;
 
 		int xD, yD;
 		transformCoordWidget2Mat(x, y, factor, xD, yD);
 
-		result = actLocalOperator->endOnCoord(xD, yD);
+		result.redraw = actLocalOperator->endOnCoord(xD, yD);
 	}
 
 	return result;
@@ -368,10 +383,7 @@ void BScanSegmentation::opencloseBScan()
 	if(!map || map->empty())
 		return;
 
-	int iterations = 1;
-	cv::erode (*map, *map, cv::Mat(), cv::Point(-1, -1), iterations  , cv::BORDER_REFLECT_101, 1);
-	cv::dilate(*map, *map, cv::Mat(), cv::Point(-1, -1), iterations*2, cv::BORDER_REFLECT_101, 1);
-	cv::erode (*map, *map, cv::Mat(), cv::Point(-1, -1), iterations  , cv::BORDER_REFLECT_101, 1);
+	BScanSegAlgorithm::openClose(*map);
 
 	requestUpdate();
 }

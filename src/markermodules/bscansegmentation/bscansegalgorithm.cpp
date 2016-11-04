@@ -230,3 +230,15 @@ void BScanSegmentation::initFromSegmentline()
 */
 
 
+void BScanSegAlgorithm::openClose(cv::Mat& dest, cv::Mat* src)
+{
+	if(!src)
+		src = &dest;
+
+	int iterations = 1;
+	cv::erode (*src, *src, cv::Mat(), cv::Point(-1, -1), iterations  , cv::BORDER_REFLECT_101, 1);
+	cv::dilate(*src, *src, cv::Mat(), cv::Point(-1, -1), iterations*2, cv::BORDER_REFLECT_101, 1);
+	cv::erode (*src, dest, cv::Mat(), cv::Point(-1, -1), iterations  , cv::BORDER_REFLECT_101, 1);
+}
+
+

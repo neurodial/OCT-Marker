@@ -10,16 +10,16 @@
 
 BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 {
+	setObjectName("ToolBarSegmentationMarker");
 
+	/*
 	QActionGroup*  actionGroupMethod  = new QActionGroup(parent);
 	QActionGroup*  actionPaintMethod  = new QActionGroup(parent);
 	// QToolBar*      toolBar            = new QToolBar(tr("Segmentation"));
 
-	setObjectName("ToolBarSegmentationMarker");
 
 	QWidget* parentWidget = dynamic_cast<QWidget*>(parent);
 
-	/*
 	QSpinBox* paintSizeSpinBox = new QSpinBox(parentWidget);
 	paintSizeSpinBox->setMinimum(1);
 	paintSizeSpinBox->setValue(seg->getLocalOperatorSize());
@@ -79,9 +79,9 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	actionGroupMethod->addAction(removeAreaAction);
 */
 
+	/*
 	addSeparator();
 
-	/*
 	QAction* actionInitFromIlm = new QAction(parent);
 	actionInitFromIlm->setText(tr("Init from ILM"));
 	actionInitFromIlm->setIcon(QIcon(":/icons/wand.png"));

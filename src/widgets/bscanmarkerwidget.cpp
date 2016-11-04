@@ -255,8 +255,16 @@ void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 	
 	BscanMarkerBase* actMarker = markerManger.getActMarker();
 	if(actMarker)
-		if(actMarker->mousePressEvent(event, this))
-			update();
+	{
+		BscanMarkerBase::RedrawRequest result = actMarker->mousePressEvent(event, this);
+		if(result.redraw)
+		{
+			if(result.rect.isValid())
+				update(result.rect);
+			else
+				update();
+		}
+	}
 	
 }
 
@@ -266,9 +274,16 @@ void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 	
 	BscanMarkerBase* actMarker = markerManger.getActMarker();
 	if(actMarker)
-		if(actMarker->mouseReleaseEvent(event, this))
-			update();
-	
+	{
+		BscanMarkerBase::RedrawRequest result = actMarker->mouseReleaseEvent(event, this);
+		if(result.redraw)
+		{
+			if(result.rect.isValid())
+				update(result.rect);
+			else
+				update();
+		}
+	}
 }
 
 void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)

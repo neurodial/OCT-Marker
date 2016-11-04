@@ -20,6 +20,7 @@ public:
 	virtual ~BScanSegLocalOp() {}
 
 	virtual void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, int factor) const = 0;
+	virtual bool drawMarker() const                                 { return true; }
 
 	virtual bool endOnCoord(int x, int y)   = 0;
 	virtual bool drawOnCoord(int x, int y)  = 0;
@@ -63,6 +64,7 @@ public:
 
 
 	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, int factor) const override;
+	bool drawMarker() const                 override                { return localPaintData.paintMethod != BScanSegmentationMarker::PaintData::PaintMethod::Pen; }
 
 	bool endOnCoord(int /*x*/, int /*y*/)   override                { return false; }
 	bool drawOnCoord(int x, int y)          override;
@@ -84,27 +86,32 @@ public:
 
 class BScanSegLocalOpThreshold : public BScanSegLocalOp
 {
-	int paintSizeWidth  =  8;
-	int paintSizeHeight = 16;
+	int  paintSizeWidth   =  8;
+	int  paintSizeHeight  = 16;
+	bool applyOnMouseMove = true;
 
 	BScanSegmentationMarker::ThresholdData localThresholdData;
+
+	bool applyThreshold(int x, int y);
 public:
 	BScanSegLocalOpThreshold(BScanSegmentation& parent) : BScanSegLocalOp(parent) {}
 
 
 	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, int factor) const override;
 
-	bool endOnCoord(int x, int y)           override;
-	bool drawOnCoord(int /*x*/, int /*y*/)  override                { return false; }
+	bool endOnCoord(int x, int y)           override                { return applyThreshold(x, y); }
+	bool drawOnCoord(int x, int y)          override                { if(applyOnMouseMove) return applyThreshold(x, y); return false; }
 	bool startOnCoord(int /*x*/, int /*y*/) override                { return false; }
 
 	int getOperatorHeight()const            override                { return paintSizeHeight; }
 	int getOperatorWidth() const            override                { return paintSizeWidth ; }
+	bool getApplyOnMouseMove() const                                { return applyOnMouseMove; }
 
 
 	void setOperatorSizeWidth (int size);
 	void setOperatorSizeHeight(int size);
 	void setThresholdData(const BScanSegmentationMarker::ThresholdData& data);
+	void setApplyOnMouseMove(bool value)                            { applyOnMouseMove = value; }
 };
 
 

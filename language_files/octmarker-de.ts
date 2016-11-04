@@ -48,32 +48,55 @@
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="54"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="370"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="352"/>
         <source>Save raw data as matrix</source>
         <translation>Rohdaten als openCV-Matrix speichern</translation>
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="63"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="384"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="366"/>
         <source>Save raw data as bin</source>
         <translation>Rohdaten im Bin-Format speichern</translation>
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="69"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="396"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="378"/>
         <source>Save image data as bin</source>
         <translation>Bild im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="408"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="390"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
 </context>
 <context>
+    <name>BScanSegToolBar</name>
+    <message>
+        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="104"/>
+        <source>Erode</source>
+        <translation>Erodieren</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="112"/>
+        <source>Dilate</source>
+        <translation>Erweitern</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="119"/>
+        <source>Open/Close</source>
+        <translation>Öffnen/Schlißen</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="126"/>
+        <source>Median</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BScanSegmentation</name>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="51"/>
+        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="31"/>
         <source>Segmentation marker</source>
         <translation>Manuelle Segmentierung</translation>
     </message>
@@ -82,54 +105,40 @@
         <translation type="obsolete">Aufnahme</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="196"/>
         <source>Segmentation</source>
-        <translation>Segmentierung</translation>
+        <translation type="vanished">Segmentierung</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="288"/>
         <source>Dilate</source>
-        <translation>Erweitern</translation>
+        <translation type="vanished">Erweitern</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="280"/>
         <source>Erode</source>
-        <translation>Erodieren</translation>
+        <translation type="vanished">Erodieren</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="302"/>
-        <source>Median</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="212"/>
         <source>Disc</source>
-        <translation>Kreis</translation>
+        <translation type="vanished">Kreis</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="221"/>
         <source>Quadrat</source>
-        <translation>Quadrat</translation>
+        <translation type="vanished">Quadrat</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="232"/>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="251"/>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation type="vanished">Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="242"/>
         <source>Auto</source>
-        <translation>Bereich automatisch bestimmen</translation>
+        <translation type="vanished">Bereich automatisch bestimmen</translation>
     </message>
     <message>
         <source>Init from ILM</source>
         <translation type="vanished">Von ILM initialisieren</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="295"/>
         <source>Open/Close</source>
-        <translation>Öffnen/Schlißen</translation>
+        <translation type="vanished">Öffnen/Schlißen</translation>
     </message>
 </context>
 <context>
@@ -145,145 +154,172 @@
         <translation>Aufnahme</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="36"/>
+        <location filename="../ui/marker_segmentation.ui" line="39"/>
         <source>From segmentation</source>
         <translation>Von vorhandener Segmentierung</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="42"/>
+        <location filename="../ui/marker_segmentation.ui" line="45"/>
         <source>Segmentation</source>
         <translation>Segmentierung</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="52"/>
-        <location filename="../ui/marker_segmentation.ui" line="126"/>
-        <location filename="../ui/marker_segmentation.ui" line="246"/>
+        <location filename="../ui/marker_segmentation.ui" line="55"/>
+        <location filename="../ui/marker_segmentation.ui" line="129"/>
+        <location filename="../ui/marker_segmentation.ui" line="249"/>
         <source>Create</source>
         <translation>Erzeugen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="62"/>
-        <location filename="../ui/marker_segmentation.ui" line="170"/>
+        <location filename="../ui/marker_segmentation.ui" line="65"/>
+        <location filename="../ui/marker_segmentation.ui" line="173"/>
         <source>From Threshold</source>
         <translation>Vom Schwellwert</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="68"/>
-        <location filename="../ui/marker_segmentation.ui" line="176"/>
-        <location filename="../ui/marker_segmentation.ui" line="356"/>
+        <location filename="../ui/marker_segmentation.ui" line="71"/>
+        <location filename="../ui/marker_segmentation.ui" line="179"/>
+        <location filename="../ui/marker_segmentation.ui" line="408"/>
         <source>Relative</source>
         <translation>Relativ</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="75"/>
-        <location filename="../ui/marker_segmentation.ui" line="186"/>
+        <location filename="../ui/marker_segmentation.ui" line="78"/>
+        <location filename="../ui/marker_segmentation.ui" line="189"/>
         <source>From above</source>
         <translation>von oben</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="95"/>
-        <location filename="../ui/marker_segmentation.ui" line="209"/>
-        <location filename="../ui/marker_segmentation.ui" line="661"/>
+        <location filename="../ui/marker_segmentation.ui" line="98"/>
+        <location filename="../ui/marker_segmentation.ui" line="212"/>
+        <location filename="../ui/marker_segmentation.ui" line="755"/>
         <source>Strikes</source>
         <translation>nötige Treffer</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="102"/>
-        <location filename="../ui/marker_segmentation.ui" line="216"/>
-        <location filename="../ui/marker_segmentation.ui" line="647"/>
+        <location filename="../ui/marker_segmentation.ui" line="105"/>
+        <location filename="../ui/marker_segmentation.ui" line="219"/>
+        <location filename="../ui/marker_segmentation.ui" line="748"/>
         <source>Absolute</source>
         <translation>Absolut</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="140"/>
-        <location filename="../ui/marker_segmentation.ui" line="260"/>
+        <location filename="../ui/marker_segmentation.ui" line="143"/>
+        <location filename="../ui/marker_segmentation.ui" line="263"/>
         <source>From below</source>
         <translation>von unten</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="164"/>
+        <location filename="../ui/marker_segmentation.ui" line="167"/>
         <source>BScan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="270"/>
+        <location filename="../ui/marker_segmentation.ui" line="273"/>
         <source>Operations</source>
         <translation>Aktionen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="276"/>
-        <location filename="../ui/marker_segmentation.ui" line="598"/>
+        <location filename="../ui/marker_segmentation.ui" line="279"/>
+        <location filename="../ui/marker_segmentation.ui" line="671"/>
         <source>Dilate</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="287"/>
-        <location filename="../ui/marker_segmentation.ui" line="584"/>
+        <location filename="../ui/marker_segmentation.ui" line="290"/>
+        <location filename="../ui/marker_segmentation.ui" line="657"/>
         <source>Erode</source>
         <translation>Erodieren</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="298"/>
-        <location filename="../ui/marker_segmentation.ui" line="504"/>
-        <location filename="../ui/marker_segmentation.ui" line="514"/>
-        <location filename="../ui/marker_segmentation.ui" line="528"/>
-        <location filename="../ui/marker_segmentation.ui" line="538"/>
-        <location filename="../ui/marker_segmentation.ui" line="552"/>
+        <location filename="../ui/marker_segmentation.ui" line="314"/>
+        <location filename="../ui/marker_segmentation.ui" line="382"/>
+        <location filename="../ui/marker_segmentation.ui" line="563"/>
+        <location filename="../ui/marker_segmentation.ui" line="573"/>
+        <location filename="../ui/marker_segmentation.ui" line="587"/>
+        <location filename="../ui/marker_segmentation.ui" line="597"/>
+        <location filename="../ui/marker_segmentation.ui" line="611"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="309"/>
+        <location filename="../ui/marker_segmentation.ui" line="325"/>
+        <location filename="../ui/marker_segmentation.ui" line="702"/>
         <source>Median</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="350"/>
+        <location filename="../ui/marker_segmentation.ui" line="353"/>
         <source>Local</source>
         <translation>Lokal</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="371"/>
+        <location filename="../ui/marker_segmentation.ui" line="368"/>
+        <location filename="../ui/marker_segmentation.ui" line="799"/>
+        <source>x</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/marker_segmentation.ui" line="436"/>
         <source>from below</source>
         <translation>von unten</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="385"/>
+        <location filename="../ui/marker_segmentation.ui" line="450"/>
         <source>from left</source>
         <translation>von links</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="399"/>
+        <location filename="../ui/marker_segmentation.ui" line="464"/>
         <source>from right</source>
         <translation>von rechts</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="413"/>
+        <location filename="../ui/marker_segmentation.ui" line="478"/>
         <source>from above</source>
         <translation>von oben</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="478"/>
+        <location filename="../ui/marker_segmentation.ui" line="634"/>
+        <source>Pen</source>
+        <translation>Stift</translation>
+    </message>
+    <message>
+        <location filename="../ui/marker_segmentation.ui" line="688"/>
+        <source>OpenClose</source>
+        <translation>Öffnen/Schlißen</translation>
+    </message>
+    <message>
+        <location filename="../ui/marker_segmentation.ui" line="813"/>
+        <source>switch size</source>
+        <translation>Abmessungen tauschen</translation>
+    </message>
+    <message>
+        <location filename="../ui/marker_segmentation.ui" line="839"/>
         <source>Paint</source>
         <translation>malen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="668"/>
+        <location filename="../ui/marker_segmentation.ui" line="870"/>
+        <source>apply on mouse move</source>
+        <translation>bei Mausbewegung anwenden</translation>
+    </message>
+    <message>
+        <location filename="../ui/marker_segmentation.ui" line="530"/>
         <source>Operation</source>
         <translation>Aktionen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="675"/>
+        <location filename="../ui/marker_segmentation.ui" line="769"/>
         <source>Direction</source>
         <translation>Richtung</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="682"/>
         <source>Size</source>
-        <translation>Größe</translation>
+        <translation type="vanished">Größe</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="689"/>
+        <location filename="../ui/marker_segmentation.ui" line="550"/>
         <source>Threshold</source>
         <translation>Schwellwert</translation>
     </message>
@@ -703,17 +739,17 @@
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="567"/>
         <source>OCT Markers Json file</source>
-        <translation type="unfinished"></translation>
+        <translation>OCT-Marker-Json-Datei</translation>
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="568"/>
         <source>OCT Markers XML file</source>
-        <translation type="unfinished"></translation>
+        <translation>OCT-Marker-XML-Datei</translation>
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="569"/>
         <source>OCT Markers INFO file</source>
-        <translation type="unfinished"></translation>
+        <translation>OCT-Marker-Info-Datei</translation>
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="691"/>

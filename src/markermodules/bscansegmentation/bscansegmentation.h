@@ -85,8 +85,8 @@ public:
 	virtual bool drawBScan() const                         override { return true;  }
 	
 	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
-	virtual bool mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
-	virtual bool mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
+	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
+	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) override;
 

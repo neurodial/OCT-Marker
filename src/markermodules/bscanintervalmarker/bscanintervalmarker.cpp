@@ -129,8 +129,11 @@ BscanMarkerBase::RedrawRequest  BScanIntervalMarker::mouseMoveEvent(QMouseEvent*
 	return result;
 }
 
-bool BScanIntervalMarker::mousePressEvent(QMouseEvent* event, BScanMarkerWidget*)
+BscanMarkerBase::RedrawRequest BScanIntervalMarker::mousePressEvent(QMouseEvent* event, BScanMarkerWidget*)
 {
+	RedrawRequest result;
+	result.redraw = false;
+
 	if(event->button() == Qt::LeftButton)
 	{
 		clickPos = event->pos();
@@ -139,30 +142,38 @@ bool BScanIntervalMarker::mousePressEvent(QMouseEvent* event, BScanMarkerWidget*
 	}
 	else
 		markerActiv = false;
-	return false;
+	return result;
 }
 
-bool BScanIntervalMarker::mouseReleaseEvent(QMouseEvent* event, BScanMarkerWidget* widget)
+BscanMarkerBase::RedrawRequest BScanIntervalMarker::mouseReleaseEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
 	double scaleFactor = widget->getImageScaleFactor();
+	RedrawRequest result;
+	result.redraw = true;
 
-	switch(getMarkerMethod())
+	if(markerActiv)
 	{
-		case Method::Paint:
-			if(clickPos.x() != event->x() && markerActiv)
-			{
-				// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
-				setMarker(std::round(clickPos.x()/scaleFactor), std::round(event->x()/scaleFactor));
-			}
-			break;
-		case Method::Fill:
-			if(markerActiv)
-				fillMarker(std::round(clickPos.x()/scaleFactor));
-			break;
+		switch(getMarkerMethod())
+		{
+			case Method::Paint:
+				if(clickPos.x() != event->x() && markerActiv)
+				{
+					// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
+					setMarker(std::round(clickPos.x()/scaleFactor), std::round(event->x()/scaleFactor));
+				}
+				break;
+			case Method::Fill:
+				if(markerActiv)
+					fillMarker(std::round(clickPos.x()/scaleFactor));
+				break;
+		}
+		result.rect = getWidgetPaintSize(event->pos(), mousePos, widget->getImageScaleFactor(), &clickPos);
+		markerActiv = false;
 	}
-	
-	markerActiv = false;
-	return true;
+	else
+		result.rect = getWidgetPaintSize(event->pos(), mousePos, widget->getImageScaleFactor());
+
+	return result;
 }
 
 void BScanIntervalMarker::setMarker(int x1, int x2)

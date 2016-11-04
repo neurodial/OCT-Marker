@@ -628,6 +628,20 @@
             </property>
            </spacer>
           </item>
+          <item row="0" column="2">
+           <widget class="QToolButton" name="buttonLocalPaintPen">
+            <property name="text">
+             <string>Pen</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/pen.png</normaloff>:/icons/pen.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -665,6 +679,34 @@
             </property>
             <property name="autoExclusive">
              <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="buttonLocalOperationOpenClose">
+            <property name="text">
+             <string>OpenClose</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/arrow_inout.png</normaloff>:/icons/arrow_inout.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="buttonLocalOperationMedian">
+            <property name="text">
+             <string>Median</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/arrow_inout.png</normaloff>:/icons/arrow_inout.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -821,6 +863,13 @@
           </spacer>
          </item>
         </layout>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QCheckBox" name="checkBoxApplyOnMove">
+         <property name="text">
+          <string>apply on mouse move</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

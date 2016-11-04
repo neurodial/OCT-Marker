@@ -78,6 +78,8 @@ void BScanSegLocalOpPaint::drawMarkerPaint(QPainter& painter, const QPoint& cent
 			painter.drawRect(centerDrawPoint.x()-size, centerDrawPoint.y()-size, size*2, size*2);
 			break;
 		}
+		case BScanSegmentationMarker::PaintData::PaintMethod::Pen:
+			break;
 	}
 }
 
@@ -94,6 +96,10 @@ bool BScanSegLocalOpPaint::drawOnCoord(int x, int y)
 			break;
 		case BScanSegmentationMarker::PaintData::PaintMethod::Rect:
 			cv::rectangle(*map, cv::Point(x-paintSize, y-paintSize), cv::Point(x+paintSize-1, y+paintSize-1), paintValue, CV_FILLED, 8, 0);
+			break;
+		case BScanSegmentationMarker::PaintData::PaintMethod::Pen:
+			if(x>=0 && y>=0 && x<map->cols && y<map->rows)
+				map->at<BScanSegmentationMarker::internalMatType>(y, x) = paintValue;
 			break;
 	}
 	return true;
@@ -187,6 +193,12 @@ bool BScanSegLocalOpOperation::endOnCoord(int x, int y)
 		case BScanSegmentationMarker::Operation::Erode:
 			cv::erode(cpy, tmp, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT);
 			break;
+		case BScanSegmentationMarker::Operation::OpenClose:
+			BScanSegAlgorithm::openClose(tmp, &cpy);
+			break;
+		case BScanSegmentationMarker::Operation::Median:
+			medianBlur(cpy, tmp, 3);
+			break;
 	}
 
 	return true;
@@ -222,7 +234,7 @@ void BScanSegLocalOpThreshold::drawMarkerPaint(QPainter& painter, const QPoint& 
 }
 
 
-bool BScanSegLocalOpThreshold::endOnCoord(int x, int y)
+bool BScanSegLocalOpThreshold::applyThreshold(int x, int y)
 {
 	cv::Mat* map = getActMat();
 	if(!map || map->empty())

@@ -37,5 +37,6 @@
 	<file>icons/intervall_edit.png</file>
 	<file>icons/paint_disc.png</file>
 	<file>icons/paint_quadrat.png</file>
+	<file>icons/pen.png</file>
 </qresource>
 </RCC>

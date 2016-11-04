@@ -1,5 +1,7 @@
 #include "octmarkerio.h"
 
+#include <data_structure/programoptions.h>
+
 #include <helper/ptreehelper.h>
 
 #include <boost/property_tree/ptree.hpp>
@@ -124,6 +126,8 @@ bool OctMarkerIO::loadDefaultMarker()
 			return loadMarkers(markersFile.generic_string(), defaultLoadedFormat);
 		}
 	}
+
+	defaultLoadedFormat = int2Fileformat(ProgramOptions::defaultFileformatOctMarkers());
 	
 	return false;
 }

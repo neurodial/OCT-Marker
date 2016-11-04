@@ -36,11 +36,11 @@ namespace BScanSegmentationMarker
 	};
 
 	enum class LocalMethod { Threshold, Paint, Operation };
-	enum class Operation   { Erode, Dilate };
+	enum class Operation   { Erode, Dilate, OpenClose, Median };
 
 	struct PaintData
 	{
-		enum class PaintMethod { Circle, Rect };
+		enum class PaintMethod { Circle, Rect, Pen };
 		enum class PaintColor  { Area0, Auto, Area1 };
 
 		PaintMethod paintMethod = PaintMethod::Circle;
