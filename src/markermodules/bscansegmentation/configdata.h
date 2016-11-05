@@ -20,10 +20,10 @@ namespace BScanSegmentationMarker
 		enum class Method { Absolute, Relative };
 
 		Direction   direction     = Direction::down;
-		Method      method        = Method::Absolute;
+		Method      method        = Method::Relative;
 		std::size_t neededStrikes = 10;
-		int         absoluteValue = 70;
-		double      relativeFrac  = 0.4;
+		int         absoluteValue = 80;
+		double      relativeFrac  = 0.5;
 
 		bool operator==(const ThresholdData& other) const
 		{

@@ -25,6 +25,13 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
+        <widget class="QCheckBox" name="checkBoxCreateNewSeriesStartValue">
+         <property name="text">
+          <string>Create new start value</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="enabled">
           <bool>false</bool>
@@ -88,7 +95,7 @@
              <double>0.050000000000000</double>
             </property>
             <property name="value">
-             <double>0.400000000000000</double>
+             <double>0.500000000000000</double>
             </property>
            </widget>
           </item>

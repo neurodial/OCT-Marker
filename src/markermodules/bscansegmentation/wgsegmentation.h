@@ -101,6 +101,8 @@ private slots:
 
 	void switchSizeLocalThreshold();
 	void switchSizeLocalOperation();
+
+	void setCreateNewSeriesStartValueEnable(bool);
 };
 
 #endif // WGSEGMENTATION_H

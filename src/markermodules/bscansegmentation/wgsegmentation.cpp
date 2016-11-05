@@ -15,6 +15,8 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 {
 	setupUi(this);
 
+	setCreateNewSeriesStartValueEnable(false);
+	connect(checkBoxCreateNewSeriesStartValue, &QAbstractButton::toggled, this, &WGSegmentation::setCreateNewSeriesStartValueEnable);
 
 	localOpPaint     = segmentation->getLocalOpPaint    ();
 	localOpThreshold = segmentation->getLocalOpThreshold();
@@ -202,11 +204,14 @@ void WGSegmentation::createConnections()
 
 void WGSegmentation::slotSeriesInitFromSeg()
 {
+
+	setCreateNewSeriesStartValueEnable(false);
 	// TODO
 }
 
 void WGSegmentation::slotSeriesInitFromThresh()
 {
+	setCreateNewSeriesStartValueEnable(false);
 	BScanSegmentationMarker::ThresholdData data;
 	thresSeries.getThresholdData(data);
 	segmentation->initSeriesFromThreshold(data);
@@ -332,6 +337,13 @@ void WGSegmentation::switchSizeLocalThreshold()
 
 
 
+void WGSegmentation::setCreateNewSeriesStartValueEnable(bool b)
+{
+	buttonSeriesInitFromThreshold->setEnabled(b);
+	checkBoxCreateNewSeriesStartValue->setChecked(b);
+}
+
+
 
 
 
@@ -443,6 +455,14 @@ void WGSegmentationThreshold::setThresholdData(const BScanSegmentationMarker::Th
 				buttonRight->setChecked(true);
 			break;
 	}
+
+	if(absoluteBox)
+		absoluteBox->setValue(data.absoluteValue);
+	if(relativeBox)
+		relativeBox->setValue(data.relativeFrac );
+	if(strikesBox)
+		strikesBox ->setValue(data.neededStrikes);
+
 	switch(data.method)
 	{
 		case BScanSegmentationMarker::ThresholdData::Method::Absolute:
@@ -452,13 +472,6 @@ void WGSegmentationThreshold::setThresholdData(const BScanSegmentationMarker::Th
 			if(buttonRelativ)
 				buttonRelativ->setChecked(true);
 	}
-
-	if(absoluteBox)
-		absoluteBox->setValue(data.absoluteValue);
-	if(relativeBox)
-		relativeBox->setValue(data.relativeFrac );
-	if(strikesBox)
-		strikesBox ->setValue(data.neededStrikes);
 }
 
 
