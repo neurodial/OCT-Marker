@@ -2,5 +2,5 @@
 
 
 
-enum class OctMarkerFileformat { Unknown, Auto, XML, Json, INFO };
+enum class OctMarkerFileformat { Unknown, NoExtension, Auto, XML, Json, INFO };
 

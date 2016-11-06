@@ -35,3 +35,10 @@ boost::property_tree::ptree& PTreeHelper::getNodeWithId(boost::property_tree::pt
 	return node;
 }
 
+void PTreeHelper::putNotEmpty(boost::property_tree::ptree& tree, const std::string& path, const std::string& value)
+{
+	if(!value.empty())
+		tree.put(path, value);
+}
+
+

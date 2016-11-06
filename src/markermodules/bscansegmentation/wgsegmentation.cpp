@@ -158,6 +158,8 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	buttonLocalPaintAreaAuto->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor::Auto ));
 	buttonLocalPaintArea1   ->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor::Area1));
 
+	connect(tabWidget, &QTabWidget::currentChanged, this, &WGSegmentation::tabWidgetCurrentChanged);
+
 	createConnections();
 }
 
@@ -165,6 +167,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 WGSegmentation::~WGSegmentation()
 {
 }
+
 
 
 void WGSegmentation::createConnections()
@@ -204,14 +207,16 @@ void WGSegmentation::createConnections()
 
 void WGSegmentation::slotSeriesInitFromSeg()
 {
+	if(!allowInitSeries)
+		return;
 
-	setCreateNewSeriesStartValueEnable(false);
 	// TODO
 }
 
 void WGSegmentation::slotSeriesInitFromThresh()
 {
-	setCreateNewSeriesStartValueEnable(false);
+	if(!allowInitSeries)
+		return;
 	BScanSegmentationMarker::ThresholdData data;
 	thresSeries.getThresholdData(data);
 	segmentation->initSeriesFromThreshold(data);
@@ -336,11 +341,20 @@ void WGSegmentation::switchSizeLocalThreshold()
 }
 
 
+void WGSegmentation::tabWidgetCurrentChanged(int index)
+{
+	if(allowInitSeries)
+		setCreateNewSeriesStartValueEnable(false);
+}
+
 
 void WGSegmentation::setCreateNewSeriesStartValueEnable(bool b)
 {
 	buttonSeriesInitFromThreshold->setEnabled(b);
+	buttonSeriesInitFromSeg      ->setEnabled(b);
 	checkBoxCreateNewSeriesStartValue->setChecked(b);
+
+	allowInitSeries = b;
 }
 
 

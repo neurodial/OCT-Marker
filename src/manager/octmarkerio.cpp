@@ -35,6 +35,25 @@ OctMarkerIO::OctMarkerIO(boost::property_tree::ptree* markerTree, const OctDataM
 	
 }
 
+OctMarkerFileformat OctMarkerIO::getDefaultFileFormat()
+{
+	OctMarkerFileformat format = int2Fileformat(ProgramOptions::defaultFileformatOctMarkers());
+
+	switch(format)
+	{
+		case OctMarkerFileformat::XML:
+		case OctMarkerFileformat::Json:
+		case OctMarkerFileformat::INFO:
+			return format;
+		case OctMarkerFileformat::Unknown:
+		case OctMarkerFileformat::Auto:
+		case OctMarkerFileformat::NoExtension:
+			break;
+	}
+	return OctMarkerFileformat::Json;
+}
+
+
 int OctMarkerIO::fileformat2Int(OctMarkerFileformat format)
 {
 	switch(format)
@@ -47,6 +66,7 @@ int OctMarkerIO::fileformat2Int(OctMarkerFileformat format)
 			return static_cast<int>(OctMarkerFileformat::INFO);
 		case OctMarkerFileformat::Unknown:
 		case OctMarkerFileformat::Auto:
+		case OctMarkerFileformat::NoExtension:
 			break;
 	}
 	return -1;
@@ -72,7 +92,11 @@ OctMarkerFileformat OctMarkerIO::getFormatFromExtension(const std::string& filen
 {
 
 	bfs::path file(filename);
-	std::string extension = file.extension().generic_string().substr(1);
+	std::string extension = file.extension().generic_string();
+	if(extension.length() == 0)
+		return OctMarkerFileformat::NoExtension;
+
+	extension = extension.substr(1);
 	
 	if(extension == getFileExtension(OctMarkerFileformat::Json))
 		return OctMarkerFileformat::Json;
@@ -97,6 +121,7 @@ const char* OctMarkerIO::getFileExtension(OctMarkerFileformat format)
 			return "ioctmarker";
 		case OctMarkerFileformat::Unknown:
 		case OctMarkerFileformat::Auto:
+		case OctMarkerFileformat::NoExtension:
 			break;
 	}
 	return "";
@@ -127,7 +152,7 @@ bool OctMarkerIO::loadDefaultMarker()
 		}
 	}
 
-	defaultLoadedFormat = int2Fileformat(ProgramOptions::defaultFileformatOctMarkers());
+	defaultLoadedFormat = getDefaultFileFormat();
 	
 	return false;
 }
@@ -143,7 +168,8 @@ bool OctMarkerIO::loadMarkers(const std::string& markersFilename, OctMarkerFilef
 {
 	if(format == OctMarkerFileformat::Auto)
 		format = getFormatFromExtension(markersFilename);
-	if(format == OctMarkerFileformat::Unknown)
+	if(format == OctMarkerFileformat::Unknown
+	|| format == OctMarkerFileformat::NoExtension)
 		return false;
 	
 	bpt::ptree loadTree;
@@ -161,6 +187,7 @@ bool OctMarkerIO::loadMarkers(const std::string& markersFilename, OctMarkerFilef
 			break;
 		case OctMarkerFileformat::Auto:
 		case OctMarkerFileformat::Unknown:
+		case OctMarkerFileformat::NoExtension:
 			return false;
 	}
 
@@ -189,15 +216,26 @@ bool OctMarkerIO::saveMarkers(const std::string& markersFilename, OctMarkerFilef
 {
 	if(format == OctMarkerFileformat::Auto)
 		format = getFormatFromExtension(markersFilename);
+	if(format == OctMarkerFileformat::NoExtension)
+	{
+		OctMarkerFileformat defaultFileFormat = getDefaultFileFormat();
+		return saveMarkersPrivat(addMarkerExtension(markersFilename, defaultFileFormat), defaultFileFormat);
+	}
 	if(format == OctMarkerFileformat::Unknown)
 		return false;
 	
+	return saveMarkersPrivat(markersFilename, format);
+}
+
+
+bool OctMarkerIO::saveMarkersPrivat(const std::string& markersFilename, OctMarkerFileformat format)
+{
 	bpt::ptree saveTree;
 	bpt::ptree& markerTree = saveTree.put(Constants::mainNodeName, "");
 	markerTree.put("Version", Constants::version);
     markerTree.add_child("Markers", *markerstree);
-	
-	
+
+
 	switch(format)
 	{
 		case OctMarkerFileformat::Json:
@@ -211,9 +249,10 @@ bool OctMarkerIO::saveMarkers(const std::string& markersFilename, OctMarkerFilef
 			break;
 		case OctMarkerFileformat::Unknown:
 		case OctMarkerFileformat::Auto:
+		case OctMarkerFileformat::NoExtension:
 			return false;
 	}
-	
+
 	return true;
 }
 

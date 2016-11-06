@@ -55,6 +55,13 @@ void OctDataManager::saveMarkersDefault()
 	}
 }
 
+void OctDataManager::triggerSaveMarkersDefault()
+{
+	saveMarkerState(actSeries);
+	markerIO->saveDefaultMarker();
+}
+
+
 
 
 void OctDataManager::openFile(const QString& filename)
@@ -167,6 +174,12 @@ boost::property_tree::ptree* OctDataManager::getMarkerTreeSeries(const OctData::
 	bpt::ptree& patNode    = PTreeHelper::getNodeWithId(*markerstree, "Patient", patient->getInternalId());
 	bpt::ptree& studyNode  = PTreeHelper::getNodeWithId(patNode     , "Study"  , study  ->getInternalId());
 	bpt::ptree& seriesNode = PTreeHelper::getNodeWithId(studyNode   , "Series" , series ->getInternalId());
+
+
+	PTreeHelper::putNotEmpty(patNode   , "PatientUID", patient->getPatientUID());
+	PTreeHelper::putNotEmpty(studyNode , "StudyUID"  , study  ->getStudyUID  ());
+	PTreeHelper::putNotEmpty(seriesNode, "SeriesUID" , series ->getSeriesUID ());
+
 
 	return &seriesNode;
 }

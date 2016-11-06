@@ -13,11 +13,14 @@ class OctDataManager;
 
 class OctMarkerIO
 {
-	static const OctMarkerFileformat defaultFileFormat = OctMarkerFileformat::Json;
+	static OctMarkerFileformat getDefaultFileFormat();
+
 	OctMarkerFileformat defaultLoadedFormat = OctMarkerFileformat::Json;
 	
 	boost::property_tree::ptree* markerstree = nullptr;
 	const OctDataManager* octDataManager = nullptr;
+
+	bool saveMarkersPrivat(const std::string& markersFilename, OctMarkerFileformat format);
 	
 public:
 	OctMarkerIO(boost::property_tree::ptree* markerTree, const OctDataManager* dataManager);

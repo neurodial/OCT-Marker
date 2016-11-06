@@ -156,7 +156,7 @@ void OCTMarkerMainWindow::setupMenu()
 	actionLoadImage->setText(tr("Load OCT scan"));
 	actionLoadImage->setShortcut(Qt::CTRL | Qt::Key_O);
 	actionLoadImage->setIcon(QIcon(":/icons/folder.png"));
-	connect(actionLoadImage, SIGNAL(triggered()), this, SLOT(showLoadImageDialog()));
+	connect(actionLoadImage, &QAction::triggered, this, &OCTMarkerMainWindow::showLoadImageDialog);
 	fileMenu->addAction(actionLoadImage);
 
 	fileMenu->addSeparator();
@@ -164,7 +164,7 @@ void OCTMarkerMainWindow::setupMenu()
 	QAction* loadMarkersAction = new QAction(this);
 	loadMarkersAction->setText(tr("load markers"));
 	loadMarkersAction->setIcon(QIcon(":/icons/folder.png"));
-	connect(loadMarkersAction, SIGNAL(triggered()), SLOT(showLoadMarkersDialog()));
+	connect(loadMarkersAction, &QAction::triggered, this, &OCTMarkerMainWindow::showLoadMarkersDialog);
 	fileMenu->addAction(loadMarkersAction);
 
 /*
@@ -178,15 +178,23 @@ void OCTMarkerMainWindow::setupMenu()
 	QAction* saveMarkersAction = new QAction(this);
 	saveMarkersAction->setText(tr("save markers"));
 	saveMarkersAction->setIcon(QIcon(":/icons/disk.png"));
-	connect(saveMarkersAction, SIGNAL(triggered()), SLOT(showSaveMarkersDialog()));
+	connect(saveMarkersAction, &QAction::triggered, this, &OCTMarkerMainWindow::showSaveMarkersDialog);
 	fileMenu->addAction(saveMarkersAction);
+
+	QAction* saveMarkersDefaultAction = new QAction(this);
+	saveMarkersDefaultAction->setText(tr("trigger auto save markers"));
+	saveMarkersDefaultAction->setIcon(QIcon(":/icons/disk.png"));
+	saveMarkersDefaultAction->setShortcut(Qt::CTRL | Qt::Key_S);
+	connect(saveMarkersDefaultAction, &QAction::triggered, &(OctDataManager::getInstance()), &OctDataManager::triggerSaveMarkersDefault);
+	fileMenu->addAction(saveMarkersDefaultAction);
+
 
 	fileMenu->addSeparator();
 
 	QAction* actionQuit = new QAction(this);
 	actionQuit->setText(tr("Quit"));
 	actionQuit->setIcon(QIcon(":/icons/door_in.png"));
-	connect(actionQuit, SIGNAL(triggered()), SLOT(close()));
+	connect(actionQuit, &QAction::triggered, this, &OCTMarkerMainWindow::close);
 	fileMenu->addAction(actionQuit);
 
 

@@ -77,6 +77,7 @@ class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 	BScanSegLocalOpThreshold* localOpThreshold = nullptr;
 	BScanSegLocalOpOperation* localOpOperation = nullptr;
 
+	bool allowInitSeries = false;
 
 	void createConnections();
 
@@ -103,6 +104,7 @@ private slots:
 	void switchSizeLocalOperation();
 
 	void setCreateNewSeriesStartValueEnable(bool);
+	void tabWidgetCurrentChanged(int index);
 };
 
 #endif // WGSEGMENTATION_H

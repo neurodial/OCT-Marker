@@ -49,6 +49,7 @@ public slots:
 	// virtual bool addMarkers (QString filename, Fileformat format);
 	virtual void saveMarkers(QString filename, OctMarkerFileformat format);
 	
+	void triggerSaveMarkersDefault();
 
 
 signals:
@@ -61,6 +62,7 @@ signals:
 	void loadMarkerState(const OctData::Series*);
 
 	void loadMarkerStateAll();
+
 
 private:
 	
