@@ -336,20 +336,24 @@ bool BScanSegmentation::leaveWidgetEvent(QEvent*, BScanMarkerWidget*)
 
 bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 {
-	/*
 	switch(e->key())
 	{
+		case Qt::Key_X:
+			opencloseBScan();
+			return true;
+		case Qt::Key_V:
+			medianBScan();
+			return true;
 		case Qt::Key_1:
-			paintArea0Slot();
+			setLocalMethod(BScanSegmentationMarker::LocalMethod::Threshold);
 			return true;
 		case Qt::Key_2:
-			autoAddRemoveArea();
+			setLocalMethod(BScanSegmentationMarker::LocalMethod::Paint);
 			return true;
 		case Qt::Key_3:
-			paintArea1Slot();
+			setLocalMethod(BScanSegmentationMarker::LocalMethod::Operation);
 			return true;
 	}
-	*/
 
 	return false;
 }
