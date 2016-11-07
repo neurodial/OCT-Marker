@@ -1,5 +1,7 @@
 #include "dwoctinformations.h"
 
+#include <cmath>
+
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/oct.h>
@@ -10,6 +12,7 @@
 
 #include <QFormLayout>
 #include <QLabel>
+
 
 
 namespace
@@ -244,6 +247,10 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 			break;
 	}
 	addInformation(seriesInformations, tr("Scan pattern"   ), scanPattern  );
+
+	double scanFocus = series->getScanFocus();
+	if(!std::isnan(scanFocus))
+		addInformation(seriesInformations, tr("Scan focus"), QString("%1").arg(scanFocus));
 
 }
 

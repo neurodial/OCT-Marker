@@ -197,14 +197,14 @@
     <message>
         <location filename="../ui/marker_segmentation.ui" line="105"/>
         <location filename="../ui/marker_segmentation.ui" line="219"/>
-        <location filename="../ui/marker_segmentation.ui" line="762"/>
+        <location filename="../ui/marker_segmentation.ui" line="779"/>
         <source>Strikes</source>
         <translation>nötige Treffer</translation>
     </message>
     <message>
         <location filename="../ui/marker_segmentation.ui" line="112"/>
         <location filename="../ui/marker_segmentation.ui" line="226"/>
-        <location filename="../ui/marker_segmentation.ui" line="755"/>
+        <location filename="../ui/marker_segmentation.ui" line="772"/>
         <source>Absolute</source>
         <translation>Absolut</translation>
     </message>
@@ -226,30 +226,30 @@
     </message>
     <message>
         <location filename="../ui/marker_segmentation.ui" line="286"/>
-        <location filename="../ui/marker_segmentation.ui" line="678"/>
+        <location filename="../ui/marker_segmentation.ui" line="695"/>
         <source>Dilate</source>
         <translation>Erweitern</translation>
     </message>
     <message>
         <location filename="../ui/marker_segmentation.ui" line="297"/>
-        <location filename="../ui/marker_segmentation.ui" line="664"/>
+        <location filename="../ui/marker_segmentation.ui" line="681"/>
         <source>Erode</source>
         <translation>Erodieren</translation>
     </message>
     <message>
         <location filename="../ui/marker_segmentation.ui" line="321"/>
         <location filename="../ui/marker_segmentation.ui" line="389"/>
-        <location filename="../ui/marker_segmentation.ui" line="570"/>
-        <location filename="../ui/marker_segmentation.ui" line="580"/>
-        <location filename="../ui/marker_segmentation.ui" line="594"/>
-        <location filename="../ui/marker_segmentation.ui" line="604"/>
-        <location filename="../ui/marker_segmentation.ui" line="618"/>
+        <location filename="../ui/marker_segmentation.ui" line="587"/>
+        <location filename="../ui/marker_segmentation.ui" line="597"/>
+        <location filename="../ui/marker_segmentation.ui" line="611"/>
+        <location filename="../ui/marker_segmentation.ui" line="621"/>
+        <location filename="../ui/marker_segmentation.ui" line="635"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/marker_segmentation.ui" line="332"/>
-        <location filename="../ui/marker_segmentation.ui" line="709"/>
+        <location filename="../ui/marker_segmentation.ui" line="726"/>
         <source>Median</source>
         <translation type="unfinished"></translation>
     </message>
@@ -260,7 +260,7 @@
     </message>
     <message>
         <location filename="../ui/marker_segmentation.ui" line="375"/>
-        <location filename="../ui/marker_segmentation.ui" line="806"/>
+        <location filename="../ui/marker_segmentation.ui" line="823"/>
         <source>x</source>
         <translation type="unfinished"></translation>
     </message>
@@ -285,37 +285,37 @@
         <translation>von oben</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="641"/>
+        <location filename="../ui/marker_segmentation.ui" line="658"/>
         <source>Pen</source>
         <translation>Stift</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="695"/>
+        <location filename="../ui/marker_segmentation.ui" line="712"/>
         <source>OpenClose</source>
         <translation>Öffnen/Schlißen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="820"/>
+        <location filename="../ui/marker_segmentation.ui" line="837"/>
         <source>switch size</source>
         <translation>Abmessungen tauschen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="846"/>
+        <location filename="../ui/marker_segmentation.ui" line="863"/>
         <source>Paint</source>
         <translation>malen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="877"/>
+        <location filename="../ui/marker_segmentation.ui" line="894"/>
         <source>apply on mouse move</source>
         <translation>bei Mausbewegung anwenden</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="537"/>
+        <location filename="../ui/marker_segmentation.ui" line="554"/>
         <source>Operation</source>
         <translation>Aktionen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="776"/>
+        <location filename="../ui/marker_segmentation.ui" line="793"/>
         <source>Direction</source>
         <translation>Richtung</translation>
     </message>
@@ -324,7 +324,7 @@
         <translation type="vanished">Größe</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="557"/>
+        <location filename="../ui/marker_segmentation.ui" line="574"/>
         <source>Threshold</source>
         <translation>Schwellwert</translation>
     </message>
@@ -346,47 +346,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="204"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="207"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="234"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="237"/>
         <source>BMP - Windows Bitmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="236"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="239"/>
         <source>JPG - Joint Photographic Experts Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="238"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="241"/>
         <source>PNG - Portable Network Graphics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="240"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="243"/>
         <source>PPM - Portable Pixmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="242"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="245"/>
         <source>TIFF - Tagged Image File Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="244"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="247"/>
         <source>XBM - X11 Bitmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="246"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="249"/>
         <source>XPM - X11 Pixmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="248"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="251"/>
         <source>%1 File</source>
         <translation>%1-Datei</translation>
     </message>
@@ -410,151 +410,156 @@
 <context>
     <name>DwOctInformations</name>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="144"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="178"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="194"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="147"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="181"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="197"/>
         <source>internal Id</source>
         <translation>Interne ID</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="146"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="149"/>
         <source>Surname</source>
         <translation>Nachname</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="147"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="150"/>
         <source>Forename</source>
         <translation>Vorname</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="148"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="151"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="149"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="152"/>
         <source>ID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="152"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="155"/>
         <source>Birthdate</source>
         <translation>Geburtstag</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="158"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="161"/>
         <source>Female</source>
         <translation>Weiblich</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="161"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="164"/>
         <source>Male</source>
         <translation>Männlich</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="166"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="169"/>
         <source>Sex</source>
         <translation>Geschlecht</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="167"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="180"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="202"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="170"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="183"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="205"/>
         <source>UID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="179"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="182"/>
         <source>Operator</source>
         <translation>Bediener</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="182"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="185"/>
         <source>Study date</source>
         <translation>Studiendatum</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="197"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="200"/>
         <source>Scan date</source>
         <translation>Aufnahmedatum</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="203"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="206"/>
         <source>Ref. UID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="207"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="210"/>
         <source>Baseline scan</source>
         <translation>Basisaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="207"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="210"/>
         <source>true</source>
         <translation>Wahr</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="207"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="210"/>
         <source>false</source>
         <translation>Falsch</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="215"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="218"/>
         <source>OS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="218"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="221"/>
         <source>OD</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="223"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="226"/>
         <source>Laterality</source>
         <translation>Lateralität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="229"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="232"/>
         <source>Single line scan</source>
         <translation>einzelner Linienscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="232"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="235"/>
         <source>Circular scan</source>
         <translation>Ringscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="235"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="238"/>
         <source>Volume scan</source>
         <translation>Volumenaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="238"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="241"/>
         <source>Fast volume scan</source>
         <translation>Schnelle Volumenaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="241"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="244"/>
         <source>Radial scan</source>
         <translation>Sternscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="246"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="249"/>
         <source>Scan pattern</source>
         <translation>Scanmuster</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="272"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="253"/>
+        <source>Scan focus</source>
+        <translation>Aufnahmefokus</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="279"/>
         <source>Acquisition time</source>
         <translation>Aufnahmezeit</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="273"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="280"/>
         <source>Image quality</source>
         <translation>Bildqualität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="274"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="281"/>
         <source>Images average</source>
         <translation>Gemittelte Bilder</translation>
     </message>
@@ -676,7 +681,7 @@
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="258"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="666"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="670"/>
         <source>Save Matlab Bin Code</source>
         <translation>Matlab-Code für Bin-Format speichern</translation>
     </message>
@@ -762,17 +767,17 @@
         <translation>OCT-Marker-Info-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="699"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="703"/>
         <source>Unknown error on autosave</source>
         <translation>Unbekannter Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="703"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="707"/>
         <source>Error on autosave</source>
         <translation>Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="703"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="707"/>
         <source>Autosave fail with message: %1 &lt;br /&gt;Quit program?</source>
         <translation>Automatisches Speichern mit Meldung:&lt;br /&gt;%1&lt;br /&gt;fehlgeschlagen.&lt;br /&gt;Programm beenden?</translation>
     </message>
