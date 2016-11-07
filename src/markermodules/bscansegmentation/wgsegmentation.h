@@ -65,6 +65,7 @@ signals:
 class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 {
 	Q_OBJECT;
+	enum class Orientation { Vertical, Horizontal };
 
 	BScanSegmentation* segmentation;
 
@@ -79,7 +80,11 @@ class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 
 	bool allowInitSeries = false;
 
+	Orientation localThresholdOrientation = Orientation::Vertical;
+
 	void createConnections();
+
+	void setLocalThresholdOrientation(Orientation o);
 
 public:
 	WGSegmentation(BScanSegmentation* parent);
@@ -105,6 +110,9 @@ private slots:
 
 	void setCreateNewSeriesStartValueEnable(bool);
 	void tabWidgetCurrentChanged(int index);
+
+	void setLocalThresholdOrientationVertical()                     { setLocalThresholdOrientation(Orientation::Vertical  ); }
+	void setLocalThresholdOrientationHorizontal()                   { setLocalThresholdOrientation(Orientation::Horizontal); }
 };
 
 #endif // WGSEGMENTATION_H

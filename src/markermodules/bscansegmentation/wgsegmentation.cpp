@@ -201,6 +201,12 @@ void WGSegmentation::createConnections()
 	connect(radioLocalThreshold, &QRadioButton::toggled, this, &WGSegmentation::slotLocalThresh   );
 	connect(radioLocalPaint    , &QRadioButton::toggled, this, &WGSegmentation::slotLocalPaint    );
 	connect(radioLocalOperation, &QRadioButton::toggled, this, &WGSegmentation::slotLocalOperation);
+
+
+	connect(buttonLocalThresholdUp   , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
+	connect(buttonLocalThresholdDown , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
+	connect(buttonLocalThresholdLeft , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
+	connect(buttonLocalThresholdRight, &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
 }
 
 
@@ -356,6 +362,17 @@ void WGSegmentation::setCreateNewSeriesStartValueEnable(bool b)
 
 	allowInitSeries = b;
 }
+
+void WGSegmentation::setLocalThresholdOrientation(Orientation o)
+{
+	if(o != localThresholdOrientation)
+	{
+		if(autoSwitchSizeLocalThresholdButton->isChecked())
+			switchSizeLocalThreshold();
+		localThresholdOrientation = o;
+	}
+}
+
 
 
 
