@@ -57,18 +57,18 @@ class BScanSegmentation : public BscanMarkerBase
 	void clearSegments();
 
 	template<typename T>
-	void drawSegmentLine(QPainter&, int factor, const QRect&) const;
+	void drawSegmentLine(QPainter&, double factor, const QRect&) const;
 
-	void transformCoordWidget2Mat(int xWidget, int yWidget, int factor, int& xMat, int& yMat);
+	void transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat);
 	
 
-	bool startOnCoord(int x, int y, int factor);
+	bool startOnCoord(int x, int y, double factor);
 
-	bool setOnCoord(int x, int y, int factor);
+	bool setOnCoord(int x, int y, double factor);
 	bool paintOnCoord(cv::Mat* map, int xD, int yD);
 	BScanSegmentationMarker::internalMatType valueOnCoord(int x, int y);
 
-	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor);
+	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor);
 
 
 

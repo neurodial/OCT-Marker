@@ -148,8 +148,8 @@ void CVImageWidget::cvImage2qtImage()
 	switch(scaleMethod)
 	{
 		case ScaleMethod::Factor:
-			imageScale.setHeight(cvImage.rows * scaleFactor);
-			imageScale.setWidth (cvImage.cols * scaleFactor);
+			imageScale.setHeight(static_cast<int>(cvImage.rows * scaleFactor + 0.5));
+			imageScale.setWidth (static_cast<int>(cvImage.cols * scaleFactor + 0.5));
 			setFixedSize(imageScale);
 			break;
 		case ScaleMethod::Size:
@@ -158,7 +158,10 @@ void CVImageWidget::cvImage2qtImage()
 	}
 
 	if(scaleFactor != 1)
-		qtImage = qtImage.scaled(cvImage.cols*scaleFactor, cvImage.rows*scaleFactor,  Qt::KeepAspectRatio, Qt::FastTransformation);
+		qtImage = qtImage.scaled(static_cast<int>(cvImage.cols*scaleFactor + 0.5)
+		                       , static_cast<int>(cvImage.rows*scaleFactor + 0.5)
+		                       , Qt::KeepAspectRatio
+		                       , Qt::FastTransformation);
 
 	update();
 }

@@ -32,10 +32,10 @@ public:
 	static OctFilesModel& getInstance()                             { static OctFilesModel instance; return instance;}
 	
 	
-	int rowCount(const QModelIndex& /*parent*/ = QModelIndex()) const
-	                                                                { return filelist.size(); }
-	QVariant data(const QModelIndex &index, int role) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+	int rowCount(const QModelIndex& /*parent*/ = QModelIndex()) const override
+	                                                                { return static_cast<int>(filelist.size()); }
+	QVariant data(const QModelIndex &index, int role) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 	
 
 private slots:

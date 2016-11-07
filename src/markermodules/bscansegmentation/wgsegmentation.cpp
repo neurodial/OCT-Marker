@@ -341,7 +341,7 @@ void WGSegmentation::switchSizeLocalThreshold()
 }
 
 
-void WGSegmentation::tabWidgetCurrentChanged(int index)
+void WGSegmentation::tabWidgetCurrentChanged(int /*index*/)
 {
 	if(allowInitSeries)
 		setCreateNewSeriesStartValueEnable(false);
@@ -441,11 +441,11 @@ void WGSegmentationThreshold::getThresholdData(BScanSegmentationMarker::Threshol
 		data.method = BScanSegmentationMarker::ThresholdData::Method::Relative;
 
 	if(absoluteBox)
-		data.absoluteValue = absoluteBox->value();
+		data.absoluteValue = static_cast<BScanSegmentationMarker::internalMatType>(absoluteBox->value());
 	if(relativeBox)
 		data.relativeFrac  = relativeBox->value();
 	if(strikesBox)
-		data.neededStrikes = strikesBox ->value();
+		data.neededStrikes = static_cast<int>(strikesBox->value());
 }
 
 void WGSegmentationThreshold::setThresholdData(const BScanSegmentationMarker::ThresholdData& data)
@@ -475,7 +475,7 @@ void WGSegmentationThreshold::setThresholdData(const BScanSegmentationMarker::Th
 	if(relativeBox)
 		relativeBox->setValue(data.relativeFrac );
 	if(strikesBox)
-		strikesBox ->setValue(data.neededStrikes);
+		strikesBox ->setValue(static_cast<int>(data.neededStrikes));
 
 	switch(data.method)
 	{

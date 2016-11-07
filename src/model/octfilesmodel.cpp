@@ -53,7 +53,7 @@ bool OctFilesModel::addFile(QString filename)
 		}
 	}
 
-	int position = filelist.size();
+	int position = static_cast<int>(filelist.size());
 	
 	beginInsertRows(QModelIndex(), position, position);
 	filelist.push_back(new OctFileUnloaded(filename));

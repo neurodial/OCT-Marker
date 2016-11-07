@@ -1,6 +1,5 @@
 #include "bscanmarkermanager.h"
 
-#include <octxmlread/markersreadwrite.h>
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
 

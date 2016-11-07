@@ -76,10 +76,10 @@ protected:
 	
 	void connectToolBar(QToolBar* toolbar);
 	
-	int getActBScanNr() const;
+	std::size_t getActBScanNr() const;
 	int getBScanWidth() const;
 	int getBScanHight() const;
-	int getBScanWidth(int nr) const;
+	int getBScanWidth(std::size_t nr) const;
 	
 	const OctData::Series* getSeries() const;
 	const OctData::BScan * getActBScan() const;

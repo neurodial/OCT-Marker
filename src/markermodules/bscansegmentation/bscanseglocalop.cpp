@@ -65,16 +65,26 @@ namespace
 
 
 
-void BScanSegLocalOpPaint::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, int factor) const
+void BScanSegLocalOpPaint::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
 {
 	switch(localPaintData.paintMethod)
 	{
 		case BScanSegmentationMarker::PaintData::PaintMethod::Circle:
-			painter.drawEllipse(centerDrawPoint + QPoint(factor/2, factor/2), static_cast<int>((paintSize+0.5)*factor), static_cast<int>((paintSize+0.5)*factor));
+		{
+			QPointF point = centerDrawPoint;
+			point += QPointF(factor/2, factor/2);
+			painter.drawEllipse(point
+			                  , (paintSize+0.5)*factor
+			                  , (paintSize+0.5)*factor);
+			/*
+			painter.drawEllipse(centerDrawPoint + QPoint(static_cast<int>(factor/2), static_cast<int>(factor/2))
+			                  , (paintSize+0.5)*factor
+			                  , (paintSize+0.5)*factor);*/
 			break;
+		}
 		case BScanSegmentationMarker::PaintData::PaintMethod::Rect:
 		{
-			int size = paintSize*factor;
+			int size = static_cast<int>(paintSize*factor + 0.5);
 			painter.drawRect(centerDrawPoint.x()-size, centerDrawPoint.y()-size, size*2, size*2);
 			break;
 		}
@@ -154,10 +164,10 @@ QIcon BScanSegLocalOpPaint::getPaintColorIcon(BScanSegmentationMarker::PaintData
 // ---------
 // Operation
 // ---------
-void BScanSegLocalOpOperation::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, int factor) const
+void BScanSegLocalOpOperation::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
 {
-	int sizeW = paintSizeWidth *factor;
-	int sizeH = paintSizeHeight*factor;
+	int sizeW = static_cast<int>(paintSizeWidth *factor + 0.5);
+	int sizeH = static_cast<int>(paintSizeHeight*factor + 0.5);
 	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
 }
 
@@ -226,10 +236,10 @@ void BScanSegLocalOpOperation::setOperatorSizeWidth(int size)
 // ---------
 // Threshold
 // ---------
-void BScanSegLocalOpThreshold::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, int factor) const
+void BScanSegLocalOpThreshold::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
 {
-	int sizeW = paintSizeWidth *factor;
-	int sizeH = paintSizeHeight*factor;
+	int sizeW = static_cast<int>(paintSizeWidth *factor + 0.5);
+	int sizeH = static_cast<int>(paintSizeHeight*factor + 0.5);
 	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
 }
 

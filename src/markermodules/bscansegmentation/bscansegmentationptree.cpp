@@ -169,8 +169,8 @@ void BScanSegmentationPtree::fillPTree(boost::property_tree::ptree& markerTree, 
 	markerTree.erase("ILM");
 	bpt::ptree& ilmTree = markerTree.put("ILM", std::string());
 
-	int numBscans = markerManager->getNumBScans();
-	for(int bscan = 0; bscan < numBscans; ++bscan)
+	std::size_t numBscans = markerManager->getNumBScans();
+	for(std::size_t bscan = 0; bscan < numBscans; ++bscan)
 	{
 		BScanSegments segments;
 

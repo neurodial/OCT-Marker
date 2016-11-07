@@ -65,13 +65,13 @@ QToolBar* BScanIntervalMarker::createToolbar(QObject* parent)
 		std::size_t markerId = marker.getInternalId();
 		QIcon icon = createColorIcon(QColor::fromRgb(marker.getRed(), marker.getGreen(), marker.getBlue()));
 
-		IntValueAction* markerAction = new IntValueAction(markerId, parent);
+		SizetValueAction* markerAction = new SizetValueAction(markerId, parent);
 		// markerAction->setCheckable(true);
 		markerAction->setText(QString::fromStdString(marker.getName()));
 		markerAction->setIcon(icon);
 		markerAction->setChecked(actMarkerId == markerId);
-		connect(markerAction, &IntValueAction::triggered            , this        , &BScanIntervalMarker::chooseMarkerID);
-		connect(this        , &BScanIntervalMarker::markerIdChanged, markerAction, &IntValueAction::valueChanged        );
+		connect(markerAction, &SizetValueAction::triggered         , this        , &BScanIntervalMarker::chooseMarkerID);
+		connect(this        , &BScanIntervalMarker::markerIdChanged, markerAction, &SizetValueAction::valueChanged     );
 
 		actionGroupMarker->addAction(markerAction);
 		toolBar->addAction(markerAction);
@@ -159,12 +159,12 @@ BscanMarkerBase::RedrawRequest BScanIntervalMarker::mouseReleaseEvent(QMouseEven
 				if(clickPos.x() != event->x() && markerActiv)
 				{
 					// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
-					setMarker(std::round(clickPos.x()/scaleFactor), std::round(event->x()/scaleFactor));
+					setMarker(static_cast<int>(clickPos.x()/scaleFactor + 0.5), static_cast<int>(event->x()/scaleFactor + 0.5));
 				}
 				break;
 			case Method::Fill:
 				if(markerActiv)
-					fillMarker(std::round(clickPos.x()/scaleFactor));
+					fillMarker(static_cast<int>(clickPos.x()/scaleFactor + 0.5));
 				break;
 		}
 		result.rect = getWidgetPaintSize(event->pos(), mousePos, widget->getImageScaleFactor(), &clickPos);
@@ -186,9 +186,9 @@ void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type)
 	setMarker(x1, x2, type     , getActBScanNr());
 }
 
-void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, int bscan)
+void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, std::size_t bscan)
 {
-	if(bscan<0 || bscan >= static_cast<int>(markers.size()))
+	if(bscan >= markers.size())
 		return;
 
 // 	printf("BScanMarkerManager::setMarker(%d, %d, %d)", x1, x2, type);
@@ -214,10 +214,9 @@ void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, int bsca
 
 void BScanIntervalMarker::fillMarker(int x, const Marker& type)
 {
-	int bscan = getActBScanNr();
+	std::size_t bscan = getActBScanNr();
 
-
-	if(bscan<0 || bscan >= static_cast<int>(markers.size()))
+	if(bscan >= markers.size())
 		return;
 
 	MarkerMap& map = markers.at(bscan);
@@ -227,7 +226,7 @@ void BScanIntervalMarker::fillMarker(int x, const Marker& type)
 
 	if(intervall.upper() > 0)
 	{
-		markers.at(bscan).set(std::make_pair(boost::icl::discrete_interval<int>::closed(intervall.lower(), intervall.upper()), type));
+		map.set(std::make_pair(boost::icl::discrete_interval<int>::closed(intervall.lower(), intervall.upper()), type));
 		dataChanged = true;
 	}
 
@@ -278,7 +277,14 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 		if(marker.isDefined())
 		{
 			boost::icl::discrete_interval<int> itv  = pair.first;
-			painter.fillRect(itv.lower()*scaleFactor, 0, (itv.upper()-itv.lower())*scaleFactor, widget->height(), QColor(marker.getRed(), marker.getGreen(), marker.getBlue(),  60));
+			painter.fillRect(static_cast<int>(itv.lower()*scaleFactor + 0.5)
+			               , 0
+			               , static_cast<int>((itv.upper()-itv.lower())*scaleFactor + 0.5)
+			               , widget->height()
+			               , QColor(marker.getRed()
+			               , marker.getGreen()
+			               , marker.getBlue()
+			               , 60));
 		}
 	}
 	
@@ -305,11 +311,13 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 
 void BScanIntervalMarker::drawBScanSLOLine(QPainter& painter, int bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& end_px, SLOImageWidget*) const
 {
+	if(bscanNr < 0 || bscanNr >= static_cast<int>(markers.size()))
+		return;
 	double bscanWidth = getBScanWidth();
 	QPen pen;
 	pen.setWidth(3);
 
-	for(const MarkerMap::interval_mapping_type pair : getMarkers(bscanNr))
+	for(const MarkerMap::interval_mapping_type pair : getMarkers(static_cast<std::size_t>(bscanNr)))
 	{
 		IntervalMarker::Marker marker = pair.second;
 		if(marker.isDefined())
@@ -366,7 +374,7 @@ void BScanIntervalMarker::loadState(boost::property_tree::ptree& markerTree)
 }
 
 
-QRect BScanIntervalMarker::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor, const QPoint* p3)
+QRect BScanIntervalMarker::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor, const QPoint* p3)
 {
 	const int broder = 5;
 	int x1 = p1.x();
@@ -385,7 +393,7 @@ QRect BScanIntervalMarker::getWidgetPaintSize(const QPoint& p1, const QPoint& p2
 	}
 
 	// QRect rect = QRect(p1.x(), 0, p2.x(), getBScanHight()*factor).normalized(); // old and new pos
-	QRect rect = QRect(minX-broder, 0, maxX-minX+2*broder, getBScanHight()*factor); // old and new pos
+	QRect rect = QRect(minX-broder, 0, maxX-minX+2*broder, static_cast<int>(getBScanHight()*factor+0.5)); // old and new pos
 
 	return rect;
 }

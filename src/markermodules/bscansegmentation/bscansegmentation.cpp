@@ -77,12 +77,18 @@ namespace
 {
 	struct PaintFactor1
 	{
-		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, int factor)
+		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, int /*factor*/)
 		{
 			if(*p00 != *p10)
-				painter.drawPoint(w*factor, h*factor);
-			else if(*p00 != *p01)
-				painter.drawPoint(w*factor, h*factor);
+			{
+				painter.drawPoint(w, h);
+				painter.drawPoint(w+1, h);
+			}
+			if(*p00 != *p01)
+			{
+				painter.drawPoint(w, h);
+				painter.drawPoint(w, h+1);
+			}
 		}
 	};
 
@@ -100,7 +106,7 @@ namespace
 
 
 template<typename T>
-void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor, const QRect& rect) const
+void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const QRect& rect) const
 {
 	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
@@ -109,10 +115,10 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor, const QRe
 	if(factor <= 0)
 		return;
 
-	int drawX      = (rect.x()     )/factor-2;
-	int drawY      = (rect.y()     )/factor-2;
-	int drawWidth  = (rect.width() )/factor+4;
-	int drawHeight = (rect.height())/factor+4;
+	int drawX      = static_cast<int>((rect.x()     )/factor + 0.5)-2;
+	int drawY      = static_cast<int>((rect.y()     )/factor + 0.5)-2;
+	int drawWidth  = static_cast<int>((rect.width() )/factor + 0.5)+4;
+	int drawHeight = static_cast<int>((rect.height())/factor + 0.5)+4;
 
 	QPen pen(Qt::red);
 	painter.setPen(pen);
@@ -137,7 +143,7 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor, const QRe
 
 		for(int w = startW; w < endW; ++w)
 		{
-			T::paint(painter, p00, p10, p01, w, h, factor);
+			T::paint(painter, p00, p10, p01, w, h, static_cast<int>(factor)); // for faster drawing, only int supported (and only int used at the moment)
 
 			++p00;
 			++p10;
@@ -146,11 +152,10 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, int factor, const QRe
 	}
 }
 
-void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, int factor, int& xMat, int& yMat)
+void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat)
 {
-	double factorD = factor;
-	xMat = static_cast<int>(std::round(xWidget/factorD));
-	yMat = static_cast<int>(std::round(yWidget/factorD));
+	yMat = static_cast<int>(yWidget/factor + 0.5);
+	xMat = static_cast<int>(xWidget/factor + 0.5);
 }
 
 
@@ -158,7 +163,7 @@ void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, int f
 
 void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const QRect& rect) const
 {
-	int factor = widget->getImageScaleFactor();
+	double factor = widget->getImageScaleFactor();
 	if(factor <= 0)
 		return;
 	
@@ -170,8 +175,8 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 	QPoint paintPoint = mousePoint;
 	if(factor > 1)
 	{
-		int x = std::round(static_cast<double>(mousePoint.x())/factor)*factor;
-		int y = std::round(static_cast<double>(mousePoint.y())/factor)*factor;
+		int x = static_cast<int>(std::round(static_cast<double>(mousePoint.x())/factor)*factor + 0.5);
+		int y = static_cast<int>(std::round(static_cast<double>(mousePoint.y())/factor)*factor + 0.5);
 		paintPoint = QPoint(x, y);
 	}
 
@@ -182,7 +187,7 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 }
 
 
-bool BScanSegmentation::setOnCoord(int x, int y, int factor)
+bool BScanSegmentation::setOnCoord(int x, int y, double factor)
 {
 	if(factor == 0)
 		return false;
@@ -198,7 +203,7 @@ bool BScanSegmentation::setOnCoord(int x, int y, int factor)
 
 
 
-bool BScanSegmentation::startOnCoord(int x, int y, int factor)
+bool BScanSegmentation::startOnCoord(int x, int y, double factor)
 {
 	if(factor == 0)
 		return false;
@@ -225,7 +230,7 @@ uint8_t BScanSegmentation::valueOnCoord(int x, int y)
 }
 
 
-QRect BScanSegmentation::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor)
+QRect BScanSegmentation::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor)
 {
 	int height = 2;
 	int width  = 2;
@@ -235,8 +240,8 @@ QRect BScanSegmentation::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, 
 		width  += actLocalOperator->getOperatorWidth ();
 	}
 
-	height *= factor;
-	width  *= factor;
+	height = static_cast<int>(height*factor + 0.5);
+	width  = static_cast<int>(width *factor + 0.5);
 
 	QRect rect = QRect(p1, p2).normalized(); // old and new pos
 	rect.adjust(-width, -height, width, height);
@@ -253,7 +258,7 @@ BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e,
 		paint = false;
 		
 	inWidget = true;
-	int factor = widget->getImageScaleFactor();
+	double factor = widget->getImageScaleFactor();
 
 	result.redraw = false; // cursor need redraw
 	result.rect   = getWidgetPaintSize(mousePoint, e->pos(), factor);
@@ -275,7 +280,7 @@ BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e,
 
 BscanMarkerBase::RedrawRequest  BScanSegmentation::mousePressEvent(QMouseEvent* e, BScanMarkerWidget* widget)
 {
-	int factor = widget->getImageScaleFactor();
+	double factor = widget->getImageScaleFactor();
 
 	RedrawRequest result;
 	result.redraw = false;
@@ -295,7 +300,7 @@ BscanMarkerBase::RedrawRequest  BScanSegmentation::mousePressEvent(QMouseEvent* 
 
 BscanMarkerBase::RedrawRequest  BScanSegmentation::mouseReleaseEvent(QMouseEvent* e, BScanMarkerWidget* widget)
 {
-	int factor = widget->getImageScaleFactor();
+	double factor = widget->getImageScaleFactor();
 
 	RedrawRequest result;
 	result.redraw = false;

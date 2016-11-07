@@ -56,14 +56,14 @@ public:
 	static OctDataModel& getInstance()                              { static OctDataModel instance; return instance;}
 	
 	
-	int rowCount(const QModelIndex& /*parent*/ = QModelIndex()) const
-	                                                                { return octSeriesList.size(); }
+	int rowCount(const QModelIndex& /*parent*/ = QModelIndex()) const override
+	                                                                { return static_cast<int>(octSeriesList.size()); }
 
-	int columnCount(const QModelIndex& /*parent*/ = QModelIndex()) const
+	int columnCount(const QModelIndex& /*parent*/ = QModelIndex()) const override
 	                                                                { return 4; }
 	
-	QVariant data(const QModelIndex &index, int role) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+	QVariant data(const QModelIndex &index, int role) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 	
 
 private slots:

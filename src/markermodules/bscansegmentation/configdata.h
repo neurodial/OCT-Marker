@@ -19,11 +19,11 @@ namespace BScanSegmentationMarker
 		enum class Direction { left, right, up, down };
 		enum class Method { Absolute, Relative };
 
-		Direction   direction     = Direction::down;
-		Method      method        = Method::Relative;
-		std::size_t neededStrikes = 10;
-		int         absoluteValue = 80;
-		double      relativeFrac  = 0.5;
+		Direction       direction     = Direction::down;
+		Method          method        = Method::Relative;
+		int             neededStrikes = 10;
+		internalMatType absoluteValue = 80;
+		double          relativeFrac  = 0.5;
 
 		bool operator==(const ThresholdData& other) const
 		{

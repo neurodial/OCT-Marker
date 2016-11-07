@@ -9,12 +9,12 @@
 
 #include <manager/bscanmarkermanager.h>
 
-int BscanMarkerBase::getActBScanNr() const
+std::size_t BscanMarkerBase::getActBScanNr() const
 {
-	return markerManager->getActBScan();
+	return static_cast<std::size_t>(markerManager->getActBScan());
 }
 
-int BscanMarkerBase::getBScanWidth(int nr) const
+int BscanMarkerBase::getBScanWidth(std::size_t nr) const
 {
 	const OctData::Series* series = getSeries();
 	if(series)

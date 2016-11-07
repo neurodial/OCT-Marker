@@ -24,9 +24,9 @@ public:
 	
 	Method getMarkerMethod() const                                  { return markerMethod; }
 	
-	void setMarker(int x1, int x2)                               ;
-	void setMarker(int x1, int x2, const Marker& type)           ;
-	void setMarker(int x1, int x2, const Marker& type, int bscan);
+	void setMarker(int x1, int x2)                                       ;
+	void setMarker(int x1, int x2, const Marker& type)                   ;
+	void setMarker(int x1, int x2, const Marker& type, std::size_t bscan);
 
 	void fillMarker(int x)                                          { fillMarker(x, actMarker); }
 	void fillMarker(int x, const Marker& type);
@@ -49,7 +49,7 @@ public:
 	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
 	
 	const MarkerMap& getMarkers() const                             { return markers.at(getActBScanNr()); }
-	const MarkerMap& getMarkers(int bscan) const                    { return markers.at(bscan); }
+	const MarkerMap& getMarkers(std::size_t bscan) const            { return markers.at(bscan); }
 
 	std::size_t getNumBScans() const                                { return markers.size(); }
 	
@@ -84,7 +84,7 @@ private:
 
 	std::vector<MarkerMap> markers;
 
-	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, int factor, const QPoint* p3 = nullptr);
+	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor, const QPoint* p3 = nullptr);
 };
 
 #endif // BSCANQUALITYMARKER_H

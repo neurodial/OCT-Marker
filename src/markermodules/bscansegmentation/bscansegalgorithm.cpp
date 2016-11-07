@@ -13,48 +13,48 @@ namespace
 	struct FieldAccVertical
 	{
 		template<typename T>
-		static constexpr T* startIt(cv::Mat& field, std::size_t inner, std::size_t outer) { return field.ptr<T>(inner) + outer; }
+		static constexpr T* startIt(cv::Mat& field, std::size_t inner, std::size_t outer) { return field.ptr<T>(static_cast<int>(inner)) + outer; }
 		template<typename T>
-		static constexpr const T* startIt_const(const cv::Mat& field, std::size_t inner, std::size_t outer) { return field.ptr<T>(inner) + outer; }
+		static constexpr const T* startIt_const(const cv::Mat& field, std::size_t inner, std::size_t outer) { return field.ptr<T>(static_cast<int>(inner)) + outer; }
 
-		static std::size_t numInner(const cv::Mat* levelset) { return levelset->rows; }
-		static std::size_t numOuter(const cv::Mat* levelset) { return levelset->cols; }
+		static std::size_t numInner(const cv::Mat* levelset) { return static_cast<std::size_t>(levelset->rows); }
+		static std::size_t numOuter(const cv::Mat* levelset) { return static_cast<std::size_t>(levelset->cols); }
 	};
 
 	struct FieldAccHorizontal
 	{
 		template<typename T>
-		static constexpr T* startIt(cv::Mat& field, std::size_t inner, std::size_t outer) { return field.ptr<T>(outer) + inner; }
+		static constexpr T* startIt(cv::Mat& field, std::size_t inner, std::size_t outer) { return field.ptr<T>(static_cast<int>(outer)) + inner; }
 		template<typename T>
-		static constexpr const T* startIt_const(const cv::Mat& field, std::size_t inner, std::size_t outer) { return field.ptr<T>(outer) + inner; }
+		static constexpr const T* startIt_const(const cv::Mat& field, std::size_t inner, std::size_t outer) { return field.ptr<T>(static_cast<int>(outer)) + inner; }
 
-		static std::size_t numInner(const cv::Mat* levelset) { return levelset->cols; }
-		static std::size_t numOuter(const cv::Mat* levelset) { return levelset->rows; }
+		static std::size_t numInner(const cv::Mat* levelset) { return static_cast<std::size_t>(levelset->cols); }
+		static std::size_t numOuter(const cv::Mat* levelset) { return static_cast<std::size_t>(levelset->rows); }
 	};
 
 	struct OpDown : public FieldAccVertical
 	{
 		template<typename T>
-		static constexpr T* op(T* p, std::size_t val, std::size_t num = 1) { return p + val*num; }
+		static constexpr T* op(T* p, std::ptrdiff_t val, int num = 1) { return p + val*num; }
 		static constexpr const bool posDirection = true;
 	};
 	struct OpUp : public FieldAccVertical
 	{
 		template<typename T>
-		static constexpr T* op(T* p, std::size_t val, std::size_t num = 1) { return p - val*num; }
+		static constexpr T* op(T* p, std::ptrdiff_t val, int num = 1) { return p - val*num; }
 		static constexpr const bool posDirection = false;
 	};
 
 	struct OpRight : public FieldAccHorizontal
 	{
 		template<typename T>
-		static constexpr T* op(T* p, std::size_t, std::size_t num = 1) { return p + num; }
+		static constexpr T* op(T* p, std::ptrdiff_t, int num = 1) { return p + num; }
 		static constexpr const bool posDirection = true;
 	};
 	struct OpLeft : public FieldAccHorizontal
 	{
 		template<typename T>
-		static constexpr T* op(T* p, std::size_t, std::size_t num = 1) { return p - num; }
+		static constexpr T* op(T* p, std::ptrdiff_t, int num = 1) { return p - num; }
 		static constexpr const bool posDirection = false;
 	};
 
@@ -63,19 +63,19 @@ namespace
 	struct PartitionFromGrayValueWorker
 	{
 		inline static void iterateRow(cv::Mat* levelSetData
-		                            , const cv::Mat& img
-		                            , const uint8_t grayValue
-		                            , const uint8_t breakValue
-		                            , const std::size_t startInner
-		                            , const std::size_t posOuter
-		                            , const std::size_t numInner
-		                            , const std::size_t itLineNum
-		                            , const std::size_t neededStrikes)
+		                            , const cv::Mat&       img
+		                            , const uint8_t        grayValue
+		                            , const uint8_t        breakValue
+		                            , const std::size_t    startInner
+		                            , const std::size_t    posOuter
+		                            , const std::size_t    numInner
+		                            , const std::ptrdiff_t itLineNum
+		                            , const int            neededStrikes)
 		{
 			BScanSegmentationMarker::internalMatType* levelSetIt  = Operator::template startIt      <BScanSegmentationMarker::internalMatType>(*levelSetData, startInner, posOuter);
 			const uint8_t*                      imgIt       = Operator::template startIt_const<uint8_t>(img          , startInner, posOuter);
 
-			std::size_t strikes  = 0;
+			int         strikes  = 0;
 			std::size_t innerPos = 0;
 
 			for(; innerPos < numInner; ++innerPos)
@@ -95,6 +95,7 @@ namespace
 			}
 
 			// go back to the begin of the founded shape
+			assert(innerPos >= static_cast<std::size_t>(strikes));
 			innerPos  -= strikes;
 			levelSetIt = Operator::op(levelSetIt, itLineNum, -strikes);
 			imgIt      = Operator::op(imgIt     , itLineNum, -strikes);
@@ -107,12 +108,12 @@ namespace
 			}
 		}
 
-		static void iterateAbsolute(cv::Mat* levelSetData, const cv::Mat& img, const BScanSegmentationMarker::internalMatType grayValue, const std::size_t neededStrikes)
+		static void iterateAbsolute(cv::Mat* levelSetData, const cv::Mat& img, const BScanSegmentationMarker::internalMatType grayValue, const int neededStrikes)
 		{
-			const std::size_t numInner   = Operator::numInner(levelSetData); // levelSetData->getSizeY();
-			const std::size_t numOuter   = Operator::numOuter(levelSetData); // levelSetData->getSizeX();
-			const std::size_t innerStart = Operator::posDirection?0:numInner-1;
-			const std::size_t itLineNum  = img.ptr<uint8_t>(1) - img.ptr<uint8_t>(0);
+			const std::size_t    numInner   = Operator::numInner(levelSetData); // levelSetData->getSizeY();
+			const std::size_t    numOuter   = Operator::numOuter(levelSetData); // levelSetData->getSizeX();
+			const std::size_t    innerStart = Operator::posDirection?0:numInner-1;
+			const std::ptrdiff_t itLineNum  = img.ptr<uint8_t>(1) - img.ptr<uint8_t>(0);
 
 			for(size_t outerPos = 0; outerPos < numOuter; ++outerPos)
 			{
@@ -120,12 +121,12 @@ namespace
 			}
 		}
 
-		static void iterateRelativ(cv::Mat* levelSetData, const cv::Mat& img, double frac, const std::size_t neededStrikes)
+		static void iterateRelativ(cv::Mat* levelSetData, const cv::Mat& img, double frac, const int neededStrikes)
 		{
-			const std::size_t numInner   = Operator::numInner(levelSetData);
-			const std::size_t numOuter   = Operator::numOuter(levelSetData);
-			const std::size_t innerStart = Operator::posDirection?0:numInner-1;
-			const std::size_t itLineNum  = img.ptr<uint8_t>(1) - img.ptr<uint8_t>(0);
+			const std::size_t    numInner   = Operator::numInner(levelSetData);
+			const std::size_t    numOuter   = Operator::numOuter(levelSetData);
+			const std::size_t    innerStart = Operator::posDirection?0:numInner-1;
+			const std::ptrdiff_t itLineNum  = img.ptr<uint8_t>(1) - img.ptr<uint8_t>(0);
 
 			for(size_t outerPos = 0; outerPos < numOuter; ++outerPos)
 			{

@@ -38,7 +38,7 @@ include_directories(${CppFramework_INCLUDE_DIRS})
 
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wunreachable-code") #  -Wconversion")        ## Optimize -O3 -Weverything -Weffc++
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wunreachable-code -Wconversion") # ")        ## Optimize -O3 -Weverything -Weffc++
 	if(WIN32)
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -mwindows")
 	endif()

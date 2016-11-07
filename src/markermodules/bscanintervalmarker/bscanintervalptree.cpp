@@ -60,10 +60,10 @@ void BScanIntervalPTree::fillPTree(bpt::ptree& markerTree, const BScanIntervalMa
 	markerTree.erase("Quality");
 	bpt::ptree& qualityTree = markerTree.put("Quality", std::string());
 
-	int numBscans = markerManager->getNumBScans();
-	for(int bscan = 0; bscan < numBscans; ++bscan)
+	std::size_t numBscans = markerManager->getNumBScans();
+	for(std::size_t bscan = 0; bscan < numBscans; ++bscan)
 	{
-		const BScanIntervalMarker::MarkerMap& markerMap = markerManager->getMarkers(bscan);
+		const BScanIntervalMarker::MarkerMap& markerMap = markerManager->getMarkers(static_cast<int>(bscan));
 		bool bscanEmpty = true;
 
 		for(const BScanIntervalMarker::MarkerMap::interval_mapping_type pair : markerMap)

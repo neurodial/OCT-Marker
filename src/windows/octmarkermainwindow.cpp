@@ -591,7 +591,7 @@ namespace
 		   return OctMarkerFileformat::Auto;
 		
 		--index;
-		if(index < sizeof(formats)/sizeof(formats[0]))
+		if(index < static_cast<int>(sizeof(formats)/sizeof(formats[0])))
 		{
 			return formats[index];
 		}
@@ -651,11 +651,15 @@ void OCTMarkerMainWindow::configBscanChooser()
 {
 	const OctData::Series* series = OctDataManager::getInstance().getSeries();
 	
-	int maxBscan = 0;
+	std::size_t maxBscan = 0;
 	if(series)
-		maxBscan = series->bscanCount()-1;
+	{
+		maxBscan = series->bscanCount();
+		if(maxBscan > 0)
+			--maxBscan;
+	}
 	
-	bscanChooser->setMaximum(maxBscan);
+	bscanChooser->setMaximum(static_cast<int>(maxBscan));
 	bscanChooser->setValue(markerManager->getActBScan());
 
 	labelMaxBscan->setText(QString("/%1").arg(maxBscan));

@@ -32,4 +32,33 @@ public slots:
 	}
 };
 
+class SizetValueAction : public QAction
+{
+	Q_OBJECT
+	std::size_t valTrue;
+public:
+	SizetValueAction(size_t t, QObject* parent) : QAction(parent), valTrue(t)
+	{
+		setCheckable(true);
+		connect(this, &QAction::toggled, this, &SizetValueAction::onTriggered);
+	}
+signals:
+	void triggered(std::size_t v);
+
+private slots:
+	void onTriggered(bool v)
+	{
+		if(v)
+			emit(triggered(valTrue));
+	}
+public slots:
+	void valueChanged(std::size_t v)
+	{
+		if(v == valTrue)
+			setChecked(true);
+		else
+			setChecked(false);
+	}
+};
+
 #endif // ACTIONCLASSES_H
