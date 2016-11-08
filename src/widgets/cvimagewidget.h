@@ -43,9 +43,6 @@ public:
 
 	void addZoomItems();
 
-public slots:
-	void showImage(const cv::Mat& image);
-
 protected:
 	void paintEvent(QPaintEvent* event);
 
@@ -64,16 +61,21 @@ protected:
 	
 public slots:
 	virtual void saveImage();
+	void showImage(const cv::Mat& image);
 
+	void setZoom(double factor)                                  { if(scaleFactor != factor && factor <= 5 && factor > 0) { scaleFactor = factor; cvImage2qtImage(); zoomChanged(factor); } }
 
-	void setZoom1()                                              { scaleFactor = 1; cvImage2qtImage(); }
-	void setZoom2()                                              { scaleFactor = 2; cvImage2qtImage(); }
-	void setZoom3()                                              { scaleFactor = 3; cvImage2qtImage(); }
-	void setZoom4()                                              { scaleFactor = 4; cvImage2qtImage(); }
-	void setZoom5()                                              { scaleFactor = 5; cvImage2qtImage(); }
+	void setZoom1()                                              { setZoom(1); }
+	void setZoom2()                                              { setZoom(2); }
+	void setZoom3()                                              { setZoom(3); }
+	void setZoom4()                                              { setZoom(4); }
+	void setZoom5()                                              { setZoom(5); }
 
-	void zoom_in()                                               { if(scaleFactor < 5) { ++scaleFactor; cvImage2qtImage(); } }
-	void zoom_out()                                              { if(scaleFactor > 1) { --scaleFactor; cvImage2qtImage(); } }
+	void zoom_in()                                               { setZoom(scaleFactor+1); }
+	void zoom_out()                                              { setZoom(scaleFactor-1); }
+
+signals:
+	void zoomChanged(double);
 };
 
 #endif // CVIMAGEWIDGET_H

@@ -337,6 +337,12 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(zoomIn, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
 	toolBar->addAction(zoomIn);
 
+	labelActZoom = new QLabel(this);
+	labelActZoom->setText("1");
+	toolBar->addWidget(labelActZoom);
+	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &OCTMarkerMainWindow::zoomChanged);
+
+
 	QAction* zoomOut = new QAction(this);
 	zoomOut->setText(tr("Zoom -"));
 	zoomOut->setIcon(QIcon(":/icons/zoom_out.png"));
@@ -347,6 +353,12 @@ void OCTMarkerMainWindow::setupMenu()
 
 	addToolBar(toolBar);
 }
+
+void OCTMarkerMainWindow::zoomChanged(double zoom)
+{
+	labelActZoom->setText(QString("%1").arg(zoom));
+}
+
 
 void OCTMarkerMainWindow::createMarkerToolbar()
 {

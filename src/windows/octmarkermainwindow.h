@@ -29,6 +29,7 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	QSpinBox* bscanChooser     = nullptr;
 	QLabel*   labelMaxBscan    = nullptr;
+	QLabel*   labelActZoom     = nullptr;
 
 
 	// void setActionToggel();
@@ -59,6 +60,7 @@ signals:
 private slots:
 	void newCscanLoaded();
 	void loadLastFileSlot();
+	void zoomChanged(double zoom);
 
 public slots:
 
