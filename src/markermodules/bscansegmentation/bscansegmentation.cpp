@@ -121,6 +121,7 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 	int drawHeight = static_cast<int>((rect.height())/factor + 0.5)+4;
 
 	QPen pen(Qt::red);
+	pen.setWidth(seglinePaintSize);
 	painter.setPen(pen);
 
 	int mapHeight = map->rows-1; // -1 for p01
@@ -524,4 +525,11 @@ void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod meth
 		localOperatorChanged(method);
 	}
 }
+
+void BScanSegmentation::setSeglinePaintSize(int size)
+{
+	seglinePaintSize = size;
+	requestUpdate();
+}
+
 

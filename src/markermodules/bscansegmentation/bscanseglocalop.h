@@ -86,7 +86,7 @@ public:
 
 class BScanSegLocalOpThreshold : public BScanSegLocalOp
 {
-	int  paintSizeWidth   =  8;
+	int  paintSizeWidth   =  4;
 	int  paintSizeHeight  = 16;
 	bool applyOnMouseMove = true;
 

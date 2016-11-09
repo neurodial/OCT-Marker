@@ -17,16 +17,20 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	QActionGroup*  actionPaintMethod  = new QActionGroup(parent);
 	// QToolBar*      toolBar            = new QToolBar(tr("Segmentation"));
 
-
+	*/
 	QWidget* parentWidget = dynamic_cast<QWidget*>(parent);
 
-	QSpinBox* paintSizeSpinBox = new QSpinBox(parentWidget);
-	paintSizeSpinBox->setMinimum(1);
-	paintSizeSpinBox->setValue(seg->getLocalOperatorSize());
-	connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), seg             , &BScanSegmentation::setLocalOperatorSize);
-	connect(seg             , &BScanSegmentation::localOperatorSizeChanged                , paintSizeSpinBox, &QSpinBox::setValue                     );
-	addWidget(paintSizeSpinBox);
-	*/
+	if(parentWidget)
+	{
+		QSpinBox* paintSizeSpinBox = new QSpinBox(parentWidget);
+		paintSizeSpinBox->setMinimum(1);
+		paintSizeSpinBox->setMaximum(4);
+		paintSizeSpinBox->setValue(seg->getSeglinePaintSize());
+		connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), seg             , &BScanSegmentation::setSeglinePaintSize);
+		// connect(seg             , &BScanSegmentation::localOperatorSizeChanged                , paintSizeSpinBox, &QSpinBox::setValue                     );
+		addWidget(paintSizeSpinBox);
+	}
+
 
 	/*
 	QAction* actionPaintMethodDisc = new QAction(parent);
