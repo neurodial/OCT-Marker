@@ -70,11 +70,13 @@ namespace
 		                            , const std::size_t    posOuter
 		                            , const std::size_t    numInner
 		                            , const std::ptrdiff_t itLineNum
-		                            , const int            neededStrikes)
+		                            , const int            neededStrikes
+		                            , const double         negStrikesFactor)
 		{
 			BScanSegmentationMarker::internalMatType* levelSetIt  = Operator::template startIt      <BScanSegmentationMarker::internalMatType>(*levelSetData, startInner, posOuter);
 			const uint8_t*                      imgIt       = Operator::template startIt_const<uint8_t>(img          , startInner, posOuter);
 
+			int         negStri  = 0;
 			int         strikes  = 0;
 			std::size_t innerPos = 0;
 
@@ -86,8 +88,17 @@ namespace
 						break;
 					++strikes;
 				}
-				else
-					strikes = 0;
+				else if(strikes > 0)
+				{
+					++negStri;
+					if(negStri < strikes*negStrikesFactor)
+						++strikes;
+					else
+					{
+						strikes = 0;
+						negStri = 0;
+					}
+				}
 
 				*levelSetIt =  BScanSegmentationMarker::paintArea0Value;
 				levelSetIt  = Operator::op(levelSetIt, itLineNum);
@@ -108,7 +119,7 @@ namespace
 			}
 		}
 
-		static void iterateAbsolute(cv::Mat* levelSetData, const cv::Mat& img, const BScanSegmentationMarker::internalMatType grayValue, const int neededStrikes)
+		static void iterateAbsolute(cv::Mat* levelSetData, const cv::Mat& img, const BScanSegmentationMarker::internalMatType grayValue, const int neededStrikes, const double negStrikesFactor)
 		{
 			const std::size_t    numInner   = Operator::numInner(levelSetData); // levelSetData->getSizeY();
 			const std::size_t    numOuter   = Operator::numOuter(levelSetData); // levelSetData->getSizeX();
@@ -117,11 +128,11 @@ namespace
 
 			for(size_t outerPos = 0; outerPos < numOuter; ++outerPos)
 			{
-				iterateRow(levelSetData, img, grayValue, std::numeric_limits<uint8_t>::max(), innerStart, outerPos, numInner, itLineNum, neededStrikes);
+				iterateRow(levelSetData, img, grayValue, std::numeric_limits<uint8_t>::max(), innerStart, outerPos, numInner, itLineNum, neededStrikes, negStrikesFactor);
 			}
 		}
 
-		static void iterateRelativ(cv::Mat* levelSetData, const cv::Mat& img, double frac, const int neededStrikes)
+		static void iterateRelativ(cv::Mat* levelSetData, const cv::Mat& img, double frac, const int neededStrikes, const double negStrikesFactor)
 		{
 			const std::size_t    numInner   = Operator::numInner(levelSetData);
 			const std::size_t    numOuter   = Operator::numOuter(levelSetData);
@@ -145,7 +156,7 @@ namespace
 				}
 				const uint8_t grayValue = static_cast<uint8_t>((maxGrayValueCol-minGrayValueCol)*frac + minGrayValueCol);
 
-				iterateRow(levelSetData, img, grayValue, maxGrayValueCol, innerStart, outerPos, numInner, itLineNum, neededStrikes);
+				iterateRow(levelSetData, img, grayValue, maxGrayValueCol, innerStart, outerPos, numInner, itLineNum, neededStrikes, negStrikesFactor);
 			}
 		}
 
@@ -154,10 +165,10 @@ namespace
 			switch(data.method)
 			{
 				case BScanSegmentationMarker::ThresholdData::Method::Absolute:
-					iterateAbsolute(&segMat, image, data.absoluteValue, data.neededStrikes);
+					iterateAbsolute(&segMat, image, data.absoluteValue, data.neededStrikes, data.negStrikesFactor);
 					break;
 				case BScanSegmentationMarker::ThresholdData::Method::Relative:
-					iterateRelativ(&segMat , image, data.relativeFrac , data.neededStrikes);
+					iterateRelativ(&segMat , image, data.relativeFrac , data.neededStrikes, data.negStrikesFactor);
 					break;
 			}
 		}
