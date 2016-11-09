@@ -32,6 +32,7 @@ class WGSegmentationThreshold : public QObject
 	QSpinBox*        absoluteBox   = nullptr;
 	QDoubleSpinBox*  relativeBox   = nullptr;
 	QSpinBox*        strikesBox    = nullptr;
+	QDoubleSpinBox*  strFailFacBox = nullptr;
 
 public:
 	WGSegmentationThreshold(WGSegmentation* parent);
@@ -47,6 +48,7 @@ public:
 	void setAbsoluteBox  (QSpinBox*        item)                   { absoluteBox   = item; }
 	void setRelativeBox  (QDoubleSpinBox*  item)                   { relativeBox   = item; }
 	void setStrikesBox   (QSpinBox*        item)                   { strikesBox    = item; }
+	void setStrFailFacBox(QDoubleSpinBox*  item)                   { strFailFacBox = item; }
 
 	void setupWidgets();
 	void getThresholdData(      BScanSegmentationMarker::ThresholdData& data);

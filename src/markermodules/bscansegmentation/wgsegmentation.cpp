@@ -22,7 +22,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	localOpThreshold = segmentation->getLocalOpThreshold();
 	localOpOperation = segmentation->getLocalOpOperation();
 
-	
+
 	setLocalOperator(segmentation->getLocalMethod());
 	connect(segmentation, &BScanSegmentation::localOperatorChanged, this, &WGSegmentation::setLocalOperator);
 
@@ -40,49 +40,52 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 
 
 	// Button groups for series
-	thresSeries.setButtonUp     (seriesThresholdDirectionUp);
-	thresSeries.setButtonDown   (seriesThresholdDirectionDown);
+	thresSeries.setButtonUp     (seriesThresholdDirectionUp     );
+	thresSeries.setButtonDown   (seriesThresholdDirectionDown   );
 //	thresSeries.setButtonLeft   ();
 //	thresSeries.setButtonRight  ();
 
-	thresSeries.setButtonAbsolut(seriesThresholdMethodAbs );
-	thresSeries.setButtonRelativ(seriesThresholdMethodRel );
+	thresSeries.setButtonAbsolut(seriesThresholdMethodAbs       );
+	thresSeries.setButtonRelativ(seriesThresholdMethodRel       );
 
-	thresSeries.setAbsoluteBox  (boxSeriesThresAbsolute   );
-	thresSeries.setRelativeBox  (boxSeriesThresRelative   );
-	thresSeries.setStrikesBox   (boxSeriesThresStrikes    );
+	thresSeries.setAbsoluteBox  (boxSeriesThresAbsolute         );
+	thresSeries.setRelativeBox  (boxSeriesThresRelative         );
+	thresSeries.setStrikesBox   (boxSeriesThresStrikes          );
+	thresSeries.setStrFailFacBox(boxSeriesThresStrikesFailFactor);
 	thresSeries.setupWidgets();
 	thresSeries.setThresholdData(BScanSegmentationMarker::ThresholdData());
 
 
 
 	// Button groups for BScan
-	thresBScan.setButtonUp     (radioBScanThresFromBelow);
-	thresBScan.setButtonDown   (radioBScanThresFromAbove);
+	thresBScan.setButtonUp     (radioBScanThresFromBelow      );
+	thresBScan.setButtonDown   (radioBScanThresFromAbove      );
 //	thresBScan.setButtonLeft   ();
 //	thresBScan.setButtonRight  ();
 
-	thresBScan.setButtonAbsolut(radioBScanThresAbsolute );
-	thresBScan.setButtonRelativ(radioBScanThresRelative );
+	thresBScan.setButtonAbsolut(radioBScanThresAbsolute       );
+	thresBScan.setButtonRelativ(radioBScanThresRelative       );
 
-	thresBScan.setAbsoluteBox  (boxBScanThresAbsolute   );
-	thresBScan.setRelativeBox  (boxBScanThresRelative   );
-	thresBScan.setStrikesBox   (boxBScanThresStrikes    );
+	thresBScan.setAbsoluteBox  (boxBScanThresAbsolute         );
+	thresBScan.setRelativeBox  (boxBScanThresRelative         );
+	thresBScan.setStrikesBox   (boxBScanThresStrikes          );
+	thresBScan.setStrFailFacBox(boxBScanThresStrikesFailFactor);
 	thresBScan.setupWidgets();
 	thresBScan.setThresholdData(BScanSegmentationMarker::ThresholdData());
 
 	// Button groups for Local
-	thresLocal.setButtonUp     (buttonLocalThresholdUp   );
-	thresLocal.setButtonDown   (buttonLocalThresholdDown );
-	thresLocal.setButtonLeft   (buttonLocalThresholdLeft );
-	thresLocal.setButtonRight  (buttonLocalThresholdRight);
+	thresLocal.setButtonUp     (buttonLocalThresholdUp         );
+	thresLocal.setButtonDown   (buttonLocalThresholdDown       );
+	thresLocal.setButtonLeft   (buttonLocalThresholdLeft       );
+	thresLocal.setButtonRight  (buttonLocalThresholdRight      );
 
-	thresLocal.setButtonAbsolut(radioLocalThresholdAbsolut);
-	thresLocal.setButtonRelativ(radioLocalThresholdRelative);
+	thresLocal.setButtonAbsolut(radioLocalThresholdAbsolut     );
+	thresLocal.setButtonRelativ(radioLocalThresholdRelative    );
 
-	thresLocal.setAbsoluteBox  (localThresholdAboluteSpinbox);
-	thresLocal.setRelativeBox  (localThresholdRelativeSpinBox);
-	thresLocal.setStrikesBox   (localThresholdStrikes);
+	thresLocal.setAbsoluteBox  (localThresholdAboluteSpinbox   );
+	thresLocal.setRelativeBox  (localThresholdRelativeSpinBox  );
+	thresLocal.setStrikesBox   (localThresholdStrikes          );
+	thresLocal.setStrFailFacBox(localThresholdStrikesFailFactor);
 	thresLocal.setupWidgets();
 	thresLocal.setThresholdData(BScanSegmentationMarker::ThresholdData());
 
@@ -165,33 +168,21 @@ void WGSegmentation::createConnections()
 	connect(buttonSeriesInitFromThreshold, &QPushButton::pressed, this, &WGSegmentation::slotSeriesInitFromThresh);
 
 	connect(buttonBScanInitFromThreshold , &QPushButton::pressed, this, &WGSegmentation::slotBscanInitFromThresh );
-// 	connect(buttonBScanErode             , &QPushButton::pressed, this, &WGSegmentation::slotBscanErode          );
-// 	connect(buttonBScanDilate            , &QPushButton::pressed, this, &WGSegmentation::slotBscanDilate         );
-// 	connect(buttonBScanOpenClose         , &QPushButton::pressed, this, &WGSegmentation::slotBscanOpenClose      );
-// 	connect(buttonBScanMedian            , &QPushButton::pressed, this, &WGSegmentation::slotBscanMedian         );
+
 
 	connect(buttonBScanErode             , &QPushButton::pressed, segmentation, &BScanSegmentation::erodeBScan          );
 	connect(buttonBScanDilate            , &QPushButton::pressed, segmentation, &BScanSegmentation::dilateBScan         );
 	connect(buttonBScanOpenClose         , &QPushButton::pressed, segmentation, &BScanSegmentation::opencloseBScan      );
 	connect(buttonBScanMedian            , &QPushButton::pressed, segmentation, &BScanSegmentation::medianBScan         );
 
-
-
 	// set local threshold
 	connect(&thresLocal       , &WGSegmentationThreshold::blockAction, this, &WGSegmentation::activateLocalThresh);
 
-	//connect(
+	connect(radioLocalThreshold      , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalThresh                       );
+	connect(radioLocalPaint          , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalPaint                        );
+	connect(radioLocalOperation      , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalOperation                    );
 
-
-/*
-	connect(localSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), segmentation    , &BScanSegmentation::setLocalOperatorSize);
-	connect(segmentation    , &BScanSegmentation::localOperatorSizeChanged                , localSizeSpinBox, &QSpinBox::setValue                     );*/
-
-	connect(radioLocalThreshold, &QRadioButton::toggled, this, &WGSegmentation::slotLocalThresh   );
-	connect(radioLocalPaint    , &QRadioButton::toggled, this, &WGSegmentation::slotLocalPaint    );
-	connect(radioLocalOperation, &QRadioButton::toggled, this, &WGSegmentation::slotLocalOperation);
-
-
+	// for toggle cursor size
 	connect(buttonLocalThresholdUp   , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
 	connect(buttonLocalThresholdDown , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
 	connect(buttonLocalThresholdLeft , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
@@ -422,13 +413,21 @@ void WGSegmentationThreshold::setupWidgets()
 		relativeBox->setMinimum(0);
 		relativeBox->setMaximum(1);
 	}
+	if(strFailFacBox)
+	{
+		strFailFacBox->setSingleStep(0.05);
+		strFailFacBox->setMinimum(0);
+		strFailFacBox->setMaximum(1);
+	}
 
 	if(absoluteBox)
-		connect(absoluteBox, static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
+		connect(absoluteBox  , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
 	if(relativeBox)
-		connect(relativeBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::widgetActivated);
+		connect(relativeBox  , static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::widgetActivated);
 	if(strikesBox)
-		connect(strikesBox , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
+		connect(strikesBox   , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
+	if(strFailFacBox)
+		connect(strFailFacBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::widgetActivated);
 
 	if(buttonUp)
 		connect(buttonUp     , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
@@ -468,6 +467,8 @@ void WGSegmentationThreshold::getThresholdData(BScanSegmentationMarker::Threshol
 		data.relativeFrac  = relativeBox->value();
 	if(strikesBox)
 		data.neededStrikes = static_cast<int>(strikesBox->value());
+	if(strFailFacBox)
+		data.negStrikesFactor = strFailFacBox->value();
 }
 
 void WGSegmentationThreshold::setThresholdData(const BScanSegmentationMarker::ThresholdData& data)
@@ -498,6 +499,8 @@ void WGSegmentationThreshold::setThresholdData(const BScanSegmentationMarker::Th
 		relativeBox->setValue(data.relativeFrac );
 	if(strikesBox)
 		strikesBox ->setValue(static_cast<int>(data.neededStrikes));
+	if(strFailFacBox)
+		strFailFacBox->setValue(data.negStrikesFactor);
 
 	switch(data.method)
 	{

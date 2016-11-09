@@ -72,6 +72,13 @@
           <string>From Threshold</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="seriesThresholdDirectionUp">
+            <property name="text">
+             <string>From below</string>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="0">
            <widget class="QRadioButton" name="seriesThresholdMethodRel">
             <property name="text">
@@ -130,7 +137,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="6" column="1">
            <widget class="QPushButton" name="buttonSeriesInitFromThreshold">
             <property name="text">
              <string>Create</string>
@@ -144,10 +151,23 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QRadioButton" name="seriesThresholdDirectionUp">
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_10">
             <property name="text">
-             <string>From below</string>
+             <string>Strikes Fail</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QDoubleSpinBox" name="boxSeriesThresStrikesFailFactor">
+            <property name="maximum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.050000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.200000000000000</double>
             </property>
            </widget>
           </item>
@@ -250,7 +270,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="6" column="1">
            <widget class="QPushButton" name="buttonBScanInitFromThreshold">
             <property name="text">
              <string>Create</string>
@@ -268,6 +288,16 @@
            <widget class="QRadioButton" name="radioBScanThresFromBelow">
             <property name="text">
              <string>From below</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QDoubleSpinBox" name="boxBScanThresStrikesFailFactor"/>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Strikes Fail</string>
             </property>
            </widget>
           </item>
@@ -360,7 +390,14 @@
        <string>Local</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="15" column="2">
+       <item row="12" column="0" colspan="3">
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="17" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QSpinBox" name="localSizeOperationWidthSpinBox">
@@ -416,7 +453,7 @@
          </property>
         </widget>
        </item>
-       <item row="19" column="1">
+       <item row="21" column="1">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -548,7 +585,7 @@
          </property>
         </widget>
        </item>
-       <item row="15" column="0" colspan="2">
+       <item row="17" column="0" colspan="2">
         <widget class="QRadioButton" name="radioLocalOperation">
          <property name="text">
           <string>Operation</string>
@@ -575,7 +612,7 @@
          </property>
         </widget>
        </item>
-       <item row="13" column="1" colspan="2">
+       <item row="15" column="1" colspan="2">
         <widget class="QWidget" name="widget_2" native="true">
          <layout class="QGridLayout" name="gridLayout_7">
           <property name="margin">
@@ -669,7 +706,7 @@
          </layout>
         </widget>
        </item>
-       <item row="16" column="1" rowspan="2" colspan="2">
+       <item row="18" column="1" rowspan="2" colspan="2">
         <widget class="QWidget" name="widget" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="margin">
@@ -794,14 +831,7 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="0" colspan="3">
-        <widget class="Line" name="line_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="0" colspan="3">
+       <item row="16" column="0" colspan="3">
         <widget class="Line" name="line_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -857,14 +887,14 @@
          </item>
         </layout>
        </item>
-       <item row="11" column="0" colspan="2">
+       <item row="13" column="0" colspan="2">
         <widget class="QRadioButton" name="radioLocalPaint">
          <property name="text">
           <string>Paint</string>
          </property>
         </widget>
        </item>
-       <item row="11" column="2">
+       <item row="13" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QSpinBox" name="localSizePaintSpinBox">
@@ -892,6 +922,23 @@
         <widget class="QCheckBox" name="checkBoxApplyOnMove">
          <property name="text">
           <string>apply on mouse move</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Strikes Fail</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="2">
+        <widget class="QDoubleSpinBox" name="localThresholdStrikesFailFactor">
+         <property name="maximum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.050000000000000</double>
          </property>
         </widget>
        </item>
