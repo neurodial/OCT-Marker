@@ -12,7 +12,7 @@ class BScanSegLocalOpThreshold;
 class BScanSegLocalOpOperation;
 
 
-namespace BScanSegmentationMarker { class ThresholdData; }
+namespace BScanSegmentationMarker { class ThresholdData; enum class LocalMethod; }
 
 class WGSegmentation;
 
@@ -113,6 +113,8 @@ private slots:
 
 	void setLocalThresholdOrientationVertical()                     { setLocalThresholdOrientation(Orientation::Vertical  ); }
 	void setLocalThresholdOrientationHorizontal()                   { setLocalThresholdOrientation(Orientation::Horizontal); }
+	
+	void setLocalOperator(BScanSegmentationMarker::LocalMethod method);
 };
 
 #endif // WGSEGMENTATION_H

@@ -506,18 +506,22 @@ void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::T
 
 void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod method)
 {
-	localMethod = method;
-	switch(localMethod)
+	if(localMethod != method)
 	{
-		case BScanSegmentationMarker::LocalMethod::Paint:
-			actLocalOperator = localOpPaint;
-			break;
-		case BScanSegmentationMarker::LocalMethod::Operation:
-			actLocalOperator = localOpOperation;
-			break;
-		case BScanSegmentationMarker::LocalMethod::Threshold:
-			actLocalOperator = localOpThreshold;
-			break;
+		localMethod = method;
+		switch(localMethod)
+		{
+			case BScanSegmentationMarker::LocalMethod::Paint:
+				actLocalOperator = localOpPaint;
+				break;
+			case BScanSegmentationMarker::LocalMethod::Operation:
+				actLocalOperator = localOpOperation;
+				break;
+			case BScanSegmentationMarker::LocalMethod::Threshold:
+				actLocalOperator = localOpThreshold;
+				break;
+		}
+		localOperatorChanged(method);
 	}
 }
 

@@ -122,7 +122,7 @@ signals:
 	void paintArea1Selected(bool = true);
 	void paintAutoAreaSelected(bool = true);
 
-	void localOperatorSizeChanged(int size);
+	void localOperatorChanged(BScanSegmentationMarker::LocalMethod method);
 
 };
 

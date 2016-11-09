@@ -22,20 +22,9 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	localOpThreshold = segmentation->getLocalOpThreshold();
 	localOpOperation = segmentation->getLocalOpOperation();
 
-
-
-	switch(segmentation->getLocalMethod())
-	{
-		case BScanSegmentationMarker::LocalMethod::Paint:
-			radioLocalPaint->setChecked(true);
-			break;
-		case BScanSegmentationMarker::LocalMethod::Threshold:
-			radioLocalThreshold->setChecked(true);
-			break;
-		case BScanSegmentationMarker::LocalMethod::Operation:
-			radioLocalOperation->setChecked(true);
-			break;
-	}
+	
+	setLocalOperator(segmentation->getLocalMethod());
+	connect(segmentation, &BScanSegmentation::localOperatorChanged, this, &WGSegmentation::setLocalOperator);
 
 
 	// Paint values:
@@ -370,6 +359,22 @@ void WGSegmentation::setLocalThresholdOrientation(Orientation o)
 		if(autoSwitchSizeLocalThresholdButton->isChecked())
 			switchSizeLocalThreshold();
 		localThresholdOrientation = o;
+	}
+}
+
+void WGSegmentation::setLocalOperator(BScanSegmentationMarker::LocalMethod method)
+{
+	switch(method)
+	{
+		case BScanSegmentationMarker::LocalMethod::Paint:
+			radioLocalPaint->setChecked(true);
+			break;
+		case BScanSegmentationMarker::LocalMethod::Threshold:
+			radioLocalThreshold->setChecked(true);
+			break;
+		case BScanSegmentationMarker::LocalMethod::Operation:
+			radioLocalOperation->setChecked(true);
+			break;
 	}
 }
 
