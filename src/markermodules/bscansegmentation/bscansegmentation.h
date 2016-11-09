@@ -38,7 +38,7 @@ class BScanSegmentation : public BscanMarkerBase
 	QPoint mousePoint;
 
 	// Local operation data
-	BScanSegmentationMarker::LocalMethod   localMethod = BScanSegmentationMarker::LocalMethod::Paint;
+	BScanSegmentationMarker::LocalMethod   localMethod = BScanSegmentationMarker::LocalMethod::None;
 
 	BScanSegLocalOp*          actLocalOperator = nullptr;
 	BScanSegLocalOpPaint*     localOpPaint     = nullptr;

@@ -95,7 +95,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 
 	// Button groups for local
 
-	QButtonGroup* localMethodBG = new QButtonGroup(this);
+	localMethodBG = new QButtonGroup(this);
 	localMethodBG->addButton(radioLocalThreshold);
 	localMethodBG->addButton(radioLocalPaint    );
 	localMethodBG->addButton(radioLocalOperation);
@@ -366,6 +366,17 @@ void WGSegmentation::setLocalOperator(BScanSegmentationMarker::LocalMethod metho
 		case BScanSegmentationMarker::LocalMethod::Operation:
 			radioLocalOperation->setChecked(true);
 			break;
+		case BScanSegmentationMarker::LocalMethod::None:
+		{
+			QAbstractButton* checkedButton = localMethodBG->checkedButton();
+			if(checkedButton)
+			{
+				localMethodBG->setExclusive(false);
+				checkedButton->setChecked(false);
+				localMethodBG->setExclusive(true);
+			}
+			break;
+		}
 	}
 }
 

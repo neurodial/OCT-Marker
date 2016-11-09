@@ -37,7 +37,7 @@ BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 	localOpThreshold = new BScanSegLocalOpThreshold(*this);
 	localOpOperation = new BScanSegLocalOpOperation(*this);
 
-	setLocalMethod(localMethod);
+	setLocalMethod(BScanSegmentationMarker::LocalMethod::Paint);
 
 	widget = new WGSegmentation(this);
 	widgetPtr2WGSegmentation = widget;
@@ -520,6 +520,9 @@ void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod meth
 				break;
 			case BScanSegmentationMarker::LocalMethod::Threshold:
 				actLocalOperator = localOpThreshold;
+				break;
+			case BScanSegmentationMarker::LocalMethod::None:
+				actLocalOperator = nullptr;
 				break;
 		}
 		localOperatorChanged(method);

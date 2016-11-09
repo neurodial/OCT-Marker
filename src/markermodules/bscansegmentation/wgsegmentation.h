@@ -10,6 +10,7 @@ class BScanSegmentation;
 class BScanSegLocalOpPaint;
 class BScanSegLocalOpThreshold;
 class BScanSegLocalOpOperation;
+class QButtonGroup;
 
 
 namespace BScanSegmentationMarker { class ThresholdData; enum class LocalMethod; }
@@ -87,6 +88,8 @@ class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 	void createConnections();
 
 	void setLocalThresholdOrientation(Orientation o);
+
+	QButtonGroup* localMethodBG = nullptr;
 
 public:
 	WGSegmentation(BScanSegmentation* parent);

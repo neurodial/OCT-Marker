@@ -21,8 +21,8 @@ namespace BScanSegmentationMarker
 
 		Direction       direction        = Direction::down;
 		Method          method           = Method::Relative;
-		int             neededStrikes    = 10;
-		double          negStrikesFactor = 0.2;
+		int             neededStrikes    = 6;
+		double          negStrikesFactor = 0.6;
 		internalMatType absoluteValue    = 80;
 		double          relativeFrac     = 0.5;
 
@@ -36,7 +36,7 @@ namespace BScanSegmentationMarker
 		}
 	};
 
-	enum class LocalMethod { Threshold, Paint, Operation };
+	enum class LocalMethod { None, Threshold, Paint, Operation };
 	enum class Operation   { Erode, Dilate, OpenClose, Median };
 
 	struct PaintData
