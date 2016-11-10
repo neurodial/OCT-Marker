@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>309</width>
-    <height>596</height>
+    <width>339</width>
+    <height>656</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -448,6 +448,123 @@
        <string>Local</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
+       <item row="15" column="1" colspan="2">
+        <widget class="QWidget" name="widget_2" native="true">
+         <layout class="QGridLayout" name="gridLayout_7">
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <item row="1" column="2">
+           <widget class="QToolButton" name="buttonLocalPaintArea1">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QToolButton" name="buttonLocalPaintRec">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/paint_quadrat.png</normaloff>:/icons/paint_quadrat.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QToolButton" name="buttonLocalPaintArea0">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QToolButton" name="buttonLocalPaintCircle">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/paint_disc.png</normaloff>:/icons/paint_disc.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QToolButton" name="buttonLocalPaintAreaAuto">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="2">
+           <widget class="QToolButton" name="buttonLocalPaintPen">
+            <property name="text">
+             <string>Pen</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/pen.png</normaloff>:/icons/pen.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QRadioButton" name="radioLocalThresholdAbsolut">
+         <property name="text">
+          <string>Absolute</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>10</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="12" column="0" colspan="3">
         <widget class="Line" name="line_4">
          <property name="orientation">
@@ -503,19 +620,6 @@
           </spacer>
          </item>
         </layout>
-       </item>
-       <item row="24" column="1">
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item row="6" column="1">
         <widget class="QRadioButton" name="radioLocalThresholdDirRelative">
@@ -669,116 +773,6 @@
           <string>Threshold</string>
          </property>
         </widget>
-       </item>
-       <item row="15" column="1" colspan="2">
-        <widget class="QWidget" name="widget_2" native="true">
-         <layout class="QGridLayout" name="gridLayout_7">
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item row="1" column="2">
-           <widget class="QToolButton" name="buttonLocalPaintArea1">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QToolButton" name="buttonLocalPaintRec">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../application.qrc">
-              <normaloff>:/icons/paint_quadrat.png</normaloff>:/icons/paint_quadrat.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QToolButton" name="buttonLocalPaintArea0">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QToolButton" name="buttonLocalPaintCircle">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../application.qrc">
-              <normaloff>:/icons/paint_disc.png</normaloff>:/icons/paint_disc.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QToolButton" name="buttonLocalPaintAreaAuto">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="2">
-           <widget class="QToolButton" name="buttonLocalPaintPen">
-            <property name="text">
-             <string>Pen</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../application.qrc">
-              <normaloff>:/icons/pen.png</normaloff>:/icons/pen.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>10</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item row="18" column="1" rowspan="2" colspan="2">
         <widget class="QWidget" name="widget" native="true">
@@ -945,6 +939,13 @@
          </item>
         </layout>
        </item>
+       <item row="11" column="1">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Strikes Fail</string>
+         </property>
+        </widget>
+       </item>
        <item row="13" column="0" colspan="2">
         <widget class="QRadioButton" name="radioLocalPaint">
          <property name="text">
@@ -980,13 +981,6 @@
         <widget class="QCheckBox" name="checkBoxApplyOnMove">
          <property name="text">
           <string>apply on mouse move</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="1">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Strikes Fail</string>
          </property>
         </widget>
        </item>
@@ -1094,6 +1088,78 @@
          </property>
          <property name="singleStep">
           <double>0.050000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="25" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QPushButton" name="buttonLocalNNApply">
+           <property name="text">
+            <string>Apply</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonLocalNNLearn">
+           <property name="text">
+            <string>Learn</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="26" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QToolButton" name="buttonLocalNNLearnBScan">
+           <property name="text">
+            <string>L</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="buttonLocalNNLearnBScan10">
+           <property name="text">
+            <string>10</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="27" column="1">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="25" column="0" colspan="2">
+        <widget class="QRadioButton" name="radioLocalNN">
+         <property name="text">
+          <string>NN test</string>
+         </property>
+        </widget>
+       </item>
+       <item row="24" column="0" colspan="3">
+        <widget class="Line" name="line_nn">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>

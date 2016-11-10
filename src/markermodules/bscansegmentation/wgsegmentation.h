@@ -11,6 +11,7 @@ class BScanSegLocalOpPaint;
 class BScanSegLocalOpThreshold;
 class BScanSegLocalOpThresholdDirection;
 class BScanSegLocalOpOperation;
+class BScanSegLocalOpNN;
 class QButtonGroup;
 
 
@@ -82,6 +83,7 @@ class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 	BScanSegLocalOpThresholdDirection* localOpThresholdDirection = nullptr;
 	BScanSegLocalOpThreshold*          localOpThreshold          = nullptr;
 	BScanSegLocalOpOperation*          localOpOperation          = nullptr;
+	BScanSegLocalOpNN*                 localOpNN                 = nullptr;
 
 	bool allowInitSeries = false;
 
@@ -109,11 +111,13 @@ private slots:
 	void activateLocalThreshDir();
 	void activateLocalPaint();
 	void activateLocalOperation();
+	void activateLocalNN();
 
 	void slotLocalThresh(bool);
 	void slotLocalThreshDir(bool);
 	void slotLocalPaint(bool);
 	void slotLocalOperation(bool);
+	void slotLocalNN(bool);
 
 	void switchSizeLocalThresholdDir();
 	void switchSizeLocalThreshold();

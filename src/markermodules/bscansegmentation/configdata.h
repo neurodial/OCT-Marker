@@ -50,7 +50,7 @@ namespace BScanSegmentationMarker
 		}
 	};
 
-	enum class LocalMethod { None, ThresholdDirection, Threshold, Paint, Operation };
+	enum class LocalMethod { None, ThresholdDirection, Threshold, Paint, Operation, NN };
 	enum class Operation   { Erode, Dilate, OpenClose, Median };
 
 	struct PaintData

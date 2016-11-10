@@ -3,6 +3,7 @@
 #include "bscansegmentation.h"
 #include "configdata.h"
 #include "bscanseglocalop.h"
+#include "bscanseglocalopnn.h"
 
 
 #include <QButtonGroup>
@@ -24,8 +25,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	localOpThresholdDirection = segmentation->getLocalOpThresholdDirection();
 	localOpOperation          = segmentation->getLocalOpOperation         ();
 	localOpThreshold          = segmentation->getLocalOpThreshold         ();
-
-
+	localOpNN                 = segmentation->getLocalOpNN                ();
 
 	setLocalOperator(segmentation->getLocalMethod());
 	connect(segmentation, &BScanSegmentation::localOperatorChanged, this, &WGSegmentation::setLocalOperator);
@@ -107,6 +107,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	localMethodBG->addButton(radioLocalThresholdDir);
 	localMethodBG->addButton(radioLocalPaint       );
 	localMethodBG->addButton(radioLocalOperation   );
+	localMethodBG->addButton(radioLocalNN          );
 
 	QButtonGroup* localPaintMethodBG = new QButtonGroup(this);
 	localPaintMethodBG->addButton(buttonLocalPaintCircle);
@@ -138,6 +139,14 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	connect(localOperationBG               , static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalOperation);
 
 
+	QButtonGroup* localNNBG = new QButtonGroup(this);
+	localNNBG->addButton(buttonLocalNNApply);
+	localNNBG->addButton(buttonLocalNNLearn);
+	buttonLocalNNApply->setChecked(!localOpNN->getLearningNN());
+	buttonLocalNNLearn->setChecked( localOpNN->getLearningNN());
+	connect(localNNBG                      , static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalNN);
+
+
 	QButtonGroup* localThresholdBG = new QButtonGroup(this);
 	localThresholdBG->addButton(radioLocalThresholdAbsolut );
 	localThresholdBG->addButton(radioLocalThresholdRelative);
@@ -145,6 +154,7 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 
 
 	setLocalThresholdValues();
+
 
 
 	connect(localSizePaintSpinBox          , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalPaint);
@@ -204,6 +214,7 @@ void WGSegmentation::createConnections()
 	connect(radioLocalThresholdDir   , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalThreshDir                    );
 	connect(radioLocalPaint          , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalPaint                        );
 	connect(radioLocalOperation      , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalOperation                    );
+	connect(radioLocalNN             , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalNN                           );
 
 	// for toggle cursor size
 	connect(buttonLocalThresholdDirUp   , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
@@ -325,6 +336,20 @@ void WGSegmentation::slotLocalOperation(bool checked)
 	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::Operation);
 }
 
+void WGSegmentation::slotLocalNN(bool checked)
+{
+	if(!checked)
+		return;
+
+	if(buttonLocalNNApply->isChecked())
+		localOpNN->setLearningNN(false);
+	else
+		localOpNN->setLearningNN(true);
+
+	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::NN);
+}
+
+
 
 void WGSegmentation::activateLocalThresh()
 {
@@ -357,6 +382,16 @@ void WGSegmentation::activateLocalOperation()
 	else
 		radioLocalOperation->setChecked(true);
 }
+
+void WGSegmentation::activateLocalNN()
+{
+	if(radioLocalNN->isChecked())
+		slotLocalNN(true);
+	else
+		radioLocalNN->setChecked(true);
+}
+
+
 
 void WGSegmentation::switchSizeLocalOperation()
 {
@@ -440,6 +475,9 @@ void WGSegmentation::setLocalOperator(BScanSegmentationMarker::LocalMethod metho
 			}
 			break;
 		}
+		case BScanSegmentationMarker::LocalMethod::NN:
+			radioLocalNN->setChecked(true);
+			break;
 	}
 }
 

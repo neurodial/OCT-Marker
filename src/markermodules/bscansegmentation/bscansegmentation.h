@@ -22,6 +22,7 @@ class BScanSegLocalOpPaint;
 class BScanSegLocalOpThreshold;
 class BScanSegLocalOpThresholdDirection;
 class BScanSegLocalOpOperation;
+class BScanSegLocalOpNN;
 
 
 class BScanSegmentation : public BscanMarkerBase
@@ -46,6 +47,7 @@ class BScanSegmentation : public BscanMarkerBase
 	BScanSegLocalOpThreshold* localOpThreshold = nullptr;
 	BScanSegLocalOpThresholdDirection* localOpThresholdDirection = nullptr;
 	BScanSegLocalOpOperation* localOpOperation = nullptr;
+	BScanSegLocalOpNN*        localOpNN        = nullptr;
 
 
 	bool paint = false;
@@ -113,6 +115,7 @@ public:
 	BScanSegLocalOpThreshold*          getLocalOpThreshold()        { return localOpThreshold; }
 	BScanSegLocalOpPaint*              getLocalOpPaint    ()        { return localOpPaint    ; }
 	BScanSegLocalOpOperation*          getLocalOpOperation()        { return localOpOperation; }
+	BScanSegLocalOpNN*                 getLocalOpNN       ()        { return localOpNN       ; }
 
 public slots:
 	virtual void erodeBScan();

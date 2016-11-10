@@ -2,9 +2,6 @@
 
 #include <QPainter>
 #include <QMouseEvent>
-// #include <QIcon>
-// #include <QActionGroup>
-// #include <QAction>
 #include <QWidget>
 
 #include <manager/octmarkermanager.h>
@@ -23,6 +20,7 @@
 #include "bscansegtoolbar.h"
 
 #include "bscanseglocalop.h"
+#include "bscanseglocalopnn.h"
 
 
 BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
@@ -37,6 +35,7 @@ BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
 	localOpThresholdDirection = new BScanSegLocalOpThresholdDirection(*this);
 	localOpThreshold          = new BScanSegLocalOpThreshold(*this);
 	localOpOperation          = new BScanSegLocalOpOperation(*this);
+	localOpNN                 = new BScanSegLocalOpNN       (*this);
 
 	setLocalMethod(BScanSegmentationMarker::LocalMethod::Paint);
 
@@ -580,6 +579,9 @@ void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod meth
 		localMethod = method;
 		switch(localMethod)
 		{
+			case BScanSegmentationMarker::LocalMethod::None:
+				actLocalOperator = nullptr;
+				break;
 			case BScanSegmentationMarker::LocalMethod::Paint:
 				actLocalOperator = localOpPaint;
 				break;
@@ -589,11 +591,11 @@ void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod meth
 			case BScanSegmentationMarker::LocalMethod::Threshold:
 				actLocalOperator = localOpThreshold;
 				break;
+			case BScanSegmentationMarker::LocalMethod::NN:
+				actLocalOperator = localOpNN;
+				break;
 			case BScanSegmentationMarker::LocalMethod::ThresholdDirection:
 				actLocalOperator = localOpThresholdDirection;
-				break;
-			case BScanSegmentationMarker::LocalMethod::None:
-				actLocalOperator = nullptr;
 				break;
 		}
 		localOperatorChanged(method);
