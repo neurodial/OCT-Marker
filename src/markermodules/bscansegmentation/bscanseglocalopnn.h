@@ -4,6 +4,7 @@
 #include "bscanseglocalop.h"
 
 class CvANN_MLP;
+class Callback;
 
 class BScanSegLocalOpNN : public BScanSegLocalOp
 {
@@ -23,7 +24,7 @@ class BScanSegLocalOpNN : public BScanSegLocalOp
 	bool getSubMaps(const cv::Mat& image, const cv::Mat& seg, cv::Mat& imageOut, cv::Mat& segOut, int x, int y);
 
 
-	void learnBScanMats(const cv::Mat& image, cv::Mat& seg);
+	void learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callback&);
 public:
 	BScanSegLocalOpNN(BScanSegmentation& parent);
 
@@ -40,8 +41,8 @@ public:
 
 	void setLearningNN(bool value)                                  { learningNN = value; }
 
-	void learnBScan();
-	void learnBScans(int start, int end);
+	void learnBScan(Callback&);
+	void learnBScans(std::size_t start, std::size_t end, Callback&);
 };
 
 #endif // BSCANSEGLOCALOPNN_H

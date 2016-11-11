@@ -67,6 +67,8 @@ public:
 	
 	virtual void newSeriesLoaded(const OctData::Series*, boost::property_tree::ptree&)
 	                                                                {}
+
+	std::size_t getActBScanNr() const;
 signals:
 	void enabledToolbar(bool b);
 	void requestUpdate();
@@ -76,8 +78,6 @@ protected:
 	OctMarkerManager* const markerManager;
 	
 	void connectToolBar(QToolBar* toolbar);
-	
-	std::size_t getActBScanNr() const;
 	int getBScanWidth() const;
 	int getBScanHight() const;
 	int getBScanWidth(std::size_t nr) const;

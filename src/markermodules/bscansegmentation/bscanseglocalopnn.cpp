@@ -7,7 +7,8 @@
 
 #include <octdata/datastruct/bscan.h>
 
-#include <QProgressDialog>
+#include <helper/callback.h>
+
 
 BScanSegLocalOpNN::BScanSegLocalOpNN(BScanSegmentation& parent)
 : BScanSegLocalOp(parent)
@@ -167,7 +168,7 @@ void BScanSegLocalOpNN::learnNNSubMat(const cv::Mat& image, const cv::Mat& seg)
 	init = false;
 }
 
-void BScanSegLocalOpNN::learnBScanMats(const cv::Mat& image, cv::Mat& seg)
+void BScanSegLocalOpNN::learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callback& callback)
 {
 	int mapHeight = seg.rows-1; // -1 for p01
 	int mapWidth  = seg.cols-1; // -1 for p10
@@ -181,14 +182,12 @@ void BScanSegLocalOpNN::learnBScanMats(const cv::Mat& image, cv::Mat& seg)
 
 	cv::Mat subImage, subSeg;
 
-//     QProgressDialog progress("Task in progress...", "Cancel", 0, endH-startH);
-//     progress.setWindowModality(Qt::WindowModal);
+	double length = endH - startH;
 
 	for(int h = startH; h < endH; ++h)
 	{
-// 		progress.setValue(h-startH);
-// 		if (progress.wasCanceled())
-// 			break;
+		if(!callback.callback(static_cast<double>(h-startH)/length))
+			break;
 
 		uint8_t* p00 = seg.ptr<uint8_t>(h);
 		uint8_t* p01 = seg.ptr<uint8_t>(h+1);
@@ -214,7 +213,7 @@ void BScanSegLocalOpNN::learnBScanMats(const cv::Mat& image, cv::Mat& seg)
 
 
 
-void BScanSegLocalOpNN::learnBScan()
+void BScanSegLocalOpNN::learnBScan(Callback& callback)
 {
 	cv::Mat* map = getActMat();
 	if(!map || map->empty())
@@ -224,12 +223,29 @@ void BScanSegLocalOpNN::learnBScan()
 	if(!bscan)
 		return;
 
-	learnBScanMats(bscan->getImage(), *map);
-
+	learnBScanMats(bscan->getImage(), *map, callback);
 }
 
 
-void BScanSegLocalOpNN::learnBScans(int start, int end)
+void BScanSegLocalOpNN::learnBScans(std::size_t start, std::size_t end, Callback& callback)
 {
+	double fracFactor = 1./static_cast<double>(end - start);
+
+	for(std::size_t scan = start; scan < end; ++scan)
+	{
+		if(!callback.callback(static_cast<double>(scan-start)*fracFactor))
+			break;
+
+		cv::Mat* map = getSegMat(scan);
+		if(!map || map->empty())
+			continue;
+
+		const OctData::BScan* bscan = getBScan(scan);
+		if(!bscan)
+			continue;
+
+		Callback subCallback = callback.createSubTask(fracFactor);
+		learnBScanMats(bscan->getImage(), *map, subCallback);
+	}
 }
 

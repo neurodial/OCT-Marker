@@ -20,14 +20,14 @@ const OctData::BScan* BScanSegLocalOp::getActBScan()
 
 cv::Mat * BScanSegLocalOp::getSegMat(std::size_t nr)
 {
-	if(segmentation.segments.size() >= nr)
+	if(segmentation.segments.size() <= nr)
 		return nullptr;
-	return segmentation.segments.at(nr);
+	return segmentation.segments[nr];
 }
 
 const OctData::BScan * BScanSegLocalOp::getBScan(std::size_t nr)
 {
-	if(segmentation.segments.size() >= nr)
+	if(segmentation.segments.size() <= nr)
 		return nullptr;
 	return segmentation.getBScan(nr);
 }
@@ -42,6 +42,12 @@ void BScanSegLocalOp::updateCursor()
 {
 	segmentation.updateCursor();
 }
+
+std::size_t BScanSegLocalOp::getBScanNr()
+{
+	return segmentation.getActBScanNr();
+}
+
 
 
 

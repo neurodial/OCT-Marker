@@ -5,6 +5,7 @@
 #include "bscanseglocalop.h"
 #include "bscanseglocalopnn.h"
 
+#include <helper/callback.h>
 
 #include <QButtonGroup>
 
@@ -453,8 +454,16 @@ void WGSegmentation::setLocalThresholdDirOrientation(Orientation o)
 
 void WGSegmentation::slotNNLearnBScan()
 {
-	localOpNN->learnBScan();
+	CallbackProgressDialog process("Learn BScan", "Cancel");
+	localOpNN->learnBScan(process);
 }
+
+void WGSegmentation::slotNNLearnBScans()
+{
+	CallbackProgressDialog process("Learn BScans", "Cancel");
+	localOpNN->learnBScans(segmentation->getActBScanNr(), segmentation->getActBScanNr()+10, process);
+}
+
 
 
 

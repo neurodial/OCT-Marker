@@ -38,6 +38,8 @@ protected:
 	cv::Mat* getSegMat(std::size_t nr);
 	const OctData::BScan* getBScan(std::size_t nr);
 
+	std::size_t getBScanNr();
+
 	BScanSegmentationMarker::internalMatType valueOnCoord(int x, int y);
 
 	void updateCursor();
