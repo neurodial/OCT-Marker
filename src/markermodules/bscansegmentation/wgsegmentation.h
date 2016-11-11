@@ -130,6 +130,8 @@ private slots:
 	void setLocalThresholdOrientationHorizontal()                   { setLocalThresholdDirOrientation(Orientation::Horizontal); }
 	
 	void setLocalOperator(BScanSegmentationMarker::LocalMethod method);
+
+	void slotNNLearnBScan();
 };
 
 #endif // WGSEGMENTATION_H

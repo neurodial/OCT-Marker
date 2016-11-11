@@ -84,6 +84,7 @@ protected:
 	
 	const OctData::Series* getSeries() const;
 	const OctData::BScan * getActBScan() const;
+	const OctData::BScan * getBScan(std::size_t nr) const;
 	
 	QString name;
 	QString id;

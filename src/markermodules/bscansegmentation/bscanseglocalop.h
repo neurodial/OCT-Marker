@@ -35,6 +35,9 @@ protected:
 	cv::Mat* getActMat();
 	const OctData::BScan* getActBScan();
 
+	cv::Mat* getSegMat(std::size_t nr);
+	const OctData::BScan* getBScan(std::size_t nr);
+
 	BScanSegmentationMarker::internalMatType valueOnCoord(int x, int y);
 
 	void updateCursor();

@@ -42,11 +42,17 @@ const OctData::Series* BscanMarkerBase::getSeries() const
 
 const OctData::BScan* BscanMarkerBase::getActBScan() const
 {
+	return getBScan(getActBScanNr());
+}
+
+const OctData::BScan * BscanMarkerBase::getBScan(std::size_t nr) const
+{
 	const OctData::Series* series = getSeries();
 	if(series)
-		return series->getBScan(getActBScanNr());
+		return series->getBScan(nr);
 	return nullptr;
 }
+
 
 void BscanMarkerBase::activate(bool b)
 {

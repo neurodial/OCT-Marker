@@ -217,6 +217,9 @@ void WGSegmentation::createConnections()
 	connect(radioLocalNN             , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalNN                           );
 
 	// for toggle cursor size
+	connect(buttonLocalNNLearnBScan  , &QAbstractButton::clicked, this, &WGSegmentation::slotNNLearnBScan);
+	connect(buttonLocalNNLearnBScan10, &QAbstractButton::clicked, this, &WGSegmentation::slotNNLearnBScans);
+
 	connect(buttonLocalThresholdDirUp   , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
 	connect(buttonLocalThresholdDirDown , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
 	connect(buttonLocalThresholdDirLeft , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
@@ -448,6 +451,13 @@ void WGSegmentation::setLocalThresholdDirOrientation(Orientation o)
 	}
 }
 
+void WGSegmentation::slotNNLearnBScan()
+{
+	localOpNN->learnBScan();
+}
+
+
+
 void WGSegmentation::setLocalOperator(BScanSegmentationMarker::LocalMethod method)
 {
 	switch(method)
@@ -495,8 +505,6 @@ void WGSegmentation::setLocalThresholdValues()
 	radioLocalThresholdRelative->setChecked(data.method == BScanSegmentationMarker::ThresholdMethod::Relative);
 
 }
-
-
 
 
 
