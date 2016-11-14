@@ -473,6 +473,8 @@ void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::Th
 		return;
 
 	const OctData::BScan* bscan = series->getBScan(getActBScanNr());
+	if(!bscan)
+		return;
 
 	const cv::Mat& image = bscan->getImage();
 	if(image.empty())
@@ -503,6 +505,48 @@ void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::T
 	}
 	requestUpdate();
 }
+
+void BScanSegmentation::initBScanFromSegline()
+{
+	cv::Mat* map = segments.at(getActBScanNr());
+	if(!map || map->empty())
+		return;
+
+	const OctData::Series* series = getSeries();
+	if(!series)
+		return;
+
+	const OctData::BScan* bscan = series->getBScan(getActBScanNr());
+	if(!bscan)
+		return;
+
+	BScanSegAlgorithm::initFromSegline(*bscan, *map);
+
+	requestUpdate();
+}
+
+void BScanSegmentation::initSeriesFromSegline()
+{
+	const OctData::Series* series = getSeries();
+	SegMats::iterator segMatIt = segments.begin();
+
+
+	for(const OctData::BScan* bscan : series->getBScans())
+	{
+		if(!bscan)
+			continue;
+		cv::Mat* mat = *segMatIt;
+
+		if(mat && !mat->empty())
+			BScanSegAlgorithm::initFromSegline(*bscan, *mat);
+
+		++segMatIt;
+	}
+	requestUpdate();
+}
+
+
+
 
 
 void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod method)

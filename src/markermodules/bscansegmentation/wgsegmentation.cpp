@@ -93,6 +93,9 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	localSizePaintSpinBox->setValue(localOpPaint->getOperatorHeight());
 	checkBoxApplyOnMove->setChecked(localOpThreshold->getApplyOnMouseMove());
 
+	comboBoxSeriesInitFromSeg->addItem("ILM");
+	comboBoxBScanFromSegline->addItem("ILM");
+
 	// Button groups for local
 
 	localMethodBG = new QButtonGroup(this);
@@ -187,6 +190,9 @@ void WGSegmentation::createConnections()
 	connect(buttonLocalThresholdDown , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
 	connect(buttonLocalThresholdLeft , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
 	connect(buttonLocalThresholdRight, &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
+
+	connect(buttonBScanInitFromSeg  , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initBScanFromSegline);
+	connect(buttonSeriesInitFromSeg , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initSeriesFromSegline);
 }
 
 

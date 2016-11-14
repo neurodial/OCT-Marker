@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="seriesTab">
       <attribute name="title">
@@ -33,9 +33,6 @@
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -54,7 +51,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox"/>
+           <widget class="QComboBox" name="comboBoxSeriesInitFromSeg"/>
           </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="buttonSeriesInitFromSeg">
@@ -194,8 +191,7 @@
        <string>BScan</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-		  <item>
-
+       <item>
         <widget class="QGroupBox" name="groupBoxBScanFromSegline">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -218,7 +214,7 @@
            <widget class="QComboBox" name="comboBoxBScanFromSegline"/>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="buttonBScansInitFromSeg">
+           <widget class="QPushButton" name="buttonBScanInitFromSeg">
             <property name="text">
              <string>Create</string>
             </property>
@@ -226,7 +222,7 @@
           </item>
          </layout>
         </widget>
-	</item>
+       </item>
        <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
@@ -982,7 +978,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>comboBox</tabstop>
+  <tabstop>comboBoxSeriesInitFromSeg</tabstop>
   <tabstop>buttonSeriesInitFromSeg</tabstop>
   <tabstop>seriesThresholdDirectionDown</tabstop>
   <tabstop>seriesThresholdDirectionUp</tabstop>

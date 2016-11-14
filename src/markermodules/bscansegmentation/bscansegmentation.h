@@ -100,6 +100,7 @@ public:
 	void initBScanFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
 	void initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
 
+
 	BScanSegmentationMarker::LocalMethod getLocalMethod() const     { return localMethod; }
 
 	int getSeglinePaintSize()                                       { return seglinePaintSize; }
@@ -120,6 +121,9 @@ public slots:
 	virtual void updateCursor();
 
 	virtual void setSeglinePaintSize(int size);
+
+	void initSeriesFromSegline();
+	void initBScanFromSegline();
 
 signals:
 	void paintArea0Selected(bool = true);
