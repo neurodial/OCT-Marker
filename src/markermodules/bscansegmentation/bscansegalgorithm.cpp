@@ -5,6 +5,8 @@
 #include <limits>
 
 
+#include <octdata/datastruct/bscan.h>
+
 
 #include "bscansegmentation.h"
 
@@ -196,6 +198,39 @@ void BScanSegAlgorithm::initFromThreshold(const cv::Mat& image, cv::Mat& segMat,
 			PartitionFromGrayValueWorker<OpLeft >::initFromThresholdMethod(image, segMat, data);
 			break;
 	}
+}
+
+void BScanSegAlgorithm::initFromSegline(const OctData::BScan& bscan, cv::Mat& segMat)
+{
+	if(!segMat.empty())
+	{
+		const OctData::BScan::Segmentline& segline = bscan.getSegmentLine(OctData::BScan::SegmentlineType::ILM);
+		BScanSegmentationMarker::internalMatType* colIt = segMat.ptr<BScanSegmentationMarker::internalMatType>();
+
+		std::size_t colSize = static_cast<std::size_t>(segMat.cols);
+		std::size_t rowSize = static_cast<std::size_t>(segMat.rows);
+
+		for(double value : segline)
+		{
+			const std::size_t rowCh = std::min(static_cast<std::size_t>(value), rowSize);
+			BScanSegmentationMarker::internalMatType* rowIt = colIt;
+
+			for(std::size_t row = 0; row < rowCh; ++row)
+			{
+				*rowIt =  1;
+				rowIt += colSize;
+			}
+
+			for(std::size_t row = rowCh; row < rowSize; ++row)
+			{
+				*rowIt = 0;
+				rowIt += colSize;
+			}
+
+			++colIt;
+		}
+	}
+
 }
 
 

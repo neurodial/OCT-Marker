@@ -86,8 +86,8 @@ void OctDataManager::openFile(const QString& filename)
 		qDebug("Dauer: %d ms", t.elapsed());
 
 		OctData::Patient* patient = nullptr;
-		OctData::Study* study     = nullptr;
-		OctData::Series* series   = nullptr;
+		OctData::Study  * study   = nullptr;
+		OctData::Series * series  = nullptr;
 		
 		if(octData->size() == 0)
 			throw "MarkerManager::loadImage: oct->size() == 0";
