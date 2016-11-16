@@ -20,6 +20,7 @@ namespace cv { class Mat; }
 class BScanSegLocalOp;
 class BScanSegLocalOpPaint;
 class BScanSegLocalOpThreshold;
+class BScanSegLocalOpThresholdDirection;
 class BScanSegLocalOpOperation;
 
 
@@ -43,6 +44,7 @@ class BScanSegmentation : public BscanMarkerBase
 	BScanSegLocalOp*          actLocalOperator = nullptr;
 	BScanSegLocalOpPaint*     localOpPaint     = nullptr;
 	BScanSegLocalOpThreshold* localOpThreshold = nullptr;
+	BScanSegLocalOpThresholdDirection* localOpThresholdDirection = nullptr;
 	BScanSegLocalOpOperation* localOpOperation = nullptr;
 
 
@@ -97,8 +99,8 @@ public:
 	
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree) override;
 
-	void initBScanFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
-	void initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdData& data);
+	void initBScanFromThreshold(const BScanSegmentationMarker::ThresholdDirectionData& data);
+	void initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdDirectionData& data);
 
 
 	BScanSegmentationMarker::LocalMethod getLocalMethod() const     { return localMethod; }
@@ -106,9 +108,10 @@ public:
 	int getSeglinePaintSize()                                       { return seglinePaintSize; }
 
 
-	BScanSegLocalOpPaint*     getLocalOpPaint    ()                 { return localOpPaint    ; }
-	BScanSegLocalOpThreshold* getLocalOpThreshold()                 { return localOpThreshold; }
-	BScanSegLocalOpOperation* getLocalOpOperation()                 { return localOpOperation; }
+	BScanSegLocalOpThresholdDirection* getLocalOpThresholdDirection() { return localOpThresholdDirection; }
+	BScanSegLocalOpThreshold*          getLocalOpThreshold()        { return localOpThreshold; }
+	BScanSegLocalOpPaint*              getLocalOpPaint    ()        { return localOpPaint    ; }
+	BScanSegLocalOpOperation*          getLocalOpOperation()        { return localOpOperation; }
 
 public slots:
 	virtual void erodeBScan();

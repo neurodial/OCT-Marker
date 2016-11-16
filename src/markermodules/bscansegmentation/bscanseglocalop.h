@@ -84,10 +84,41 @@ public:
 
 
 
-class BScanSegLocalOpThreshold : public BScanSegLocalOp
+class BScanSegLocalOpThresholdDirection : public BScanSegLocalOp
 {
 	int  paintSizeWidth   =  4;
 	int  paintSizeHeight  = 16;
+	bool applyOnMouseMove = true;
+
+	BScanSegmentationMarker::ThresholdDirectionData localThresholdData;
+
+	bool applyThreshold(int x, int y);
+public:
+	BScanSegLocalOpThresholdDirection(BScanSegmentation& parent) : BScanSegLocalOp(parent) {}
+
+
+	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const override;
+
+	bool endOnCoord(int x, int y)           override                { return applyThreshold(x, y); }
+	bool drawOnCoord(int x, int y)          override                { if(applyOnMouseMove) return applyThreshold(x, y); return false; }
+	bool startOnCoord(int /*x*/, int /*y*/) override                { return false; }
+
+	int getOperatorHeight()const            override                { return paintSizeHeight; }
+	int getOperatorWidth() const            override                { return paintSizeWidth ; }
+	bool getApplyOnMouseMove() const                                { return applyOnMouseMove; }
+
+
+	void setOperatorSizeWidth (int size);
+	void setOperatorSizeHeight(int size);
+	void setThresholdData(const BScanSegmentationMarker::ThresholdDirectionData& data);
+	void setApplyOnMouseMove(bool value)                            { applyOnMouseMove = value; }
+};
+
+
+class BScanSegLocalOpThreshold : public BScanSegLocalOp
+{
+	int  paintSizeWidth   = 10;
+	int  paintSizeHeight  = 10;
 	bool applyOnMouseMove = true;
 
 	BScanSegmentationMarker::ThresholdData localThresholdData;
@@ -112,8 +143,11 @@ public:
 	void setOperatorSizeHeight(int size);
 	void setThresholdData(const BScanSegmentationMarker::ThresholdData& data);
 	void setApplyOnMouseMove(bool value)                            { applyOnMouseMove = value; }
-};
 
+	const BScanSegmentationMarker::ThresholdData& getLocalThresholdData() const { return localThresholdData; }
+	int getOperatorSizeWidth () const                               { return paintSizeWidth ; }
+	int getOperatorSizeHeight() const                               { return paintSizeHeight; }
+};
 
 
 

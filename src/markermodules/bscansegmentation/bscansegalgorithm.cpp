@@ -162,14 +162,14 @@ namespace
 			}
 		}
 
-		static void initFromThresholdMethod(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdData& data)
+		static void initFromThresholdMethod(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdDirectionData& data)
 		{
 			switch(data.method)
 			{
-				case BScanSegmentationMarker::ThresholdData::Method::Absolute:
+				case BScanSegmentationMarker::ThresholdMethod::Absolute:
 					iterateAbsolute(&segMat, image, data.absoluteValue, data.neededStrikes, data.negStrikesFactor);
 					break;
-				case BScanSegmentationMarker::ThresholdData::Method::Relative:
+				case BScanSegmentationMarker::ThresholdMethod::Relative:
 					iterateRelativ(&segMat , image, data.relativeFrac , data.neededStrikes, data.negStrikesFactor);
 					break;
 			}
@@ -177,7 +177,7 @@ namespace
 	};
 }
 
-void BScanSegAlgorithm::initFromThreshold(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdData& data)
+void BScanSegAlgorithm::initFromThresholdDirection(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdDirectionData& data)
 {
 	assert(image.cols == segMat.cols);
 	assert(image.rows == segMat.rows);
@@ -185,19 +185,63 @@ void BScanSegAlgorithm::initFromThreshold(const cv::Mat& image, cv::Mat& segMat,
 
 	switch(data.direction)
 	{
-		case BScanSegmentationMarker::ThresholdData::Direction::down:
+		case BScanSegmentationMarker::ThresholdDirectionData::Direction::down:
 			PartitionFromGrayValueWorker<OpDown >::initFromThresholdMethod(image, segMat, data);
 			break;
-		case BScanSegmentationMarker::ThresholdData::Direction::up:
+		case BScanSegmentationMarker::ThresholdDirectionData::Direction::up:
 			PartitionFromGrayValueWorker<OpUp   >::initFromThresholdMethod(image, segMat, data);
 			break;
-		case BScanSegmentationMarker::ThresholdData::Direction::right:
+		case BScanSegmentationMarker::ThresholdDirectionData::Direction::right:
 			PartitionFromGrayValueWorker<OpRight>::initFromThresholdMethod(image, segMat, data);
 			break;
-		case BScanSegmentationMarker::ThresholdData::Direction::left:
+		case BScanSegmentationMarker::ThresholdDirectionData::Direction::left:
 			PartitionFromGrayValueWorker<OpLeft >::initFromThresholdMethod(image, segMat, data);
 			break;
 	}
+}
+
+
+void BScanSegAlgorithm::initFromThreshold(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdData& data)
+{
+	assert(image.cols == segMat.cols);
+	assert(image.rows == segMat.rows);
+
+	BScanSegmentationMarker::internalMatType grayValue = data.absoluteValue;
+	if(data.method == BScanSegmentationMarker::ThresholdMethod::Relative)
+	{
+		double minVal;
+		double maxVal;
+		cv::minMaxLoc(image, &minVal, &maxVal);
+		grayValue = static_cast<BScanSegmentationMarker::internalMatType>((maxVal-minVal)*data.relativeFrac + minVal);
+	}
+
+
+	// accept only char type matrices
+	CV_Assert(image.depth() == CV_8U);
+	CV_Assert(image.channels() == 1);
+
+	int nRows = image.rows;
+	int nCols = image.cols;
+
+	if(image.isContinuous())
+	{
+		nCols *= nRows;
+		nRows = 1;
+	}
+
+	for(int i = 0;i < nRows; ++i)
+	{
+		const uint8_t* imgIt = image .ptr<uint8_t>(i);
+		      uint8_t* segIt = segMat.ptr<uint8_t>(i);
+
+		for(int j = 0;j < nCols; ++j)
+		{
+			*segIt = *imgIt<grayValue ? BScanSegmentationMarker::paintArea0Value : BScanSegmentationMarker::paintArea1Value;
+			++imgIt;
+			++segIt;
+		}
+	}
+
 }
 
 void BScanSegAlgorithm::initFromSegline(const OctData::BScan& bscan, cv::Mat& segMat)

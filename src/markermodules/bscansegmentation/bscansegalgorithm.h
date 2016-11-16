@@ -19,6 +19,7 @@ class BScanSegAlgorithm
 {
 public:
 	static void initFromSegline(const OctData::BScan& bscan, cv::Mat& segMat);
+	static void initFromThresholdDirection(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdDirectionData& data);
 	static void initFromThreshold(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdData& data);
 	static void openClose(cv::Mat& dest, cv::Mat* src = nullptr); /// if no src given, then dest is used as src
 };

@@ -33,9 +33,10 @@ BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
 	
 	icon = QIcon(":/icons/segline_edit.png");
 
-	localOpPaint     = new BScanSegLocalOpPaint    (*this);
-	localOpThreshold = new BScanSegLocalOpThreshold(*this);
-	localOpOperation = new BScanSegLocalOpOperation(*this);
+	localOpPaint              = new BScanSegLocalOpPaint    (*this);
+	localOpThresholdDirection = new BScanSegLocalOpThresholdDirection(*this);
+	localOpThreshold          = new BScanSegLocalOpThreshold(*this);
+	localOpOperation          = new BScanSegLocalOpOperation(*this);
 
 	setLocalMethod(BScanSegmentationMarker::LocalMethod::Paint);
 
@@ -346,13 +347,16 @@ bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 			medianBScan();
 			return true;
 		case Qt::Key_1:
-			setLocalMethod(BScanSegmentationMarker::LocalMethod::Threshold);
+			setLocalMethod(BScanSegmentationMarker::LocalMethod::ThresholdDirection);
 			return true;
 		case Qt::Key_2:
 			setLocalMethod(BScanSegmentationMarker::LocalMethod::Paint);
 			return true;
 		case Qt::Key_3:
 			setLocalMethod(BScanSegmentationMarker::LocalMethod::Operation);
+			return true;
+		case Qt::Key_4:
+			setLocalMethod(BScanSegmentationMarker::LocalMethod::Threshold);
 			return true;
 	}
 
@@ -462,7 +466,7 @@ void BScanSegmentation::updateCursor()
 }
 
 
-void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::ThresholdData& data)
+void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::ThresholdDirectionData& data)
 {
 	cv::Mat* map = segments.at(getActBScanNr());
 	if(!map || map->empty())
@@ -481,13 +485,13 @@ void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::Th
 		return;
 
 
-	BScanSegAlgorithm::initFromThreshold(image, *map, data);
+	BScanSegAlgorithm::initFromThresholdDirection(image, *map, data);
 
 	requestUpdate();
 }
 
 
-void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdData& data)
+void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdDirectionData& data)
 {
 	const OctData::Series* series = getSeries();
 	SegMats::iterator segMatIt = segments.begin();
@@ -499,7 +503,7 @@ void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::T
 		cv::Mat* mat = *segMatIt;
 
 		if(mat && !mat->empty())
-			BScanSegAlgorithm::initFromThreshold(image, *mat, data);
+			BScanSegAlgorithm::initFromThresholdDirection(image, *mat, data);
 
 		++segMatIt;
 	}
@@ -564,6 +568,9 @@ void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod meth
 				break;
 			case BScanSegmentationMarker::LocalMethod::Threshold:
 				actLocalOperator = localOpThreshold;
+				break;
+			case BScanSegmentationMarker::LocalMethod::ThresholdDirection:
+				actLocalOperator = localOpThresholdDirection;
 				break;
 			case BScanSegmentationMarker::LocalMethod::None:
 				actLocalOperator = nullptr;

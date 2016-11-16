@@ -9,11 +9,12 @@ class BScanSegmentation;
 
 class BScanSegLocalOpPaint;
 class BScanSegLocalOpThreshold;
+class BScanSegLocalOpThresholdDirection;
 class BScanSegLocalOpOperation;
 class QButtonGroup;
 
 
-namespace BScanSegmentationMarker { class ThresholdData; enum class LocalMethod; }
+namespace BScanSegmentationMarker { class ThresholdDirectionData; enum class LocalMethod; }
 
 class WGSegmentation;
 
@@ -52,8 +53,8 @@ public:
 	void setStrFailFacBox(QDoubleSpinBox*  item)                   { strFailFacBox = item; }
 
 	void setupWidgets();
-	void getThresholdData(      BScanSegmentationMarker::ThresholdData& data);
-	void setThresholdData(const BScanSegmentationMarker::ThresholdData& data);
+	void getThresholdData(      BScanSegmentationMarker::ThresholdDirectionData& data);
+	void setThresholdData(const BScanSegmentationMarker::ThresholdDirectionData& data);
 
 private slots:
 	void absoluteSpinBoxChanged();
@@ -77,17 +78,20 @@ class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 	WGSegmentationThreshold thresLocal ;
 
 
-	BScanSegLocalOpPaint*     localOpPaint     = nullptr;
-	BScanSegLocalOpThreshold* localOpThreshold = nullptr;
-	BScanSegLocalOpOperation* localOpOperation = nullptr;
+	BScanSegLocalOpPaint*              localOpPaint              = nullptr;
+	BScanSegLocalOpThresholdDirection* localOpThresholdDirection = nullptr;
+	BScanSegLocalOpThreshold*          localOpThreshold          = nullptr;
+	BScanSegLocalOpOperation*          localOpOperation          = nullptr;
 
 	bool allowInitSeries = false;
 
-	Orientation localThresholdOrientation = Orientation::Vertical;
+	Orientation localThresholdDirOrientation = Orientation::Vertical;
 
 	void createConnections();
 
-	void setLocalThresholdOrientation(Orientation o);
+	void setLocalThresholdDirOrientation(Orientation o);
+
+	void setLocalThresholdValues();
 
 	QButtonGroup* localMethodBG = nullptr;
 
@@ -102,22 +106,25 @@ private slots:
 
 	void slotBscanInitFromThresh();
 
-	void activateLocalPaint();
 	void activateLocalThresh();
+	void activateLocalThreshDir();
+	void activateLocalPaint();
 	void activateLocalOperation();
 
 	void slotLocalThresh(bool);
+	void slotLocalThreshDir(bool);
 	void slotLocalPaint(bool);
 	void slotLocalOperation(bool);
 
+	void switchSizeLocalThresholdDir();
 	void switchSizeLocalThreshold();
 	void switchSizeLocalOperation();
 
 	void setCreateNewSeriesStartValueEnable(bool);
 	void tabWidgetCurrentChanged(int index);
 
-	void setLocalThresholdOrientationVertical()                     { setLocalThresholdOrientation(Orientation::Vertical  ); }
-	void setLocalThresholdOrientationHorizontal()                   { setLocalThresholdOrientation(Orientation::Horizontal); }
+	void setLocalThresholdOrientationVertical()                     { setLocalThresholdDirOrientation(Orientation::Vertical  ); }
+	void setLocalThresholdOrientationHorizontal()                   { setLocalThresholdDirOrientation(Orientation::Horizontal); }
 	
 	void setLocalOperator(BScanSegmentationMarker::LocalMethod method);
 };

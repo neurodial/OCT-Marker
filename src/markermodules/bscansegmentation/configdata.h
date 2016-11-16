@@ -5,28 +5,28 @@
 
 namespace BScanSegmentationMarker
 {
-		typedef uint8_t internalMatType;
+	typedef uint8_t internalMatType;
 
-		static const internalMatType paintArea0Value = 0;
-		static const internalMatType paintArea1Value = 1;
+	static const internalMatType paintArea0Value = 0;
+	static const internalMatType paintArea1Value = 1;
 
-		static const internalMatType markermatInitialValue = paintArea0Value;
+	static const internalMatType markermatInitialValue = paintArea0Value;
 
+	enum class ThresholdMethod { Absolute, Relative };
 
-	class ThresholdData
+	class ThresholdDirectionData
 	{
 	public:
 		enum class Direction { left, right, up, down };
-		enum class Method { Absolute, Relative };
 
 		Direction       direction        = Direction::down;
-		Method          method           = Method::Relative;
+		ThresholdMethod method           = ThresholdMethod::Relative;
 		int             neededStrikes    = 6;
 		double          negStrikesFactor = 0.6;
 		internalMatType absoluteValue    = 80;
 		double          relativeFrac     = 0.5;
 
-		bool operator==(const ThresholdData& other) const
+		bool operator==(const ThresholdDirectionData& other) const
 		{
 			return direction     == other.direction
 			    && method        == other.method
@@ -36,7 +36,21 @@ namespace BScanSegmentationMarker
 		}
 	};
 
-	enum class LocalMethod { None, Threshold, Paint, Operation };
+	class ThresholdData
+	{
+	public:
+		ThresholdMethod method           = ThresholdMethod::Relative;
+		internalMatType absoluteValue    = 80;
+		double          relativeFrac     = 0.5;
+
+		bool operator==(const ThresholdData& other) const
+		{
+			return absoluteValue == other.absoluteValue
+			    && relativeFrac  == other.relativeFrac;
+		}
+	};
+
+	enum class LocalMethod { None, ThresholdDirection, Threshold, Paint, Operation };
 	enum class Operation   { Erode, Dilate, OpenClose, Median };
 
 	struct PaintData

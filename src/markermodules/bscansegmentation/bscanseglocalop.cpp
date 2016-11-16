@@ -233,9 +233,71 @@ void BScanSegLocalOpOperation::setOperatorSizeWidth(int size)
 
 
 
+// -------------------
+// Threshold Direction
+// -------------------
+void BScanSegLocalOpThresholdDirection::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
+{
+	int sizeW = static_cast<int>(paintSizeWidth *factor + 0.5);
+	int sizeH = static_cast<int>(paintSizeHeight*factor + 0.5);
+	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
+}
+
+
+bool BScanSegLocalOpThresholdDirection::applyThreshold(int x, int y)
+{
+	cv::Mat* map = getActMat();
+	if(!map || map->empty())
+		return false;
+
+	int rows = map->rows;
+	int cols = map->cols;
+
+	int x0 = std::max(x - paintSizeWidth , 0);
+	int x1 = std::min(x + paintSizeWidth , cols-1);
+	int y0 = std::max(y - paintSizeHeight, 0);
+	int y1 = std::min(y + paintSizeHeight, rows-1);
+
+	if(x0>=x1)
+		return false;
+	if(y0>=y1)
+		return false;
+
+	const OctData::BScan* bscan = getActBScan();
+	if(!bscan)
+		return false;
+
+	cv::Mat tmp = (*map)(cv::Rect(x0, y0, x1-x0, y1-y0));
+	cv::Mat tmpImages = bscan->getImage()(cv::Rect(x0, y0, x1-x0, y1-y0));
+
+	BScanSegAlgorithm::initFromThresholdDirection(tmpImages, tmp, localThresholdData);
+
+	return true;
+}
+void BScanSegLocalOpThresholdDirection::setOperatorSizeHeight(int size)
+{
+	size = validOperatorSize(size);
+	if(assignUpdateNecessary(paintSizeHeight, size))
+		updateCursor();
+}
+void BScanSegLocalOpThresholdDirection::setOperatorSizeWidth(int size)
+{
+	size = validOperatorSize(size);
+	if(assignUpdateNecessary(paintSizeWidth, size))
+		updateCursor();
+}
+void BScanSegLocalOpThresholdDirection::setThresholdData(const BScanSegmentationMarker::ThresholdDirectionData& data)
+{
+	if(assignUpdateNecessary(localThresholdData, data))
+		updateCursor();
+}
+
+
+
 // ---------
 // Threshold
 // ---------
+
 void BScanSegLocalOpThreshold::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
 {
 	int sizeW = static_cast<int>(paintSizeWidth *factor + 0.5);
@@ -291,8 +353,6 @@ void BScanSegLocalOpThreshold::setThresholdData(const BScanSegmentationMarker::T
 	if(assignUpdateNecessary(localThresholdData, data))
 		updateCursor();
 }
-
-
 
 
 
