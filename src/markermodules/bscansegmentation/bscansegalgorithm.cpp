@@ -261,13 +261,13 @@ void BScanSegAlgorithm::initFromSegline(const OctData::BScan& bscan, cv::Mat& se
 
 			for(std::size_t row = 0; row < rowCh; ++row)
 			{
-				*rowIt =  1;
+				*rowIt = BScanSegmentationMarker::paintArea0Value;
 				rowIt += colSize;
 			}
 
 			for(std::size_t row = rowCh; row < rowSize; ++row)
 			{
-				*rowIt = 0;
+				*rowIt = BScanSegmentationMarker::paintArea1Value;
 				rowIt += colSize;
 			}
 
