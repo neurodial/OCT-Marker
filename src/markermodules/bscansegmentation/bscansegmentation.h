@@ -57,6 +57,7 @@ class BScanSegmentation : public BscanMarkerBase
 	SegMats segments;
 
 	void clearSegments();
+	void createSegments();
 
 	template<typename T>
 	void drawSegmentLine(QPainter&, double factor, const QRect&) const;
@@ -125,6 +126,7 @@ public slots:
 
 	virtual void setSeglinePaintSize(int size);
 
+	void removeSeriesSegmentation()                                 { createSegments(); requestUpdate(); }
 	void initSeriesFromSegline();
 	void initBScanFromSegline();
 

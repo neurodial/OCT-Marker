@@ -15,6 +15,8 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 {
 	setupUi(this);
 
+	tabWidget->setCurrentWidget(localTab);
+
 	setCreateNewSeriesStartValueEnable(false);
 	connect(checkBoxCreateNewSeriesStartValue, &QAbstractButton::toggled, this, &WGSegmentation::setCreateNewSeriesStartValueEnable);
 
@@ -185,7 +187,6 @@ WGSegmentation::~WGSegmentation()
 
 void WGSegmentation::createConnections()
 {
-	connect(buttonSeriesInitFromSeg      , &QPushButton::pressed, this, &WGSegmentation::slotSeriesInitFromSeg   );
 	connect(buttonSeriesInitFromThreshold, &QPushButton::pressed, this, &WGSegmentation::slotSeriesInitFromThresh);
 
 	connect(buttonBScanInitFromThreshold , &QPushButton::pressed, this, &WGSegmentation::slotBscanInitFromThresh );
@@ -210,19 +211,12 @@ void WGSegmentation::createConnections()
 	connect(buttonLocalThresholdDirLeft , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
 	connect(buttonLocalThresholdDirRight, &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
 
-	connect(buttonBScanInitFromSeg  , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initBScanFromSegline);
-	connect(buttonSeriesInitFromSeg , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initSeriesFromSegline);
+	connect(buttonBScanInitFromSeg        , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initBScanFromSegline    );
+	connect(buttonSeriesInitFromSeg       , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initSeriesFromSegline   );
+	connect(buttonSeriesDeleteSegmentation, &QAbstractButton::clicked, segmentation, &BScanSegmentation::removeSeriesSegmentation);
 }
 
 
-
-void WGSegmentation::slotSeriesInitFromSeg()
-{
-	if(!allowInitSeries)
-		return;
-
-	// TODO
-}
 
 void WGSegmentation::slotSeriesInitFromThresh()
 {
@@ -400,8 +394,10 @@ void WGSegmentation::tabWidgetCurrentChanged(int /*index*/)
 
 void WGSegmentation::setCreateNewSeriesStartValueEnable(bool b)
 {
-	buttonSeriesInitFromThreshold->setEnabled(b);
-	buttonSeriesInitFromSeg      ->setEnabled(b);
+	buttonSeriesInitFromThreshold ->setEnabled(b);
+	buttonSeriesInitFromSeg       ->setEnabled(b);
+	buttonSeriesDeleteSegmentation->setEnabled(b);
+
 	checkBoxCreateNewSeriesStartValue->setChecked(b);
 
 	allowInitSeries = b;

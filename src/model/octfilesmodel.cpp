@@ -2,6 +2,9 @@
 
 #include <manager/octdatamanager.h>
 
+#include <QMessageBox>
+#include <boost/exception/diagnostic_information.hpp>
+
 
 OctFilesModel::OctFilesModel()
 {
@@ -24,7 +27,7 @@ QVariant OctFilesModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 
 	if(role == Qt::DisplayRole)
-		return filelist.at(index.row())->getFilename();
+		return filelist.at(static_cast<std::size_t>(index.row()))->getFilename();
 	else
 		return QVariant();
 }
@@ -47,10 +50,7 @@ bool OctFilesModel::addFile(QString filename)
 	for(const OctFileUnloaded* file : filelist)
 	{
 		if(file->sameFile(filename))
-		{
-			OctDataManager::getInstance().openFile(filename);
-			return false;
-		}
+			return openFile(filename);
 	}
 
 	int position = static_cast<int>(filelist.size());
@@ -59,9 +59,7 @@ bool OctFilesModel::addFile(QString filename)
 	filelist.push_back(new OctFileUnloaded(filename));
 	endInsertRows();
 	
-	OctDataManager::getInstance().openFile(filename);
-	
-	return true;
+	return openFile(filename);
 }
 
 void OctFilesModel::slotClicked(QModelIndex index)
@@ -74,7 +72,7 @@ void OctFilesModel::slotClicked(QModelIndex index)
 		return;
 	
 	OctFileUnloaded* file = filelist.at(row);
-	OctDataManager::getInstance().openFile(file->getFilename());
+	openFile(file->getFilename());
 }
 
 void OctFilesModel::slotDoubleClicked(QModelIndex index)
@@ -90,6 +88,45 @@ void OctFilesModel::slotDoubleClicked(QModelIndex index)
 	
 	
 	qDebug("file doubleclicked: %s", file->getFilename().toStdString().c_str());
+}
+
+
+bool OctFilesModel::openFile(const QString& filename)
+{
+	try
+	{
+		OctDataManager::getInstance().openFile(filename);
+		return true;
+	}
+	catch(boost::exception& e)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString::fromStdString(boost::diagnostic_information(e)));
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	catch(std::exception& e)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString::fromStdString(e.what()));
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	catch(const char* str)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(str);
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	catch(...)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__));
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
+	return false;
 }
 
 

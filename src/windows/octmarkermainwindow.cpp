@@ -523,40 +523,7 @@ void OCTMarkerMainWindow::dragMoveEvent(QDragMoveEvent* event)
 
 bool OCTMarkerMainWindow::loadFile(const QString& filename)
 {
-	try
-	{
-		OctFilesModel::getInstance().addFile(filename);
-		return true;
-	}
-	catch(boost::exception& e)
-	{
-		QMessageBox msgBox;
-		msgBox.setText(QString::fromStdString(boost::diagnostic_information(e)));
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
-	}
-	catch(std::exception& e)
-	{
-		QMessageBox msgBox;
-		msgBox.setText(QString::fromStdString(e.what()));
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
-	}
-	catch(const char* str)
-	{
-		QMessageBox msgBox;
-		msgBox.setText(str);
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
-	}
-	catch(...)
-	{
-		QMessageBox msgBox;
-		msgBox.setText(QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__));
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
-	}
-	return false;
+	return OctFilesModel::getInstance().addFile(filename);
 }
 /*
 

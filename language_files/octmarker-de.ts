@@ -73,22 +73,22 @@
 <context>
     <name>BScanSegToolBar</name>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="104"/>
+        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="108"/>
         <source>Erode</source>
         <translation>Erodieren</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="112"/>
+        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="116"/>
         <source>Dilate</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="119"/>
+        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="123"/>
         <source>Open/Close</source>
         <translation>Öffnen/Schlißen</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="126"/>
+        <location filename="../src/markermodules/bscansegmentation/bscansegtoolbar.cpp" line="130"/>
         <source>Median</source>
         <translation type="unfinished"></translation>
     </message>
@@ -159,170 +159,187 @@
         <translation>Neue Startbedingung erzeugen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="46"/>
+        <location filename="../ui/marker_segmentation.ui" line="43"/>
+        <location filename="../ui/marker_segmentation.ui" line="232"/>
         <source>From segmentation</source>
         <translation>Von vorhandener Segmentierung</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="52"/>
+        <location filename="../ui/marker_segmentation.ui" line="49"/>
+        <location filename="../ui/marker_segmentation.ui" line="238"/>
         <source>Segmentation</source>
         <translation>Segmentierung</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="62"/>
-        <location filename="../ui/marker_segmentation.ui" line="143"/>
-        <location filename="../ui/marker_segmentation.ui" line="276"/>
+        <location filename="../ui/marker_segmentation.ui" line="59"/>
+        <location filename="../ui/marker_segmentation.ui" line="140"/>
+        <location filename="../ui/marker_segmentation.ui" line="248"/>
+        <location filename="../ui/marker_segmentation.ui" line="334"/>
         <source>Create</source>
         <translation>Erzeugen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="72"/>
-        <location filename="../ui/marker_segmentation.ui" line="200"/>
+        <location filename="../ui/marker_segmentation.ui" line="69"/>
+        <location filename="../ui/marker_segmentation.ui" line="258"/>
         <source>From Threshold</source>
         <translation>Vom Schwellwert</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="85"/>
-        <location filename="../ui/marker_segmentation.ui" line="206"/>
-        <location filename="../ui/marker_segmentation.ui" line="452"/>
+        <location filename="../ui/marker_segmentation.ui" line="82"/>
+        <location filename="../ui/marker_segmentation.ui" line="264"/>
+        <location filename="../ui/marker_segmentation.ui" line="523"/>
+        <location filename="../ui/marker_segmentation.ui" line="1076"/>
         <source>Relative</source>
         <translation>Relativ</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="92"/>
-        <location filename="../ui/marker_segmentation.ui" line="216"/>
+        <location filename="../ui/marker_segmentation.ui" line="89"/>
+        <location filename="../ui/marker_segmentation.ui" line="274"/>
         <source>From above</source>
         <translation>von oben</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="112"/>
-        <location filename="../ui/marker_segmentation.ui" line="239"/>
-        <location filename="../ui/marker_segmentation.ui" line="816"/>
+        <location filename="../ui/marker_segmentation.ui" line="109"/>
+        <location filename="../ui/marker_segmentation.ui" line="297"/>
+        <location filename="../ui/marker_segmentation.ui" line="874"/>
         <source>Strikes</source>
         <translation>nötige Treffer</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="119"/>
-        <location filename="../ui/marker_segmentation.ui" line="246"/>
-        <location filename="../ui/marker_segmentation.ui" line="809"/>
+        <location filename="../ui/marker_segmentation.ui" line="116"/>
+        <location filename="../ui/marker_segmentation.ui" line="304"/>
+        <location filename="../ui/marker_segmentation.ui" line="867"/>
+        <location filename="../ui/marker_segmentation.ui" line="1069"/>
         <source>Absolute</source>
         <translation>Absolut</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="78"/>
-        <location filename="../ui/marker_segmentation.ui" line="290"/>
+        <location filename="../ui/marker_segmentation.ui" line="75"/>
+        <location filename="../ui/marker_segmentation.ui" line="348"/>
         <source>From below</source>
         <translation>von unten</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="157"/>
-        <location filename="../ui/marker_segmentation.ui" line="300"/>
-        <location filename="../ui/marker_segmentation.ui" line="931"/>
+        <location filename="../ui/marker_segmentation.ui" line="154"/>
+        <location filename="../ui/marker_segmentation.ui" line="358"/>
+        <location filename="../ui/marker_segmentation.ui" line="989"/>
         <source>Strikes Fail</source>
-        <translation type="unfinished">erlaubter Fehler</translation>
+        <translation>erlaubter Fehler</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="194"/>
+        <location filename="../ui/marker_segmentation.ui" line="177"/>
+        <source>Delete segmentation</source>
+        <translation>Segmentierung löschen</translation>
+    </message>
+    <message>
+        <location filename="../ui/marker_segmentation.ui" line="183"/>
+        <source>Delete</source>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <location filename="../ui/marker_segmentation.ui" line="220"/>
         <source>BScan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="310"/>
+        <location filename="../ui/marker_segmentation.ui" line="368"/>
         <source>Operations</source>
         <translation>Aktionen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="316"/>
-        <location filename="../ui/marker_segmentation.ui" line="732"/>
+        <location filename="../ui/marker_segmentation.ui" line="374"/>
+        <location filename="../ui/marker_segmentation.ui" line="806"/>
         <source>Dilate</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="327"/>
-        <location filename="../ui/marker_segmentation.ui" line="718"/>
+        <location filename="../ui/marker_segmentation.ui" line="385"/>
+        <location filename="../ui/marker_segmentation.ui" line="792"/>
         <source>Erode</source>
         <translation>Erodieren</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="351"/>
-        <location filename="../ui/marker_segmentation.ui" line="426"/>
-        <location filename="../ui/marker_segmentation.ui" line="624"/>
-        <location filename="../ui/marker_segmentation.ui" line="634"/>
-        <location filename="../ui/marker_segmentation.ui" line="648"/>
-        <location filename="../ui/marker_segmentation.ui" line="658"/>
-        <location filename="../ui/marker_segmentation.ui" line="672"/>
+        <location filename="../ui/marker_segmentation.ui" line="409"/>
+        <location filename="../ui/marker_segmentation.ui" line="484"/>
+        <location filename="../ui/marker_segmentation.ui" line="682"/>
+        <location filename="../ui/marker_segmentation.ui" line="692"/>
+        <location filename="../ui/marker_segmentation.ui" line="706"/>
+        <location filename="../ui/marker_segmentation.ui" line="716"/>
+        <location filename="../ui/marker_segmentation.ui" line="730"/>
+        <location filename="../ui/marker_segmentation.ui" line="1043"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="362"/>
-        <location filename="../ui/marker_segmentation.ui" line="763"/>
+        <location filename="../ui/marker_segmentation.ui" line="420"/>
+        <location filename="../ui/marker_segmentation.ui" line="837"/>
         <source>Median</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="390"/>
+        <location filename="../ui/marker_segmentation.ui" line="448"/>
         <source>Local</source>
         <translation>Lokal</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="412"/>
-        <location filename="../ui/marker_segmentation.ui" line="853"/>
+        <location filename="../ui/marker_segmentation.ui" line="470"/>
+        <location filename="../ui/marker_segmentation.ui" line="911"/>
+        <location filename="../ui/marker_segmentation.ui" line="1029"/>
         <source>x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="480"/>
+        <location filename="../ui/marker_segmentation.ui" line="538"/>
         <source>from below</source>
         <translation>von unten</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="494"/>
+        <location filename="../ui/marker_segmentation.ui" line="552"/>
         <source>from left</source>
         <translation>von links</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="508"/>
+        <location filename="../ui/marker_segmentation.ui" line="566"/>
         <source>from right</source>
         <translation>von rechts</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="522"/>
+        <location filename="../ui/marker_segmentation.ui" line="580"/>
         <source>from above</source>
         <translation>von oben</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="695"/>
+        <location filename="../ui/marker_segmentation.ui" line="753"/>
         <source>Pen</source>
         <translation>Stift</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="749"/>
+        <location filename="../ui/marker_segmentation.ui" line="823"/>
         <source>OpenClose</source>
         <translation>Öffnen/Schlißen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="867"/>
+        <location filename="../ui/marker_segmentation.ui" line="925"/>
         <source>switch size</source>
         <translation>Abmessungen tauschen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="893"/>
+        <location filename="../ui/marker_segmentation.ui" line="951"/>
         <source>Paint</source>
         <translation>malen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="924"/>
+        <location filename="../ui/marker_segmentation.ui" line="982"/>
         <source>apply on mouse move</source>
         <translation>bei Mausbewegung anwenden</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="591"/>
+        <location filename="../ui/marker_segmentation.ui" line="649"/>
         <source>Operation</source>
         <translation>Aktionen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="830"/>
+        <location filename="../ui/marker_segmentation.ui" line="888"/>
         <source>Direction</source>
         <translation>Richtung</translation>
     </message>
@@ -331,7 +348,8 @@
         <translation type="vanished">Größe</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation.ui" line="611"/>
+        <location filename="../ui/marker_segmentation.ui" line="669"/>
+        <location filename="../ui/marker_segmentation.ui" line="1013"/>
         <source>Threshold</source>
         <translation>Schwellwert</translation>
     </message>

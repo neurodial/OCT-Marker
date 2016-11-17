@@ -101,7 +101,6 @@ public:
 
 
 private slots:
-	void slotSeriesInitFromSeg();
 	void slotSeriesInitFromThresh();
 
 	void slotBscanInitFromThresh();

@@ -424,12 +424,29 @@ void BScanSegmentation::clearSegments()
 	segments.clear();
 }
 
-void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
+void BScanSegmentation::createSegments()
 {
-	clearSegments();
+	const OctData::Series* series = getSeries();
 
 	if(!series)
 		return;
+
+	clearSegments();
+
+	for(const OctData::BScan* bscan : series->getBScans())
+	{
+		cv::Mat* mat = new cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(BScanSegmentationMarker::markermatInitialValue));
+		segments.push_back(mat);
+	}
+}
+
+
+void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
+{
+	if(!series)
+		return;
+
+	clearSegments();
 
 	for(const OctData::BScan* bscan : series->getBScans())
 	{
@@ -548,8 +565,6 @@ void BScanSegmentation::initSeriesFromSegline()
 	}
 	requestUpdate();
 }
-
-
 
 
 

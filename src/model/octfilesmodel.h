@@ -28,6 +28,8 @@ class OctFilesModel : public QAbstractListModel
 	OctFilesModel();
 	virtual ~OctFilesModel();
 
+	bool openFile(const QString& filename);
+
 public:
 	static OctFilesModel& getInstance()                             { static OctFilesModel instance; return instance;}
 	
