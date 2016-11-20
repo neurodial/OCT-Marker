@@ -51,6 +51,8 @@
 #include <globaldefinitions.h>
 
 
+#include <widgets/scrollareapan.h>
+
 
 OCTMarkerMainWindow::OCTMarkerMainWindow()
 : QMainWindow()
@@ -62,7 +64,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
 	
 	
-	QScrollArea* bscanMarkerWidgetScrollArea = new QScrollArea(this);
+	ScrollAreaPan* bscanMarkerWidgetScrollArea = new ScrollAreaPan(this);
 	bscanMarkerWidgetScrollArea->setWidget(bscanMarkerWidget);
 
 	// General Objects

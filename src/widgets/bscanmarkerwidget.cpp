@@ -232,7 +232,7 @@ void BScanMarkerWidget::wheelEvent(QWheelEvent* wheelE)
 void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	QWidget::mouseMoveEvent(event);
-	
+
 	BscanMarkerBase* actMarker = markerManger.getActMarker();
 	if(actMarker)
 	{
@@ -251,6 +251,10 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 {
 	QWidget::mousePressEvent(event);
+
+	// TODO: workaround for pan in scrollarea
+	if(event->modifiers() & Qt::ControlModifier)
+		return;
 
 	
 	BscanMarkerBase* actMarker = markerManger.getActMarker();
