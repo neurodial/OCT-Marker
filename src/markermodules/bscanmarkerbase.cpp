@@ -61,3 +61,11 @@ void BscanMarkerBase::connectToolBar(QToolBar* toolbar)
 	toolbar->setEnabled(isActivated);
 }
 
+
+bool BscanMarkerBase::setMarkerActive(bool active, BScanMarkerWidget*)
+{
+	bool result = (active != markerActive);
+	markerActive = active;
+	return result;
+}
+

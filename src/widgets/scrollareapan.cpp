@@ -4,23 +4,41 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 
+#include <QDebug>
+
+namespace
+{
+	inline bool modPressed(QKeyEvent* e)
+	{
+		return e->modifiers() & Qt::ControlModifier;
+	}
+	inline bool modPressed(QMouseEvent* e)
+	{
+		return e->modifiers() & Qt::ControlModifier;
+	}
+}
+
 void ScrollAreaPan::mousePressEvent(QMouseEvent* e)
 {
-	if(e->modifiers() & Qt::ControlModifier)
+	QScrollArea::mousePressEvent(e);
+
+	if((e->buttons() & Qt::LeftButton) == 0)
+		return;
+
+	if(upadtePanStatus(modPressed(e), MausButton::Pressed))
 	{
 		mousePos = e->pos();
-		setPan(true);
 		e->accept();
 	}
-	QScrollArea::mousePressEvent(e);
 }
 
 
 void ScrollAreaPan::mouseMoveEvent(QMouseEvent* e)
 {
-	if(paning)
+	QScrollArea::mouseMoveEvent(e);
+	if(panStatus == PanStatus::Paning)
 	{
-		if(e->modifiers() & Qt::ControlModifier)
+		if(modPressed(e))
 		{
 			QPoint diff = e->pos() - mousePos;
 			mousePos    = e->pos();
@@ -29,28 +47,74 @@ void ScrollAreaPan::mouseMoveEvent(QMouseEvent* e)
 			e->accept();
 		}
 		else
-			setPan(false);
+			upadtePanStatus(false, MausButton::Undef);
 	}
-	QScrollArea::mouseMoveEvent(e);
 }
 
 void ScrollAreaPan::mouseReleaseEvent(QMouseEvent* e)
 {
-	if(paning)
-	{
-		setPan(false);
+	if((e->buttons() & Qt::LeftButton) != 0)
+		return;
+
+	QScrollArea::mouseReleaseEvent(e);
+	if(upadtePanStatus(modPressed(e), MausButton::Unpressed))
 		e->accept();
-	}
 }
 
 
-void ScrollAreaPan::setPan(bool pan)
+
+void ScrollAreaPan::keyPressEvent(QKeyEvent* e)
 {
-	paning = pan;
-	if(pan)
-	{
-		setCursor(Qt::ClosedHandCursor);
-	}
-	else
-		unsetCursor();
+	QScrollArea::keyPressEvent(e);
+	upadtePanStatus(modPressed(e), MausButton::Undef);
 }
+
+void ScrollAreaPan::keyReleaseEvent(QKeyEvent* e)
+{
+	QScrollArea::keyReleaseEvent(e);
+	upadtePanStatus(modPressed(e), MausButton::Undef);
+}
+
+
+bool ScrollAreaPan::upadtePanStatus(bool modifierPressed, MausButton mouseButtonPressed)
+{
+	if(!modifierPressed && panStatus != PanStatus::None)
+	{
+		panStatus = PanStatus::None;
+		unsetCursor();
+		return true;
+	}
+
+	switch(panStatus)
+	{
+		case PanStatus::None:
+			if(mouseButtonPressed == MausButton::Undef)
+			{
+				panStatus = PanStatus::PanReady;
+				setCursor(Qt::OpenHandCursor);
+				return true;
+			}
+			break;
+
+		case PanStatus::PanReady:
+			if(mouseButtonPressed == MausButton::Pressed)
+			{
+				panStatus = PanStatus::Paning;
+				setCursor(Qt::ClosedHandCursor);
+				return true;
+			}
+			break;
+
+		case PanStatus::Paning:
+			if(mouseButtonPressed == MausButton::Unpressed)
+			{
+				panStatus = PanStatus::PanReady;
+				setCursor(Qt::OpenHandCursor);
+				return true;
+			}
+			break;
+	}
+
+	return false;
+}
+

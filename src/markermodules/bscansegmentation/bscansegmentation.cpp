@@ -182,10 +182,12 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 		paintPoint = QPoint(x, y);
 	}
 
-	QPen pen(Qt::green);
-	p.setPen(pen);
-	if(inWidget && actLocalOperator)
+	if(inWidget && markerActive && actLocalOperator)
+	{
+		QPen pen(Qt::green);
+		p.setPen(pen);
 		actLocalOperator->drawMarkerPaint(p, paintPoint, factor);
+	}
 }
 
 
@@ -256,26 +258,30 @@ BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e,
 {
 	RedrawRequest result;
 
-	if(!(e->buttons() & Qt::LeftButton))
-		paint = false;
-		
 	inWidget = true;
-	double factor = widget->getImageScaleFactor();
 
-	result.redraw = false; // cursor need redraw
-	result.rect   = getWidgetPaintSize(mousePoint, e->pos(), factor);
-
-	mousePoint = e->pos();
-	int x = e->x();
-	int y = e->y();
-	
-	if(actLocalOperator)
+	if(markerActive)
 	{
-		if(paint)
-			result.redraw = setOnCoord(x, y, factor);
+		if(!(e->buttons() & Qt::LeftButton))
+			paint = false;
 
-		result.redraw |= actLocalOperator->drawMarker();
+		double factor = widget->getImageScaleFactor();
+
+		result.redraw = false; // cursor need redraw
+		result.rect   = getWidgetPaintSize(mousePoint, e->pos(), factor);
+
+		int x = e->x();
+		int y = e->y();
+
+		if(actLocalOperator)
+		{
+			if(paint)
+				result.redraw = setOnCoord(x, y, factor);
+
+			result.redraw |= actLocalOperator->drawMarker();
+		}
 	}
+	mousePoint = e->pos();
 
 	return result;
 }
@@ -334,7 +340,6 @@ bool BScanSegmentation::leaveWidgetEvent(QEvent*, BScanMarkerWidget*)
 	inWidget = false;
 	return true;
 }
-
 
 bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 {

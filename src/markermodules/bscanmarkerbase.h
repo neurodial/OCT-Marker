@@ -51,6 +51,7 @@ public:
 	
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) { return false; }
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) { return false; }
+	virtual bool setMarkerActive  (bool        , BScanMarkerWidget*);
 	
 	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
 	virtual QWidget*  createWidget (QWidget*)                       { return nullptr; }
@@ -87,7 +88,8 @@ protected:
 	QString name;
 	QString id;
 	QIcon  icon;
-	bool isActivated = false;
+	bool isActivated  = false;
+	bool markerActive = true;
 	
 };
 

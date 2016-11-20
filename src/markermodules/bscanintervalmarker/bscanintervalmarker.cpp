@@ -116,12 +116,15 @@ QToolBar* BScanIntervalMarker::createToolbar(QObject* parent)
 BscanMarkerBase::RedrawRequest  BScanIntervalMarker::mouseMoveEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
 	RedrawRequest result;
-	result.redraw = true;
+	if(markerActive)
+	{
+		result.redraw = true;
 
-	if(markerActiv)
-		result.rect = getWidgetPaintSize(event->pos(), mousePos, widget->getImageScaleFactor(), &clickPos);
-	else
-		result.rect = getWidgetPaintSize(event->pos(), mousePos, widget->getImageScaleFactor());
+		if(markerActiv)
+			result.rect = getWidgetPaintSize(event->pos(), mousePos, widget->getImageScaleFactor(), &clickPos);
+		else
+			result.rect = getWidgetPaintSize(event->pos(), mousePos, widget->getImageScaleFactor());
+	}
 
 	mouseInWidget = true;
 	mousePos = event->pos();
@@ -289,7 +292,7 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 	}
 	
 
-	if(mouseInWidget && getMarkerMethod() == Method::Paint)
+	if(mouseInWidget && markerActive && getMarkerMethod() == Method::Paint)
 	{
 		painter.drawLine(mousePos.x(), 0, mousePos.x(), widget->height());
 

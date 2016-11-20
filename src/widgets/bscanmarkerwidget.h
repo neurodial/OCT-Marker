@@ -28,26 +28,33 @@ class BScanMarkerWidget : public CVImageWidget
 	QAction*                                saveRawBinAction   = nullptr;
 	QAction*                                saveImageBinAction = nullptr;
 	const OctData::BScan*                   actBscan           = nullptr;
+
+	bool controlUsed = false;
 	
 	int fdSaveRaw(QString& filename);
 	void updateRawExport();
 	bool existsRaw() const;
 	bool rawSaveableAsImage() const;
+
+	bool checkControlUsed(QMouseEvent* event);
+	bool checkControlUsed(QKeyEvent  * event);
+	bool checkControlUsed(bool modPressed);
 public:
 	BScanMarkerWidget(BScanMarkerManager& markerManger);
 
 	virtual ~BScanMarkerWidget();
 
 protected:
-	void paintEvent(QPaintEvent* event);
+	void paintEvent(QPaintEvent* event) override;
 
-	virtual void mouseMoveEvent   (QMouseEvent*);
-	virtual void mousePressEvent  (QMouseEvent*);
-	virtual void mouseReleaseEvent(QMouseEvent*);
+	virtual void mouseMoveEvent   (QMouseEvent*) override;
+	virtual void mousePressEvent  (QMouseEvent*) override;
+	virtual void mouseReleaseEvent(QMouseEvent*) override;
 	
-	virtual void keyPressEvent    (QKeyEvent*  );
-	virtual void leaveEvent       (QEvent*     );
-	virtual void wheelEvent       (QWheelEvent*);
+	virtual void keyPressEvent    (QKeyEvent*  ) override;
+	virtual void keyReleaseEvent  (QKeyEvent*  ) override;
+	virtual void leaveEvent       (QEvent*     ) override;
+	virtual void wheelEvent       (QWheelEvent*) override;
 
 private slots:
 	void bscanChanged(int);

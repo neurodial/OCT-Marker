@@ -21,6 +21,18 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+namespace
+{
+	inline bool modPressed(QKeyEvent* e)
+	{
+		return e->modifiers() & Qt::ControlModifier;
+	}
+	inline bool modPressed(QMouseEvent* e)
+	{
+		return e->modifiers() & Qt::ControlModifier;
+	}
+}
+
 BScanMarkerWidget::BScanMarkerWidget(BScanMarkerManager& markerManger)
 : CVImageWidget()
 , markerManger(markerManger)
@@ -233,6 +245,9 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	QWidget::mouseMoveEvent(event);
 
+// 	if(checkControlUsed(event))
+// 		return;
+
 	BscanMarkerBase* actMarker = markerManger.getActMarker();
 	if(actMarker)
 	{
@@ -246,6 +261,8 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 		}
 	}
 
+	if(!checkControlUsed(event) && actMarker)
+		event->accept();
 }
 
 void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
@@ -253,7 +270,7 @@ void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 	QWidget::mousePressEvent(event);
 
 	// TODO: workaround for pan in scrollarea
-	if(event->modifiers() & Qt::ControlModifier)
+	if(checkControlUsed(event))
 		return;
 
 	
@@ -268,6 +285,7 @@ void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 			else
 				update();
 		}
+		event->accept();
 	}
 	
 }
@@ -275,6 +293,9 @@ void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 {
 	QWidget::mouseReleaseEvent(event);
+
+	if(checkControlUsed(event))
+		return;
 	
 	BscanMarkerBase* actMarker = markerManger.getActMarker();
 	if(actMarker)
@@ -287,13 +308,16 @@ void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 			else
 				update();
 		}
+		event->accept();
 	}
 }
 
 void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 {
 	QWidget::keyPressEvent(e);
-	
+
+	checkControlUsed(e);
+
 	switch(e->key())
 	{
 		case Qt::Key_Left:
@@ -311,8 +335,57 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 					update();
 			break;
 	}
-	
 }
+
+void BScanMarkerWidget::keyReleaseEvent(QKeyEvent* e)
+{
+	QWidget::keyReleaseEvent(e);
+	checkControlUsed(e);
+}
+
+
+bool BScanMarkerWidget::checkControlUsed(QMouseEvent* event)
+{
+	return checkControlUsed(modPressed(event));
+}
+
+bool BScanMarkerWidget::checkControlUsed(QKeyEvent* event)
+{
+	return checkControlUsed(modPressed(event));
+}
+
+
+inline bool BScanMarkerWidget::checkControlUsed(bool modPressed)
+{
+	if(modPressed)
+	{
+		if(!controlUsed)
+		{
+			BscanMarkerBase* actMarker = markerManger.getActMarker();
+			if(actMarker)
+				if(actMarker->setMarkerActive(false, this))
+					update();
+		}
+		controlUsed = true;
+
+		return true;
+	}
+
+	bool result = controlUsed;
+
+	if(controlUsed)
+	{
+		BscanMarkerBase* actMarker = markerManger.getActMarker();
+		if(actMarker)
+			if(actMarker->setMarkerActive(true, this))
+				update();
+
+		controlUsed = false;
+	}
+
+	return result;
+}
+
 
 /*
 void BScanMarkerWidget::markersMethodChanged()

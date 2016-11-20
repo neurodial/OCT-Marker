@@ -18,6 +18,7 @@
 #include <widgets/wgoctdatatree.h>
 #include <widgets/dwoctinformations.h>
 #include <widgets/dwmarkerwidgets.h>
+#include <widgets/scrollareapan.h>
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
@@ -34,24 +35,20 @@
 #include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/series.h>
 
-
+#include <octdata/octfileread.h>
 #include <octdata/filereadoptions.h>
 
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
-#include <buildconstants.h>
-
 #include <boost/algorithm/string/join.hpp>
-
-#include <octdata/octfileread.h>
 
 #include <cpp_framework/cvmat/treestructbin.h>
 
 #include <globaldefinitions.h>
+#include <buildconstants.h>
 
 
-#include <widgets/scrollareapan.h>
 
 
 OCTMarkerMainWindow::OCTMarkerMainWindow()
