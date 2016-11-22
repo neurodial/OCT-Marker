@@ -10,11 +10,11 @@ namespace
 {
 	inline bool modPressed(QKeyEvent* e)
 	{
-		return e->modifiers() & Qt::ControlModifier;
+		return e->modifiers() == Qt::ControlModifier;
 	}
 	inline bool modPressed(QMouseEvent* e)
 	{
-		return e->modifiers() & Qt::ControlModifier;
+		return e->modifiers() == Qt::ControlModifier;
 	}
 }
 
@@ -78,11 +78,15 @@ void ScrollAreaPan::keyReleaseEvent(QKeyEvent* e)
 
 bool ScrollAreaPan::upadtePanStatus(bool modifierPressed, MausButton mouseButtonPressed)
 {
-	if(!modifierPressed && panStatus != PanStatus::None)
+	if(!modifierPressed)
 	{
-		panStatus = PanStatus::None;
-		unsetCursor();
-		return true;
+		if(panStatus != PanStatus::None)
+		{
+			panStatus = PanStatus::None;
+			unsetCursor();
+			return true;
+		}
+		return false;
 	}
 
 	switch(panStatus)

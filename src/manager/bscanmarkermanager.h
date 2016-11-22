@@ -13,6 +13,7 @@ namespace OctData
 }
 
 class BscanMarkerBase;
+class SloMarkerBase;
 
 class BScanMarkerManager : public QObject
 {

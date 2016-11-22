@@ -1,5 +1,5 @@
 
-#include <src/buildconstants.h>
+#include <buildconstants.h>
 
 const char BuildConstants::gitSha1        [] = "@GIT_SHA1@";
 const char BuildConstants::buildTyp       [] = "@CMAKE_BUILD_TYPE@";
