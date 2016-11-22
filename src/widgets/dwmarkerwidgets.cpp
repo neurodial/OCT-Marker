@@ -11,7 +11,7 @@ DWMarkerWidgets::DWMarkerWidgets(OctMarkerManager* markerManager, QWidget* paren
 	setWindowTitle(tr("Marker widgets"));
 	connect(markerManager, &OctMarkerManager::markerChanged, this, &DWMarkerWidgets::markerChanged);
 
-	markerChanged(markerManager->getActMarker());
+	markerChanged(markerManager->getActBscanMarker());
 }
 
 DWMarkerWidgets::~DWMarkerWidgets()

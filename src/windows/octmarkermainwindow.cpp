@@ -99,7 +99,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	connect(this, &OCTMarkerMainWindow::loadLastFile, this, &OCTMarkerMainWindow::loadLastFileSlot, Qt::QueuedConnection);
 
 	
-	for(BscanMarkerBase* marker : markerManager->getMarker())
+	for(BscanMarkerBase* marker : markerManager->getBscanMarker())
 	{
 		QToolBar* toolbar = marker->createToolbar(this);
 		if(toolbar)
@@ -361,7 +361,7 @@ void OCTMarkerMainWindow::zoomChanged(double zoom)
 
 void OCTMarkerMainWindow::createMarkerToolbar()
 {
-	const std::vector<BscanMarkerBase*>& markers = markerManager->getMarker();
+	const std::vector<BscanMarkerBase*>& markers = markerManager->getBscanMarker();
 	
 	QToolBar*      toolBar            = new QToolBar(tr("Marker"));
 	QActionGroup*  actionGroupMarker  = new QActionGroup(this);
@@ -373,7 +373,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	markerAction->setCheckable(true);
 	markerAction->setText(tr("no marker"));
 	markerAction->setIcon(QIcon(":/icons/image.png"));
-	markerAction->setChecked(markerManager->getActMarkerId() == -1);
+	markerAction->setChecked(markerManager->getActBscanMarkerId() == -1);
 	connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
 	signalMapperMarker->setMapping(markerAction, -1);
 	actionGroupMarker->addAction(markerAction);
@@ -386,7 +386,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		markerAction->setCheckable(true);
 		markerAction->setText(marker->getName());
 		markerAction->setIcon(marker->getIcon());
-		markerAction->setChecked(markerManager->getActMarkerId() == id);
+		markerAction->setChecked(markerManager->getActBscanMarkerId() == id);
 		connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
 		signalMapperMarker->setMapping(markerAction, id);
 

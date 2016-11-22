@@ -27,19 +27,18 @@ public:
 	const OctData::Series* getSeries() const                        { return series;   }
 
 
-	BscanMarkerBase* getActMarker()                                 { return actMarker; }
-	int getActMarkerId() const                                      { return actMarkerId; }
-	
-	const std::vector<BscanMarkerBase*>& getMarker() const          { return markerObj; }
+	BscanMarkerBase* getActBscanMarker()                            { return actBscanMarker; }
+	int getActBscanMarkerId() const                                 { return actBscanMarkerId; }
+	const std::vector<BscanMarkerBase*>& getBscanMarker() const     { return bscanMarkerObj; }
 
 
 private:
 	int                    actBScan = 0;
 	const OctData::Series* series   = nullptr;
 	
-	std::vector<BscanMarkerBase*> markerObj;
-	BscanMarkerBase* actMarker = nullptr;
-	int actMarkerId = -1;
+	std::vector<BscanMarkerBase*> bscanMarkerObj;
+	BscanMarkerBase* actBscanMarker = nullptr;
+	int actBscanMarkerId = -1;
 
 private slots:
 	virtual void saveMarkerStateSlot(const OctData::Series* series);

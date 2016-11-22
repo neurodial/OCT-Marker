@@ -149,7 +149,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	
 	QPainter painter(this);
 	
-	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
 		actMarker->drawMarker(painter, this, event->rect());
 
@@ -210,7 +210,7 @@ void BScanMarkerWidget::leaveEvent(QEvent* event)
 {
 	QWidget::leaveEvent(event);
 
-	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
 		if(actMarker->leaveWidgetEvent(event, this))
 			update();
@@ -248,7 +248,7 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 // 	if(checkControlUsed(event))
 // 		return;
 
-	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
 	{
 		BscanMarkerBase::RedrawRequest result = actMarker->mouseMoveEvent(event, this);
@@ -274,7 +274,7 @@ void BScanMarkerWidget::mousePressEvent(QMouseEvent* event)
 		return;
 
 	
-	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
 	{
 		BscanMarkerBase::RedrawRequest result = actMarker->mousePressEvent(event, this);
@@ -297,7 +297,7 @@ void BScanMarkerWidget::mouseReleaseEvent(QMouseEvent* event)
 	if(checkControlUsed(event))
 		return;
 	
-	BscanMarkerBase* actMarker = markerManger.getActMarker();
+	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
 	{
 		BscanMarkerBase::RedrawRequest result = actMarker->mouseReleaseEvent(event, this);
@@ -329,7 +329,7 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 			e->accept();
 			break;
 		default:
-			BscanMarkerBase* actMarker = markerManger.getActMarker();
+			BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 			if(actMarker)
 				if(actMarker->keyPressEvent(e, this))
 					update();
@@ -361,7 +361,7 @@ inline bool BScanMarkerWidget::checkControlUsed(bool modPressed)
 	{
 		if(!controlUsed)
 		{
-			BscanMarkerBase* actMarker = markerManger.getActMarker();
+			BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 			if(actMarker)
 				if(actMarker->setMarkerActive(false, this))
 					update();
@@ -375,7 +375,7 @@ inline bool BScanMarkerWidget::checkControlUsed(bool modPressed)
 
 	if(controlUsed)
 	{
-		BscanMarkerBase* actMarker = markerManger.getActMarker();
+		BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 		if(actMarker)
 			if(actMarker->setMarkerActive(true, this))
 				update();

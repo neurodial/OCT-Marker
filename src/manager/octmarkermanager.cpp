@@ -39,10 +39,10 @@ OctMarkerManager::OctMarkerManager()
 	connect(&dataManager, &OctDataManager::loadMarkerState, this, &OctMarkerManager::loadMarkerStateSlot);
 	connect(&dataManager, &OctDataManager::loadMarkerStateAll, this, &OctMarkerManager::reloadMarkerStateSlot);
 
-	markerObj.push_back(new BScanSegmentation(this));
-	markerObj.push_back(new BScanIntervalMarker(this));
+	bscanMarkerObj.push_back(new BScanSegmentation(this));
+	bscanMarkerObj.push_back(new BScanIntervalMarker(this));
 	
-	for(BscanMarkerBase* obj : markerObj)
+	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
 		obj->activate(false);
 		connect(obj, &BscanMarkerBase::requestUpdate, this, &OctMarkerManager::udateFromMarkerModul);
@@ -54,7 +54,7 @@ OctMarkerManager::OctMarkerManager()
 
 OctMarkerManager::~OctMarkerManager()
 {
-	for(BscanMarkerBase* obj : markerObj)
+	for(BscanMarkerBase* obj : bscanMarkerObj)
 		delete obj;
 //	saveMarkerDefault();
 }
@@ -88,7 +88,7 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 	actBScan = 0;
 
 
-	for(BscanMarkerBase* obj : markerObj)
+	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
 		const QString& markerId = obj->getMarkerId();
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
@@ -105,22 +105,22 @@ void OctMarkerManager::setMarker(int id)
 {
 	BscanMarkerBase* newMarker = nullptr;
 		
-	if(id < 0 || static_cast<std::size_t>(id) >= markerObj.size())
+	if(id < 0 || static_cast<std::size_t>(id) >= bscanMarkerObj.size())
 		newMarker = nullptr;
 	else
-		newMarker = markerObj.at(id);
+		newMarker = bscanMarkerObj.at(id);
 	
-	if(newMarker != actMarker)
+	if(newMarker != actBscanMarker)
 	{
-		actMarkerId = id;
-		if(actMarker)
-			actMarker->activate(false);
+		actBscanMarkerId = id;
+		if(actBscanMarker)
+			actBscanMarker->activate(false);
 		if(newMarker)
 			newMarker->activate(true);
 		
-		actMarker = newMarker;
+		actBscanMarker = newMarker;
 		emit(bscanChanged(actBScan));
-		emit(markerChanged(actMarker));
+		emit(markerChanged(actBscanMarker));
 	}
 }
 
@@ -136,7 +136,7 @@ void OctMarkerManager::saveMarkerStateSlot(const OctData::Series* s)
 		return;
 
 
-	for(BscanMarkerBase* obj : markerObj)
+	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
 		const QString& markerId = obj->getMarkerId();
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
@@ -156,7 +156,7 @@ void OctMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 		return;
 
 
-	for(BscanMarkerBase* obj : markerObj)
+	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
 		const QString& markerId = obj->getMarkerId();
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
@@ -168,7 +168,7 @@ void OctMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 void OctMarkerManager::udateFromMarkerModul()
 {
 	 QObject* obj = sender();
-	 if(obj == actMarker)
+	 if(obj == actBscanMarker)
 	 {
 		 emit(bscanChanged(actBScan));
 	 }

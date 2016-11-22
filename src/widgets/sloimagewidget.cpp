@@ -160,7 +160,7 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bsc
 
 	if(paintMarker)
 	{
-		BscanMarkerBase* actMarker = markerManger.getActMarker();
+		BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 		if(actMarker)
 			actMarker->drawBScanSLOLine(painter, bscanNr, start_px, end_px, this);
 	}
