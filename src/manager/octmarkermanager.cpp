@@ -1,4 +1,4 @@
-#include "bscanmarkermanager.h"
+#include "octmarkermanager.h"
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
@@ -29,15 +29,15 @@
 namespace bpt = boost::property_tree;
 
 
-BScanMarkerManager::BScanMarkerManager()
+OctMarkerManager::OctMarkerManager()
 : QObject()
 {
 	
 	OctDataManager& dataManager = OctDataManager::getInstance();
-	connect(&dataManager, &OctDataManager::seriesChanged  , this, &BScanMarkerManager::showSeries         );
-	connect(&dataManager, &OctDataManager::saveMarkerState, this, &BScanMarkerManager::saveMarkerStateSlot);
-	connect(&dataManager, &OctDataManager::loadMarkerState, this, &BScanMarkerManager::loadMarkerStateSlot);
-	connect(&dataManager, &OctDataManager::loadMarkerStateAll, this, &BScanMarkerManager::reloadMarkerStateSlot);
+	connect(&dataManager, &OctDataManager::seriesChanged  , this, &OctMarkerManager::showSeries         );
+	connect(&dataManager, &OctDataManager::saveMarkerState, this, &OctMarkerManager::saveMarkerStateSlot);
+	connect(&dataManager, &OctDataManager::loadMarkerState, this, &OctMarkerManager::loadMarkerStateSlot);
+	connect(&dataManager, &OctDataManager::loadMarkerStateAll, this, &OctMarkerManager::reloadMarkerStateSlot);
 
 	markerObj.push_back(new BScanSegmentation(this));
 	markerObj.push_back(new BScanIntervalMarker(this));
@@ -45,14 +45,14 @@ BScanMarkerManager::BScanMarkerManager()
 	for(BscanMarkerBase* obj : markerObj)
 	{
 		obj->activate(false);
-		connect(obj, &BscanMarkerBase::requestUpdate, this, &BScanMarkerManager::udateFromMarkerModul);
+		connect(obj, &BscanMarkerBase::requestUpdate, this, &OctMarkerManager::udateFromMarkerModul);
 	}
 	
 	setMarker(0);
 }
 
 
-BScanMarkerManager::~BScanMarkerManager()
+OctMarkerManager::~OctMarkerManager()
 {
 	for(BscanMarkerBase* obj : markerObj)
 		delete obj;
@@ -61,7 +61,7 @@ BScanMarkerManager::~BScanMarkerManager()
 
 
 
-void BScanMarkerManager::chooseBScan(int bscan)
+void OctMarkerManager::chooseBScan(int bscan)
 {
 	if(bscan == actBScan)
 		return;
@@ -77,7 +77,7 @@ void BScanMarkerManager::chooseBScan(int bscan)
 }
 
 
-void BScanMarkerManager::showSeries(const OctData::Series* s)
+void OctMarkerManager::showSeries(const OctData::Series* s)
 {
 	series = s;
 	bpt::ptree* markerTree = OctDataManager::getInstance().getMarkerTree(s);
@@ -101,7 +101,7 @@ void BScanMarkerManager::showSeries(const OctData::Series* s)
 }
 
 
-void BScanMarkerManager::setMarker(int id)
+void OctMarkerManager::setMarker(int id)
 {
 	BscanMarkerBase* newMarker = nullptr;
 		
@@ -125,7 +125,7 @@ void BScanMarkerManager::setMarker(int id)
 }
 
 
-void BScanMarkerManager::saveMarkerStateSlot(const OctData::Series* s)
+void OctMarkerManager::saveMarkerStateSlot(const OctData::Series* s)
 {
 	if(series != s)
 		return;
@@ -145,7 +145,7 @@ void BScanMarkerManager::saveMarkerStateSlot(const OctData::Series* s)
 }
 
 
-void BScanMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
+void OctMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 {
 	if(series != s)
 		return;
@@ -165,7 +165,7 @@ void BScanMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 }
 
 
-void BScanMarkerManager::udateFromMarkerModul()
+void OctMarkerManager::udateFromMarkerModul()
 {
 	 QObject* obj = sender();
 	 if(obj == actMarker)

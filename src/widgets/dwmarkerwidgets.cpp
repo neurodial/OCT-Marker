@@ -1,15 +1,15 @@
 #include "dwmarkerwidgets.h"
 
-#include <manager/bscanmarkermanager.h>
+#include <manager/octmarkermanager.h>
 #include <markermodules/bscanmarkerbase.h>
 
 
-DWMarkerWidgets::DWMarkerWidgets(BScanMarkerManager* markerManager, QWidget* parent)
+DWMarkerWidgets::DWMarkerWidgets(OctMarkerManager* markerManager, QWidget* parent)
 : QDockWidget(parent)
 , markerManager(markerManager)
 {
 	setWindowTitle(tr("Marker widgets"));
-	connect(markerManager, &BScanMarkerManager::markerChanged, this, &DWMarkerWidgets::markerChanged);
+	connect(markerManager, &OctMarkerManager::markerChanged, this, &DWMarkerWidgets::markerChanged);
 
 	markerChanged(markerManager->getActMarker());
 }

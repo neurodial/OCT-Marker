@@ -9,7 +9,7 @@ namespace OctData { class BScan; }
 
 class QWheelEvent;
 class QMouseEvent;
-class BScanMarkerManager;
+class OctMarkerManager;
 
 class BScanMarkerWidget : public CVImageWidget
 {
@@ -21,7 +21,7 @@ class BScanMarkerWidget : public CVImageWidget
 	bool markerActiv = false;
 	bool mouseInWidget = false;*/
 
-	BScanMarkerManager& markerManger;
+	OctMarkerManager& markerManger;
 	
 	QAction*                                saveRawImageAction = nullptr;
 	QAction*                                saveRawMatAction   = nullptr;
@@ -40,7 +40,7 @@ class BScanMarkerWidget : public CVImageWidget
 	bool checkControlUsed(QKeyEvent  * event);
 	bool checkControlUsed(bool modPressed);
 public:
-	BScanMarkerWidget(BScanMarkerManager& markerManger);
+	BScanMarkerWidget(OctMarkerManager& markerManger);
 
 	virtual ~BScanMarkerWidget();
 

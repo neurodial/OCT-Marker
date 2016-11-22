@@ -17,13 +17,13 @@ class QGraphicsView;
 
 // class QColor;
 class QPainter;
-class BScanMarkerManager;
+class OctMarkerManager;
 
 class SLOImageWidget : public CVImageWidget
 {
 	Q_OBJECT
 
-	BScanMarkerManager& markerManger;
+	OctMarkerManager& markerManger;
 	QGraphicsView* gv = nullptr;
 	QGraphicsScene* scene = nullptr;
 	
@@ -34,7 +34,7 @@ class SLOImageWidget : public CVImageWidget
 	void createIntervallColors();
 	void deleteIntervallColors();
 public:
-	SLOImageWidget(BScanMarkerManager& markerManger);
+	SLOImageWidget(OctMarkerManager& markerManger);
 
     virtual ~SLOImageWidget();
 

@@ -13,7 +13,7 @@ class QKeyEvent;
 class QEvent;
 class QToolBar;
 
-class BScanMarkerManager;
+class OctMarkerManager;
 class SLOImageWidget;
 
 
@@ -37,7 +37,7 @@ public:
 	};
 
 
-	BscanMarkerBase(BScanMarkerManager* markerManager) : markerManager(markerManager) {}
+	BscanMarkerBase(OctMarkerManager* markerManager) : markerManager(markerManager) {}
 	virtual ~BscanMarkerBase()                                      {}
 	
 	virtual void drawBScanSLOLine(QPainter&, int /*bscanNr*/, const OctData::CoordSLOpx& /*start_px*/, const OctData::CoordSLOpx& /*end_px*/, SLOImageWidget*) const
@@ -73,7 +73,7 @@ signals:
 	
 	
 protected:
-	BScanMarkerManager* const markerManager;
+	OctMarkerManager* const markerManager;
 	
 	void connectToolBar(QToolBar* toolbar);
 	

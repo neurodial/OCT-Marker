@@ -7,7 +7,7 @@
 #include <QToolBar>
 
 
-#include <manager/bscanmarkermanager.h>
+#include <manager/octmarkermanager.h>
 
 std::size_t BscanMarkerBase::getActBScanNr() const
 {

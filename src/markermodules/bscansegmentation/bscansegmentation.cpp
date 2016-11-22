@@ -7,7 +7,7 @@
 // #include <QAction>
 #include <QWidget>
 
-#include <manager/bscanmarkermanager.h>
+#include <manager/octmarkermanager.h>
 
 #include <widgets/bscanmarkerwidget.h>
 
@@ -25,7 +25,7 @@
 #include "bscanseglocalop.h"
 
 
-BScanSegmentation::BScanSegmentation(BScanMarkerManager* markerManager)
+BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 {
 	name = tr("Segmentation marker");

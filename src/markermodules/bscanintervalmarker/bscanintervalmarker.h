@@ -15,7 +15,7 @@ class BScanIntervalMarker : public BscanMarkerBase
 {
 	Q_OBJECT
 public:
-	BScanIntervalMarker(BScanMarkerManager* markerManager);
+	BScanIntervalMarker(OctMarkerManager* markerManager);
 
 	typedef IntervalMarker::Marker Marker;
 	typedef boost::icl::interval_map<int, Marker, boost::icl::partial_enricher> MarkerMap;

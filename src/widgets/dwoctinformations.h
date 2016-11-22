@@ -14,7 +14,7 @@ namespace OctData
 #include <ui_octinformations.h>
 
 class QFormLayout;
-class BScanMarkerManager;
+class OctMarkerManager;
 class QLabel;
 
 
@@ -33,7 +33,7 @@ public:
 	explicit DwOctInformations(QWidget *parent = nullptr);
 	virtual ~DwOctInformations() = default;
 	
-	void setBScanMarkerManager(BScanMarkerManager* manager);
+	void setBScanMarkerManager(OctMarkerManager* manager);
 
 public slots:
 	void setPatient(const OctData::Patient* patient);
@@ -47,7 +47,7 @@ private:
 	QFormLayout* seriesInformations  = nullptr;
 	QFormLayout* bscanInformations   = nullptr;
 
-	BScanMarkerManager* markerManager = nullptr;
+	OctMarkerManager* markerManager = nullptr;
 
 
 	// BScan informations

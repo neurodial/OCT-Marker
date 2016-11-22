@@ -77,7 +77,7 @@ class BScanSegmentation : public BscanMarkerBase
 
 public:
 
-	BScanSegmentation(BScanMarkerManager* markerManager);
+	BScanSegmentation(OctMarkerManager* markerManager);
 	virtual ~BScanSegmentation();
 
 	QToolBar* createToolbar(QObject* parent) override;

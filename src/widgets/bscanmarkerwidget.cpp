@@ -1,6 +1,6 @@
 #include "bscanmarkerwidget.h"
 
-#include <manager/bscanmarkermanager.h>
+#include <manager/octmarkermanager.h>
 #include <manager/octdatamanager.h>
 
 #include <markermodules/bscanmarkerbase.h>
@@ -33,7 +33,7 @@ namespace
 	}
 }
 
-BScanMarkerWidget::BScanMarkerWidget(BScanMarkerManager& markerManger)
+BScanMarkerWidget::BScanMarkerWidget(OctMarkerManager& markerManger)
 : CVImageWidget()
 , markerManger(markerManger)
 {
@@ -43,10 +43,10 @@ BScanMarkerWidget::BScanMarkerWidget(BScanMarkerManager& markerManger)
 	addZoomItems();
 
 	connect(&octdataManager, &OctDataManager::seriesChanged   , this, &BScanMarkerWidget::cscanLoaded         );
-	connect(&markerManger  , &BScanMarkerManager::bscanChanged, this, &BScanMarkerWidget::bscanChanged        );
+	connect(&markerManger  , &OctMarkerManager::bscanChanged, this, &BScanMarkerWidget::bscanChanged        );
 	//connect(&markerManger, &BScanMarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
 
-	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &BScanMarkerManager::inkrementBScan);
+	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &OctMarkerManager::inkrementBScan);
 
 	connect(&ProgramOptions::bscansShowSegmentationslines, &OptionBool::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 	

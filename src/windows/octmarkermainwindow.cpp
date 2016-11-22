@@ -23,7 +23,7 @@
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
 
-#include <manager/bscanmarkermanager.h>
+#include <manager/octmarkermanager.h>
 #include <manager/octdatamanager.h>
 #include <manager/octmarkerio.h>
 #include <markermodules/bscanmarkerbase.h>
@@ -53,7 +53,7 @@
 
 OCTMarkerMainWindow::OCTMarkerMainWindow()
 : QMainWindow()
-, markerManager      (new BScanMarkerManager      )
+, markerManager      (new OctMarkerManager      )
 , dwSloImage         (new DWSloImage(*markerManager))
 , bscanMarkerWidget  (new BScanMarkerWidget(*markerManager))
 {
@@ -394,7 +394,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		toolBar->addAction(markerAction);
 		++id;
 	}
-	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), markerManager, &BScanMarkerManager::setMarker);
+	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), markerManager, &OctMarkerManager::setMarker);
 	
 	addToolBar(toolBar);
 }

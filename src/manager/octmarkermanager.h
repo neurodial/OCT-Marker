@@ -15,12 +15,12 @@ namespace OctData
 class BscanMarkerBase;
 class SloMarkerBase;
 
-class BScanMarkerManager : public QObject
+class OctMarkerManager : public QObject
 {
 public:
 
-	BScanMarkerManager();
-	virtual ~BScanMarkerManager();
+	OctMarkerManager();
+	virtual ~OctMarkerManager();
 
 	int getActBScan() const                                         { return actBScan; }
 

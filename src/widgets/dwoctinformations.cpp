@@ -8,7 +8,7 @@
 
 #include <manager/octdatamanager.h>
 
-#include <manager/bscanmarkermanager.h>
+#include <manager/octmarkermanager.h>
 
 #include <QFormLayout>
 #include <QLabel>
@@ -125,12 +125,12 @@ DwOctInformations::DwOctInformations(QWidget* parent)
 
 
 
-void DwOctInformations::setBScanMarkerManager(BScanMarkerManager* const manager)
+void DwOctInformations::setBScanMarkerManager(OctMarkerManager* const manager)
 {
 	if(markerManager)
-		disconnect(markerManager, &BScanMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan);
+		disconnect(markerManager, &OctMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan);
 	if(manager)
-		connect(manager, &BScanMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan);
+		connect(manager, &OctMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan);
 
 	groupBoxBScan->setVisible(manager != nullptr);
 

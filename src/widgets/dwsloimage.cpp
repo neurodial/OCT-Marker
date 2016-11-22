@@ -4,7 +4,7 @@
 #include "wgsloimage.h"
 
 
-DWSloImage::DWSloImage(BScanMarkerManager& markerManger)
+DWSloImage::DWSloImage(OctMarkerManager& markerManger)
 : sloWidget(new WgSloImage(markerManger))
 // : imageWidget(new SLOImageWidget(markerManger))
 // , markerManger(markerManger)

@@ -15,7 +15,7 @@
 #include <QMouseEvent>
 #include <widgets/bscanmarkerwidget.h>
 
-#include <manager/bscanmarkermanager.h>
+#include <manager/octmarkermanager.h>
 #include <helper/actionclasses.h>
 
 #include <octdata/datastruct/series.h>
@@ -34,7 +34,7 @@ namespace
 }
 
 
-BScanIntervalMarker::BScanIntervalMarker(BScanMarkerManager* markerManager)
+BScanIntervalMarker::BScanIntervalMarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 {
 	name = tr("Interval marker");

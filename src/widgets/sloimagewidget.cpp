@@ -8,7 +8,7 @@
 #include <octdata/datastruct/coordslo.h>
 #include <octdata/datastruct/bscan.h>
 
-#include <manager/bscanmarkermanager.h>
+#include <manager/octmarkermanager.h>
 #include <manager/octdatamanager.h>
 
 #include <markermodules/bscanmarkerbase.h>
@@ -21,14 +21,14 @@
 
 #include <markerobjects/rectitem.h>
 
-SLOImageWidget::SLOImageWidget(BScanMarkerManager& markerManger)
+SLOImageWidget::SLOImageWidget(OctMarkerManager& markerManger)
 : markerManger(markerManger)
 , drawBScans(ProgramOptions::sloShowBscans())
 , drawOnylActBScan(ProgramOptions::sloShowOnylActBScan())
 {
 	OctDataManager& octDataManager = OctDataManager::getInstance();
 	connect(&octDataManager, &OctDataManager::seriesChanged   , this, &SLOImageWidget::reladSLOImage);
-	connect(&markerManger  , &BScanMarkerManager::bscanChanged, this, &SLOImageWidget::bscanChanged );
+	connect(&markerManger  , &OctMarkerManager::bscanChanged, this, &SLOImageWidget::bscanChanged );
 
 	setMinimumSize(150,150);
 	setFocusPolicy(Qt::StrongFocus);

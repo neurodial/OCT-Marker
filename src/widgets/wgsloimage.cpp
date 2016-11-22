@@ -1,14 +1,14 @@
 #include "wgsloimage.h"
 
 #include "sloimagewidget.h"
-#include <manager/bscanmarkermanager.h>
+#include <manager/octmarkermanager.h>
 #include <data_structure/programoptions.h>
 
 #include <QResizeEvent>
 #include <QToolBar>
 #include <QAction>
 
-WgSloImage::WgSloImage(BScanMarkerManager& markerManger)
+WgSloImage::WgSloImage(OctMarkerManager& markerManger)
 : QMainWindow(0)
 , imageWidget(new SLOImageWidget(markerManger))
 , markerManger(markerManger)

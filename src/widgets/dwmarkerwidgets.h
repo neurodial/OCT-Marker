@@ -6,7 +6,7 @@
 
 // class QStackedWidget;
 
-class BScanMarkerManager;
+class OctMarkerManager;
 class BscanMarkerBase;
 
 class DWMarkerWidgets : public QDockWidget
@@ -14,10 +14,10 @@ class DWMarkerWidgets : public QDockWidget
 	Q_OBJECT
 
     // QStackedWidget* stackedMarkerWidgets;
-	BScanMarkerManager* markerManager;
+	OctMarkerManager* markerManager;
 
 public:
-	explicit DWMarkerWidgets(BScanMarkerManager* markerManager, QWidget* parent);
+	explicit DWMarkerWidgets(OctMarkerManager* markerManager, QWidget* parent);
 	virtual ~DWMarkerWidgets();
 
 private slots:
