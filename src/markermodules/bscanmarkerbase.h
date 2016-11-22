@@ -54,7 +54,6 @@ public:
 	virtual bool setMarkerActive  (bool        , BScanMarkerWidget*);
 	
 	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
-	virtual QWidget*  createWidget (QWidget*)                       { return nullptr; }
 	virtual QWidget*  getWidget ()                                  { return nullptr; }
 	
 	virtual const QString& getName()                                { return name; }

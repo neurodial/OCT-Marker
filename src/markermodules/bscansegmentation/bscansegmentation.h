@@ -83,7 +83,6 @@ public:
 	virtual ~BScanSegmentation();
 
 	QToolBar* createToolbar(QObject* parent) override;
-	virtual QWidget* createWidget(QWidget*)  override;
 	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGSegmentation; }
 	
 	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect&) const override;

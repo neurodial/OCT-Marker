@@ -53,12 +53,6 @@ BScanSegmentation::~BScanSegmentation()
 	delete widget;
 }
 
-
-QWidget* BScanSegmentation::createWidget(QWidget* parent)
-{
-	return new QWidget(parent);;
-}
-
 QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 {
 	BScanSegToolBar* toolBar = new BScanSegToolBar(this, parent);
@@ -150,7 +144,9 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 			++p10;
 			++p01;
 		}
+		T::paint(painter, p00, p00, p01, endW, h, static_cast<int>(factor)); // last col p10 replaced by p00, because p10 is outside
 	}
+	// TODO draw last row
 }
 
 void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat)
