@@ -47,17 +47,12 @@ SLOImageWidget::SLOImageWidget(OctMarkerManager& markerManger)
 	RectItem* currentRect = new RectItem();
 	currentRect->setDescription("ONH");
 	currentRect->setRect(QRectF(50, 50, 50, 50));
-	currentRect->setSelected(true);
+// 	currentRect->setSelected(true);
 	scene->addItem(currentRect);
-
 
 	// gv->show();
 	gv->setGeometry(rect());
-
 	gv->setVisible(ProgramOptions::sloShowLabels());
-
-	
-	// createIntervallColors();
 }
 
 SLOImageWidget::~SLOImageWidget()
@@ -213,9 +208,11 @@ void SLOImageWidget::setImageSize(QSize size)
 	QPoint p = imageWidget->pos();
 	QRect  r = imageWidget->rect();*/
 	gv->setGeometry(0, 0, scaledImageWidth(), scaledImageHight());
+	// gv->setGeometry(0, 0, 1, 1);
 	// gv->setPos(imageWidget->pos());
 	gv->resetTransform();
 	gv->scale(getImageScaleFactor(), getImageScaleFactor());
+// 	gv->scale(getImageScaleFactor()*scaledImageWidth(), getImageScaleFactor()*scaledImageHight());
 	// gv->setSceneRect(0, 0, imageWidth(), imageHight());
 }
 
