@@ -362,6 +362,9 @@ bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 		case Qt::Key_4:
 			setLocalMethod(BScanSegmentationMarker::LocalMethod::Threshold);
 			return true;
+		case Qt::Key_5:
+			setLocalMethod(BScanSegmentationMarker::LocalMethod::NN);
+			return true;
 	}
 
 	return false;

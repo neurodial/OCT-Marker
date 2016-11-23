@@ -151,27 +151,27 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	QButtonGroup* localThresholdBG = new QButtonGroup(this);
 	localThresholdBG->addButton(radioLocalThresholdAbsolut );
 	localThresholdBG->addButton(radioLocalThresholdRelative);
+	setLocalThresholdValues();
 	connect(localThresholdBG               , static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalThresh);
 
 
-	setLocalThresholdValues();
 
 
 
-	connect(localSizePaintSpinBox          , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalPaint);
+	connect(localSizePaintSpinBox             , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)               , this, &WGSegmentation::activateLocalPaint    );
 
-	connect(localSizeThresholdDirWidthSpinBox , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalThreshDir);
-	connect(localSizeThresholdDirHeightSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalThreshDir);
-	connect(checkBoxApplyOnMove               , &QCheckBox::toggled                                                  , this, &WGSegmentation::activateLocalThreshDir);
+	connect(localSizeThresholdDirWidthSpinBox , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)               , this, &WGSegmentation::activateLocalThreshDir);
+	connect(localSizeThresholdDirHeightSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)               , this, &WGSegmentation::activateLocalThreshDir);
+	connect(checkBoxApplyOnMove               , &QCheckBox::toggled                                                        , this, &WGSegmentation::activateLocalThreshDir);
 
-	connect(localSizeOperationWidthSpinBox , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalOperation);
-	connect(localSizeOperationHeightSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalOperation);
+	connect(localSizeOperationWidthSpinBox    , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)               , this, &WGSegmentation::activateLocalOperation);
+	connect(localSizeOperationHeightSpinBox   , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)               , this, &WGSegmentation::activateLocalOperation);
 
 
-	connect(localSizeThresholdWidthSpinBox , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalThresh);
-	connect(localSizeThresholdHeightSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalThresh);
-	connect(localThresholdAboluteSpinbox , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalThresh);
-	connect(localThresholdRelativeSpinBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged)         , this, &WGSegmentation::activateLocalThresh);
+	connect(localSizeThresholdWidthSpinBox    , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)               , this, &WGSegmentation::activateLocalThresh   );
+	connect(localSizeThresholdHeightSpinBox   , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)               , this, &WGSegmentation::activateLocalThresh   );
+	connect(localThresholdAboluteSpinbox      , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)               , this, &WGSegmentation::activateLocalThreshAbs);
+	connect(localThresholdRelativeSpinBox     , static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentation::activateLocalThreshRel);
 
 
 	connect(switchSizeLocalThresholdDirButton, &QAbstractButton::clicked, this, &WGSegmentation::switchSizeLocalThresholdDir);
@@ -361,6 +361,28 @@ void WGSegmentation::activateLocalThresh()
 		slotLocalThresh(true);
 	else
 		radioLocalThreshold->setChecked(true);
+}
+
+void WGSegmentation::activateLocalThreshAbs()
+{
+	if(radioLocalThresholdAbsolut->isChecked())
+		slotLocalThresh(true);
+	else
+	{
+		radioLocalThresholdAbsolut->setChecked(true);
+		activateLocalThresh();
+	}
+}
+
+void WGSegmentation::activateLocalThreshRel()
+{
+	if(radioLocalThresholdRelative->isChecked())
+		slotLocalThresh(true);
+	else
+	{
+		radioLocalThresholdRelative->setChecked(true);
+		activateLocalThresh();
+	}
 }
 
 void WGSegmentation::activateLocalThreshDir()

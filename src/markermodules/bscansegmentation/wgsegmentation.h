@@ -108,6 +108,8 @@ private slots:
 	void slotBscanInitFromThresh();
 
 	void activateLocalThresh();
+	void activateLocalThreshRel();
+	void activateLocalThreshAbs();
 	void activateLocalThreshDir();
 	void activateLocalPaint();
 	void activateLocalOperation();

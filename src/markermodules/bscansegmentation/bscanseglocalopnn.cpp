@@ -289,8 +289,8 @@ void BScanSegLocalOpNN::learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callb
 
 	CvANN_MLP_TrainParams params;
 	params.train_method = CvANN_MLP_TrainParams::BACKPROP;
-	params.bp_dw_scale = 0.05f;
-	params.bp_moment_scale = 0.15f;
+	params.bp_dw_scale = 0.005f;
+	params.bp_moment_scale = 0.05f;
 	params.term_crit = criteria;
 
 	mlp->train(tranSampels, outputSampels, cv::Mat(), cv::Mat(), params, CvANN_MLP::NO_OUTPUT_SCALE | CvANN_MLP::NO_INPUT_SCALE);
