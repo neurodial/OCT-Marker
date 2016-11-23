@@ -278,48 +278,6 @@ void BScanSegAlgorithm::initFromSegline(const OctData::BScan& bscan, cv::Mat& se
 }
 
 
-/*
-void BScanSegmentation::initFromSegmentline()
-{
-	const OctData::Series* series = getSeries();
-
-	SegMats::iterator segMatIt = segments.begin();
-
-	for(const OctData::BScan* bscan : series->getBScans())
-	{
-		const OctData::BScan::Segmentline& segline = bscan->getSegmentLine(OctData::BScan::SegmentlineType::ILM);
-		cv::Mat* mat = *segMatIt;
-		if(mat && !mat->empty())
-		{
-			internalMatType* colIt = mat->ptr<internalMatType>();
-			std::size_t colSize = static_cast<std::size_t>(mat->cols);
-			std::size_t rowSize = static_cast<std::size_t>(mat->rows);
-			for(double value : segline)
-			{
-				const std::size_t rowCh = std::min(static_cast<std::size_t>(value), rowSize);
-				internalMatType* rowIt = colIt;
-
-				for(std::size_t row = 0; row < rowCh; ++row)
-				{
-					*rowIt =  1;
-					rowIt += colSize;
-				}
-
-				for(std::size_t row = rowCh; row < rowSize; ++row)
-				{
-					*rowIt = 0;
-					rowIt += colSize;
-				}
-
-				++colIt;
-			}
-		}
-		++segMatIt;
-	}
-	requestUpdate();
-}
-*/
-
 
 void BScanSegAlgorithm::openClose(cv::Mat& dest, cv::Mat* src)
 {

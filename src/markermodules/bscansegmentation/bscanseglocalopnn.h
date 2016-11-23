@@ -8,8 +8,9 @@ class Callback;
 
 class BScanSegLocalOpNN : public BScanSegLocalOp
 {
-	static const int paintSizeWidth   =  6;
-	static const int paintSizeHeight  = 16;
+	static const int paintSizeWidth   =  5;
+	static const int paintSizeHeight  = 12;
+	static const std::size_t maskSize = paintSizeWidth*paintSizeHeight*4;
 	bool learningNN = true;
 
 	CvANN_MLP*             mlp    = nullptr;
@@ -19,9 +20,10 @@ class BScanSegLocalOpNN : public BScanSegLocalOp
 
 	void learnNNSubMat(const cv::Mat& image, const cv::Mat& seg);
 
-	bool getSubMaps(cv::Mat& image, cv::Mat& seg, int x, int y);
-	bool getSubMaps(cv::Mat& image, cv::Mat& seg, int x, int y, std::size_t bscanNr);
-	bool getSubMaps(const cv::Mat& image, const cv::Mat& seg, cv::Mat& imageOut, cv::Mat& segOut, int x, int y);
+	int getSubMaps(cv::Mat& image, cv::Mat& seg, int x, int y);
+	int getSubMaps(cv::Mat& image, cv::Mat& seg, int x, int y, std::size_t bscanNr);
+	int getSubMaps(const cv::Mat& image, const cv::Mat& seg, cv::Mat& imageOut, cv::Mat& segOut, int x, int y);
+	int getSubMapSize(const cv::Mat& mat, int x, int y);
 
 
 	void learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callback&);
