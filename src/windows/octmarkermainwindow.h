@@ -23,7 +23,7 @@ class OCTMarkerMainWindow : public QMainWindow
 	
 	OctMarkerManager* markerManager = nullptr;
 
-	DWSloImage*    dwSloImage  = nullptr;
+	QDockWidget*       dwSloImage        = nullptr;
 	BScanMarkerWidget* bscanMarkerWidget = nullptr;
 
 

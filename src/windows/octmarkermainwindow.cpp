@@ -13,7 +13,7 @@
 #include <QSpinBox>
 #include <QLabel>
 
-#include <widgets/dwsloimage.h>
+#include <widgets/wgsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
 #include <widgets/wgoctdatatree.h>
 #include <widgets/dwoctinformations.h>
@@ -54,7 +54,7 @@
 OCTMarkerMainWindow::OCTMarkerMainWindow()
 : QMainWindow()
 , markerManager      (new OctMarkerManager      )
-, dwSloImage         (new DWSloImage(*markerManager))
+, dwSloImage         (new QDockWidget(this))
 , bscanMarkerWidget  (new BScanMarkerWidget(*markerManager))
 {
 	QSettings& settings = ProgramOptions::getSettings();
@@ -71,6 +71,8 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 	createMarkerToolbar();
 	// DockWidgets
 	dwSloImage->setObjectName("DWSloImage");
+	dwSloImage->setWidget(new WgSloImage(*markerManager, this));
+	dwSloImage->setWindowTitle(tr("SLO image"));
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
 
 

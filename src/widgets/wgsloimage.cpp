@@ -8,8 +8,8 @@
 #include <QToolBar>
 #include <QAction>
 
-WgSloImage::WgSloImage(OctMarkerManager& markerManger)
-: QMainWindow(0)
+WgSloImage::WgSloImage(OctMarkerManager& markerManger, QWidget* parent)
+: QMainWindow(parent)
 , imageWidget(new SLOImageWidget(markerManger))
 , markerManger(markerManger)
 {
