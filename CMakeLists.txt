@@ -73,6 +73,7 @@ add_executable(octmarker src/main.cpp ${octmarker_SRCS}
 	${TRANSLATIONS})
 
 if(WIN32 AND MSVC)
+	# suppress dos window
 	set_target_properties(octmarker PROPERTIES LINK_FLAGS_RELEASE "/subsystem:windows /ENTRY:mainCRTStartup")
 endif()
 
@@ -81,4 +82,3 @@ target_link_libraries(octmarker ${LibOctData_LIBRARIES})
 target_link_libraries(octmarker ${CppFramework_LIBRARIES})
 
 install(TARGETS octmarker RUNTIME DESTINATION bin)
-
