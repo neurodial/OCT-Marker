@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
 	QTranslator translator, translator2;
 	// translator.load("/usr/share/qt4/translations/qt_" + QLocale::system().name());
-	translator.load(QLocale::system(), "qt", "_", "/usr/share/qt4/translations", ".qm");
+	translator.load(QLocale::system(), "qt", "_", "/usr/share/qt5/translations", ".qm");
 
 	QFile file("octmarker-de.qm");
 	if(file.exists())
