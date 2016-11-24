@@ -16,10 +16,10 @@ BScanSegLocalOpNN::BScanSegLocalOpNN(BScanSegmentation& parent)
 {
 	cv::Mat layers = cv::Mat(4, 1, CV_32SC1);
 
-	layers.row(0) = cv::Scalar(maskSize);
+	layers.row(0) = cv::Scalar(maskSizeInput);
 	layers.row(1) = cv::Scalar(150);
 	layers.row(2) = cv::Scalar(100);
-	layers.row(3) = cv::Scalar(maskSize);
+	layers.row(3) = cv::Scalar(maskSizeOutput);
 
 	mlp->create(layers, CvANN_MLP::SIGMOID_SYM, 1, 1);
 }
@@ -56,23 +56,28 @@ int BScanSegLocalOpNN::getSubMaps(const cv::Mat& image, const cv::Mat& seg, cv::
 	int rows = seg.rows;
 	int cols = seg.cols;
 
-	int x0 = std::max(x - paintSizeWidth , 0);
-	int x1 = std::min(x + paintSizeWidth , cols-1);
-	int y0 = std::max(y - paintSizeHeight, 0);
-	int y1 = std::min(y + paintSizeHeight, rows-1);
+	int x0i = std::max(x - paintSizeWidthInput , 0);
+	int x1i = std::min(x + paintSizeWidthInput , cols-1);
+	int x0o = std::max(x - paintSizeWidthOutput, 0);
+	int x1o = std::min(x + paintSizeWidthOutput, cols-1);
+	int y0  = std::max(y - paintSizeHeight     , 0);
+	int y1  = std::min(y + paintSizeHeight     , rows-1);
 
-	if(x0>=x1)
+	if(x0i>=x1i)
+		return 0;
+	if(x0o>=x1o)
 		return 0;
 	if(y0>=y1)
 		return 0;
 
-	int height = y1-y0;
-	int width  = x1-x0;
+	int height = y1 -y0 ;
+	int widthI = x1i-x0i;
+	// int widthO = x1o-x0o;
 
-	segOut   = seg(cv::Rect(x0, y0, x1-x0, y1-y0));
-	imageOut = image(cv::Rect(x0, y0, x1-x0, y1-y0));
+	segOut   = seg  (cv::Rect(x0o, y0, x1o-x0o, y1-y0));
+	imageOut = image(cv::Rect(x0i, y0, x1i-x0i, y1-y0));
 
-	return height*width;
+	return height*widthI;
 }
 
 int BScanSegLocalOpNN::getSubMapSize(const cv::Mat& mat, int x, int y)
@@ -80,20 +85,25 @@ int BScanSegLocalOpNN::getSubMapSize(const cv::Mat& mat, int x, int y)
 	int rows = mat.rows;
 	int cols = mat.cols;
 
-	int x0 = std::max(x - paintSizeWidth , 0);
-	int x1 = std::min(x + paintSizeWidth , cols-1);
-	int y0 = std::max(y - paintSizeHeight, 0);
-	int y1 = std::min(y + paintSizeHeight, rows-1);
+	int x0i = std::max(x - paintSizeWidthInput , 0);
+	int x1i = std::min(x + paintSizeWidthInput , cols-1);
+	int x0o = std::max(x - paintSizeWidthOutput, 0);
+	int x1o = std::min(x + paintSizeWidthOutput, cols-1);
+	int y0  = std::max(y - paintSizeHeight     , 0);
+	int y1  = std::min(y + paintSizeHeight     , rows-1);
 
-	if(x0>=x1)
+	if(x0i>=x1i)
+		return 0;
+	if(x0o>=x1o)
 		return 0;
 	if(y0>=y1)
 		return 0;
 
-	int height = y1-y0;
-	int width  = x1-x0;
+	int height = y1 -y0 ;
+	int widthI = x1i-x0i;
+	// int widthO = x1o-x0o;
 
-	return height*width;
+	return height*widthI;
 }
 
 
@@ -101,9 +111,14 @@ int BScanSegLocalOpNN::getSubMapSize(const cv::Mat& mat, int x, int y)
 
 void BScanSegLocalOpNN::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
 {
-	int sizeW = static_cast<int>(paintSizeWidth *factor + 0.5);
-	int sizeH = static_cast<int>(paintSizeHeight*factor + 0.5);
+	int sizeW    = static_cast<int>(paintSizeWidthInput *factor + 0.5);
+	int sizeWerg = static_cast<int>(paintSizeWidthOutput*factor + 0.5);
+	int sizeH    = static_cast<int>(paintSizeHeight*factor + 0.5);
 	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
+
+	QPen pen(Qt::blue);
+	painter.setPen(pen);
+	painter.drawRect(centerDrawPoint.x()-sizeWerg, centerDrawPoint.y()-sizeH, sizeWerg*2, sizeH*2);
 }
 
 
@@ -113,7 +128,7 @@ bool BScanSegLocalOpNN::applyNN(int x, int y)
 	cv::Mat image, seg;
 	getSubMaps(image, seg, x, y);
 
-	if(image.rows*image.cols != maskSize || seg.rows*seg.cols != maskSize)
+	if(image.rows*image.cols != maskSizeInput || seg.rows*seg.cols != maskSizeOutput)
 		return false;
 
 	cv::Mat imageFloat, segFloat;
@@ -170,7 +185,7 @@ void BScanSegLocalOpNN::learnNNSubMat(const cv::Mat& image, const cv::Mat& seg)
 	params.bp_moment_scale = 0.05f;
 	params.term_crit = criteria;
 
-	if(image.rows*image.cols != maskSize || seg.rows*seg.cols != maskSize)
+	if(image.rows*image.cols != maskSizeInput || seg.rows*seg.cols != maskSizeOutput)
 		return;
 
 	cv::Mat imageFloatLin, segFloatLin;
@@ -231,7 +246,7 @@ void BScanSegLocalOpNN::learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callb
 			{
 				for(int h2 = -learnAbs; h2 <= learnAbs; ++h2)
 				{
-					if(getSubMapSize(seg, w, h+h2) == maskSize)
+					if(getSubMapSize(seg, w, h+h2) == maskSizeInput)
 						++transampelsSize;
 				}
 			}
@@ -241,8 +256,8 @@ void BScanSegLocalOpNN::learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callb
 	}
 
 	cv::Mat tranSampels, outputSampels;
-	tranSampels  .create(transampelsSize, maskSize, cv::DataType<float>::type);
-	outputSampels.create(transampelsSize, maskSize, cv::DataType<float>::type);
+	tranSampels  .create(transampelsSize, maskSizeInput , cv::DataType<float>::type);
+	outputSampels.create(transampelsSize, maskSizeOutput, cv::DataType<float>::type);
 
 	int actTrainSampel = 0;
 	for(int h = startH; h < endH; ++h)
@@ -262,15 +277,16 @@ void BScanSegLocalOpNN::learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callb
 			{
 				for(int h2 = -learnAbs; h2 <= learnAbs; ++h2)
 				{
-					if(getSubMaps(image, seg, subImage, subSeg, w, h+h2) == maskSize)
+					if(getSubMaps(image, seg, subImage, subSeg, w, h+h2) == maskSizeInput)
 					{
 						cv::Mat imageFloatLin, segFloatLin;
 						convert2FloatRow(subImage, imageFloatLin, 1./255.                                    , -0.5);
 						convert2FloatRow(subSeg  , segFloatLin  , 1./BScanSegmentationMarker::paintArea1Value, -0.5);
 
-						cv::Rect actRec = cv::Rect(0, actTrainSampel, maskSize, 1);
-						imageFloatLin.copyTo(tranSampels  (actRec));
-						segFloatLin  .copyTo(outputSampels(actRec));
+						cv::Rect actRecI = cv::Rect(0, actTrainSampel, maskSizeInput , 1);
+						cv::Rect actRecO = cv::Rect(0, actTrainSampel, maskSizeOutput, 1);
+						imageFloatLin.copyTo(tranSampels  (actRecI));
+						segFloatLin  .copyTo(outputSampels(actRecO));
 						++actTrainSampel;
 					}
 				}
@@ -283,7 +299,7 @@ void BScanSegLocalOpNN::learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callb
 
 
 	CvTermCriteria criteria;
-	criteria.max_iter = 100;
+	criteria.max_iter = 200;
 	criteria.epsilon = 0.000001f;
 	criteria.type = CV_TERMCRIT_ITER | CV_TERMCRIT_EPS;
 

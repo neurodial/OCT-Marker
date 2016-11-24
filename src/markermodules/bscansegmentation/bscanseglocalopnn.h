@@ -8,10 +8,12 @@ class Callback;
 
 class BScanSegLocalOpNN : public BScanSegLocalOp
 {
-	static const int paintSizeWidth   =  5;
-	static const int paintSizeHeight  = 12;
-	static const std::size_t maskSize = paintSizeWidth*paintSizeHeight*4;
-	bool learningNN = true;
+	static const int paintSizeWidthInput    =  5;
+	static const int paintSizeWidthOutput   =  1;
+	static const int paintSizeHeight        = 12;
+	static const std::size_t maskSizeInput  = paintSizeWidthInput *paintSizeHeight*4;
+	static const std::size_t maskSizeOutput = paintSizeWidthOutput*paintSizeHeight*4;
+	bool learningNN = false;
 
 	CvANN_MLP*             mlp    = nullptr;
 
@@ -38,7 +40,7 @@ public:
 	bool startOnCoord(int /*x*/, int /*y*/) override                { return false; }
 
 	int getOperatorHeight()const            override                { return paintSizeHeight; }
-	int getOperatorWidth() const            override                { return paintSizeWidth ; }
+	int getOperatorWidth() const            override                { return paintSizeWidthInput ; }
 	bool getLearningNN()   const                                    { return learningNN; }
 
 	void setLearningNN(bool value)                                  { learningNN = value; }
