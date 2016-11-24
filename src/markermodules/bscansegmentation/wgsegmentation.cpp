@@ -8,6 +8,7 @@
 #include <helper/callback.h>
 
 #include <QButtonGroup>
+#include <QFileDialog>
 
 WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 : segmentation(parent)
@@ -219,7 +220,9 @@ void WGSegmentation::createConnections()
 
 	// for toggle cursor size
 	connect(buttonLocalNNLearnBScan  , &QAbstractButton::clicked, this, &WGSegmentation::slotNNLearnBScan);
-	connect(buttonLocalNNLearnBScan10, &QAbstractButton::clicked, this, &WGSegmentation::slotNNLearnBScans);
+	connect(buttonLocalNNSave        , &QAbstractButton::clicked, this, &WGSegmentation::slotNNSave      );
+	connect(buttonLocalNNLoad        , &QAbstractButton::clicked, this, &WGSegmentation::slotNNLoad      );
+	// connect(buttonLocalNNLearnBScan10, &QAbstractButton::clicked, this, &WGSegmentation::slotNNLearnBScans);
 
 	connect(buttonLocalThresholdDirUp   , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
 	connect(buttonLocalThresholdDirDown , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
@@ -480,12 +483,19 @@ void WGSegmentation::slotNNLearnBScan()
 	localOpNN->learnBScan(process);
 }
 
-void WGSegmentation::slotNNLearnBScans()
+void WGSegmentation::slotNNLoad()
 {
-	CallbackProgressDialog process("Learn BScans", "Cancel");
-	localOpNN->learnBScans(segmentation->getActBScanNr(), segmentation->getActBScanNr()+10, process);
+	QString file = QFileDialog::getOpenFileName(this, tr("Load NN"), QString(), "*.yml");
+	if(!file.isEmpty())
+		localOpNN->loadNN(file);
 }
 
+void WGSegmentation::slotNNSave()
+{
+	QString file = QFileDialog::getSaveFileName(this, tr("Save NN"), QString(), "*.yml");
+	if(!file.isEmpty())
+		localOpNN->saveNN(file);
+}
 
 
 

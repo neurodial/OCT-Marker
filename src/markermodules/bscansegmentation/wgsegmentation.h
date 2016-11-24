@@ -134,7 +134,8 @@ private slots:
 	void setLocalOperator(BScanSegmentationMarker::LocalMethod method);
 
 	void slotNNLearnBScan();
-	void slotNNLearnBScans();
+	void slotNNSave();
+	void slotNNLoad();
 };
 
 #endif // WGSEGMENTATION_H

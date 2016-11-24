@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>339</width>
-    <height>662</height>
+    <height>673</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1098,6 +1098,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="buttonLocalNNLearn">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Learn</string>
            </property>
@@ -1121,9 +1124,24 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="buttonLocalNNLearnBScan10">
+          <widget class="QToolButton" name="buttonLocalNNSave">
            <property name="text">
             <string>10</string>
+           </property>
+           <property name="icon">
+            <iconset theme="document-save" resource="../application.qrc">
+             <normaloff>:/icons/disk.png</normaloff>:/icons/disk.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="buttonLocalNNLoad">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset theme="document-open" resource="../application.qrc">
+             <normaloff>:/icons/folder.png</normaloff>:/icons/folder.png</iconset>
            </property>
           </widget>
          </item>

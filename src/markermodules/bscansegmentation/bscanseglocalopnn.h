@@ -45,6 +45,9 @@ public:
 
 	void learnBScan(Callback&);
 	void learnBScans(std::size_t start, std::size_t end, Callback&);
+
+	void loadNN(const QString& file);
+	void saveNN(const QString& file) const;
 };
 
 #endif // BSCANSEGLOCALOPNN_H

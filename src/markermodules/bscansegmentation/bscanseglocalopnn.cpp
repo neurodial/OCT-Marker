@@ -334,3 +334,18 @@ void BScanSegLocalOpNN::learnBScans(std::size_t start, std::size_t end, Callback
 	}
 }
 
+void BScanSegLocalOpNN::loadNN(const QString& file)
+{
+	mlp->load(file.toStdString().c_str(), "mlp");
+}
+
+
+void BScanSegLocalOpNN::saveNN(const QString& file) const
+{
+	cv::FileStorage fs(file.toStdString(), cv::FileStorage::WRITE); // or xml
+	mlp->write(*fs, "mlp"); // don't think too much about the deref, it casts to a FileNode
+}
+
+
+
+
