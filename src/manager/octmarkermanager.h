@@ -62,13 +62,15 @@ public slots:
 
 	virtual void showSeries(const OctData::Series* series);
 	
-	virtual void setMarker(int id);
+	virtual void setBscanMarker(int id);
+	virtual void setSloMarker  (int id);
 
 signals:
-	void bscanChanged   (int bscan);
-	void newSeriesShowed(const OctData::Series* series);
-	void newBScanShowed (const OctData::BScan * series);
-	void markerChanged  (BscanMarkerBase* marker);
+	void bscanChanged      (int bscan);
+	void newSeriesShowed   (const OctData::Series* series);
+	void newBScanShowed    (const OctData::BScan * series);
+	void bscanMarkerChanged(BscanMarkerBase* marker);
+	void sloMarkerChanged  (SloMarkerBase  * marker);
 
 private:
 	Q_OBJECT

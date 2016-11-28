@@ -18,13 +18,14 @@ class QGraphicsView;
 // class QColor;
 class QPainter;
 class OctMarkerManager;
+class SloMarkerBase;
 
 class SLOImageWidget : public CVImageWidget
 {
 	Q_OBJECT
 
 	OctMarkerManager& markerManger;
-	QGraphicsView* gv = nullptr;
+	QGraphicsView*  gv    = nullptr;
 	QGraphicsScene* scene = nullptr;
 	
 	// std::vector<QColor*> intervallColors;
@@ -33,6 +34,8 @@ class SLOImageWidget : public CVImageWidget
 
 	void createIntervallColors();
 	void deleteIntervallColors();
+
+	void setGraphicsViewSize(QSize size);
 public:
 	SLOImageWidget(OctMarkerManager& markerManger);
 
@@ -45,7 +48,6 @@ public:
 public slots:
 	void showBScans(bool show);
 	void showOnylActBScan(bool show);
-	void showLabels(bool show);
 
 protected:
 	void paintEvent(QPaintEvent* event);
@@ -56,6 +58,7 @@ protected:
 private slots:
 	void reladSLOImage();
 	void bscanChanged(int);
+	void sloMarkerChanged(SloMarkerBase* marker);
 };
 
 #endif // SLOIMAGE_H

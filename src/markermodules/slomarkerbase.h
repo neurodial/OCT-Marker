@@ -34,6 +34,7 @@ public:
 	virtual ~SloMarkerBase()                                        {}
 
 	virtual QGraphicsScene* getGraphicsScene()                      { return nullptr; }
+	virtual const QGraphicsScene* getGraphicsScene() const          { return nullptr; }
 
 
 	virtual void saveState(boost::property_tree::ptree&)            {}
@@ -46,6 +47,9 @@ public:
 	virtual const QString& getName()                                { return name; }
 	virtual const QString& getMarkerId()                            { return id;   }
 	virtual const QIcon&   getIcon()                                { return icon; }
+
+
+	virtual void activate(bool);
 
 protected:
 	OctMarkerManager* const markerManager;

@@ -42,7 +42,7 @@ BScanMarkerWidget::BScanMarkerWidget(OctMarkerManager& markerManger)
 
 	addZoomItems();
 
-	connect(&octdataManager, &OctDataManager::seriesChanged   , this, &BScanMarkerWidget::cscanLoaded         );
+	connect(&octdataManager, &OctDataManager::seriesChanged , this, &BScanMarkerWidget::cscanLoaded         );
 	connect(&markerManger  , &OctMarkerManager::bscanChanged, this, &BScanMarkerWidget::bscanChanged        );
 	//connect(&markerManger, &BScanMarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
 

@@ -396,7 +396,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		toolBar->addAction(markerAction);
 		++id;
 	}
-	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), markerManager, &OctMarkerManager::setMarker);
+	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), markerManager, &OctMarkerManager::setBscanMarker);
 	
 	addToolBar(toolBar);
 }

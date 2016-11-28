@@ -12,6 +12,7 @@
 #include <manager/octdatamanager.h>
 
 #include <markermodules/bscanmarkerbase.h>
+#include <markermodules/slomarkerbase.h>
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
@@ -19,16 +20,15 @@
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
 
-#include <markerobjects/rectitem.h>
-
 SLOImageWidget::SLOImageWidget(OctMarkerManager& markerManger)
 : markerManger(markerManger)
 , drawBScans(ProgramOptions::sloShowBscans())
 , drawOnylActBScan(ProgramOptions::sloShowOnylActBScan())
 {
 	OctDataManager& octDataManager = OctDataManager::getInstance();
-	connect(&octDataManager, &OctDataManager::seriesChanged   , this, &SLOImageWidget::reladSLOImage);
-	connect(&markerManger  , &OctMarkerManager::bscanChanged, this, &SLOImageWidget::bscanChanged );
+	connect(&octDataManager, &OctDataManager::seriesChanged     , this, &SLOImageWidget::reladSLOImage   );
+	connect(&markerManger  , &OctMarkerManager::bscanChanged    , this, &SLOImageWidget::bscanChanged    );
+	connect(&markerManger  , &OctMarkerManager::sloMarkerChanged, this, &SLOImageWidget::sloMarkerChanged);
 
 	setMinimumSize(150,150);
 	setFocusPolicy(Qt::StrongFocus);
@@ -40,19 +40,12 @@ SLOImageWidget::SLOImageWidget(OctMarkerManager& markerManger)
 	gv->setWindowFlags (Qt::FramelessWindowHint);
 	gv->setCacheMode(QGraphicsView::CacheBackground);
 	gv->setFocusPolicy(Qt::NoFocus);
-
-	scene = new QGraphicsScene(this);
-	gv->setScene(scene);
-
-	RectItem* currentRect = new RectItem();
-	currentRect->setDescription("ONH");
-	currentRect->setRect(QRectF(50, 50, 50, 50));
-// 	currentRect->setSelected(true);
-	scene->addItem(currentRect);
+	gv->setDragMode(QGraphicsView::NoDrag);
 
 	// gv->show();
-	gv->setGeometry(rect());
-	gv->setVisible(ProgramOptions::sloShowLabels());
+	// gv->setGeometry(rect());
+	// gv->setVisible(ProgramOptions::sloShowLabels());
+	setGraphicsViewSize(size());
 }
 
 SLOImageWidget::~SLOImageWidget()
@@ -192,28 +185,43 @@ void SLOImageWidget::showOnylActBScan(bool show)
 }
 
 
-void SLOImageWidget::showLabels(bool show)
-{
-
-	gv->setVisible(show);
-}
-
-
-
-
 void SLOImageWidget::setImageSize(QSize size)
 {
 	CVImageWidget::setImageSize(size);
+	setGraphicsViewSize(size);
+}
+
+void SLOImageWidget::setGraphicsViewSize(QSize size)
+{
 /*
 	QPoint p = imageWidget->pos();
 	QRect  r = imageWidget->rect();*/
 	gv->setGeometry(0, 0, scaledImageWidth(), scaledImageHight());
-	// gv->setGeometry(0, 0, 1, 1);
-	// gv->setPos(imageWidget->pos());
-	gv->resetTransform();
-	gv->scale(getImageScaleFactor(), getImageScaleFactor());
-// 	gv->scale(getImageScaleFactor()*scaledImageWidth(), getImageScaleFactor()*scaledImageHight());
-	// gv->setSceneRect(0, 0, imageWidth(), imageHight());
+//
+// 	// gv->setPos(imageWidget->pos());
+//	gv->resetTransform();
+// //	gv->scale(getImageScaleFactor(), getImageScaleFactor());
+// //	gv->scale(getImageScaleFactor()*scaledImageWidth(), getImageScaleFactor()*scaledImageHight());
+// 	gv->scale(scaledImageWidth(), scaledImageHight());
+
+	gv->setSceneRect(0, 0, 100, 100);
+	gv->fitInView(QRectF(0, 0, 100, 100));
 }
 
+
+
+void SLOImageWidget::sloMarkerChanged(SloMarkerBase* marker)
+{
+	if(marker)
+	{
+		scene = marker->getGraphicsScene();
+	}
+	else
+	{
+		scene = nullptr;
+	}
+	gv->setScene(scene);
+	gv->setVisible(scene != nullptr);
+	setGraphicsViewSize(QSize());
+}
 
