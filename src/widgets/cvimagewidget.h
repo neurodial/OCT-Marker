@@ -36,7 +36,7 @@ public:
 	int  imageHight() const;
 	int  imageWidth() const;
 
-	int  scaledImageHight() const                               { return qtImage.height(); }
+	int  scaledImageHeight() const                              { return qtImage.height(); }
 	int  scaledImageWidth() const                               { return qtImage.width() ; }
 
 	double getImageScaleFactor()                                { return scaleFactor; }

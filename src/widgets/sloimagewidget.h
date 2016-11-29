@@ -35,7 +35,7 @@ class SLOImageWidget : public CVImageWidget
 	void createIntervallColors();
 	void deleteIntervallColors();
 
-	void setGraphicsViewSize(QSize size);
+	void updateGraphicsViewSize();
 public:
 	SLOImageWidget(OctMarkerManager& markerManger);
 
@@ -43,14 +43,14 @@ public:
 
 	bool getShowBScans() const                                   { return drawBScans; }
 
-	virtual void setImageSize(QSize size);
+	virtual void setImageSize(QSize size) override;
 
 public slots:
 	void showBScans(bool show);
 	void showOnylActBScan(bool show);
 
 protected:
-	void paintEvent(QPaintEvent* event);
+	void paintEvent(QPaintEvent* event) override;
 
 	void paintBScan    (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker);
 	void paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker);

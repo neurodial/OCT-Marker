@@ -20,6 +20,25 @@
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
 
+
+namespace
+{
+	class GraphicsView : public QGraphicsView
+	{
+	public:
+		explicit GraphicsView(QWidget* parent) : QGraphicsView(parent) {}
+	protected:
+		virtual void resizeEvent(QResizeEvent *event) override
+		{
+			QGraphicsView::resizeEvent(event);
+
+			setSceneRect    (0, 0, 100, 100);
+			fitInView(QRectF(0, 0, 100, 100));
+		}
+	};
+}
+
+
 SLOImageWidget::SLOImageWidget(OctMarkerManager& markerManger)
 : markerManger(markerManger)
 , drawBScans(ProgramOptions::sloShowBscans())
@@ -33,7 +52,7 @@ SLOImageWidget::SLOImageWidget(OctMarkerManager& markerManger)
 	setMinimumSize(150,150);
 	setFocusPolicy(Qt::StrongFocus);
 
-	gv = new QGraphicsView(this);
+	gv = new GraphicsView(this);
 	gv->setStyleSheet("QGraphicsView { border-style: none; background: transparent;}" );
 	gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -45,7 +64,7 @@ SLOImageWidget::SLOImageWidget(OctMarkerManager& markerManger)
 	// gv->show();
 	// gv->setGeometry(rect());
 	// gv->setVisible(ProgramOptions::sloShowLabels());
-	setGraphicsViewSize(size());
+	updateGraphicsViewSize();
 }
 
 SLOImageWidget::~SLOImageWidget()
@@ -188,24 +207,12 @@ void SLOImageWidget::showOnylActBScan(bool show)
 void SLOImageWidget::setImageSize(QSize size)
 {
 	CVImageWidget::setImageSize(size);
-	setGraphicsViewSize(size);
+	updateGraphicsViewSize();
 }
 
-void SLOImageWidget::setGraphicsViewSize(QSize size)
+void SLOImageWidget::updateGraphicsViewSize()
 {
-/*
-	QPoint p = imageWidget->pos();
-	QRect  r = imageWidget->rect();*/
-	gv->setGeometry(0, 0, scaledImageWidth(), scaledImageHight());
-//
-// 	// gv->setPos(imageWidget->pos());
-//	gv->resetTransform();
-// //	gv->scale(getImageScaleFactor(), getImageScaleFactor());
-// //	gv->scale(getImageScaleFactor()*scaledImageWidth(), getImageScaleFactor()*scaledImageHight());
-// 	gv->scale(scaledImageWidth(), scaledImageHight());
-
-	gv->setSceneRect(0, 0, 100, 100);
-	gv->fitInView(QRectF(0, 0, 100, 100));
+	gv->setGeometry(0, 0, scaledImageWidth(), scaledImageHeight());
 }
 
 
@@ -222,6 +229,6 @@ void SLOImageWidget::sloMarkerChanged(SloMarkerBase* marker)
 	}
 	gv->setScene(scene);
 	gv->setVisible(scene != nullptr);
-	setGraphicsViewSize(QSize());
+	updateGraphicsViewSize();
 }
 
