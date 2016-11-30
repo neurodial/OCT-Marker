@@ -5,10 +5,9 @@
 #include "bscanseglocalop.h"
 #include "bscanseglocalopnn.h"
 
-#include <helper/callback.h>
+#include "wgsegnn.h"
 
 #include <QButtonGroup>
-#include <QFileDialog>
 
 WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 : segmentation(parent)
@@ -27,7 +26,6 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	localOpThresholdDirection = segmentation->getLocalOpThresholdDirection();
 	localOpOperation          = segmentation->getLocalOpOperation         ();
 	localOpThreshold          = segmentation->getLocalOpThreshold         ();
-	localOpNN                 = segmentation->getLocalOpNN                ();
 
 	setLocalOperator(segmentation->getLocalMethod());
 	connect(segmentation, &BScanSegmentation::localOperatorChanged, this, &WGSegmentation::setLocalOperator);
@@ -180,6 +178,15 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	connect(tabWidget, &QTabWidget::currentChanged, this, &WGSegmentation::tabWidgetCurrentChanged);
 
 	createConnections();
+
+#ifdef ML_SUPPORT
+	widgetNN = new WgSegNN(this, parent);
+	tabWidget->addTab(widgetNN, "NN");
+
+#else
+	line_nn->setVisible(false);
+	radioLocalNN->setVisible(false);
+#endif
 }
 
 
@@ -333,9 +340,6 @@ void WGSegmentation::slotLocalNN(bool checked)
 {
 	if(!checked)
 		return;
-
-	localOpNN->setLearningNN(false);
-
 	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::NN);
 }
 
@@ -460,27 +464,6 @@ void WGSegmentation::setLocalThresholdDirOrientation(Orientation o)
 	}
 }
 
-void WGSegmentation::slotNNLearnBScan()
-{
-	CallbackProgressDialog process("Learn BScan", "Cancel");
-	localOpNN->learnBScan(process);
-}
-
-void WGSegmentation::slotNNLoad()
-{
-	QString file = QFileDialog::getOpenFileName(this, tr("Load NN"), QString(), "*.yml");
-	if(!file.isEmpty())
-		localOpNN->loadNN(file);
-}
-
-void WGSegmentation::slotNNSave()
-{
-	QString file = QFileDialog::getSaveFileName(this, tr("Save NN"), QString(), "*.yml");
-	if(!file.isEmpty())
-		localOpNN->saveNN(file);
-}
-
-
 
 void WGSegmentation::setLocalOperator(BScanSegmentationMarker::LocalMethod method)
 {
@@ -559,6 +542,9 @@ void WGSegmentationThreshold::setupWidgets()
 
 	if(absoluteBox)
 	{
+
+
+
 		connect(absoluteBox, static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::absoluteSpinBoxChanged);
 		absoluteBox->setSingleStep(5);
 		absoluteBox->setMinimum(0);

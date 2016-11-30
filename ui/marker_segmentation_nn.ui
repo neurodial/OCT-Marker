@@ -49,14 +49,14 @@
     </widget>
    </item>
    <item row="6" column="2">
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="pbAddBscanExampels">
      <property name="text">
       <string>add bscan</string>
      </property>
     </widget>
    </item>
    <item row="26" column="1" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="QDialogButtonBox" name="buttonBoxLoadSave">
      <property name="standardButtons">
       <set>QDialogButtonBox::Open|QDialogButtonBox::Save</set>
      </property>
@@ -80,14 +80,14 @@
     </widget>
    </item>
    <item row="13" column="0" colspan="3">
-    <widget class="QRadioButton" name="radioButton">
+    <widget class="QRadioButton" name="rbBackPropagation">
      <property name="text">
       <string>back-propagation</string>
      </property>
     </widget>
    </item>
    <item row="22" column="2">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="pushButtonTrain">
      <property name="text">
       <string>Train</string>
      </property>
@@ -101,7 +101,7 @@
     </widget>
    </item>
    <item row="16" column="0" colspan="3">
-    <widget class="QRadioButton" name="radioButton_2">
+    <widget class="QRadioButton" name="rbRPROP">
      <property name="text">
       <string>RPROP</string>
      </property>
@@ -122,7 +122,7 @@
     </widget>
    </item>
    <item row="15" column="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+    <widget class="QDoubleSpinBox" name="sbMomentScale"/>
    </item>
    <item row="17" column="1">
     <widget class="QLabel" name="label_18">
@@ -132,7 +132,7 @@
     </widget>
    </item>
    <item row="14" column="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+    <widget class="QDoubleSpinBox" name="sbLearnRate"/>
    </item>
    <item row="20" column="1">
     <widget class="QLabel" name="label_21">
@@ -142,10 +142,10 @@
     </widget>
    </item>
    <item row="10" column="2">
-    <widget class="QSpinBox" name="spinBox"/>
+    <widget class="QSpinBox" name="sbMaxIterations"/>
    </item>
    <item row="11" column="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox">
+    <widget class="QDoubleSpinBox" name="sbEpsilon">
      <property name="decimals">
       <number>8</number>
      </property>
@@ -169,7 +169,7 @@
     </widget>
    </item>
    <item row="17" column="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
+    <widget class="QDoubleSpinBox" name="sbDelta0"/>
    </item>
    <item row="21" column="1">
     <widget class="QLabel" name="label_22">
@@ -179,16 +179,16 @@
     </widget>
    </item>
    <item row="21" column="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_5"/>
+    <widget class="QDoubleSpinBox" name="sbDeltaMax"/>
    </item>
    <item row="20" column="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_6"/>
+    <widget class="QDoubleSpinBox" name="sbDeltaMin"/>
    </item>
    <item row="18" column="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_7"/>
+    <widget class="QDoubleSpinBox" name="sbNuePlus"/>
    </item>
    <item row="19" column="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_8"/>
+    <widget class="QDoubleSpinBox" name="sbNueMinus"/>
    </item>
    <item row="22" column="0">
     <widget class="QLabel" name="label_23">

@@ -18,6 +18,7 @@ class QButtonGroup;
 namespace BScanSegmentationMarker { class ThresholdDirectionData; enum class LocalMethod; }
 
 class WGSegmentation;
+class WgSegNN;
 
 class WGSegmentationThreshold : public QObject
 {
@@ -72,7 +73,7 @@ class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 	Q_OBJECT;
 	enum class Orientation { Vertical, Horizontal };
 
-	BScanSegmentation* segmentation;
+	BScanSegmentation* segmentation = nullptr;
 
 	WGSegmentationThreshold thresSeries;
 	WGSegmentationThreshold thresBScan ;
@@ -83,7 +84,9 @@ class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 	BScanSegLocalOpThresholdDirection* localOpThresholdDirection = nullptr;
 	BScanSegLocalOpThreshold*          localOpThreshold          = nullptr;
 	BScanSegLocalOpOperation*          localOpOperation          = nullptr;
-	BScanSegLocalOpNN*                 localOpNN                 = nullptr;
+
+	WgSegNN* widgetNN = nullptr;
+
 
 	bool allowInitSeries = false;
 
@@ -133,9 +136,6 @@ private slots:
 	
 	void setLocalOperator(BScanSegmentationMarker::LocalMethod method);
 
-	void slotNNLearnBScan();
-	void slotNNSave();
-	void slotNNLoad();
 };
 
 #endif // WGSEGMENTATION_H
