@@ -1,6 +1,8 @@
 #ifndef BSCANSEGLOCALOPNN_H
 #define BSCANSEGLOCALOPNN_H
 
+#ifdef ML_SUPPORT
+
 #include "bscanseglocalop.h"
 
 class CvANN_MLP;
@@ -52,4 +54,5 @@ public:
 	void saveNN(const QString& file) const;
 };
 
+#endif
 #endif // BSCANSEGLOCALOPNN_H

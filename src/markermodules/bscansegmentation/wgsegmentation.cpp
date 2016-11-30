@@ -141,14 +141,6 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	connect(localOperationBG               , static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalOperation);
 
 
-	QButtonGroup* localNNBG = new QButtonGroup(this);
-	localNNBG->addButton(buttonLocalNNApply);
-	localNNBG->addButton(buttonLocalNNLearn);
-	buttonLocalNNApply->setChecked(!localOpNN->getLearningNN());
-	buttonLocalNNLearn->setChecked( localOpNN->getLearningNN());
-	connect(localNNBG                      , static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalNN);
-
-
 	QButtonGroup* localThresholdBG = new QButtonGroup(this);
 	localThresholdBG->addButton(radioLocalThresholdAbsolut );
 	localThresholdBG->addButton(radioLocalThresholdRelative);
@@ -217,12 +209,6 @@ void WGSegmentation::createConnections()
 	connect(radioLocalPaint          , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalPaint                        );
 	connect(radioLocalOperation      , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalOperation                    );
 	connect(radioLocalNN             , &QRadioButton::toggled   , this, &WGSegmentation::slotLocalNN                           );
-
-	// for toggle cursor size
-	connect(buttonLocalNNLearnBScan  , &QAbstractButton::clicked, this, &WGSegmentation::slotNNLearnBScan);
-	connect(buttonLocalNNSave        , &QAbstractButton::clicked, this, &WGSegmentation::slotNNSave      );
-	connect(buttonLocalNNLoad        , &QAbstractButton::clicked, this, &WGSegmentation::slotNNLoad      );
-	// connect(buttonLocalNNLearnBScan10, &QAbstractButton::clicked, this, &WGSegmentation::slotNNLearnBScans);
 
 	connect(buttonLocalThresholdDirUp   , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
 	connect(buttonLocalThresholdDirDown , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationVertical  );
@@ -348,10 +334,7 @@ void WGSegmentation::slotLocalNN(bool checked)
 	if(!checked)
 		return;
 
-	if(buttonLocalNNApply->isChecked())
-		localOpNN->setLearningNN(false);
-	else
-		localOpNN->setLearningNN(true);
+	localOpNN->setLearningNN(false);
 
 	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::NN);
 }

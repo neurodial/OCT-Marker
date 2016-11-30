@@ -1,5 +1,7 @@
 #include "bscanseglocalopnn.h"
 
+#ifdef ML_SUPPORT
+
 #include <QPainter>
 
 #include <opencv/cv.h>
@@ -362,6 +364,6 @@ void BScanSegLocalOpNN::saveNN(const QString& file) const
 	mlp->write(*fs, "mlp"); // don't think too much about the deref, it casts to a FileNode
 }
 
-
+#endif
 
 
