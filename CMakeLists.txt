@@ -16,6 +16,9 @@ find_package(LibOctData REQUIRED)
 find_package(CppFramework REQUIRED)
 
 
+option(BUILD_WITH_SEGMENTATION_ML "build with support for NN" OFF)
+
+
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel.")
 
 
@@ -42,6 +45,12 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	if(WIN32)
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -mwindows")
 	endif()
+endif()
+
+
+
+if(BUILD_WITH_SEGMENTATION_ML)
+	add_definitions(-DML_SUPPORT)
 endif()
 
 
