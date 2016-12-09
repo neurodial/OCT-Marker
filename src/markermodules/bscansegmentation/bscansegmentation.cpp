@@ -35,7 +35,9 @@ BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
 	localOpThresholdDirection = new BScanSegLocalOpThresholdDirection(*this);
 	localOpThreshold          = new BScanSegLocalOpThreshold(*this);
 	localOpOperation          = new BScanSegLocalOpOperation(*this);
+#ifdef ML_SUPPORT
 	localOpNN                 = new BScanSegLocalOpNN       (*this);
+#endif
 
 	setLocalMethod(BScanSegmentationMarker::LocalMethod::Paint);
 

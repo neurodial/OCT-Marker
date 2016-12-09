@@ -1,5 +1,7 @@
 #include "wgsegnn.h"
 
+#ifdef ML_SUPPORT
+
 #include "wgsegmentation.h"
 #include "bscansegmentation.h"
 #include "bscanseglocalopnn.h"
@@ -122,3 +124,5 @@ void WgSegNN::slotSave()
 		localOpNN->saveNN(file);
 }
 
+
+#endif

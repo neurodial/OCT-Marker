@@ -1,6 +1,8 @@
 #ifndef WGSEGNN_H
 #define WGSEGNN_H
 
+#ifdef ML_SUPPORT
+
 #include <QObject>
 
 #include <ui_marker_segmentation_nn.h>
@@ -43,5 +45,7 @@ private slots:
 	void slotLoadSaveButtonBoxClicked(QAbstractButton* button);
 
 };
+
+#endif
 
 #endif // WGSEGNN_H

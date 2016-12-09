@@ -1,9 +1,9 @@
 #ifndef BSCANSEGLOCALOPNN_H
 #define BSCANSEGLOCALOPNN_H
 
-#ifdef ML_SUPPORT
-
 #include "bscanseglocalop.h"
+
+#ifdef ML_SUPPORT
 
 class CvANN_MLP;
 class Callback;
@@ -54,5 +54,10 @@ public:
 	void saveNN(const QString& file) const;
 };
 
+#else
+class BScanSegLocalOpNN : public BScanSegLocalOp
+{
+	BScanSegLocalOpNN(BScanSegmentation& parent) : BScanSegLocalOp(parent) {} // null implementation, private is right
+};
 #endif
 #endif // BSCANSEGLOCALOPNN_H
