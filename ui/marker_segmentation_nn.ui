@@ -142,7 +142,11 @@
     </widget>
    </item>
    <item row="10" column="2">
-    <widget class="QSpinBox" name="sbMaxIterations"/>
+    <widget class="QSpinBox" name="sbMaxIterations">
+     <property name="maximum">
+      <number>10000</number>
+     </property>
+    </widget>
    </item>
    <item row="11" column="2">
     <widget class="QDoubleSpinBox" name="sbEpsilon">

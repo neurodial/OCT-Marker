@@ -13,7 +13,7 @@ class BScanSegmentation;
 
 namespace BScanSegmentationMarker
 {
-	struct NNData;
+	struct NNTrainData;
 }
 
 class WgSegNN : public QWidget, Ui::BScanSegWidgetNN
@@ -26,8 +26,8 @@ class WgSegNN : public QWidget, Ui::BScanSegWidgetNN
 
 	void createConnections();
 
-	void setNNData(const BScanSegmentationMarker::NNData& data);
-	void getNNData(      BScanSegmentationMarker::NNData& data);
+	void setNNData(const BScanSegmentationMarker::NNTrainData& data);
+	void getNNData(      BScanSegmentationMarker::NNTrainData& data);
 
 public:
 	WgSegNN(WGSegmentation* parent, BScanSegmentation* seg);
@@ -36,8 +36,10 @@ public:
 
 private slots:
 
-	void slotLearnBScan();
+	// void slotLearnBScan();
 	void slotTrain();
+
+	void slotAddBscanExampels();
 
 	void slotSave();
 	void slotLoad();

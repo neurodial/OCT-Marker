@@ -68,12 +68,12 @@ namespace BScanSegmentationMarker
 		}
 	};
 
-	struct NNData
+	struct NNTrainData
 	{
 		enum class TrainMethod { RPROP, Backpropergation};
 
 		double      epsilon       =   0.000001;
-		std::size_t maxIterations = 200;
+		int         maxIterations = 200;
 		TrainMethod trainMethod   = TrainMethod::Backpropergation;
 
 		double learnRate   = 0.01;

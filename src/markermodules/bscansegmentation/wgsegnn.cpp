@@ -18,7 +18,9 @@ WgSegNN::WgSegNN(WGSegmentation* parent, BScanSegmentation* seg)
 {
 	setupUi(this);
 
-	setNNData(BScanSegmentationMarker::NNData());
+	setNNData(BScanSegmentationMarker::NNTrainData());
+
+	labelNumberExampels->setText("0");
 
 	createConnections();
 }
@@ -34,6 +36,8 @@ void WgSegNN::createConnections()
 
 	connect(buttonBoxLoadSave , &QDialogButtonBox::clicked, this, &WgSegNN::slotLoadSaveButtonBoxClicked);
 	connect(pushButtonTrain   , &QAbstractButton ::clicked, this, &WgSegNN::slotTrain                   );
+	connect(pbAddBscanExampels, &QAbstractButton ::clicked, this, &WgSegNN::slotAddBscanExampels        );
+
 }
 
 
@@ -55,7 +59,7 @@ void WgSegNN::slotLoadSaveButtonBoxClicked(QAbstractButton* button)
 }
 
 
-void WgSegNN::getNNData(BScanSegmentationMarker::NNData& data)
+void WgSegNN::getNNData(BScanSegmentationMarker::NNTrainData& data)
 {
 	data.maxIterations = sbMaxIterations->value();
 	data.epsilon       = sbEpsilon      ->value();
@@ -70,13 +74,13 @@ void WgSegNN::getNNData(BScanSegmentationMarker::NNData& data)
 	data.nuePlus       = sbNuePlus      ->value();
 
 	if(rbBackPropagation->isChecked())
-		data.trainMethod = BScanSegmentationMarker::NNData::TrainMethod::Backpropergation;
+		data.trainMethod = BScanSegmentationMarker::NNTrainData::TrainMethod::Backpropergation;
 	else
-		data.trainMethod = BScanSegmentationMarker::NNData::TrainMethod::RPROP           ;
+		data.trainMethod = BScanSegmentationMarker::NNTrainData::TrainMethod::RPROP           ;
 }
 
 
-void WgSegNN::setNNData(const BScanSegmentationMarker::NNData& data)
+void WgSegNN::setNNData(const BScanSegmentationMarker::NNTrainData& data)
 {
 
 	sbMaxIterations->setValue(static_cast<int>(data.maxIterations));
@@ -91,23 +95,18 @@ void WgSegNN::setNNData(const BScanSegmentationMarker::NNData& data)
 	sbNueMinus     ->setValue(data.nueMinus     );
 	sbNuePlus      ->setValue(data.nuePlus      );
 
-	rbBackPropagation->setChecked(data.trainMethod == BScanSegmentationMarker::NNData::TrainMethod::Backpropergation);
-	rbRPROP          ->setChecked(data.trainMethod == BScanSegmentationMarker::NNData::TrainMethod::RPROP           );
+	rbBackPropagation->setChecked(data.trainMethod == BScanSegmentationMarker::NNTrainData::TrainMethod::Backpropergation);
+	rbRPROP          ->setChecked(data.trainMethod == BScanSegmentationMarker::NNTrainData::TrainMethod::RPROP           );
 }
 
 
 
 void WgSegNN::slotTrain()
 {
-	CallbackProgressDialog process("Learn BScan", "Cancel");
-	localOpNN->learnBScan(process);
-}
-
-
-void WgSegNN::slotLearnBScan()
-{/*
-	CallbackProgressDialog process("Learn BScan", "Cancel");
-	localOpNN->learnBScan(process);*/
+//	CallbackProgressDialog process("Learn BScan", "Cancel");
+	BScanSegmentationMarker::NNTrainData data;
+	getNNData(data);
+	localOpNN->trainNN(data);
 }
 
 void WgSegNN::slotLoad()
@@ -123,6 +122,13 @@ void WgSegNN::slotSave()
 	if(!file.isEmpty())
 		localOpNN->saveNN(file);
 }
+
+void WgSegNN::slotAddBscanExampels()
+{
+	localOpNN->addBscanExampels();
+	labelNumberExampels->setText(QString("%1").arg(localOpNN->numExampels()));
+}
+
 
 
 #endif
