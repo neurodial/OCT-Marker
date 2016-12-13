@@ -306,16 +306,17 @@ void BScanSegLocalOpNN::trainNN(BScanSegmentationMarker::NNTrainData& trainData)
 	{
 		case BScanSegmentationMarker::NNTrainData::TrainMethod::Backpropergation:
 			params.train_method    = CvANN_MLP_TrainParams::BACKPROP;
-			params.bp_dw_scale     = 0.005f;
-			params.bp_moment_scale = 0.05f;
+			params.bp_dw_scale     = trainData.learnRate;
+			params.bp_moment_scale = trainData.momentScale;
 			break;
 		case BScanSegmentationMarker::NNTrainData::TrainMethod::RPROP:
 			params.train_method    = CvANN_MLP_TrainParams::RPROP;
-			params.rp_dw0      = trainData.delta0  ;
-			params.rp_dw_plus  = trainData.nuePlus ;
-			params.rp_dw_minus = trainData.nueMinus;
-			params.rp_dw_min   = trainData.deltaMin;
-			params.rp_dw_max   = trainData.deltaMax;
+			params.rp_dw0          = trainData.delta0  ;
+			params.rp_dw_plus      = trainData.nuePlus ;
+			params.rp_dw_minus     = trainData.nueMinus;
+			params.rp_dw_min       = trainData.deltaMin;
+			params.rp_dw_max       = trainData.deltaMax;
+			break;
 	}
 
 	mlp->train(*tranSampels, *outputSampels, cv::Mat(), cv::Mat(), params, CvANN_MLP::NO_OUTPUT_SCALE | CvANN_MLP::NO_INPUT_SCALE);
