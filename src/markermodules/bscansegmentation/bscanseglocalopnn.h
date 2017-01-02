@@ -8,6 +8,8 @@
 class CvANN_MLP;
 class Callback;
 
+namespace cv { class Mat; }
+
 class BScanSegLocalOpNN : public BScanSegLocalOp
 {
 	static const int paintSizeWidthInput    =  5;
@@ -51,6 +53,15 @@ public:
 	int numExampels() const;
 	void addBscanExampels();
 	void trainNN(BScanSegmentationMarker::NNTrainData& trainData);
+
+
+	int getInputHeight ()                                     const { return paintSizeHeight     ; }
+	int getInputWidth  ()                                     const { return paintSizeWidthInput ; }
+	int getOutputHeight()                                     const { return paintSizeHeight     ; }
+	int getOutputWidth ()                                     const { return paintSizeWidthOutput; }
+
+
+    const cv::Mat& getLayerSizes() const;
 };
 
 #else

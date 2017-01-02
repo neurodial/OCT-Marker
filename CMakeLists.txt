@@ -78,8 +78,7 @@ QT5_ADD_TRANSLATION(TRANSLATIONS ${LANG})
 add_executable(octmarker src/main.cpp ${octmarker_SRCS}
 	${ui_files_headers}
 	${TRANSLATIONS}
-	${octmarker_RESOURCES_RCC}
-	${TRANSLATIONS})
+	${octmarker_RESOURCES_RCC})
 
 if(WIN32 AND MSVC)
 	# suppress dos window

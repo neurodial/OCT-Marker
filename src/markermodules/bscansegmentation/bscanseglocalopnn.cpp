@@ -329,6 +329,20 @@ int BScanSegLocalOpNN::numExampels() const
 	return tranSampels->rows;
 }
 
+const cv::Mat& BScanSegLocalOpNN::getLayerSizes() const
+{
+	static cv::Mat layers;
+	const CvMat* layersC = mlp->get_layer_sizes();
+
+	if(layersC)
+		layers = cv::Mat(layersC);
+	else
+		layers = cv::Mat();
+
+	return layers;
+}
+
+
 
 
 #endif

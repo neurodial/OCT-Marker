@@ -101,98 +101,117 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="47"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="136"/>
         <source>ε</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="54"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="27"/>
         <source>add bscan</source>
         <translation>B-Scan hinzufügen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="71"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="61"/>
         <source>1234</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="78"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="143"/>
         <source>Max iterations</source>
         <translation>Max. Iterationen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="85"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="47"/>
         <source>back-propagation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="92"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="54"/>
         <source>Train</source>
         <translation>Trainieren</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="99"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="129"/>
         <source>moment scale</source>
         <translation>Moment</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="106"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="122"/>
         <source>RPROP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="113"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="89"/>
         <source>learn rate</source>
         <translation>Lernrate</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="120"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="68"/>
         <source>Exampels</source>
         <translation>Beispiele</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="130"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="82"/>
         <source>Δ&lt;sub&gt;0&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="140"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="174"/>
         <source>Δ&lt;sub&gt;min&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="164"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="181"/>
         <source>η&lt;sup&gt;-&lt;/sup&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="171"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="216"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="351"/>
+        <source>Output size</source>
+        <translation>Ausgabegröße</translation>
+    </message>
+    <message>
+        <location filename="../ui/marker_segmentation_nn.ui" line="322"/>
         <source>η&lt;sup&gt;+&lt;/sup&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="181"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="332"/>
         <source>Δ&lt;sub&gt;max&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="228"/>
-        <source>Optput size</source>
-        <translation>Ausgabegröße</translation>
+        <location filename="../ui/marker_segmentation_nn.ui" line="358"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="368"/>
+        <source>Hidden layers</source>
+        <translation>verdeckte Schichten</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="238"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="389"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="396"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="403"/>
+        <source>-</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optput size</source>
+        <translation type="vanished">Ausgabegröße</translation>
+    </message>
+    <message>
+        <location filename="../ui/marker_segmentation_nn.ui" line="226"/>
         <source>change</source>
         <translation>Ändern</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="248"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="20"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="40"/>
         <source>Input size</source>
         <translation>Eingabegröße</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="274"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="315"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="252"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="293"/>
         <source>x</source>
         <translation type="unfinished"></translation>
     </message>
