@@ -146,7 +146,7 @@ void WgSegNN::updateActLayerInfo()
 
 	int inputNeurons  = 0;
 	int outputNeurons = 0;
-	int numLayers = static_cast<int>(layers.elemSize());
+	int numLayers = static_cast<int>(layers.rows*layers.cols);
 
 	if(numLayers > 1)
 	{

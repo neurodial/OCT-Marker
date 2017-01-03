@@ -72,6 +72,7 @@ public slots:
 	virtual void showSaveMarkersDialog();
 
 	virtual void saveMatlabBinCode();
+	virtual void saveMatlabWriteBinCode();
 
 };
 

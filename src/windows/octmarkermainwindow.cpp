@@ -261,6 +261,11 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(actionSaveMatlabBinCode, &QAction::triggered, this, &OCTMarkerMainWindow::saveMatlabBinCode);
 	extrisMenu->addAction(actionSaveMatlabBinCode);
 
+	QAction* actionSaveMatlabWriteBinCode = new QAction(this);
+	actionSaveMatlabWriteBinCode->setText(tr("Save Matlab Write Bin Code"));
+	actionSaveMatlabWriteBinCode->setIcon(QIcon(":/icons/disk.png"));
+	connect(actionSaveMatlabWriteBinCode, &QAction::triggered, this, &OCTMarkerMainWindow::saveMatlabWriteBinCode);
+	extrisMenu->addAction(actionSaveMatlabWriteBinCode);
 
 	// ----------
 	// Help Menu
@@ -652,6 +657,12 @@ void OCTMarkerMainWindow::saveMatlabBinCode()
 		CppFW::CVMatTreeStructBin::writeMatlabReadCode(filename.toStdString().c_str());
 }
 
+void OCTMarkerMainWindow::saveMatlabWriteBinCode()
+{
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save Matlab Write Bin Code"), QString("writebin.m"), "Matlab (*.m)");
+	if(!filename.isEmpty())
+		CppFW::CVMatTreeStructBin::writeMatlabWriteCode(filename.toStdString().c_str());
+}
 
 void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
 {
