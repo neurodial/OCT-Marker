@@ -92,11 +92,11 @@ void BScanSegLocalOpNN::drawMarkerPaint(QPainter& painter, const QPoint& centerD
 	int sizeW    = static_cast<int>(paintSizeWidthInput *factor + 0.5);
 	int sizeWerg = static_cast<int>(paintSizeWidthOutput*factor + 0.5);
 	int sizeH    = static_cast<int>(paintSizeHeight*factor + 0.5);
-	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
+	painter.drawRect(centerDrawPoint.x()-sizeW/2, centerDrawPoint.y()-sizeH/2, sizeW, sizeH);
 
 	QPen pen(Qt::blue);
 	painter.setPen(pen);
-	painter.drawRect(centerDrawPoint.x()-sizeWerg, centerDrawPoint.y()-sizeH, sizeWerg*2, sizeH*2);
+	painter.drawRect(centerDrawPoint.x()-sizeWerg/2, centerDrawPoint.y()-sizeH/2, sizeWerg, sizeH);
 }
 
 
@@ -159,6 +159,20 @@ namespace
 void BScanSegLocalOpNN::loadNN(const QString& file)
 {
 	mlp->load(file.toStdString().c_str(), "mlp");
+
+	cv::Mat sizeInOut;
+	cv::FileStorage storage(file.toStdString(),, cv::FileStorage::READ);
+	storage["sizeInOut"] >> sizeInOut;
+	storage.release();
+
+	if(sizeInOut.rows != 4 || sizeInOut.cols != 1 || sizeInOut.type() != cv::DataType<int>::type)
+		setInputOutputSize(10, 24, 2, 24);
+	else
+		setInputOutputSize(sizeInOut.at<int>(0)
+		                 , sizeInOut.at<int>(1)
+		                 , sizeInOut.at<int>(2)
+		                 , sizeInOut.at<int>(3));
+
 }
 
 
@@ -166,6 +180,14 @@ void BScanSegLocalOpNN::saveNN(const QString& file) const
 {
 	cv::FileStorage fs(file.toStdString(), cv::FileStorage::WRITE); // or xml
 	mlp->write(*fs, "mlp"); // don't think too much about the deref, it casts to a FileNode
+
+	cv::Mat sizeInOut = cv::Mat(4, 1, cv::DataType<int>::type);
+	sizeInOut.row(0) = paintSizeWidthInput  ;
+	sizeInOut.row(1) = paintSizeWidthOutput ;
+	sizeInOut.row(2) = paintSizeHeightInput ;
+	sizeInOut.row(3) = paintSizeHeightOutput;
+	fs << "sizeInOut" << sizeInOut;
+	fs.release();
 }
 
 

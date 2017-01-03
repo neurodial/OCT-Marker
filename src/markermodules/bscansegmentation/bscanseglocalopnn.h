@@ -12,11 +12,12 @@ namespace cv { class Mat; }
 
 class BScanSegLocalOpNN : public BScanSegLocalOp
 {
-	static const int paintSizeWidthInput    =  5;
+	static const int paintSizeWidthInput    = 10;
 	static const int paintSizeWidthOutput   =  1;
-	static const int paintSizeHeight        = 12;
-	static const std::size_t maskSizeInput  = paintSizeWidthInput *paintSizeHeight*4;
-	static const std::size_t maskSizeOutput = paintSizeWidthOutput*paintSizeHeight*4;
+	static const int paintSizeHeightInput   = 24;
+	static const int paintSizeHeightOutput  = 24;
+	static const std::size_t maskSizeInput  = paintSizeWidthInput *paintSizeHeightInput;
+	static const std::size_t maskSizeOutput = paintSizeWidthOutput*paintSizeHeightOutput;
 
 	CvANN_MLP* mlp           = nullptr;
 	cv::Mat*   tranSampels   = nullptr;
@@ -44,8 +45,8 @@ public:
 	bool drawOnCoord(int x, int y)          override                { return applyNN(x, y); }
 	bool startOnCoord(int /*x*/, int /*y*/) override                { return false; }
 
-	int getOperatorHeight()const            override                { return paintSizeHeight; }
-	int getOperatorWidth() const            override                { return paintSizeWidthInput ; }
+	int getOperatorHeight()const            override                { return paintSizeHeightInput/2+1; }
+	int getOperatorWidth() const            override                { return paintSizeWidthInput /2+1; }
 
 	void loadNN(const QString& file);
 	void saveNN(const QString& file) const;
@@ -55,11 +56,13 @@ public:
 	void trainNN(BScanSegmentationMarker::NNTrainData& trainData);
 
 
-	int getInputHeight ()                                     const { return paintSizeHeight     ; }
-	int getInputWidth  ()                                     const { return paintSizeWidthInput ; }
-	int getOutputHeight()                                     const { return paintSizeHeight     ; }
-	int getOutputWidth ()                                     const { return paintSizeWidthOutput; }
+	int getInputHeight ()                                     const { return paintSizeHeightInput ; }
+	int getInputWidth  ()                                     const { return paintSizeWidthInput  ; }
+	int getOutputHeight()                                     const { return paintSizeHeightOutput; }
+	int getOutputWidth ()                                     const { return paintSizeWidthOutput ; }
 
+
+	void setInputOutputSize(int widthIn, int heighIn, int widthOut, int heighOut);
 
     const cv::Mat& getLayerSizes() const;
 };
