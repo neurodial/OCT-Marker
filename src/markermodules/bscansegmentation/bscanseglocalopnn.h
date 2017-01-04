@@ -3,6 +3,9 @@
 
 #include "bscanseglocalop.h"
 
+#include <cstdint>
+#include <vector>
+
 #ifdef ML_SUPPORT
 
 class CvANN_MLP;
@@ -12,16 +15,18 @@ namespace cv { class Mat; }
 
 class BScanSegLocalOpNN : public BScanSegLocalOp
 {
-	static const int paintSizeWidthInput    = 10;
-	static const int paintSizeWidthOutput   =  1;
-	static const int paintSizeHeightInput   = 24;
-	static const int paintSizeHeightOutput  = 24;
-	static const std::size_t maskSizeInput  = paintSizeWidthInput *paintSizeHeightInput;
-	static const std::size_t maskSizeOutput = paintSizeWidthOutput*paintSizeHeightOutput;
+	int paintSizeWidthInput   = 10;
+	int paintSizeWidthOutput  =  1;
+	int paintSizeHeightInput  = 24;
+	int paintSizeHeightOutput = 18;
+	int maskSizeInput         = 0;
+	int maskSizeOutput        = 0;
 
 	CvANN_MLP* mlp           = nullptr;
 	cv::Mat*   tranSampels   = nullptr;
 	cv::Mat*   outputSampels = nullptr;
+
+	std::vector<int> neuronsPerHiddenLayer = {150, 100};
 
 	bool applyNN(int x, int y);
 
@@ -32,6 +37,10 @@ class BScanSegLocalOpNN : public BScanSegLocalOp
 	template<typename T>
 	void iterateBscanSeg(const cv::Mat& seg, T& op);
 
+	void createNN();
+	void calcMaskSizes();
+	void setInputOutputSize(int widthIn, int heighIn, int widthOut, int heighOut);
+	void setNeuronsPerHiddenLayer(const std::string& neuronsStr);
 
 	// void learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callback&);
 public:
@@ -56,13 +65,13 @@ public:
 	void trainNN(BScanSegmentationMarker::NNTrainData& trainData);
 
 
+
 	int getInputHeight ()                                     const { return paintSizeHeightInput ; }
 	int getInputWidth  ()                                     const { return paintSizeWidthInput  ; }
 	int getOutputHeight()                                     const { return paintSizeHeightOutput; }
 	int getOutputWidth ()                                     const { return paintSizeWidthOutput ; }
 
-
-	void setInputOutputSize(int widthIn, int heighIn, int widthOut, int heighOut);
+	void setNNConfig(const std::string& neuronsPerHiddenLayer, int widthIn, int heighIn, int widthOut, int heighOut);
 
     const cv::Mat& getLayerSizes() const;
 };

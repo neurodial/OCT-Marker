@@ -12,18 +12,24 @@
 #include <helper/callback.h>
 
 
+namespace
+{
+	void getRelOpSize(int& x1, int& x2, int& y1, int& y2, int x, int y)
+	{
+		x1 = (x+1)/2;
+		x2 = x/2;
+		y1 = (y+1)/2;
+		y2 = y/2;
+	}
+}
+
+
 BScanSegLocalOpNN::BScanSegLocalOpNN(BScanSegmentation& parent)
 : BScanSegLocalOp(parent)
 , mlp(new CvANN_MLP)
 {
-	cv::Mat layers = cv::Mat(4, 1, CV_32SC1);
-
-	layers.row(0) = cv::Scalar(maskSizeInput);
-	layers.row(1) = cv::Scalar(150);
-	layers.row(2) = cv::Scalar(100);
-	layers.row(3) = cv::Scalar(maskSizeOutput);
-
-	mlp->create(layers, CvANN_MLP::SIGMOID_SYM, 1, 1);
+	calcMaskSizes();
+	createNN();
 }
 
 BScanSegLocalOpNN::~BScanSegLocalOpNN()
@@ -33,6 +39,27 @@ BScanSegLocalOpNN::~BScanSegLocalOpNN()
 	delete outputSampels;
 }
 
+void BScanSegLocalOpNN::createNN()
+{
+	if(maskSizeInput > 0 && maskSizeOutput > 0)
+	{
+		int numHiddenLayers = static_cast<int>(neuronsPerHiddenLayer.size());
+
+		cv::Mat layers = cv::Mat(numHiddenLayers+2, 1, CV_32SC1);
+
+		layers.row(0) = cv::Scalar(maskSizeInput);
+		for(int i = 0; i < numHiddenLayers; ++i)
+			layers.row(i+1) = cv::Scalar(neuronsPerHiddenLayer[static_cast<std::size_t>(i)]);
+		layers.row(numHiddenLayers+1) = cv::Scalar(maskSizeOutput);
+
+		mlp->create(layers, CvANN_MLP::SIGMOID_SYM, 1, 1);
+
+		if(tranSampels)
+			*tranSampels   = cv::Mat();
+		if(outputSampels)
+			*outputSampels = cv::Mat();
+	}
+}
 
 
 int BScanSegLocalOpNN::getSubMaps(cv::Mat& image, cv::Mat& seg, int x, int y)
@@ -49,33 +76,44 @@ int BScanSegLocalOpNN::getSubMaps(cv::Mat& image, cv::Mat& seg, int x, int y)
 }
 
 
+
+
 int BScanSegLocalOpNN::getSubMaps(const cv::Mat& image, const cv::Mat& seg, cv::Mat* imageOut, cv::Mat* segOut, int x, int y)
 {
 	int rows = seg.rows;
 	int cols = seg.cols;
 
-	int x0i = std::max(x - paintSizeWidthInput , 0);
-	int x1i = std::min(x + paintSizeWidthInput , cols-1);
-	int x0o = std::max(x - paintSizeWidthOutput, 0);
-	int x1o = std::min(x + paintSizeWidthOutput, cols-1);
-	int y0  = std::max(y - paintSizeHeight     , 0);
-	int y1  = std::min(y + paintSizeHeight     , rows-1);
+	int dx0i, dx1i, dy0i, dy1i;
+	getRelOpSize(dx0i, dx1i, dy0i, dy1i, paintSizeWidthInput, paintSizeHeightInput);
+	int dx0o, dx1o, dy0o, dy1o;
+	getRelOpSize(dx0o, dx1o, dy0o, dy1o, paintSizeWidthOutput, paintSizeHeightOutput);
+
+	int x0i = std::max(x - dx0i , 0);
+	int x1i = std::min(x + dx1i , cols-1);
+	int y0i = std::max(y - dy0i , 0);
+	int y1i = std::min(y + dy1i , rows-1);
+	int x0o = std::max(x - dx0o , 0);
+	int x1o = std::min(x + dx1o , cols-1);
+	int y0o = std::max(y - dy0o , 0);
+	int y1o = std::min(y + dy1o , rows-1);
 
 	if(x0i>=x1i)
 		return 0;
 	if(x0o>=x1o)
 		return 0;
-	if(y0>=y1)
+	if(y0i>=y1i)
+		return 0;
+	if(y0o>=y1o)
 		return 0;
 
-	int height = y1 -y0 ;
+	int height = y1i-y0i;
 	int widthI = x1i-x0i;
 	// int widthO = x1o-x0o;
 
 	if(segOut)
-		*segOut   = seg  (cv::Rect(x0o, y0, x1o-x0o, y1-y0));
+		*segOut   = seg  (cv::Rect(x0o, y0o, x1o-x0o, y1o-y0o));
 	if(imageOut)
-		*imageOut = image(cv::Rect(x0i, y0, x1i-x0i, y1-y0));
+		*imageOut = image(cv::Rect(x0i, y0i, x1i-x0i, y1i-y0i));
 
 	return height*widthI;
 }
@@ -89,14 +127,26 @@ int BScanSegLocalOpNN::getSubMapSize(const cv::Mat& mat, int x, int y)
 
 void BScanSegLocalOpNN::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
 {
-	int sizeW    = static_cast<int>(paintSizeWidthInput *factor + 0.5);
-	int sizeWerg = static_cast<int>(paintSizeWidthOutput*factor + 0.5);
-	int sizeH    = static_cast<int>(paintSizeHeight*factor + 0.5);
-	painter.drawRect(centerDrawPoint.x()-sizeW/2, centerDrawPoint.y()-sizeH/2, sizeW, sizeH);
+
+	int dx0i, dx1i, dy0i, dy1i;
+	getRelOpSize(dx0i, dx1i, dy0i, dy1i, paintSizeWidthInput, paintSizeHeightInput);
+	int dx0o, dx1o, dy0o, dy1o;
+	getRelOpSize(dx0o, dx1o, dy0o, dy1o, paintSizeWidthOutput, paintSizeHeightOutput);
+
+
+	int sizeW      = static_cast<int>(paintSizeWidthInput  *factor + 0.5);
+	int sizeWerg   = static_cast<int>(paintSizeWidthOutput *factor + 0.5);
+	int sizeH      = static_cast<int>(paintSizeHeightInput *factor + 0.5);
+	int sizeHerg   = static_cast<int>(paintSizeHeightOutput*factor + 0.5);
+	int startX0In  = static_cast<int>(centerDrawPoint.x()-dx0i*factor + 0.5);
+	int startY0In  = static_cast<int>(centerDrawPoint.y()-dy0i*factor + 0.5);
+	int startX0Out = static_cast<int>(centerDrawPoint.x()-dx0o*factor + 0.5);
+	int startY0Out = static_cast<int>(centerDrawPoint.y()-dy0o*factor + 0.5);
+	painter.drawRect(startX0In, startY0In, sizeW, sizeH);
 
 	QPen pen(Qt::blue);
 	painter.setPen(pen);
-	painter.drawRect(centerDrawPoint.x()-sizeWerg/2, centerDrawPoint.y()-sizeH/2, sizeWerg, sizeH);
+	painter.drawRect(startX0Out, startY0Out, sizeWerg, sizeHerg);
 }
 
 
@@ -156,12 +206,30 @@ namespace
 
 */
 
+void BScanSegLocalOpNN::setInputOutputSize(int widthIn, int heighIn, int widthOut, int heighOut)
+{
+	paintSizeWidthInput   = widthIn;
+	paintSizeWidthOutput  = widthOut;
+	paintSizeHeightInput  = heighIn;
+	paintSizeHeightOutput = heighOut;
+
+	calcMaskSizes();
+}
+
+void BScanSegLocalOpNN::calcMaskSizes()
+{
+	maskSizeInput  = paintSizeWidthInput *paintSizeHeightInput;
+	maskSizeOutput = paintSizeWidthOutput*paintSizeHeightOutput;
+}
+
+
+
 void BScanSegLocalOpNN::loadNN(const QString& file)
 {
 	mlp->load(file.toStdString().c_str(), "mlp");
 
 	cv::Mat sizeInOut;
-	cv::FileStorage storage(file.toStdString(),, cv::FileStorage::READ);
+	cv::FileStorage storage(file.toStdString(), cv::FileStorage::READ);
 	storage["sizeInOut"] >> sizeInOut;
 	storage.release();
 
@@ -179,14 +247,16 @@ void BScanSegLocalOpNN::loadNN(const QString& file)
 void BScanSegLocalOpNN::saveNN(const QString& file) const
 {
 	cv::FileStorage fs(file.toStdString(), cv::FileStorage::WRITE); // or xml
-	mlp->write(*fs, "mlp"); // don't think too much about the deref, it casts to a FileNode
 
 	cv::Mat sizeInOut = cv::Mat(4, 1, cv::DataType<int>::type);
 	sizeInOut.row(0) = paintSizeWidthInput  ;
-	sizeInOut.row(1) = paintSizeWidthOutput ;
-	sizeInOut.row(2) = paintSizeHeightInput ;
+	sizeInOut.row(1) = paintSizeHeightInput ;
+	sizeInOut.row(2) = paintSizeWidthOutput ;
 	sizeInOut.row(3) = paintSizeHeightOutput;
 	fs << "sizeInOut" << sizeInOut;
+
+	mlp->write(*fs, "mlp"); // don't think too much about the deref, it casts to a FileNode
+
 	fs.release();
 }
 
@@ -197,7 +267,7 @@ void BScanSegLocalOpNN::iterateBscanSeg(const cv::Mat& seg, T& op)
 	int mapHeight = seg.rows-1; // -1 for p01
 	int mapWidth  = seg.cols-1; // -1 for p10
 
-	const int learnAbs = paintSizeHeight - 4;
+	const int learnAbs = paintSizeHeightInput - 4;
 
 	int startH = 0;
 	int endH   = mapHeight;
@@ -232,10 +302,11 @@ void BScanSegLocalOpNN::addBscanExampels()
 {
 	class SumOp
 	{
-		int transampelsSize = 0;
 		BScanSegLocalOpNN* parent;
+		int transampelsSize = 0;
+		int maskSizeInput;
 	public:
-		SumOp(BScanSegLocalOpNN* parent) : parent(parent) {}
+		SumOp(BScanSegLocalOpNN* parent, int maskSizeInput) : parent(parent), maskSizeInput(maskSizeInput) {}
 		void op(const cv::Mat& seg, int x, int y) { if(parent->getSubMapSize(seg, x, y) == maskSizeInput) ++transampelsSize; }
 		int  getSize() const { return transampelsSize; }
 	};
@@ -245,6 +316,8 @@ void BScanSegLocalOpNN::addBscanExampels()
 		BScanSegLocalOpNN* parent;
 		const cv::Mat& img;
 		int actTrainSampel;
+		int maskSizeInput;
+		int maskSizeOutput;
 
 		cv::Mat& tranSampels  ;
 		cv::Mat& outputSampels;
@@ -255,10 +328,14 @@ void BScanSegLocalOpNN::addBscanExampels()
 		            , const cv::Mat& img
 		            , int startTrainSampel
 		            , cv::Mat& tranSampels
-		            , cv::Mat& outputSampels)
+		            , cv::Mat& outputSampels
+		            , int maskSizeInput
+		            , int maskSizeOutput)
 		: parent(parent)
 		, img(img)
 		, actTrainSampel(startTrainSampel)
+		, maskSizeInput(maskSizeInput)
+		, maskSizeOutput(maskSizeOutput)
 		, tranSampels(tranSampels)
 		, outputSampels(outputSampels)
 		{}
@@ -287,7 +364,7 @@ void BScanSegLocalOpNN::addBscanExampels()
 	const cv::Mat* seg = getActMat();
 	const cv::Mat& img = bscan->getImage();
 
-	SumOp sumOp(this);
+	SumOp sumOp(this, maskSizeInput);
 	iterateBscanSeg(*seg, sumOp);
 	int transampelsSize  = sumOp.getSize();
 	int startTrainSampel = 0;
@@ -308,7 +385,7 @@ void BScanSegLocalOpNN::addBscanExampels()
 		outputSampels->resize(static_cast<std::size_t>(newSize));
 	}
 
-	AddExapmelsOp addExapmelsOp(this, img, startTrainSampel, *tranSampels, *outputSampels);
+	AddExapmelsOp addExapmelsOp(this, img, startTrainSampel, *tranSampels, *outputSampels, maskSizeInput, maskSizeOutput);
 	iterateBscanSeg(*seg, addExapmelsOp);
 }
 
@@ -342,6 +419,25 @@ void BScanSegLocalOpNN::trainNN(BScanSegmentationMarker::NNTrainData& trainData)
 	}
 
 	mlp->train(*tranSampels, *outputSampels, cv::Mat(), cv::Mat(), params, CvANN_MLP::NO_OUTPUT_SCALE | CvANN_MLP::NO_INPUT_SCALE);
+}
+
+void BScanSegLocalOpNN::setNeuronsPerHiddenLayer(const std::string& neuronsStr)
+{
+	neuronsPerHiddenLayer.clear();
+	std::istringstream is(neuronsStr);
+	int n;
+	while(is >> n)
+	{
+		if(n>0)
+			neuronsPerHiddenLayer.push_back(n);
+	}
+}
+
+void BScanSegLocalOpNN::setNNConfig(const std::string& neuronsPerHiddenLayer, int widthIn, int heighIn, int widthOut, int heighOut)
+{
+	setNeuronsPerHiddenLayer(neuronsPerHiddenLayer);
+	setInputOutputSize(widthIn, heighIn, widthOut, heighOut);
+	createNN();
 }
 
 

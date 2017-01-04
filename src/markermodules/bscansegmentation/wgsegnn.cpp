@@ -40,7 +40,7 @@ void WgSegNN::createConnections()
 	connect(buttonBoxLoadSave , &QDialogButtonBox::clicked, this, &WgSegNN::slotLoadSaveButtonBoxClicked);
 	connect(pushButtonTrain   , &QAbstractButton ::clicked, this, &WgSegNN::slotTrain                   );
 	connect(pbAddBscanExampels, &QAbstractButton ::clicked, this, &WgSegNN::slotAddBscanExampels        );
-
+	connect(pbSetNNConfig     , &QAbstractButton ::clicked, this, &WgSegNN::changeNNConfig              );
 }
 
 
@@ -161,14 +161,25 @@ void WgSegNN::updateActLayerInfo()
 	for(int i = 1; i<numLayers-1; ++i)
 	{
 		if(i > 1)
-			layerString += "; ";
+			layerString += " ";
 		layerString += QString("%1").arg(layers.at<int>(i));
 	}
 	labelActHiddenLayers->setText(layerString);
 }
 
 
+void WgSegNN::changeNNConfig()
+{
+	QString nnHiddenLayers = lineEditHiddenLayers->text();
+	int inputHWidth  = spinBoxInputX->value();
+	int inputHeight  = spinBoxInputY->value();
+	int outputHWidth = spinBoxOutputX->value();
+	int outputHeight = spinBoxOutputY->value();
 
+	localOpNN->setNNConfig(nnHiddenLayers.toStdString(), inputHWidth, inputHeight, outputHWidth, outputHeight);
+
+	updateActLayerInfo();
+}
 
 
 

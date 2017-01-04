@@ -48,6 +48,8 @@ private slots:
 
 	void slotLoadSaveButtonBoxClicked(QAbstractButton* button);
 
+	void changeNNConfig();
+
 };
 
 #endif

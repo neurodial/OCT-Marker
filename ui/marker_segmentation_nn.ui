@@ -34,7 +34,7 @@
    <item row="4" column="0" colspan="2">
     <widget class="QLabel" name="label_24">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="text">
       <string>Input size</string>
@@ -210,7 +210,7 @@
    <item row="5" column="0" colspan="2">
     <widget class="QLabel" name="label_25">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="text">
       <string>Output size</string>
@@ -218,9 +218,9 @@
     </widget>
    </item>
    <item row="7" column="2">
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="pbSetNNConfig">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="text">
       <string>change</string>
@@ -239,14 +239,20 @@
      <item>
       <widget class="QSpinBox" name="spinBoxInputX">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_26">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="text">
         <string>x</string>
@@ -256,7 +262,13 @@
      <item>
       <widget class="QSpinBox" name="spinBoxInputY">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
        </property>
       </widget>
      </item>
@@ -280,14 +292,20 @@
      <item>
       <widget class="QSpinBox" name="spinBoxOutputX">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_27">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="text">
         <string>x</string>
@@ -297,7 +315,13 @@
      <item>
       <widget class="QSpinBox" name="spinBoxOutputY">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
        </property>
       </widget>
      </item>
@@ -362,7 +386,7 @@
    <item row="6" column="0" colspan="2">
     <widget class="QLabel" name="label_4">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="text">
       <string>Hidden layers</string>
@@ -372,7 +396,7 @@
    <item row="6" column="2">
     <widget class="QLineEdit" name="lineEditHiddenLayers">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -401,6 +425,9 @@
     <widget class="QLabel" name="labelActHiddenLayers">
      <property name="text">
       <string>-</string>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>
