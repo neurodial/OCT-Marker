@@ -5,6 +5,7 @@
 #include "wgsegmentation.h"
 #include "bscansegmentation.h"
 #include "bscanseglocalopnn.h"
+#include "windownninout.h"
 
 #include <helper/callback.h>
 
@@ -31,6 +32,7 @@ WgSegNN::WgSegNN(WGSegmentation* parent, BScanSegmentation* seg)
 
 WgSegNN::~WgSegNN()
 {
+	delete inOutWindow;
 }
 
 
@@ -41,6 +43,7 @@ void WgSegNN::createConnections()
 	connect(pushButtonTrain   , &QAbstractButton ::clicked, this, &WgSegNN::slotTrain                   );
 	connect(pbAddBscanExampels, &QAbstractButton ::clicked, this, &WgSegNN::slotAddBscanExampels        );
 	connect(pbSetNNConfig     , &QAbstractButton ::clicked, this, &WgSegNN::changeNNConfig              );
+	connect(btnShowInOutNN    , &QAbstractButton ::toggled, this, &WgSegNN::showInOutWindow              );
 }
 
 
@@ -180,6 +183,37 @@ void WgSegNN::changeNNConfig()
 
 	updateActLayerInfo();
 }
+
+void WgSegNN::showInOutWindow(bool show)
+{
+	class CallbackInOutNeuronsWindow : public BScanSegLocalOpNN::CallbackInOutNeurons
+	{
+		WindowNNInOut* inOutWindow = nullptr;
+	public:
+		void setWindow(WindowNNInOut* window) { inOutWindow = window; }
+		virtual void processedInOutNeurons(const cv::Mat& in, const cv::Mat& out) const override
+		{
+			if(inOutWindow)
+				inOutWindow->showInOutMat(in, out);
+		}
+	};
+
+	static CallbackInOutNeuronsWindow callbackWindow;
+
+	if(show)
+	{
+		if(!inOutWindow)
+		{
+			inOutWindow = new WindowNNInOut();
+			callbackWindow.setWindow(inOutWindow);
+			localOpNN->setCallbackInOutNeurons(&callbackWindow);
+		}
+		inOutWindow->show();
+	}
+	else
+		inOutWindow->close();
+}
+
 
 
 

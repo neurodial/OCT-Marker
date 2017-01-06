@@ -87,18 +87,35 @@ void CVImageWidget::showImage(const cv::Mat& image)
 			case CV_32FC1:
 			case CV_64FC1:
 			{
-				double min, max;
-				cv::minMaxLoc(image, &min, &max);
-			//	qDebug("min: %d\tmax: %d", min, max);
-			//	std::cout << "min: " << min << "\tmax: " << max << std::endl;
+				std::cout << "1 Channels: " << image.channels() << "\tgr: " << image.rows << " x " << image.cols << std::endl;
 
-				if(min == max)
-					max = min+1;
-		//		image.convertTo(cvImage, CV_8UC3, 255.0/(max-min), -255.0*min/(max-min));
-				image.convertTo(cvImage, CV_8UC3, 255.0, 0);
+				switch(floatGrayTransform)
+				{
+					case FloatGrayTransform::Auto:
+					{
+						double min, max;
+						cv::minMaxLoc(image, &min, &max);
+						if(min == max)
+							max = min+1;
+						image.convertTo(cvImage, cv::DataType<uint8_t>::type, 255.0/(max-min), -255.0*min/(max-min));
+						break;
+					}
+					case FloatGrayTransform::Fix:
+						image.convertTo(cvImage, cv::DataType<uint8_t>::type, grayTransformA, grayTransformB);
+						break;
+					case FloatGrayTransform::ZeroToOne:
+						image.convertTo(cvImage, cv::DataType<uint8_t>::type, 255.0, 0);
+						break;
+				}
+
+
+				std::cout << "2 Channels: " << cvImage.channels() << "\tgr: " << cvImage.rows << " x " << cvImage.cols << std::endl;
 
 				if(cvImage.channels() == 1)
 					cv::cvtColor(cvImage, cvImage, CV_GRAY2BGR);
+
+
+				std::cout << "3 Channels: " << cvImage.channels() << "\tgr: " << cvImage.rows << " x " << cvImage.cols << std::endl;
 
 				break;
 			}

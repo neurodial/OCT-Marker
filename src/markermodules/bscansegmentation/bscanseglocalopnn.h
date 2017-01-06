@@ -15,12 +15,21 @@ namespace cv { class Mat; }
 
 class BScanSegLocalOpNN : public BScanSegLocalOp
 {
+public:
+	class CallbackInOutNeurons
+	{
+	public:
+		virtual void processedInOutNeurons(const cv::Mat& in, const cv::Mat& out) const = 0;
+	};
+private:
 	int paintSizeWidthInput   = 10;
 	int paintSizeWidthOutput  =  1;
 	int paintSizeHeightInput  = 24;
 	int paintSizeHeightOutput = 18;
 	int maskSizeInput         = 0;
 	int maskSizeOutput        = 0;
+
+	const CallbackInOutNeurons* callbackInOutNeurons = nullptr;
 
 	CvANN_MLP* mlp           = nullptr;
 	cv::Mat*   tranSampels   = nullptr;
@@ -64,7 +73,8 @@ public:
 	void addBscanExampels();
 	void trainNN(BScanSegmentationMarker::NNTrainData& trainData);
 
-
+	void setCallbackInOutNeurons(const CallbackInOutNeurons* callback)
+	                                                                { callbackInOutNeurons = callback; }
 
 	int getInputHeight ()                                     const { return paintSizeHeightInput ; }
 	int getInputWidth  ()                                     const { return paintSizeWidthInput  ; }

@@ -24,6 +24,8 @@ class CVImageWidget : public QWidget
 	ScaleMethod scaleMethod = ScaleMethod::Factor;
 	
 public:
+	enum class FloatGrayTransform { Auto, Fix, ZeroToOne };
+
 	explicit CVImageWidget(QWidget *parent = 0);
 	virtual ~CVImageWidget();
 
@@ -42,6 +44,10 @@ public:
 	double getImageScaleFactor()                                { return scaleFactor; }
 
 	void addZoomItems();
+
+	void setFloatGrayTransform(FloatGrayTransform transform)    { floatGrayTransform = transform; }
+	void setGrayTransformValueA(double val)                     { grayTransformA = val; }
+	void setGrayTransformValueB(double val)                     { grayTransformB = val; }
 
 protected:
 	void paintEvent(QPaintEvent* event);
@@ -76,6 +82,11 @@ public slots:
 
 signals:
 	void zoomChanged(double);
+
+private:
+	FloatGrayTransform floatGrayTransform = FloatGrayTransform::ZeroToOne;
+	double grayTransformA = 255;
+	double grayTransformB = 0;
 };
 
 #endif // CVIMAGEWIDGET_H

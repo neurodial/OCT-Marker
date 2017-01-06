@@ -10,6 +10,7 @@
 class BScanSegLocalOpNN;
 class WGSegmentation;
 class BScanSegmentation;
+class WindowNNInOut;
 
 namespace BScanSegmentationMarker
 {
@@ -23,6 +24,8 @@ class WgSegNN : public QWidget, Ui::BScanSegWidgetNN
 
 	BScanSegmentation* segmentation = nullptr;
 	BScanSegLocalOpNN* localOpNN    = nullptr;
+
+	WindowNNInOut* inOutWindow = nullptr;
 
 	void createConnections();
 
@@ -49,6 +52,8 @@ private slots:
 	void slotLoadSaveButtonBoxClicked(QAbstractButton* button);
 
 	void changeNNConfig();
+
+	void showInOutWindow(bool show);
 
 };
 

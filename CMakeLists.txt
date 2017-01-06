@@ -90,3 +90,4 @@ target_link_libraries(octmarker ${LibOctData_LIBRARIES})
 target_link_libraries(octmarker ${CppFramework_LIBRARIES})
 
 install(TARGETS octmarker RUNTIME DESTINATION bin)
+

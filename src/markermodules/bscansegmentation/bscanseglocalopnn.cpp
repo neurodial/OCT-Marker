@@ -169,14 +169,17 @@ bool BScanSegLocalOpNN::applyNN(int x, int y)
 
 	mlp->predict(imageFloatLin, segFloat);
 
+	if(callbackInOutNeurons)
+		callbackInOutNeurons->processedInOutNeurons(imageFloat, segFloat.reshape(0, seg.rows));
 
-	double min1, max1, min2, max2;
-	cv::minMaxLoc(segFloat, &min1, &max1);
-	cv::minMaxLoc(imageFloatLin, &min2, &max2);
+// 	double min1, max1, min2, max2;
+// 	cv::minMaxLoc(segFloat, &min1, &max1);
+// 	cv::minMaxLoc(imageFloatLin, &min2, &max2);
 	// std::cerr << "ApplyNN: " << min1 << "\t" << max1 << "\t" << min2 << "\t" << max2 << "\n";
 
 	segFloat.convertTo(segFloat, cv::DataType<uint8_t>::type, BScanSegmentationMarker::paintArea1Value, 0.5*BScanSegmentationMarker::paintArea1Value);
 	segFloat.reshape(0, seg.rows).copyTo(seg);
+
 
 	return true;
 }
