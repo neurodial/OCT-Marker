@@ -80,6 +80,7 @@ void OctDataManager::openFile(const QString& filename)
 		octOptions.e2eGray             = static_cast<OctData::FileReadOptions::E2eGrayTransform>(ProgramOptions::e2eGrayTransform());
 		octOptions.registerBScanns     = ProgramOptions::registerBScans();
 		octOptions.fillEmptyPixelWhite = ProgramOptions::fillEmptyPixelWhite();
+		octOptions.holdRawData         = ProgramOptions::holdOCTRawData();
 
 		qDebug("Lese: %s", filename.toStdString().c_str());
 		octData = new OctData::OCT(OctData::OctFileRead::openFile(filename.toStdString(), octOptions));

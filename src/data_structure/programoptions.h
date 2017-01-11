@@ -164,6 +164,8 @@ public:
 	static OptionBool registerBScans;
 	static OptionBool loadRotateSlo;
 
+	static OptionBool holdOCTRawData;
+
 	static OptionInt  e2eGrayTransform;
 	
 	static OptionBool sloShowBscans;

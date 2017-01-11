@@ -17,6 +17,8 @@ OptionBool ProgramOptions::fillEmptyPixelWhite(true , "fillEmptyPixelWhite");
 OptionBool ProgramOptions::registerBScans     (true , "registerBScans"     );
 OptionBool ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      );
 
+OptionBool ProgramOptions::holdOCTRawData     (false, "holdOCTRawData"     );
+
 OptionInt  ProgramOptions::e2eGrayTransform(1, "e2eGrayTransform");
 
 

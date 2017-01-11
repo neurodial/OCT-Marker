@@ -208,12 +208,15 @@ void OCTMarkerMainWindow::setupMenu()
 	QAction* fillEpmtyPixelWhite = ProgramOptions::fillEmptyPixelWhite.getAction();
 	QAction* registerBScans      = ProgramOptions::registerBScans     .getAction();
 	QAction* loadRotateSlo       = ProgramOptions::loadRotateSlo      .getAction();
+	QAction* holdOCTRawData      = ProgramOptions::holdOCTRawData     .getAction();
 	fillEpmtyPixelWhite->setText(tr("Fill empty pixels white"));
 	registerBScans     ->setText(tr("register BScans"));
 	loadRotateSlo      ->setText(tr("rotate SLO"));
+	holdOCTRawData     ->setText(tr("hold OCT raw data"));
 	optionsMenu->addAction(fillEpmtyPixelWhite);
 	optionsMenu->addAction(registerBScans);
-	optionsMenu->addAction(loadRotateSlo);
+	optionsMenu->addAction(loadRotateSlo );
+	optionsMenu->addAction(holdOCTRawData);
 
 	QMenu* optionsMenuE2E = new QMenu(this);
 	optionsMenuE2E->setTitle(tr("E2E Gray"));
