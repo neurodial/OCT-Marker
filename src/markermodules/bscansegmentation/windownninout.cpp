@@ -26,7 +26,7 @@
 
 #include <opencv/cv.hpp>
 
-#include <iostream>
+// #include <iostream>
 
 WindowNNInOut::WindowNNInOut()
 : inoutNeuronsWidget(new QWidget())
@@ -63,7 +63,7 @@ WindowNNInOut::WindowNNInOut()
 
 void WindowNNInOut::showInOutMat(const cv::Mat& in, const cv::Mat& out)
 {
-	std::cout << "In Channels: " << in.channels() << "\tgr: " << in.rows << " x " << in.cols << "\t Out Channels: " << out.channels() << "\tgr: " << out.rows << " x " << out.cols << std::endl;
+// 	std::cout << "In Channels: " << in.channels() << "\tgr: " << in.rows << " x " << in.cols << "\t Out Channels: " << out.channels() << "\tgr: " << out.rows << " x " << out.cols << std::endl;
 
 	cv::Mat inImg, outImg;
 	in .convertTo( inImg, cv::DataType<uint8_t>::type, 128, 0.5*255);

@@ -18,21 +18,6 @@ const OctData::BScan* BScanSegLocalOp::getActBScan()
 	return segmentation.getActBScan();
 }
 
-cv::Mat * BScanSegLocalOp::getSegMat(std::size_t nr)
-{
-	if(segmentation.segments.size() <= nr)
-		return nullptr;
-	return segmentation.segments[nr];
-}
-
-const OctData::BScan * BScanSegLocalOp::getBScan(std::size_t nr)
-{
-	if(segmentation.segments.size() <= nr)
-		return nullptr;
-	return segmentation.getBScan(nr);
-}
-
-
 BScanSegmentationMarker::internalMatType BScanSegLocalOp::valueOnCoord(int x, int y)
 {
 	return segmentation.valueOnCoord(x, y);

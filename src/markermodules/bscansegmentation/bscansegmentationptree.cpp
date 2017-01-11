@@ -21,9 +21,13 @@ namespace bpt = boost::property_tree;
 
 #include "bscansegmentation.h"
 
+#include <data_structure/simplematcompress.h>
+
 
 namespace
 {
+
+
 	class ColSegments
 	{
 		friend class boost::serialization::access;
@@ -78,37 +82,13 @@ namespace
 		std::size_t size() const                                       { return rows.size(); }
 		bool empty() const                                             { return rows.empty(); }
 	};
-}
 
-
-bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree, BScanSegmentation* markerManager)
-{
-	const char* bscansNodeStr = "ILM";
-	boost::optional<const bpt::ptree&> bscansNode = ptree.get_child_optional(bscansNodeStr);
-
-	if(!bscansNode)
-		return false;
-
-
-	for(const std::pair<const std::string, const bpt::ptree>& bscanPair : *bscansNode)
+	void oldDeSerialization(const bpt::ptree& bscanNode, cv::Mat* map)
 	{
-		if(bscanPair.first != "BScan")
-			continue;
-
-		const bpt::ptree& bscanNode = bscanPair.second;
-		int bscanId             = bscanNode.get_child("ID").get_value<int>(-1);
-		if(bscanId == -1)
-			continue;
-
-		cv::Mat* map = markerManager->segments.at(bscanId);
-
-		if(!map || map->empty())
-			continue;
-
 		std::string serializationString = bscanNode.get_child("serialization").get_value<std::string>("");
 
 		if(serializationString.size() < 2)
-			continue;
+			return;
 
 		BScanSegments segments;
 		std::stringstream ioa(serializationString);
@@ -160,6 +140,66 @@ bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree
 			}
 		}
 	}
+
+
+}
+
+
+
+
+bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree, BScanSegmentation* markerManager)
+{
+	const char* bscansNodeStr = "ILM";
+	boost::optional<const bpt::ptree&> bscansNode = ptree.get_child_optional(bscansNodeStr);
+
+	if(!bscansNode)
+		return false;
+
+
+	for(const std::pair<const std::string, const bpt::ptree>& bscanPair : *bscansNode)
+	{
+		if(bscanPair.first != "BScan")
+			continue;
+
+		try{
+			const bpt::ptree& bscanNode = bscanPair.second;
+			int bscanId                 = bscanNode.get_child("ID").get_value<int>(-1);
+			if(bscanId == -1)
+				continue;
+
+			cv::Mat* map = markerManager->segments.at(bscanId);
+
+			if(!map || map->empty())
+				continue;
+
+			boost::optional<const bpt::ptree&> serializationNode = bscanNode.get_child_optional("serialization");
+
+			if(serializationNode)
+				oldDeSerialization(bscanNode, map);
+
+			boost::optional<const bpt::ptree&> matCompressNode = bscanNode.get_child_optional("matCompress");
+			if(matCompressNode)
+			{
+				std::string serializationString = matCompressNode->get_value<std::string>("");
+
+				if(serializationString.size() < 2)
+					continue;
+
+				SimpleMatCompress compressedMat;
+				std::stringstream ioa(serializationString);
+				boost::archive::text_iarchive oa(ioa);
+				oa >> compressedMat;
+
+				compressedMat.writeMat(*map);
+			}
+
+
+		}
+		catch(...)
+		{
+			// TODO: Error message
+		}
+	}
 	return true;
 }
 
@@ -172,79 +212,27 @@ void BScanSegmentationPtree::fillPTree(boost::property_tree::ptree& markerTree, 
 	std::size_t numBscans = markerManager->getNumBScans();
 	for(std::size_t bscan = 0; bscan < numBscans; ++bscan)
 	{
-		BScanSegments segments;
-
-		cv::Mat* map = markerManager->segments.at(bscan);
-
+		const cv::Mat* map = markerManager->segments.at(bscan);
 		if(map && !map->empty())
 		{
-			BScanSegmentationMarker::internalMatType* colIt = map->ptr<BScanSegmentationMarker::internalMatType>();
-			int rowSize = map->rows;
-			int colSize = map->cols;
+			// Todo: check type
 
-			for(int col = 0; col < colSize; ++col)
-			{
-				BScanSegmentationMarker::internalMatType value  = BScanSegmentationMarker::markermatInitialValue;
-				BScanSegmentationMarker::internalMatType* rowIt = colIt;
-				ColSegments colSegments(col);
+			SimpleMatCompress compressedMat;
+			compressedMat.readMat(*map);
 
-				for(int row = 0; row < rowSize; ++row)
-				{
-					if(value != *rowIt)
-					{
-						value = *rowIt;
-						colSegments.addSegmentChange(row);
-					}
-					rowIt += colSize;
-				}
-
-				++colIt;
-				segments.addSegment(colSegments);
-			}
-
-
-			if(segments.empty())
+			if(compressedMat.isEmpty(BScanSegmentationMarker::paintArea0Value))
 				continue;
-
 
 			std::stringstream ofs;
 			boost::archive::text_oarchive oa(ofs);
 			// write class instance to archive
-			oa << segments;
+			oa << compressedMat;
 
 			std::string nodeName = "BScan";
 			bpt::ptree& bscanNode = ilmTree.add(nodeName, "");
 			bscanNode.add("ID", boost::lexical_cast<std::string>(bscan));
-			bscanNode.put("serialization", ofs.str());
+			bscanNode.put("matCompress", ofs.str());
 		}
 	}
-
 }
 
-/*
-if(mat && !mat->empty())
-{
-	internalMatType* colIt = mat->ptr<internalMatType>();
-	std::size_t colSize = static_cast<std::size_t>(mat->cols);
-	std::size_t rowSize = static_cast<std::size_t>(mat->rows);
-	for(double value : segline)
-	{
-		const std::size_t rowCh = std::min(static_cast<std::size_t>(value), rowSize);
-		internalMatType* rowIt = colIt;
-
-		for(std::size_t row = 0; row < rowCh; ++row)
-		{
-			*rowIt =  1;
-			rowIt += colSize;
-		}
-
-		for(std::size_t row = rowCh; row < rowSize; ++row)
-		{
-			*rowIt = 0;
-			rowIt += colSize;
-		}
-
-		++colIt;
-	}
-}
-*/
