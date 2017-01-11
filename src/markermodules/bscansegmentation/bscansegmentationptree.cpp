@@ -23,6 +23,9 @@ namespace bpt = boost::property_tree;
 
 #include <data_structure/simplematcompress.h>
 
+// need only old format (for mat size)
+#include <octdata/datastruct/bscan.h>
+
 
 namespace
 {
@@ -167,15 +170,23 @@ bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree
 			if(bscanId == -1)
 				continue;
 
-			cv::Mat* map = markerManager->segments.at(bscanId);
+			SimpleMatCompress* compressedMat = markerManager->segments.at(bscanId);
 
-			if(!map || map->empty())
+			if(!compressedMat)
 				continue;
 
+			// for old format
 			boost::optional<const bpt::ptree&> serializationNode = bscanNode.get_child_optional("serialization");
-
 			if(serializationNode)
-				oldDeSerialization(bscanNode, map);
+			{
+				const OctData::BScan* bscan = markerManager->getBScan(bscanId);
+				if(bscan)
+				{
+					cv::Mat tempSegMat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(BScanSegmentationMarker::markermatInitialValue));
+					oldDeSerialization(bscanNode, &tempSegMat);
+					compressedMat->readMat(tempSegMat);
+				}
+			}
 
 			boost::optional<const bpt::ptree&> matCompressNode = bscanNode.get_child_optional("matCompress");
 			if(matCompressNode)
@@ -185,12 +196,11 @@ bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree
 				if(serializationString.size() < 2)
 					continue;
 
-				SimpleMatCompress compressedMat;
 				std::stringstream ioa(serializationString);
 				boost::archive::text_iarchive oa(ioa);
-				oa >> compressedMat;
+				oa >> *compressedMat;
 
-				compressedMat.writeMat(*map);
+// 				compressedMat.writeMat(*map);
 			}
 
 
@@ -212,21 +222,17 @@ void BScanSegmentationPtree::fillPTree(boost::property_tree::ptree& markerTree, 
 	std::size_t numBscans = markerManager->getNumBScans();
 	for(std::size_t bscan = 0; bscan < numBscans; ++bscan)
 	{
-		const cv::Mat* map = markerManager->segments.at(bscan);
-		if(map && !map->empty())
+		// const cv::Mat* map = markerManager->segments.at(bscan);
+		const SimpleMatCompress* compressedMat = markerManager->segments.at(bscan);
+		if(compressedMat)
 		{
-			// Todo: check type
-
-			SimpleMatCompress compressedMat;
-			compressedMat.readMat(*map);
-
-			if(compressedMat.isEmpty(BScanSegmentationMarker::paintArea0Value))
+			if(compressedMat->isEmpty(BScanSegmentationMarker::paintArea0Value))
 				continue;
 
 			std::stringstream ofs;
 			boost::archive::text_oarchive oa(ofs);
 			// write class instance to archive
-			oa << compressedMat;
+			oa << *compressedMat;
 
 			std::string nodeName = "BScan";
 			bpt::ptree& bscanNode = ilmTree.add(nodeName, "");

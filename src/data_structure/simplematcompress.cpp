@@ -4,11 +4,14 @@
 
 void SimpleMatCompress::readMat(const cv::Mat& mat)
 {
-	sumSegments = 0;
-
 	rows = mat.rows;
 	cols = mat.cols;
 	segmentsChange.clear();
+
+	sumSegments = 0;
+
+	if(mat.empty())
+		return;
 
 	int     actSegmentLengt = 0;
 	uint8_t actSegmentValue = *(mat.ptr<uint8_t>());
@@ -57,7 +60,7 @@ inline void SimpleMatCompress::addSegment(int length, uint8_t value)
 	sumSegments += length;
 }
 
-bool SimpleMatCompress::isEmpty(uint8_t defaultValue)
+bool SimpleMatCompress::isEmpty(uint8_t defaultValue) const
 {
 	if(segmentsChange.empty())
 		return true;

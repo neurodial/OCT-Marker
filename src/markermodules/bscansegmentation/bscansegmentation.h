@@ -24,17 +24,16 @@ class BScanSegLocalOpThresholdDirection;
 class BScanSegLocalOpOperation;
 class BScanSegLocalOpNN;
 
+class SimpleMatCompress;
 
 class BScanSegmentation : public BscanMarkerBase
 {
 	Q_OBJECT
 
-	// enum class PaintMethod { Disc, Quadrat };
-
 	friend class BScanSegmentationPtree;
 	friend class BScanSegLocalOp;
 	
-	typedef std::vector<cv::Mat*> SegMats;
+	typedef std::vector<SimpleMatCompress*> SegMats;
 
 	bool inWidget = false;
 	QPoint mousePoint;
@@ -42,12 +41,12 @@ class BScanSegmentation : public BscanMarkerBase
 	// Local operation data
 	BScanSegmentationMarker::LocalMethod   localMethod = BScanSegmentationMarker::LocalMethod::None;
 
-	BScanSegLocalOp*          actLocalOperator = nullptr;
-	BScanSegLocalOpPaint*     localOpPaint     = nullptr;
-	BScanSegLocalOpThreshold* localOpThreshold = nullptr;
+	BScanSegLocalOp*                   actLocalOperator          = nullptr;
+	BScanSegLocalOpPaint*              localOpPaint              = nullptr;
+	BScanSegLocalOpThreshold*          localOpThreshold          = nullptr;
 	BScanSegLocalOpThresholdDirection* localOpThresholdDirection = nullptr;
-	BScanSegLocalOpOperation* localOpOperation = nullptr;
-	BScanSegLocalOpNN*        localOpNN        = nullptr;
+	BScanSegLocalOpOperation*          localOpOperation          = nullptr;
+	BScanSegLocalOpNN*                 localOpNN                 = nullptr;
 
 
 	bool paint = false;
@@ -57,6 +56,8 @@ class BScanSegmentation : public BscanMarkerBase
 	QWidget* widgetPtr2WGSegmentation = nullptr;
 	
 	SegMats segments;
+	mutable cv::Mat* actMat = nullptr;
+	mutable std::size_t actMatNr = 0;
 
 	void clearSegments();
 	void createSegments();
@@ -76,6 +77,8 @@ class BScanSegmentation : public BscanMarkerBase
 	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor);
 
 	int seglinePaintSize = 1;
+
+	bool setActMat(std::size_t nr, bool saveOldState = true) const;
 
 public:
 
@@ -101,7 +104,7 @@ public:
 	
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree) override;
 
-	void initBScanFromThreshold(const BScanSegmentationMarker::ThresholdDirectionData& data);
+	void initBScanFromThreshold (const BScanSegmentationMarker::ThresholdDirectionData& data);
 	void initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdDirectionData& data);
 
 

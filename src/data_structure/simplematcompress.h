@@ -53,7 +53,7 @@ public:
 
 	void writeMat(cv::Mat& mat) const;
 
-	bool isEmpty(uint8_t defaultValue);
+	bool isEmpty(uint8_t defaultValue) const;
 };
 
 

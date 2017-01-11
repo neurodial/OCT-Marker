@@ -10,7 +10,7 @@
 
 cv::Mat* BScanSegLocalOp::getActMat()
 {
-	return segmentation.segments.at(segmentation.getActBScanNr());
+	return segmentation.actMat;
 }
 
 const OctData::BScan* BScanSegLocalOp::getActBScan()

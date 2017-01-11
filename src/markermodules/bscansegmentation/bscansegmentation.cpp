@@ -22,9 +22,12 @@
 #include "bscanseglocalop.h"
 #include "bscanseglocalopnn.h"
 
+#include <data_structure/simplematcompress.h>
+
 
 BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
+, actMat(new cv::Mat)
 {
 	name = tr("Segmentation marker");
 	id   = "SegmentationMarker";
@@ -53,6 +56,7 @@ BScanSegmentation::~BScanSegmentation()
 	clearSegments();
 
 	delete widget;
+	delete actMat;
 }
 
 QToolBar* BScanSegmentation::createToolbar(QObject* parent)
@@ -104,8 +108,8 @@ namespace
 template<typename T>
 void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const QRect& rect) const
 {
-	cv::Mat* map = segments.at(getActBScanNr());
-	if(!map || map->empty())
+	setActMat(getActBScanNr());
+	if(!actMat || actMat->empty())
 		return;
 
 	if(factor <= 0)
@@ -120,8 +124,8 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 	pen.setWidth(seglinePaintSize);
 	painter.setPen(pen);
 
-	int mapHeight = map->rows-1; // -1 for p01
-	int mapWidth  = map->cols-1; // -1 for p10
+	int mapHeight = actMat->rows-1; // -1 for p01
+	int mapWidth  = actMat->cols-1; // -1 for p10
 
 	int startH = std::max(drawY, 0);
 	int endH   = std::min(drawY+drawHeight, mapHeight);
@@ -130,9 +134,9 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 
 	for(int h = startH; h < endH; ++h)
 	{
-		uint8_t* p00 = map->ptr<uint8_t>(h);
+		uint8_t* p00 = actMat->ptr<uint8_t>(h);
 		uint8_t* p10 = p00+1;
-		uint8_t* p01 = map->ptr<uint8_t>(h+1);
+		uint8_t* p01 = actMat->ptr<uint8_t>(h+1);
 
 		p00 += startW;
 		p10 += startW;
@@ -223,11 +227,11 @@ bool BScanSegmentation::startOnCoord(int x, int y, double factor)
 
 uint8_t BScanSegmentation::valueOnCoord(int x, int y)
 {
-	cv::Mat* map = segments.at(getActBScanNr());
-	if(!map || map->empty())
+	setActMat(getActBScanNr());
+	if(!actMat || actMat->empty())
 		return BScanSegmentationMarker::markermatInitialValue;
 
-	return map->at<uint8_t>(cv::Point(x, y));
+	return actMat->at<uint8_t>(cv::Point(x, y));
 }
 
 
@@ -295,9 +299,6 @@ BscanMarkerBase::RedrawRequest  BScanSegmentation::mousePressEvent(QMouseEvent* 
 	if(paint)
 	{
 		startOnCoord(e->x(), e->y(), factor);
-		// if(autoPaintValue)
-		//	paintValue = valueOnCoord(e->x(), e->y(), widget->getImageScaleFactor());
-		
 		result.redraw = setOnCoord(e->x(), e->y(), factor);
 	}
 	return result;
@@ -374,35 +375,35 @@ bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 
 void BScanSegmentation::dilateBScan()
 {
-	cv::Mat* map = segments.at(getActBScanNr());
-	if(!map || map->empty())
+	setActMat(getActBScanNr());
+	if(!actMat || actMat->empty())
 		return;
 
 	int iterations = 1;
-	cv::dilate(*map, *map, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
+	cv::dilate(*actMat, *actMat, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
 
 	requestUpdate();
 }
 
 void BScanSegmentation::erodeBScan()
 {
-	cv::Mat* map = segments.at(getActBScanNr());
-	if(!map || map->empty())
+	setActMat(getActBScanNr());
+	if(!actMat || actMat->empty())
 		return;
 
 	int iterations = 1;
-	cv::erode(*map, *map, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
+	cv::erode(*actMat, *actMat, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
 
 	requestUpdate();
 }
 
 void BScanSegmentation::opencloseBScan()
 {
-	cv::Mat* map = segments.at(getActBScanNr());
-	if(!map || map->empty())
+	setActMat(getActBScanNr());
+	if(!actMat || actMat->empty())
 		return;
 
-	BScanSegAlgorithm::openClose(*map);
+	BScanSegAlgorithm::openClose(*actMat);
 
 	requestUpdate();
 }
@@ -410,11 +411,11 @@ void BScanSegmentation::opencloseBScan()
 
 void BScanSegmentation::medianBScan()
 {
-	cv::Mat* map = segments.at(getActBScanNr());
-	if(!map || map->empty())
+	setActMat(getActBScanNr());
+	if(!actMat || actMat->empty())
 		return;
 
-	medianBlur(*map, *map, 3);
+	medianBlur(*actMat, *actMat, 3);
 
 	requestUpdate();
 }
@@ -423,7 +424,7 @@ void BScanSegmentation::medianBScan()
 
 void BScanSegmentation::clearSegments()
 {
-	for(cv::Mat* mat : segments)
+	for(auto mat : segments)
 		delete mat;
 
 	segments.clear();
@@ -438,9 +439,9 @@ void BScanSegmentation::createSegments()
 
 	clearSegments();
 
-	for(const OctData::BScan* bscan : series->getBScans())
+	for(std::size_t i=0; i<series->bscanCount(); ++i)
 	{
-		cv::Mat* mat = new cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(BScanSegmentationMarker::markermatInitialValue));
+		SimpleMatCompress* mat = new SimpleMatCompress;
 		segments.push_back(mat);
 	}
 }
@@ -453,13 +454,13 @@ void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::pr
 
 	clearSegments();
 
-	for(const OctData::BScan* bscan : series->getBScans())
+	for(std::size_t i=0; i<series->bscanCount(); ++i)
 	{
-		cv::Mat* mat = new cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(BScanSegmentationMarker::markermatInitialValue));
+		SimpleMatCompress* mat = new SimpleMatCompress;
 		segments.push_back(mat);
 	}
 
-	BScanSegmentationPtree::parsePTree(markerTree, this);
+	loadState(markerTree);
 }
 
 void BScanSegmentation::saveState(boost::property_tree::ptree& markerTree)
@@ -469,15 +470,8 @@ void BScanSegmentation::saveState(boost::property_tree::ptree& markerTree)
 
 void BScanSegmentation::loadState(boost::property_tree::ptree& markerTree)
 {
-	for(cv::Mat* mat : segments)
-	{
-		if(mat)
-		{
-			mat->setTo(cv::Scalar(BScanSegmentationMarker::markermatInitialValue));
-		}
-	}
-
 	BScanSegmentationPtree::parsePTree(markerTree, this);
+	setActMat(getActBScanNr(), false);
 }
 
 
@@ -490,8 +484,8 @@ void BScanSegmentation::updateCursor()
 
 void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::ThresholdDirectionData& data)
 {
-	cv::Mat* map = segments.at(getActBScanNr());
-	if(!map || map->empty())
+	setActMat(getActBScanNr());
+	if(!actMat || actMat->empty())
 		return;
 
 	const OctData::Series* series = getSeries();
@@ -507,7 +501,7 @@ void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::Th
 		return;
 
 
-	BScanSegAlgorithm::initFromThresholdDirection(image, *map, data);
+	BScanSegAlgorithm::initFromThresholdDirection(image, *actMat, data);
 
 	requestUpdate();
 }
@@ -516,26 +510,26 @@ void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::Th
 void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::ThresholdDirectionData& data)
 {
 	const OctData::Series* series = getSeries();
-	SegMats::iterator segMatIt = segments.begin();
 
-
+	std::size_t bscanCount = 0;
 	for(const OctData::BScan* bscan : series->getBScans())
 	{
 		const cv::Mat& image = bscan->getImage();
-		cv::Mat* mat = *segMatIt;
 
-		if(mat && !mat->empty())
-			BScanSegAlgorithm::initFromThresholdDirection(image, *mat, data);
-
-		++segMatIt;
+		if(setActMat(bscanCount))
+		{
+			if(actMat && !actMat->empty())
+				BScanSegAlgorithm::initFromThresholdDirection(image, *actMat, data);
+		}
+		++bscanCount;
 	}
 	requestUpdate();
 }
 
 void BScanSegmentation::initBScanFromSegline()
 {
-	cv::Mat* map = segments.at(getActBScanNr());
-	if(!map || map->empty())
+	setActMat(getActBScanNr());
+	if(!actMat || actMat->empty())
 		return;
 
 	const OctData::Series* series = getSeries();
@@ -546,7 +540,7 @@ void BScanSegmentation::initBScanFromSegline()
 	if(!bscan)
 		return;
 
-	BScanSegAlgorithm::initFromSegline(*bscan, *map);
+	BScanSegAlgorithm::initFromSegline(*bscan, *actMat);
 
 	requestUpdate();
 }
@@ -554,19 +548,21 @@ void BScanSegmentation::initBScanFromSegline()
 void BScanSegmentation::initSeriesFromSegline()
 {
 	const OctData::Series* series = getSeries();
-	SegMats::iterator segMatIt = segments.begin();
 
 
+	std::size_t bscanCount = 0;
 	for(const OctData::BScan* bscan : series->getBScans())
 	{
 		if(!bscan)
 			continue;
-		cv::Mat* mat = *segMatIt;
 
-		if(mat && !mat->empty())
-			BScanSegAlgorithm::initFromSegline(*bscan, *mat);
+		if(setActMat(bscanCount))
+		{
+			if(actMat && !actMat->empty())
+				BScanSegAlgorithm::initFromSegline(*bscan, *actMat);
 
-		++segMatIt;
+		}
+		++bscanCount;
 	}
 	requestUpdate();
 }
@@ -610,3 +606,32 @@ void BScanSegmentation::setSeglinePaintSize(int size)
 }
 
 
+bool BScanSegmentation::setActMat(std::size_t nr, bool saveOldState) const
+{
+	if(nr == actMatNr && saveOldState)
+		return true;
+
+	if(actMat)
+	{
+		if(saveOldState && segments.size() > actMatNr)
+			segments[actMatNr]->readMat(*actMat); // save state from old bscan
+
+		if(segments.size() > nr)
+		{
+			segments[nr]->writeMat(*actMat); // load state from new bscan
+			actMatNr = nr;
+
+			if(actMat->empty())
+			{
+				const OctData::BScan* bscan = getBScan(nr);
+				if(bscan)
+				{
+					*actMat = cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(BScanSegmentationMarker::markermatInitialValue));
+				}
+			}
+
+			return true;
+	}
+	}
+	return false;
+}
