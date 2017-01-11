@@ -55,6 +55,14 @@ BScanSegmentation::~BScanSegmentation()
 {
 	clearSegments();
 
+	delete localOpPaint             ;
+	delete localOpThresholdDirection;
+	delete localOpThreshold         ;
+	delete localOpOperation         ;
+#ifdef ML_SUPPORT
+	delete localOpNN                ;
+#endif
+
 	delete widget;
 	delete actMat;
 }

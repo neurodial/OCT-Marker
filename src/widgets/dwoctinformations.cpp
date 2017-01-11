@@ -37,20 +37,20 @@ namespace
 		}
 	}
 	
-	void addInformation(QFormLayout* formlayout, const QString& labelText, const std::string& information)
+	void addInformation(QFormLayout* formlayout, const QString& labelText, const std::string& information, QWidget* parent)
 	{
 		if(!information.empty())
 		{
-			QLabel* label = new QLabel(QString::fromStdString(information));
+			QLabel* label = new QLabel(QString::fromStdString(information), parent);
 			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 			formlayout->addRow(labelText, label);
 		}
 	}
-	void addInformation(QFormLayout* formlayout, const QString& labelText, const QString& information)
+	void addInformation(QFormLayout* formlayout, const QString& labelText, const QString& information, QWidget* parent)
 	{
 		if(!information.isEmpty())
 		{
-			QLabel* label = new QLabel(information);
+			QLabel* label = new QLabel(information, parent);
 			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 			formlayout->addRow(labelText, label);
 		}
@@ -59,15 +59,18 @@ namespace
 	class LayoutFiller
 	{
 		int counter = 0;
+		QWidget* parent;
 	public:
+		LayoutFiller(QWidget* parent) : parent(parent) {}
+
 		void setInformation(QFormLayout* formlayout, const QString& labelText, const QString& information, DwOctInformations::OctInfoField& octInfo)
 		{
 			if(octInfo.labelDesc == nullptr)
-				octInfo.labelDesc = new QLabel(labelText);
+				octInfo.labelDesc = new QLabel(labelText, parent);
 
 			if(octInfo.labelInfo == nullptr)
 			{
-				octInfo.labelInfo = new QLabel();
+				octInfo.labelInfo = new QLabel(parent);
 				octInfo.labelInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
 			}
 
@@ -144,15 +147,15 @@ void DwOctInformations::setPatient(const OctData::Patient* patient)
 	if(!patient)
 		return;
 	
-	addInformation(patientInformations, tr("internal Id"), QString("%1").arg(patient->getInternalId()));
+	addInformation(patientInformations, tr("internal Id"), QString("%1").arg(patient->getInternalId()), this);
 	
-	addInformation(patientInformations, tr("Surname"    ), patient->getSurname ());
-	addInformation(patientInformations, tr("Forename"   ), patient->getForename());
-	addInformation(patientInformations, tr("Title"      ), patient->getTitle()   );
-	addInformation(patientInformations, tr("ID"         ), patient->getId()      );
+	addInformation(patientInformations, tr("Surname"    ), patient->getSurname (), this);
+	addInformation(patientInformations, tr("Forename"   ), patient->getForename(), this);
+	addInformation(patientInformations, tr("Title"      ), patient->getTitle()   , this);
+	addInformation(patientInformations, tr("ID"         ), patient->getId()      , this);
 	
 	if(!patient->getBirthdate().isEmpty())
-		addInformation(patientInformations, tr("Birthdate"), patient->getBirthdate().str());
+		addInformation(patientInformations, tr("Birthdate"), patient->getBirthdate().str(), this);
 	
 	QString sex;
 	switch(patient->getSex())
@@ -166,8 +169,8 @@ void DwOctInformations::setPatient(const OctData::Patient* patient)
 		case OctData::Patient::Sex::Unknown:
 			break;
 	}
-	addInformation(patientInformations, tr("Sex"      ), sex);
-	addInformation(patientInformations, tr("UID"      ), patient->getPatientUID());
+	addInformation(patientInformations, tr("Sex"      ), sex, this);
+	addInformation(patientInformations, tr("UID"      ), patient->getPatientUID(), this);
 }
 
 
@@ -178,11 +181,11 @@ void DwOctInformations::setStudy(const OctData::Study* study)
 	if(!study)
 		return;
 	
-	addInformation(studyInformations, tr("internal Id"), QString("%1").arg(study->getInternalId())   );
-	addInformation(studyInformations, tr("Operator"   ), study->getStudyOperator());
-	addInformation(studyInformations, tr("UID"        ), study->getStudyUID()     );
+	addInformation(studyInformations, tr("internal Id"), QString("%1").arg(study->getInternalId())   , this);
+	addInformation(studyInformations, tr("Operator"   ), study->getStudyOperator(), this);
+	addInformation(studyInformations, tr("UID"        ), study->getStudyUID()     , this);
 	if(!study->getStudyDate().isEmpty())
-		addInformation(studyInformations, tr("Study date"), study->getStudyDate().str());
+		addInformation(studyInformations, tr("Study date"), study->getStudyDate().str(), this);
 	
 }
 
@@ -194,20 +197,20 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 	if(!series)
 		return;
 	
-	addInformation(seriesInformations, tr("internal Id"), QString("%1").arg(series->getInternalId()));
+	addInformation(seriesInformations, tr("internal Id"), QString("%1").arg(series->getInternalId()), this);
 
 	if(!series->getScanDate().isEmpty())
-		addInformation(seriesInformations, tr("Scan date"), series->getScanDate().timeDateStr());
+		addInformation(seriesInformations, tr("Scan date"), series->getScanDate().timeDateStr(), this);
 	
 	const std::string&    seriesUID = series->getSeriesUID()   ;
 	const std::string& refSeriesUID = series->getRefSeriesUID();
 	
-	addInformation(seriesInformations, tr("UID"     ),    seriesUID);
-	addInformation(seriesInformations, tr("Ref. UID"), refSeriesUID);
+	addInformation(seriesInformations, tr("UID"     ),    seriesUID, this);
+	addInformation(seriesInformations, tr("Ref. UID"), refSeriesUID, this);
 	
 	if(!seriesUID.empty() && !refSeriesUID.empty())
 	{
-		addInformation(seriesInformations, tr("Baseline scan"), (seriesUID == refSeriesUID)?tr("true"):tr("false"));
+		addInformation(seriesInformations, tr("Baseline scan"), (seriesUID == refSeriesUID)?tr("true"):tr("false"), this);
 	}
 	
 	
@@ -223,7 +226,7 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 		case OctData::Series::Laterality::undef:
 			break;
 	}
-	addInformation(seriesInformations, tr("Laterality"     ), scanPos     );
+	addInformation(seriesInformations, tr("Laterality"     ), scanPos     , this);
 	
 	QString scanPattern;
 	switch(series->getScanPattern())
@@ -246,17 +249,17 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 		case OctData::Series::ScanPattern::Unknown:
 			break;
 	}
-	addInformation(seriesInformations, tr("Scan pattern"   ), scanPattern  );
+	addInformation(seriesInformations, tr("Scan pattern"   ), scanPattern  , this);
 
 	double scanFocus = series->getScanFocus();
 	if(!std::isnan(scanFocus))
-		addInformation(seriesInformations, tr("Scan focus"), QString("%1").arg(scanFocus));
+		addInformation(seriesInformations, tr("Scan focus"), QString("%1").arg(scanFocus), this);
 
 }
 
 void DwOctInformations::setBScan(const OctData::BScan* bscan)
 {
-	LayoutFiller filler;
+	LayoutFiller filler(this);
 
 	// clearQLayout(bscanInformations);
 
