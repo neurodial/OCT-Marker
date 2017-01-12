@@ -1,28 +1,23 @@
 #include "simplematcompress.h"
 
-#include <opencv/cv.h>
-
-void SimpleMatCompress::readMat(const cv::Mat& mat)
+bool SimpleMatCompress::readFromMat(const uint8_t* mat, int rows, int cols)
 {
-	rows = mat.rows;
-	cols = mat.cols;
+	this->rows = rows;
+	this->cols = cols;
 	segmentsChange.clear();
 
 	sumSegments = 0;
 
-	if(mat.empty())
-		return;
+	if(mat == nullptr)
+		return false;
 
 	int     actSegmentLengt = 0;
-	uint8_t actSegmentValue = *(mat.ptr<uint8_t>());
+	uint8_t actSegmentValue = *mat;
 
-	int rowSize = mat.rows;
-	int colSize = mat.cols;
-
-	for(int row = 0; row < rowSize; ++row)
+	const uint8_t* dataPtr = mat;
+	for(int row = 0; row < rows; ++row)
 	{
-		const uint8_t* dataPtr = mat.ptr<uint8_t>(row);
-		for(int col = 0; col < colSize; ++col)
+		for(int col = 0; col < cols; ++col)
 		{
 			if(actSegmentValue != *dataPtr)
 			{
@@ -39,19 +34,21 @@ void SimpleMatCompress::readMat(const cv::Mat& mat)
 	addSegment(actSegmentLengt, actSegmentValue);
 
 	assert(sumSegments == rows*cols);
+	return true;
 }
 
-void SimpleMatCompress::writeMat(cv::Mat& mat) const
+bool SimpleMatCompress::writeToMat(uint8_t* mat, int rows, int cols) const
 {
-	mat = cv::Mat(rows, cols, cv::DataType<uint8_t>::type);
-	uint8_t* dataPtr = mat.ptr<uint8_t>();
+	if(this->rows != rows || this->cols != cols || mat == nullptr)
+		return false;
 
 	for(const MatSegment& segment : segmentsChange)
 	{
 		uint8_t segmentValue = segment.value;
-		for(int i=0; i<segment.length; ++i, ++dataPtr)
-			*dataPtr = segmentValue;
+		for(int i=0; i<segment.length; ++i, ++mat)
+			*mat = segmentValue;
 	}
+	return true;
 }
 
 inline void SimpleMatCompress::addSegment(int length, uint8_t value)

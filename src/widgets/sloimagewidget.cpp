@@ -146,8 +146,8 @@ void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, 
 {
 	if(bscan.getCenter())
 	{
-		const OctData::CoordSLOpx&  start_px = bscan.getStart()  * factor;
-		const OctData::CoordSLOpx& center_px = bscan.getCenter() * factor;
+		const OctData::CoordSLOpx&  start_px = (transform * bscan.getStart() ) * factor + shift;
+		const OctData::CoordSLOpx& center_px = (transform * bscan.getCenter()) * factor + shift;
 
 		double radius = center_px.abs(start_px);
 

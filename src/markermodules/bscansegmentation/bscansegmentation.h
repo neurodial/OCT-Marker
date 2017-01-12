@@ -24,7 +24,7 @@ class BScanSegLocalOpThresholdDirection;
 class BScanSegLocalOpOperation;
 class BScanSegLocalOpNN;
 
-class SimpleMatCompress;
+class SimpleCvMatCompress;
 
 class BScanSegmentation : public BscanMarkerBase
 {
@@ -33,7 +33,7 @@ class BScanSegmentation : public BscanMarkerBase
 	friend class BScanSegmentationPtree;
 	friend class BScanSegLocalOp;
 	
-	typedef std::vector<SimpleMatCompress*> SegMats;
+	typedef std::vector<SimpleCvMatCompress*> SegMats;
 
 	bool inWidget = false;
 	QPoint mousePoint;

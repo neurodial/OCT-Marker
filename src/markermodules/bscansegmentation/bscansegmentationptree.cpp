@@ -21,7 +21,7 @@ namespace bpt = boost::property_tree;
 
 #include "bscansegmentation.h"
 
-#include <data_structure/simplematcompress.h>
+#include <data_structure/simplecvmatcompress.h>
 
 // need only old format (for mat size)
 #include <octdata/datastruct/bscan.h>
@@ -170,7 +170,7 @@ bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree
 			if(bscanId == -1)
 				continue;
 
-			SimpleMatCompress* compressedMat = markerManager->segments.at(bscanId);
+			SimpleCvMatCompress* compressedMat = markerManager->segments.at(bscanId);
 
 			if(!compressedMat)
 				continue;
@@ -184,7 +184,7 @@ bool BScanSegmentationPtree::parsePTree(const boost::property_tree::ptree& ptree
 				{
 					cv::Mat tempSegMat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(BScanSegmentationMarker::markermatInitialValue));
 					oldDeSerialization(bscanNode, &tempSegMat);
-					compressedMat->readMat(tempSegMat);
+					compressedMat->readFromMat(tempSegMat);
 				}
 			}
 
@@ -223,7 +223,7 @@ void BScanSegmentationPtree::fillPTree(boost::property_tree::ptree& markerTree, 
 	for(std::size_t bscan = 0; bscan < numBscans; ++bscan)
 	{
 		// const cv::Mat* map = markerManager->segments.at(bscan);
-		const SimpleMatCompress* compressedMat = markerManager->segments.at(bscan);
+		const SimpleCvMatCompress* compressedMat = markerManager->segments.at(bscan);
 		if(compressedMat)
 		{
 			if(compressedMat->isEmpty(BScanSegmentationMarker::paintArea0Value))

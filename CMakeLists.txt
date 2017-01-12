@@ -18,6 +18,7 @@ find_package(CppFramework REQUIRED)
 
 option(BUILD_WITH_SEGMENTATION_ML "build with support for NN" OFF)
 option(BUILD_MATLAB_MEX_FUNCTIONS "build matlab mex functions" OFF)
+option(BUILD_OCTAVE_MEX_FUNCTIONS "build octave mex functions" OFF)
 
 
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel.")
@@ -99,9 +100,20 @@ if(BUILD_MATLAB_MEX_FUNCTIONS)
 
 	include_directories(${Matlab_INCLUDE_DIRS})
 
-	matlab_add_mex(NAME read_seg SRC src_matlab/read_seg.cpp src/manager/octmarkerio.cpp LINK_TO ${Boost_LIBRARIES})
+	matlab_add_mex(NAME read_seg SRC src_matlab/read_seg.cpp src/manager/octmarkerio.cpp src/data_structure/simplematcompress.cpp LINK_TO ${Boost_LIBRARIES})
 	set_target_properties(read_seg PROPERTIES COMPILE_DEFINITIONS "MEX_COMPILE")
 
+endif()
+
+
+if(BUILD_OCTAVE_MEX_FUNCTIONS)
+	find_package(Octave COMPONENTS MX_LIBRARY REQUIRED)
+
+	include_directories(${OCTAVE_INCLUDE_DIRS})
+
+
+	octave_add_oct(oct_read_seg SOURCES src_matlab/read_seg.cpp src/manager/octmarkerio.cpp src/data_structure/simplematcompress.cpp LINK_LIBRARIES ${Boost_LIBRARIES} EXTENSION mex)
+	set_target_properties(oct_read_seg PROPERTIES COMPILE_DEFINITIONS "MEX_COMPILE")
 endif()
 
 

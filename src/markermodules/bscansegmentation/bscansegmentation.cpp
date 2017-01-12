@@ -22,7 +22,7 @@
 #include "bscanseglocalop.h"
 #include "bscanseglocalopnn.h"
 
-#include <data_structure/simplematcompress.h>
+#include <data_structure/simplecvmatcompress.h>
 
 
 BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
@@ -449,7 +449,7 @@ void BScanSegmentation::createSegments()
 
 	for(std::size_t i=0; i<series->bscanCount(); ++i)
 	{
-		SimpleMatCompress* mat = new SimpleMatCompress;
+		SimpleCvMatCompress* mat = new SimpleCvMatCompress;
 		segments.push_back(mat);
 	}
 }
@@ -464,7 +464,7 @@ void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::pr
 
 	for(std::size_t i=0; i<series->bscanCount(); ++i)
 	{
-		SimpleMatCompress* mat = new SimpleMatCompress;
+		SimpleCvMatCompress* mat = new SimpleCvMatCompress;
 		segments.push_back(mat);
 	}
 
@@ -622,11 +622,11 @@ bool BScanSegmentation::setActMat(std::size_t nr, bool saveOldState) const
 	if(actMat)
 	{
 		if(saveOldState && segments.size() > actMatNr)
-			segments[actMatNr]->readMat(*actMat); // save state from old bscan
+			segments[actMatNr]->readFromMat(*actMat); // save state from old bscan
 
 		if(segments.size() > nr)
 		{
-			segments[nr]->writeMat(*actMat); // load state from new bscan
+			segments[nr]->writeToMat(*actMat); // load state from new bscan
 			actMatNr = nr;
 
 			if(actMat->empty())

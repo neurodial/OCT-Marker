@@ -6,9 +6,6 @@
 
 #include <boost/serialization/vector.hpp>
 
-
-namespace cv { class Mat; }
-
 class SimpleMatCompress
 {
 	friend class boost::serialization::access;
@@ -49,11 +46,13 @@ class SimpleMatCompress
 	void addSegment(int length, uint8_t value);
 
 public:
-	void readMat(const cv::Mat& mat);
-
-	void writeMat(cv::Mat& mat) const;
-
 	bool isEmpty(uint8_t defaultValue) const;
+
+	int getRows() const { return rows; }
+	int getCols() const { return cols; }
+
+	bool readFromMat(const uint8_t* mat, int rows, int cols);
+	bool writeToMat (      uint8_t* mat, int rows, int cols) const;
 };
 
 
