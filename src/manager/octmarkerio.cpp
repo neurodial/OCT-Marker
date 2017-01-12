@@ -1,6 +1,8 @@
 #include "octmarkerio.h"
 
+#ifndef MEX_COMPILE
 #include <data_structure/programoptions.h>
+#endif
 
 #include <helper/ptreehelper.h>
 
@@ -35,7 +37,11 @@ OctMarkerIO::OctMarkerIO(boost::property_tree::ptree* markerTree)
 
 OctMarkerFileformat OctMarkerIO::getDefaultFileFormat()
 {
+#ifndef MEX_COMPILE
 	OctMarkerFileformat format = int2Fileformat(ProgramOptions::defaultFileformatOctMarkers());
+#else
+	OctMarkerFileformat format = OctMarkerFileformat::INFO;
+#endif
 
 	switch(format)
 	{
@@ -149,7 +155,6 @@ bool OctMarkerIO::loadDefaultMarker(const std::string& octFilename)
 	}
 
 	defaultLoadedFormat = getDefaultFileFormat();
-	
 	return false;
 }
 

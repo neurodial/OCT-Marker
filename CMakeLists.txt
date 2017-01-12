@@ -17,6 +17,7 @@ find_package(CppFramework REQUIRED)
 
 
 option(BUILD_WITH_SEGMENTATION_ML "build with support for NN" OFF)
+option(BUILD_MATLAB_MEX_FUNCTIONS "build matlab mex functions" OFF)
 
 
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel.")
@@ -90,4 +91,18 @@ target_link_libraries(octmarker ${LibOctData_LIBRARIES})
 target_link_libraries(octmarker ${CppFramework_LIBRARIES})
 
 install(TARGETS octmarker RUNTIME DESTINATION bin)
+
+
+
+if(BUILD_MATLAB_MEX_FUNCTIONS)
+	find_package(Matlab COMPONENTS MX_LIBRARY REQUIRED)
+
+	include_directories(${Matlab_INCLUDE_DIRS})
+
+	matlab_add_mex(NAME read_seg SRC src_matlab/read_seg.cpp src/manager/octmarkerio.cpp LINK_TO ${Boost_LIBRARIES})
+	set_target_properties(read_seg PROPERTIES COMPILE_DEFINITIONS "MEX_COMPILE")
+
+endif()
+
+
 
