@@ -7,9 +7,6 @@
 
 #include<globaldefinitions.h>
 
-// namespace boost{ namespace filesystem{ class path; }}
-
-class OctDataManager;
 
 class OctMarkerIO
 {
@@ -18,12 +15,11 @@ class OctMarkerIO
 	OctMarkerFileformat defaultLoadedFormat = OctMarkerFileformat::Json;
 	
 	boost::property_tree::ptree* markerstree = nullptr;
-	const OctDataManager* octDataManager = nullptr;
 
 	bool saveMarkersPrivat(const std::string& markersFilename, OctMarkerFileformat format);
 	
 public:
-	OctMarkerIO(boost::property_tree::ptree* markerTree, const OctDataManager* dataManager);
+	explicit OctMarkerIO(boost::property_tree::ptree* markerTree);
 	
 	
 	static const char* getFileExtension(OctMarkerFileformat format);
@@ -34,8 +30,8 @@ public:
 	static int fileformat2Int(OctMarkerFileformat format);
 	
 	
-	bool saveDefaultMarker();
-	bool loadDefaultMarker();
+	bool saveDefaultMarker(const std::string& octFilename);
+	bool loadDefaultMarker(const std::string& octFilename);
 	
 	bool loadMarkers(const std::string& markersFilename, OctMarkerFileformat format);
 	bool saveMarkers(const std::string& markersFilename, OctMarkerFileformat format);

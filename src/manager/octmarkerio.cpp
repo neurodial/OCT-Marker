@@ -13,7 +13,6 @@
 
 #include <boost/filesystem.hpp>
 
-#include "octdatamanager.h"
 
 namespace bpt = boost::property_tree;
 namespace bfs = boost::filesystem;
@@ -28,9 +27,8 @@ namespace
 }
 
 
-OctMarkerIO::OctMarkerIO(boost::property_tree::ptree* markerTree, const OctDataManager* dataManager)
+OctMarkerIO::OctMarkerIO(boost::property_tree::ptree* markerTree)
 : markerstree(markerTree)
-, octDataManager(dataManager)
 {
 	
 }
@@ -134,10 +132,8 @@ std::string OctMarkerIO::addMarkerExtension(const std::string& file, OctMarkerFi
 
 
 
-bool OctMarkerIO::loadDefaultMarker()
+bool OctMarkerIO::loadDefaultMarker(const std::string& octFilename)
 {
-	std::string octFilename = octDataManager->getLoadedFilename().toStdString();
-	
 	OctMarkerFileformat formats[] = { OctMarkerFileformat::Json,
 	                                  OctMarkerFileformat::XML,
 	                                  OctMarkerFileformat::INFO };
@@ -158,9 +154,9 @@ bool OctMarkerIO::loadDefaultMarker()
 }
 
 
-bool OctMarkerIO::saveDefaultMarker()
+bool OctMarkerIO::saveDefaultMarker(const std::string& octFilename)
 {
-	return saveMarkers(addMarkerExtension(octDataManager->getLoadedFilename().toStdString(), defaultLoadedFormat), defaultLoadedFormat);
+	return saveMarkers(addMarkerExtension(octFilename, defaultLoadedFormat), defaultLoadedFormat);
 }
 
 

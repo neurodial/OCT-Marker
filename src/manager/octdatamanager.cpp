@@ -32,7 +32,7 @@ namespace bfs = boost::filesystem;
 
 OctDataManager::OctDataManager()
 : markerstree(new bpt::ptree)
-, markerIO(new OctMarkerIO(markerstree, this))
+, markerIO(new OctMarkerIO(markerstree))
 {
 }
 
@@ -51,14 +51,14 @@ void OctDataManager::saveMarkersDefault()
 	if(ProgramOptions::autoSaveOctMarkers())
 	{
 		saveMarkerState(actSeries);
-		markerIO->saveDefaultMarker();
+		markerIO->saveDefaultMarker(actFilename.toStdString());
 	}
 }
 
 void OctDataManager::triggerSaveMarkersDefault()
 {
 	saveMarkerState(actSeries);
-	markerIO->saveDefaultMarker();
+	markerIO->saveDefaultMarker(actFilename.toStdString());
 }
 
 
@@ -121,7 +121,7 @@ void OctDataManager::openFile(const QString& filename)
 	delete oldOct;
 	markerstree->clear();
 	
-	markerIO->loadDefaultMarker();
+	markerIO->loadDefaultMarker(actFilename.toStdString());
 	
 	emit(octFileChanged(octData   ));
 	emit(patientChanged(actPatient));
