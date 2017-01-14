@@ -177,6 +177,9 @@ public:
 	
 	static OptionBool autoSaveOctMarkers;
 	static OptionInt  defaultFileformatOctMarkers;
+
+	static OptionInt  bscanMarkerToolId;
+	static OptionInt    sloMarkerToolId;
 	
 	
 	static std::vector<Option*> getAllOptions();

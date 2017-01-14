@@ -36,9 +36,9 @@ OctMarkerManager::OctMarkerManager()
 {
 	
 	OctDataManager& dataManager = OctDataManager::getInstance();
-	connect(&dataManager, &OctDataManager::seriesChanged  , this, &OctMarkerManager::showSeries         );
-	connect(&dataManager, &OctDataManager::saveMarkerState, this, &OctMarkerManager::saveMarkerStateSlot);
-	connect(&dataManager, &OctDataManager::loadMarkerState, this, &OctMarkerManager::loadMarkerStateSlot);
+	connect(&dataManager, &OctDataManager::seriesChanged     , this, &OctMarkerManager::showSeries         );
+	connect(&dataManager, &OctDataManager::saveMarkerState   , this, &OctMarkerManager::saveMarkerStateSlot);
+	connect(&dataManager, &OctDataManager::loadMarkerState   , this, &OctMarkerManager::loadMarkerStateSlot);
 	connect(&dataManager, &OctDataManager::loadMarkerStateAll, this, &OctMarkerManager::reloadMarkerStateSlot);
 
 	bscanMarkerObj.push_back(new BScanSegmentation(this));
@@ -53,8 +53,8 @@ OctMarkerManager::OctMarkerManager()
 
 	sloMarkerObj.push_back(new SloObjectMarker(this));
 	
-	setBscanMarker(0);
-	setSloMarker(-1);
+	setBscanMarker(ProgramOptions::bscanMarkerToolId());
+	setSloMarker  (ProgramOptions::  sloMarkerToolId());
 }
 
 
@@ -62,7 +62,6 @@ OctMarkerManager::~OctMarkerManager()
 {
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 		delete obj;
-//	saveMarkerDefault();
 }
 
 
@@ -108,8 +107,6 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 		obj->newSeriesLoaded(s, subtree);
 	}
 
-
-
 	emit(newBScanShowed(series->getBScan(actBScan)));
 	emit(newSeriesShowed(s));
 }
@@ -135,6 +132,7 @@ void OctMarkerManager::setBscanMarker(int id)
 		actBscanMarker = newMarker;
 		emit(bscanChanged(actBScan));
 		emit(bscanMarkerChanged(actBscanMarker));
+		ProgramOptions::bscanMarkerToolId.setValue(actBscanMarkerId);
 	}
 }
 
@@ -157,6 +155,7 @@ void OctMarkerManager::setSloMarker(int id)
 
 		actSloMarker = newMarker;
 		emit(sloMarkerChanged(actSloMarker));
+		ProgramOptions::sloMarkerToolId.setValue(actSloMarkerId);
 	}
 }
 

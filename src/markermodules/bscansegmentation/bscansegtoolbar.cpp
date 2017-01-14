@@ -9,28 +9,22 @@
 
 
 BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
+: QToolBar(tr("Segmentation"), dynamic_cast<QWidget*>(parent))
 {
 	setObjectName("ToolBarSegmentationMarker");
 
 	/*
 	QActionGroup*  actionGroupMethod  = new QActionGroup(parent);
 	QActionGroup*  actionPaintMethod  = new QActionGroup(parent);
-	// QToolBar*      toolBar            = new QToolBar(tr("Segmentation"));
-
 	*/
-	QWidget* parentWidget = dynamic_cast<QWidget*>(parent);
 
-	if(parentWidget)
-	{
-		QSpinBox* paintSizeSpinBox = new QSpinBox(parentWidget);
-		paintSizeSpinBox->setMinimum(1);
-		paintSizeSpinBox->setMaximum(4);
-		paintSizeSpinBox->setValue(seg->getSeglinePaintSize());
-		connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), seg             , &BScanSegmentation::setSeglinePaintSize);
-		// connect(seg             , &BScanSegmentation::localOperatorSizeChanged                , paintSizeSpinBox, &QSpinBox::setValue                     );
-		addWidget(paintSizeSpinBox);
-	}
-
+	QSpinBox* paintSizeSpinBox = new QSpinBox(this);
+	paintSizeSpinBox->setMinimum(1);
+	paintSizeSpinBox->setMaximum(4);
+	paintSizeSpinBox->setValue(seg->getSeglinePaintSize());
+	connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), seg             , &BScanSegmentation::setSeglinePaintSize);
+	// connect(seg             , &BScanSegmentation::localOperatorSizeChanged                , paintSizeSpinBox, &QSpinBox::setValue                     );
+	addWidget(paintSizeSpinBox);
 
 	/*
 	QAction* actionPaintMethodDisc = new QAction(parent);
@@ -104,7 +98,7 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	toolBar->addSeparator();
 	*/
 
-	QAction* actionErodeBScan = new QAction(parent);
+	QAction* actionErodeBScan = new QAction(this);
 	actionErodeBScan->setText(tr("Erode"));
 	actionErodeBScan->setIcon(QIcon(":/icons/arrow_in.png"));
 	connect(actionErodeBScan, &QAction::triggered, seg, &BScanSegmentation::erodeBScan);
@@ -112,21 +106,21 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	addAction(actionErodeBScan);
 
 
-	QAction* actionDilateBScan = new QAction(parent);
+	QAction* actionDilateBScan = new QAction(this);
 	actionDilateBScan->setText(tr("Dilate"));
 	actionDilateBScan->setIcon(QIcon(":/icons/arrow_out.png"));
 	connect(actionDilateBScan, &QAction::triggered, seg, &BScanSegmentation::dilateBScan);
 	connect(seg, &BScanSegmentation::paintArea1Selected, actionDilateBScan, &QAction::setChecked);
 	addAction(actionDilateBScan);
 
-	QAction* actionOpenCloseBScan = new QAction(parent);
+	QAction* actionOpenCloseBScan = new QAction(this);
 	actionOpenCloseBScan->setText(tr("Open/Close"));
 	actionOpenCloseBScan->setIcon(QIcon(":/icons/arrow_inout.png"));
 	connect(actionOpenCloseBScan, &QAction::triggered, seg, &BScanSegmentation::opencloseBScan);
 	connect(seg, &BScanSegmentation::paintArea1Selected, actionOpenCloseBScan, &QAction::setChecked);
 	addAction(actionOpenCloseBScan);
 
-	QAction* actionMedianBScan = new QAction(parent);
+	QAction* actionMedianBScan = new QAction(this);
 	actionMedianBScan->setText(tr("Median"));
 	actionMedianBScan->setIcon(QIcon(":/icons/arrow_inout.png"));
 	connect(actionMedianBScan, &QAction::triggered, seg, &BScanSegmentation::medianBScan);
