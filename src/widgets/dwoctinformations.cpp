@@ -118,6 +118,8 @@ DwOctInformations::DwOctInformations(QWidget* parent)
 	groupBoxStudy  ->setLayout(studyInformations  );
 	groupBoxSeries ->setLayout(seriesInformations );
 	groupBoxBScan  ->setLayout(bscanInformations );
+
+	groupBoxPatDiagnose->setVisible(false);
 		
 	connect(&dataManager, &OctDataManager::patientChanged, this, &DwOctInformations::setPatient);
 	connect(&dataManager, &OctDataManager::studyChanged  , this, &DwOctInformations::setStudy  );
@@ -171,6 +173,15 @@ void DwOctInformations::setPatient(const OctData::Patient* patient)
 	}
 	addInformation(patientInformations, tr("Sex"      ), sex, this);
 	addInformation(patientInformations, tr("UID"      ), patient->getPatientUID(), this);
+
+	const std::u16string diagnose = patient->getDiagnose();
+	if(!diagnose.empty())
+	{
+		groupBoxPatDiagnose->setVisible(true);
+		labelDiagnoseText->setText(QString::fromStdU16String(diagnose));
+	}
+	else
+		groupBoxPatDiagnose->setVisible(false);
 }
 
 

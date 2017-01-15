@@ -41,10 +41,27 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="groupBoxPatDiagnose">
+          <property name="title">
+           <string>Diagnose</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLabel" name="labelDiagnoseText">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBoxStudy">
           <property name="title">
            <string>Study</string>
           </property>
+          <zorder>groupBoxPatDiagnose</zorder>
          </widget>
         </item>
         <item>
