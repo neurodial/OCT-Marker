@@ -298,6 +298,21 @@ void OCTMarkerMainWindow::setupMenu()
 	menuBar()->addMenu(helpMenu);
 
 
+	//
+	// Toolbar
+	//
+
+	QAction* previousOctScan = new QAction(this);
+	previousOctScan->setText(tr("previous octScan"));
+	previousOctScan->setIcon(QIcon(":/icons/resultset_previous.png"));
+	previousOctScan->setShortcut(Qt::CTRL + Qt::LeftArrow);
+	connect(previousOctScan, &QAction::triggered, &(OctFilesModel::getInstance()), &OctFilesModel::loadPreviousFile);
+
+	QAction* nextOctScan = new QAction(this);
+	nextOctScan->setText(tr("next octScan"));
+	nextOctScan->setIcon(QIcon(":/icons/resultset_next.png"));
+	nextOctScan->setShortcut(Qt::CTRL + Qt::RightArrow);
+	connect(nextOctScan, &QAction::triggered, &(OctFilesModel::getInstance()), &OctFilesModel::loadNextFile);
 
 
 
@@ -327,6 +342,9 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QToolBar* toolBar = new QToolBar(tr("B-Scan"));
 	toolBar->setObjectName("ToolBarBScan");
+	toolBar->addAction(previousOctScan);
+	toolBar->addAction(nextOctScan);
+	toolBar->addSeparator();
 	toolBar->addAction(previousBScan);
 	toolBar->addAction(nextBScan);
 	toolBar->addSeparator();

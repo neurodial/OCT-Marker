@@ -47,20 +47,50 @@ QVariant OctFilesModel::headerData(int section, Qt::Orientation orientation, int
 
 bool OctFilesModel::addFile(QString filename)
 {
+	std::size_t count = 0;
 	for(const OctFileUnloaded* file : filelist)
 	{
 		if(file->sameFile(filename))
+		{
+			loadedFilePos = count;
 			return openFile(filename);
+		}
+		++count;
 	}
 
-	int position = static_cast<int>(filelist.size());
+	loadedFilePos = filelist.size();
 	
-	beginInsertRows(QModelIndex(), position, position);
+	beginInsertRows(QModelIndex(), static_cast<int>(loadedFilePos), static_cast<int>(loadedFilePos));
 	filelist.push_back(new OctFileUnloaded(filename));
 	endInsertRows();
 	
 	return openFile(filename);
 }
+
+void OctFilesModel::loadNextFile()
+{
+	std::size_t filesInList = filelist.size();
+	std::size_t requestFilePost = loadedFilePos + 1;
+	if(requestFilePost < filesInList)
+	{
+		openFile(filelist[requestFilePost]->getFilename());
+		loadedFilePos = requestFilePost;
+	}
+}
+
+
+void OctFilesModel::loadPreviousFile()
+{
+	if(loadedFilePos > 0)
+	{
+		--loadedFilePos;
+		openFile(filelist[loadedFilePos]->getFilename());
+	}
+}
+
+
+
+
 
 void OctFilesModel::slotClicked(QModelIndex index)
 {
@@ -71,6 +101,8 @@ void OctFilesModel::slotClicked(QModelIndex index)
 	if(row >= filelist.size())
 		return;
 	
+
+	loadedFilePos = row;
 	OctFileUnloaded* file = filelist.at(row);
 	openFile(file->getFilename());
 }

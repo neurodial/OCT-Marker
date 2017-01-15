@@ -30,6 +30,8 @@ class OctFilesModel : public QAbstractListModel
 
 	bool openFile(const QString& filename);
 
+	std::size_t loadedFilePos = 0;
+
 public:
 	static OctFilesModel& getInstance()                             { static OctFilesModel instance; return instance;}
 	
@@ -47,5 +49,8 @@ public slots:
 	
     void slotClicked(QModelIndex index);
     void slotDoubleClicked(QModelIndex index);
+
+	void loadNextFile();
+	void loadPreviousFile();
 };
 
