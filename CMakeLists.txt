@@ -98,22 +98,19 @@ install(TARGETS octmarker RUNTIME DESTINATION bin)
 if(BUILD_MATLAB_MEX_FUNCTIONS)
 	find_package(Matlab COMPONENTS MX_LIBRARY REQUIRED)
 
-	include_directories(${Matlab_INCLUDE_DIRS})
-
 	matlab_add_mex(NAME read_seg SRC src_matlab/read_seg.cpp src/manager/octmarkerio.cpp src/data_structure/simplematcompress.cpp LINK_TO ${Boost_LIBRARIES})
 	set_target_properties(read_seg PROPERTIES COMPILE_DEFINITIONS "MEX_COMPILE")
 
+	target_include_directories(read_seg SYSTEM PRIVATE ${Matlab_INCLUDE_DIRS} PUBLIC ${CMAKE_SOURCE_DIR}/src/)
 endif()
 
 
 if(BUILD_OCTAVE_MEX_FUNCTIONS)
 	find_package(Octave COMPONENTS MX_LIBRARY REQUIRED)
 
-	include_directories(${OCTAVE_INCLUDE_DIRS})
-
-
 	octave_add_oct(oct_read_seg SOURCES src_matlab/read_seg.cpp src/manager/octmarkerio.cpp src/data_structure/simplematcompress.cpp LINK_LIBRARIES ${Boost_LIBRARIES} EXTENSION mex)
 	set_target_properties(oct_read_seg PROPERTIES COMPILE_DEFINITIONS "MEX_COMPILE")
+	target_include_directories(oct_read_seg SYSTEM PRIVATE ${OCTAVE_INCLUDE_DIRS} PUBLIC ${CMAKE_SOURCE_DIR}/src/)
 endif()
 
 
