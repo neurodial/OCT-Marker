@@ -257,7 +257,15 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 		case OctData::Series::ScanPattern::Radial:
 			scanPattern = tr("Radial scan");
 			break;
+		case OctData::Series::ScanPattern::RadialCircles:
+			scanPattern = tr("Radial+Circles scan");
+			break;
+		case OctData::Series::ScanPattern::Text:
+			scanPattern = QString::fromStdString(series->getScanPatternText());
+			break;
 		case OctData::Series::ScanPattern::Unknown:
+			if(!series->getScanPatternText().empty())
+				scanPattern = tr("Unknown") + ": " + QString::fromStdString(series->getScanPatternText());
 			break;
 	}
 	addInformation(seriesInformations, tr("Scan pattern"   ), scanPattern  , this);

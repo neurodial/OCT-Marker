@@ -372,7 +372,7 @@
     <message>
         <location filename="../ui/marker_segmentation.ui" line="220"/>
         <source>BScan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">B-Scan</translation>
     </message>
     <message>
         <location filename="../ui/marker_segmentation.ui" line="368"/>
@@ -701,27 +701,37 @@
         <translation>Sternscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="263"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="261"/>
+        <source>Radial+Circles scan</source>
+        <translation>Stern- und Radialscan</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="268"/>
+        <source>Unknown</source>
+        <translation>Unbekannt</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="271"/>
         <source>Scan pattern</source>
         <translation>Scanmuster</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="267"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="275"/>
         <source>Scan focus</source>
         <translation>Aufnahmefokus</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="293"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="301"/>
         <source>Acquisition time</source>
         <translation>Aufnahmezeit</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="294"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="302"/>
         <source>Image quality</source>
         <translation>Bildqualität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="295"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="303"/>
         <source>Images average</source>
         <translation>Gemittelte Bilder</translation>
     </message>
