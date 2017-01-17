@@ -707,6 +707,7 @@
     </message>
     <message>
         <location filename="../src/widgets/dwoctinformations.cpp" line="268"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="287"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
@@ -716,22 +717,37 @@
         <translation>Scanmuster</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="275"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="277"/>
+        <source>ONH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="280"/>
+        <source>Retina</source>
+        <translation>Netzhaut</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="290"/>
+        <source>Examined Structure</source>
+        <translation>Untersuchte Struktur</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="294"/>
         <source>Scan focus</source>
         <translation>Aufnahmefokus</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="301"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="320"/>
         <source>Acquisition time</source>
         <translation>Aufnahmezeit</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="302"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="321"/>
         <source>Image quality</source>
         <translation>Bildqualität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="303"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="322"/>
         <source>Images average</source>
         <translation>Gemittelte Bilder</translation>
     </message>

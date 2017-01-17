@@ -270,6 +270,25 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 	}
 	addInformation(seriesInformations, tr("Scan pattern"   ), scanPattern  , this);
 
+	QString examinedStructure;
+	switch(series->getExaminedStructure())
+	{
+		case OctData::Series::ExaminedStructure::ONH:
+			     examinedStructure = tr("ONH");
+			break;
+		case OctData::Series::ExaminedStructure::Retina:
+			     examinedStructure = tr("Retina");
+			break;
+		case OctData::Series::ExaminedStructure::Text:
+			     examinedStructure = QString::fromStdString(series->getExaminedStructureText());
+			break;
+		case OctData::Series::ExaminedStructure::Unknown:
+			if(!series->getExaminedStructureText().empty())
+				examinedStructure = tr("Unknown") + ": " + QString::fromStdString(series->getExaminedStructureText());
+			break;
+	}
+	addInformation(seriesInformations, tr("Examined Structure"   ), examinedStructure  , this);
+
 	double scanFocus = series->getScanFocus();
 	if(!std::isnan(scanFocus))
 		addInformation(seriesInformations, tr("Scan focus"), QString("%1").arg(scanFocus), this);
