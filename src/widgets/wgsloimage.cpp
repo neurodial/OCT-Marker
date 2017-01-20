@@ -47,6 +47,7 @@ void WgSloImage::wheelEvent(QWheelEvent* wheelE)
 		markerManager.previousBScan();
 	else
 		markerManager.nextBScan();
+	wheelE->accept();
 }
 
 

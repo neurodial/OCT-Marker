@@ -737,17 +737,22 @@
         <translation>Aufnahmefokus</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="320"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="296"/>
+        <source>Description</source>
+        <translation>Beschreibung</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="321"/>
         <source>Acquisition time</source>
         <translation>Aufnahmezeit</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="321"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="322"/>
         <source>Image quality</source>
         <translation>Bildqualität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="322"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="323"/>
         <source>Images average</source>
         <translation>Gemittelte Bilder</translation>
     </message>
@@ -1153,12 +1158,12 @@
         <translation>Nur aktuellen B-Scan zeigen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/wgsloimage.cpp" line="66"/>
+        <location filename="../src/widgets/wgsloimage.cpp" line="67"/>
         <source>Marker</source>
         <translation>Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/wgsloimage.cpp" line="74"/>
+        <location filename="../src/widgets/wgsloimage.cpp" line="75"/>
         <source>no marker</source>
         <translation>Keine Markierungen</translation>
     </message>

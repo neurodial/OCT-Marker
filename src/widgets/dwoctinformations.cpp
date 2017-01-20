@@ -293,6 +293,7 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 	if(!std::isnan(scanFocus))
 		addInformation(seriesInformations, tr("Scan focus"), QString("%1").arg(scanFocus), this);
 
+	addInformation(seriesInformations, tr("Description"), series->getDescription(), this);
 }
 
 void DwOctInformations::setBScan(const OctData::BScan* bscan)
