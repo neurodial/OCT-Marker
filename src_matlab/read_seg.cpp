@@ -56,7 +56,7 @@ void mexFunction(int            nlhs  ,
 		return;
 	}
 
-	mexPrintf("Read segmentation\n");
+// 	mexPrintf("Read segmentation\n");
 
 	if(!mxIsChar(prhs[0]))
 	{
