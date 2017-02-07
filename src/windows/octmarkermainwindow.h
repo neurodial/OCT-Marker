@@ -38,6 +38,8 @@ class OCTMarkerMainWindow : public QMainWindow
 	static void setMarkersFilters(QFileDialog& fd);
 
 	bool loadFile(const QString& filename);
+	bool addFile(const QString& filename);
+// 	bool loadFolder(const QString& foldername);
 
 	virtual void closeEvent(QCloseEvent* e);
 

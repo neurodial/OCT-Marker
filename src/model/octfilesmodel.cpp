@@ -44,27 +44,31 @@ QVariant OctFilesModel::headerData(int section, Qt::Orientation orientation, int
 		return QString("Row %1").arg(section);
 }
 
+bool OctFilesModel::loadFile(QString filename)
+{
+	loadedFilePos = addFile(filename);
+	return openFile(filename);
+}
 
-bool OctFilesModel::addFile(QString filename)
+
+
+std::size_t OctFilesModel::addFile(QString filename)
 {
 	std::size_t count = 0;
 	for(const OctFileUnloaded* file : filelist)
 	{
 		if(file->sameFile(filename))
 		{
-			loadedFilePos = count;
-			return openFile(filename);
+			return count;
 		}
 		++count;
 	}
 
-	loadedFilePos = filelist.size();
-	
 	beginInsertRows(QModelIndex(), static_cast<int>(loadedFilePos), static_cast<int>(loadedFilePos));
 	filelist.push_back(new OctFileUnloaded(filename));
 	endInsertRows();
 	
-	return openFile(filename);
+	return count;
 }
 
 void OctFilesModel::loadNextFile()

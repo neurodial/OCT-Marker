@@ -43,4 +43,3 @@ WGOctDataTree::WGOctDataTree()
 	connect(listviewOctData, &QTableView::activated    , modelOctData, &OctDataModel ::slotClicked      );
 
 }
-

@@ -519,6 +519,16 @@ void OCTMarkerMainWindow::dropEvent(QDropEvent* event)
 		{
 			loadFile(urlList.at(0).toLocalFile());
 		}
+		else
+		{
+			for(const QUrl& url : urlList)
+			{
+				if(OctData::OctFileRead::isLoadable(url.toLocalFile().toStdString()))
+				{
+					addFile(url.toLocalFile());
+				}
+			}
+		}
 	}
 }
 
@@ -529,10 +539,13 @@ void OCTMarkerMainWindow::dragEnterEvent(QDragEnterEvent* event)
 	{
 		QStringList pathList;
 		QList<QUrl> urlList = mimeData->urls();
-		if(urlList.size() == 1)
+		for(const QUrl& url : urlList)
 		{
-			if(OctData::OctFileRead::isLoadable(urlList.at(0).toLocalFile().toStdString()))
+			if(OctData::OctFileRead::isLoadable(url.toLocalFile().toStdString()))
+			{
 				event->acceptProposedAction();
+				break;
+			}
 		}
 	}
 }
@@ -550,8 +563,25 @@ void OCTMarkerMainWindow::dragMoveEvent(QDragMoveEvent* event)
 
 bool OCTMarkerMainWindow::loadFile(const QString& filename)
 {
+	return OctFilesModel::getInstance().loadFile(filename);
+}
+
+bool OCTMarkerMainWindow::addFile(const QString& filename)
+{
 	return OctFilesModel::getInstance().addFile(filename);
 }
+
+// bool OCTMarkerMainWindow::loadFolder(const QString& foldername)
+// {
+// 	return OctFilesModel::getInstance().addFile(filename);
+// }
+//
+
+
+
+
+
+
 /*
 
 void OCTMarkerMainWindow::showAddMarkersDialog()

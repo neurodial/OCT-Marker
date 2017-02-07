@@ -45,7 +45,8 @@ public:
 private slots:
 	
 public slots:
-	bool addFile(QString filename);
+	std::size_t addFile(QString filename);
+	bool loadFile(QString filename);
 	
     void slotClicked(QModelIndex index);
     void slotDoubleClicked(QModelIndex index);
