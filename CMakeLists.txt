@@ -103,7 +103,7 @@ endif()
 if(BUILD_MATLAB_MEX_FUNCTIONS)
 	find_package(Matlab COMPONENTS MX_LIBRARY REQUIRED)
 
-	matlab_add_mex(NAME read_seg SRC src_matlab/read_seg.cpp src/manager/octmarkerio.cpp src/data_structure/simplematcompress.cpp)
+	matlab_add_mex(NAME read_seg SRC src_matlab/read_seg.cpp src/manager/octmarkerio.cpp src/data_structure/simplematcompress.cpp LINK_TO ${Boost_LIBRARIES})
 	set_target_properties(read_seg PROPERTIES COMPILE_DEFINITIONS "MEX_COMPILE")
 	if(BUILD_MEX_WITH_STATIC_CPP_LIB)
 		set_target_properties(read_seg PROPERTIES LINK_FLAGS "-static-libstdc++")
@@ -116,7 +116,7 @@ endif()
 if(BUILD_OCTAVE_MEX_FUNCTIONS)
 	find_package(Octave COMPONENTS MX_LIBRARY REQUIRED)
 
-	octave_add_oct(oct_read_seg SOURCES src_matlab/read_seg.cpp src/manager/octmarkerio.cpp src/data_structure/simplematcompress.cpp EXTENSION mex)
+	octave_add_oct(oct_read_seg SOURCES src_matlab/read_seg.cpp src/manager/octmarkerio.cpp src/data_structure/simplematcompress.cpp LINK_LIBRARIES ${Boost_LIBRARIES} EXTENSION mex)
 	set_target_properties(oct_read_seg PROPERTIES COMPILE_DEFINITIONS "MEX_COMPILE")
 	if(BUILD_MEX_WITH_STATIC_CPP_LIB)
 		set_target_properties(oct_read_seg PROPERTIES LINK_FLAGS "-static-libstdc++")
@@ -124,6 +124,5 @@ if(BUILD_OCTAVE_MEX_FUNCTIONS)
 	target_include_directories(oct_read_seg SYSTEM PRIVATE ${OCTAVE_INCLUDE_DIRS} PUBLIC ${CMAKE_SOURCE_DIR}/src/)
 
 endif()
-
 
 
