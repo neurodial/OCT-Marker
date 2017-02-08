@@ -11,6 +11,8 @@ namespace bpt = boost::property_tree;
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 
+#include <iostream> // TODO
+
 namespace
 {
 
@@ -40,9 +42,13 @@ namespace
 		}
 
 
-		QPointF pos  = item.mapToScene(QPointF(centerPosX, centerPosY));
+		QPointF pos  = item.mapFromScene(QPointF(centerPosX, centerPosY));
 		QRectF  rect(pos.x()-width/2, pos.y()-height/2, width, height);
+
 		item.setRect(rect);
+/*
+		QPointF pos2 = item.mapToScene(rect.center());
+		std::cout << "SLO-Marker: " << centerPosX << " | " << pos2.x() << " -- " << centerPosY << " | " << pos2.y() << std::endl;*/
 	}
 
 	void saveItemState(boost::property_tree::ptree& ptree, const RectItem& item, const double scaleFactor)
