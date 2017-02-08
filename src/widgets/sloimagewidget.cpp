@@ -25,15 +25,18 @@ namespace
 {
 	class GraphicsView : public QGraphicsView
 	{
+		double scaleFactor = 100;
 	public:
 		explicit GraphicsView(QWidget* parent) : QGraphicsView(parent) {}
+
+		void setScaleFactor(double factor) { scaleFactor = factor; }
 	protected:
 		virtual void resizeEvent(QResizeEvent *event) override
 		{
 			QGraphicsView::resizeEvent(event);
 
-			setSceneRect    (0, 0, 100, 100);
-			fitInView(QRectF(0, 0, 100, 100));
+			setSceneRect    (0, 0, scaleFactor, scaleFactor);
+			fitInView(QRectF(0, 0, scaleFactor, scaleFactor));
 		}
 	};
 }
@@ -64,6 +67,7 @@ SLOImageWidget::SLOImageWidget(OctMarkerManager& markerManger)
 	// gv->show();
 	// gv->setGeometry(rect());
 	// gv->setVisible(ProgramOptions::sloShowLabels());
+	sloMarkerChanged(markerManger.getActSloMarker());
 	updateGraphicsViewSize();
 }
 
@@ -75,6 +79,7 @@ SLOImageWidget::~SLOImageWidget()
 void SLOImageWidget::paintEvent(QPaintEvent* event)
 {
 	CVImageWidget::paintEvent(event);
+
 
 	QPainter painter(this);
 /*
@@ -183,7 +188,8 @@ void SLOImageWidget::reladSLOImage()
 	//if(sloImage)
 		showImage(sloImage.getImage());
 
-	gv->setSceneRect(0, 0, imageWidth(), imageHight());
+	updateGraphicsViewSize();
+// 	gv->setSceneRect(0, 0, imageWidth(), imageHight());
 }
 
 void SLOImageWidget::bscanChanged(int /*bscan*/)
@@ -222,6 +228,9 @@ void SLOImageWidget::sloMarkerChanged(SloMarkerBase* marker)
 	if(marker)
 	{
 		scene = marker->getGraphicsScene();
+		GraphicsView* gvConvert = dynamic_cast<GraphicsView*>(gv);
+		if(gvConvert)
+			gvConvert->setScaleFactor(marker->getScaleFactor());
 	}
 	else
 	{

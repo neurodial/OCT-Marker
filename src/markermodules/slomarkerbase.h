@@ -48,6 +48,8 @@ public:
 	virtual const QString& getMarkerId()                            { return id;   }
 	virtual const QIcon&   getIcon()                                { return icon; }
 
+	virtual double getScaleFactor() const                           { return 1000;  }
+
 
 	virtual void activate(bool);
 

@@ -23,12 +23,21 @@ namespace
 		return defaultValue;
 	}
 
-	void loadItemState(const boost::property_tree::ptree& ptree, RectItem& item)
+	void loadItemState(const boost::property_tree::ptree& ptree, RectItem& item, const double scaleFactor)
 	{
-		double centerPosX = readOptinalNode(ptree, "CenterPosX", 0.5)*100.;
-		double centerPosY = readOptinalNode(ptree, "CenterPosY", 0.5)*100.;
-		double height     = readOptinalNode(ptree, "Height"    , 0.5)*100.;
-		double width      = readOptinalNode(ptree, "Width"     , 0.5)*100.;
+		double centerPosX = readOptinalNode(ptree, "CenterPosX", 0.5)*scaleFactor;
+		double centerPosY = readOptinalNode(ptree, "CenterPosY", 0.5)*scaleFactor;
+		double height     = readOptinalNode(ptree, "Height"    , 0.5)*scaleFactor;
+		double width      = readOptinalNode(ptree, "Width"     , 0.5)*scaleFactor;
+
+		// TODO: quick fix for wrong saved files, remove later
+		if(centerPosX > 1.5 || centerPosY > 1.5 || height > 1 || width > 1)
+		{
+			centerPosX /= 7.8;
+			centerPosY /= 7.8;
+			height     /= 7.8;
+			width      /= 7.8;
+		}
 
 
 		QPointF pos  = item.mapToScene(QPointF(centerPosX, centerPosY));
@@ -36,17 +45,17 @@ namespace
 		item.setRect(rect);
 	}
 
-	void saveItemState(boost::property_tree::ptree& ptree, const RectItem& item)
+	void saveItemState(boost::property_tree::ptree& ptree, const RectItem& item, const double scaleFactor)
 	{
 		QRectF rect = item.rect();
 
 		QPointF pos = item.mapToScene(rect.center());
 
 		ptree.put("ItemType"  , "Rect"       );
-		ptree.put("CenterPosX", pos.x()      /100.);
-		ptree.put("CenterPosY", pos.y()      /100.);
-		ptree.put("Height"    , rect.height()/100.);
-		ptree.put("Width"     , rect.width() /100.);
+		ptree.put("CenterPosX", pos.x()      /scaleFactor);
+		ptree.put("CenterPosY", pos.y()      /scaleFactor);
+		ptree.put("Height"    , rect.height()/scaleFactor);
+		ptree.put("Width"     , rect.width() /scaleFactor);
 	}
 
 }
@@ -54,6 +63,8 @@ namespace
 
 void SloObjectsPtree::fillPTree(boost::property_tree::ptree& ptree, const SloObjectMarker* markerManager)
 {
+	const double scaleFactor = markerManager->getScaleFactor();
+
 	boost::property_tree::ptree& ptreeObjects = PTreeHelper::get_put(ptree, "Objects");
 	const SloObjectMarker::RectItems& rectItems = markerManager->getRectItems();
 	for(const SloObjectMarker::RectItemsTypes& itemPair : rectItems)
@@ -61,7 +72,7 @@ void SloObjectsPtree::fillPTree(boost::property_tree::ptree& ptree, const SloObj
 		if(itemPair.second)
 		{
 			boost::property_tree::ptree& ptreeRectItem = PTreeHelper::get_put(ptreeObjects, itemPair.first);
-			saveItemState(ptreeRectItem, *(itemPair.second));
+			saveItemState(ptreeRectItem, *(itemPair.second), scaleFactor);
 		}
 	}
 }
@@ -72,6 +83,8 @@ bool SloObjectsPtree::parsePTree(const boost::property_tree::ptree& ptree, SloOb
 	boost::optional<const bpt::ptree&> ptreeObjects = ptree.get_child_optional("Objects");
 	if(ptreeObjects)
 	{
+		const double scaleFactor = markerManager->getScaleFactor();
+
 		for(const std::pair<const std::string, bpt::ptree>& child : *ptreeObjects)
 		{
 			const std::string& itemName = child.first;
@@ -81,7 +94,7 @@ bool SloObjectsPtree::parsePTree(const boost::property_tree::ptree& ptree, SloOb
 			{
 				RectItem* item = markerManager->getRectItem(itemName);
 				if(item)
-					loadItemState(child.second, *item);
+					loadItemState(child.second, *item, scaleFactor);
 			}
 		}
 
