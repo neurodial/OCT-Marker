@@ -31,7 +31,7 @@ namespace
 		double width      = readOptinalNode(ptree, "Width"     , 0.5)*scaleFactor;
 
 		// TODO: quick fix for wrong saved files, remove later
-		if(centerPosX > 1.5 || centerPosY > 1.5 || height > 1 || width > 1)
+		if(centerPosX > 1.5*scaleFactor || centerPosY > 1.5*scaleFactor || height > scaleFactor || width > scaleFactor)
 		{
 			centerPosX /= 7.8;
 			centerPosY /= 7.8;

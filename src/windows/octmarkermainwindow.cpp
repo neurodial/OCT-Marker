@@ -51,7 +51,7 @@
 
 
 
-OCTMarkerMainWindow::OCTMarkerMainWindow()
+OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 : QMainWindow()
 , markerManager      (new OctMarkerManager      )
 , dwSloImage         (new QDockWidget(this))
@@ -110,7 +110,9 @@ OCTMarkerMainWindow::OCTMarkerMainWindow()
 
 	restoreState(settings.value("mainWindowState").toByteArray());
 
-	if(!ProgramOptions::loadOctdataAtStart().isEmpty())
+	if(filename)
+		loadFile(filename);
+	else if(!ProgramOptions::loadOctdataAtStart().isEmpty())
 		emit(loadLastFile());
 }
 

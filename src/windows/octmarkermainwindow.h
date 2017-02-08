@@ -50,7 +50,7 @@ protected:
 	virtual void dragMoveEvent (QDragMoveEvent * event);
 
 public:
-	OCTMarkerMainWindow();
+	OCTMarkerMainWindow(const char* filename = nullptr);
 	~OCTMarkerMainWindow();
 
 	

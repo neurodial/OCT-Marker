@@ -38,8 +38,11 @@ int main(int argc, char **argv)
 
 	ProgramOptions::readAllOptions();
 
+	const char* filename = nullptr;
+	if(argc > 1)
+		filename = argv[argc-1];
 
-	OCTMarkerMainWindow octMarkerProg;
+	OCTMarkerMainWindow octMarkerProg(filename);
 	octMarkerProg.show();
 	return app.exec();
 }
