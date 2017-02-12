@@ -11,7 +11,9 @@
 
 #include <QActionGroup>
 #include <QSpinBox>
+#include <QProgressBar>
 #include <QLabel>
+#include <QStatusBar>
 
 #include <widgets/wgsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
@@ -68,6 +70,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	setCentralWidget(bscanMarkerWidgetScrollArea);
 
 	setupMenu();
+	setupStatusBar();
 	createMarkerToolbar();
 	// DockWidgets
 	dwSloImage->setObjectName("DWSloImage");
@@ -114,6 +117,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 		loadFile(filename);
 	else if(!ProgramOptions::loadOctdataAtStart().isEmpty())
 		emit(loadLastFile());
+
 }
 
 void OCTMarkerMainWindow::loadLastFileSlot()
@@ -382,6 +386,24 @@ void OCTMarkerMainWindow::setupMenu()
 
 	addToolBar(toolBar);
 }
+
+void OCTMarkerMainWindow::setupStatusBar()
+{
+
+	OctDataManager& octDataManager = OctDataManager::getInstance();
+	connect(&octDataManager, &OctDataManager::loadFileSignal  , this, &OCTMarkerMainWindow::loadFileStatusSlot);
+	connect(&octDataManager, &OctDataManager::loadFileProgress, this, &OCTMarkerMainWindow::loadFileProgress  );
+
+	loadProgressBar = new QProgressBar;
+	loadProgressBar->setFixedWidth(200);
+	loadProgressBar->setMinimum(0);
+	loadProgressBar->setMaximum(100);
+	loadProgressBar->setVisible(false);
+
+	statusBar()->addPermanentWidget(loadProgressBar);
+}
+
+
 
 void OCTMarkerMainWindow::zoomChanged(double zoom)
 {
@@ -777,3 +799,27 @@ void SendInt::connectOptions(OptionInt& option, QAction* action)
 
 	action->setChecked(option() == v);
 }
+
+
+void OCTMarkerMainWindow::loadFileStatusSlot(bool loading)
+{
+	if(loading)
+	{
+		loadProgressBar->setValue(0);
+		setDisabled(true);
+		loadProgressBar->setVisible(true);
+	}
+	else
+	{
+		setDisabled(false);
+		loadProgressBar->setVisible(false);
+	}
+}
+
+
+void OCTMarkerMainWindow::loadFileProgress(double frac)
+{
+	loadProgressBar->setValue(static_cast<int>(frac*100));
+}
+
+

@@ -11,6 +11,7 @@ class BScanMarkerWidget;
 class OctMarkerManager;
 class DWSloImage;
 class CScan;
+class QProgressBar;
 
 
 class OCTMarkerMainWindow : public QMainWindow
@@ -18,6 +19,7 @@ class OCTMarkerMainWindow : public QMainWindow
 	Q_OBJECT
 
 	void setupMenu();
+	void setupStatusBar();
 
 	void createMarkerToolbar();
 	
@@ -27,9 +29,10 @@ class OCTMarkerMainWindow : public QMainWindow
 	BScanMarkerWidget* bscanMarkerWidget = nullptr;
 
 
-	QSpinBox* bscanChooser     = nullptr;
-	QLabel*   labelMaxBscan    = nullptr;
-	QLabel*   labelActZoom     = nullptr;
+	QSpinBox*     bscanChooser     = nullptr;
+	QLabel*       labelMaxBscan    = nullptr;
+	QLabel*       labelActZoom     = nullptr;
+	QProgressBar* loadProgressBar  = nullptr;
 
 
 	// void setActionToggel();
@@ -63,6 +66,9 @@ private slots:
 	void newCscanLoaded();
 	void loadLastFileSlot();
 	void zoomChanged(double zoom);
+
+	void loadFileStatusSlot(bool loading);
+	void loadFileProgress(double frac);
 
 public slots:
 

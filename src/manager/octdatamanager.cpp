@@ -23,6 +23,7 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include <boost/exception/diagnostic_information.hpp>
 #include <boost/filesystem.hpp>
 
 namespace bpt = boost::property_tree;
@@ -62,72 +63,122 @@ void OctDataManager::triggerSaveMarkersDefault()
 }
 
 
-
-
-void OctDataManager::openFile(const QString& filename)
+void OctDataManagerThread::run()
 {
-	saveMarkersDefault();
-
-	OctData::OCT* oldOct = octData;
-	octData    = nullptr;
+	if(!oct)
+	{
+		error = "oct variable is not set";
+		loadSuccess = false;
+	}
 
 	try
 	{
-		QTime t;
-		t.start();
-
 		OctData::FileReadOptions octOptions;
 		octOptions.e2eGray             = static_cast<OctData::FileReadOptions::E2eGrayTransform>(ProgramOptions::e2eGrayTransform());
 		octOptions.registerBScanns     = ProgramOptions::registerBScans();
 		octOptions.fillEmptyPixelWhite = ProgramOptions::fillEmptyPixelWhite();
 		octOptions.holdRawData         = ProgramOptions::holdOCTRawData();
 
-		qDebug("Lese: %s", filename.toStdString().c_str());
-		octData = new OctData::OCT(OctData::OctFileRead::openFile(filename.toStdString(), octOptions));
-		qDebug("Dauer: %d ms", t.elapsed());
-
-		OctData::Patient* patient = nullptr;
-		OctData::Study  * study   = nullptr;
-		OctData::Series * series  = nullptr;
-		
-		if(octData->size() == 0)
-			throw "MarkerManager::loadImage: oct->size() == 0";
-		patient = octData->begin()->second;
-		
-		if(patient->size() > 0)
-		{
-			study = patient->begin()->second;
-			
-			if(study->size() > 0)
-			{
-				series = study->begin()->second;
-			}
-		}
-
-		
-		actFilename = filename;
-		
-		actPatient = patient;
-		actStudy   = study;
-		actSeries  = series;
+		*oct = std::move(OctData::OctFileRead::openFile(filename.toStdString(), octOptions, this));
+	}
+	catch(boost::exception& e)
+	{
+		error = QString::fromStdString(boost::diagnostic_information(e));
+		loadSuccess = false;
+	}
+	catch(std::exception& e)
+	{
+		error = QString::fromStdString(e.what());
+		loadSuccess = false;
+	}
+	catch(const char* str)
+	{
+		error = str;
+		loadSuccess = false;
 	}
 	catch(...)
 	{
-		delete octData;
-		octData = oldOct;
-
-		throw;
+		error = QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__);
+		loadSuccess = false;
 	}
-	delete oldOct;
-	markerstree->clear();
-	
-	markerIO->loadDefaultMarker(actFilename.toStdString());
-	
-	emit(octFileChanged(octData   ));
-	emit(patientChanged(actPatient));
-	emit(studyChanged  (actStudy  ));
-	emit(seriesChanged (actSeries ));
 }
+
+void OctDataManager::openFile(const QString& filename)
+{
+	if(loadThread)
+		return;
+
+	loadFileSignal(true);
+	saveMarkersDefault();
+
+	octData4Loading = new OctData::OCT;
+
+	loadThread = new OctDataManagerThread(*this, filename, octData4Loading);
+	connect(loadThread, &OctDataManagerThread::stepCalulated, this, &OctDataManager::loadOctDataThreadProgress);
+	connect(loadThread, &OctDataManagerThread::finished     , this, &OctDataManager::loadOctDataThreadFinish  );
+	loadThread->start();
+}
+
+
+void OctDataManager::loadOctDataThreadFinish()
+{
+	loadFileSignal(false);
+
+	if(loadThread->success())
+	{
+		if(octData4Loading->size() == 0)
+			throw "OctDataManager::openFile: oct->size() == 0";
+
+		delete octData;
+		octData = octData4Loading;
+		octData4Loading = nullptr;
+
+		actPatient = octData->begin()->second;
+		if(actPatient->size() > 0)
+		{
+			actStudy = actPatient->begin()->second;
+
+			if(actStudy->size() > 0)
+			{
+				actSeries = actStudy->begin()->second;
+			}
+		}
+
+		actFilename = loadThread->getFilename();
+
+
+		markerstree->clear();
+
+		markerIO->loadDefaultMarker(actFilename.toStdString());
+
+		loadFileSignal(false);
+
+		emit(octFileChanged(octData   ));
+		emit(patientChanged(actPatient));
+		emit(studyChanged  (actStudy  ));
+		emit(seriesChanged (actSeries ));
+	}
+	else
+	{
+		QString loadError = loadThread->getError();
+
+		if(!loadError.isEmpty())
+		{
+			delete loadThread;
+			delete octData4Loading;
+			loadThread      = nullptr;
+			octData4Loading = nullptr;
+
+			throw loadError;
+		}
+	}
+
+	delete loadThread;
+	delete octData4Loading;
+	loadThread      = nullptr;
+	octData4Loading = nullptr;
+}
+
 
 
 void OctDataManager::chooseSeries(const OctData::Series* seriesReq)

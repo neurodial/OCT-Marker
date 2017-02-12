@@ -2,6 +2,8 @@
 
 #include <QObject>
 
+#include <QThread>
+
 #include <vector>
 #include <string>
 
@@ -9,6 +11,8 @@
 #include <boost/property_tree/ptree_fwd.hpp>
 
 #include <globaldefinitions.h>
+
+#include <cpp_framework/callback.h>
 
 
 class QString;
@@ -22,9 +26,12 @@ namespace OctData
 	class Series;
 }
 
+class OctDataManagerThread;
 
 class OctDataManager : public QObject
 {
+	friend class OctDataManagerThread;
+
 	Q_OBJECT
 public:
 	
@@ -38,6 +45,10 @@ public:
 	                                                                { return getMarkerTreeSeries(series); }
 	
 	void saveMarkersDefault();
+
+private slots:
+	void loadOctDataThreadProgress(double frac)                     { emit(loadFileProgress(frac)); }
+	void loadOctDataThreadFinish();
 
 public slots:
 	void openFile(const QString& filename);
@@ -63,20 +74,24 @@ signals:
 
 	void loadMarkerStateAll();
 
+	void loadFileSignal(bool loading);
+	void loadFileProgress(double frac);
+
 
 private:
 	
 	boost::property_tree::ptree* const markerstree = nullptr;
 	OctMarkerIO*                 const markerIO    = nullptr;
 
-	OctData::OCT* octData = nullptr;
+	OctData::OCT* octData         = nullptr;
+	OctData::OCT* octData4Loading = nullptr; // is nullptr when no file is loading by task
 	QString actFilename;
 	
 	const OctData::Patient* actPatient = nullptr;
 	const OctData::Study*   actStudy   = nullptr;
 	const OctData::Series*  actSeries  = nullptr;
 	
-	
+	OctDataManagerThread* loadThread = nullptr;
 	
 	OctDataManager();
 	
@@ -84,4 +99,39 @@ private:
 	boost::property_tree::ptree* getMarkerTreeSeries(const OctData::Patient* pat, const OctData::Study* study, const OctData::Series*  series);
 };
 
+
+class OctDataManagerThread : public QThread, public CppFW::Callback
+{
+	Q_OBJECT
+
+	OctDataManager& octDataManager;
+
+	bool breakLoading = false;
+	bool loadSuccess  = true;
+
+	OctData::OCT* oct = nullptr;
+
+	const QString filename;
+	QString  error;
+
+public:
+	OctDataManagerThread(OctDataManager& dataManager, const QString& filename, OctData::OCT* oct) : octDataManager(dataManager), oct(oct), filename(filename) {}
+
+	void breakLoad()                                                { breakLoading = true; }
+
+	bool success()                                           const  { return loadSuccess; }
+	const QString& getError()                                const  { return error; }
+	const QString& getFilename()                             const  { return filename; }
+
+protected:
+	void run();
+
+	virtual bool callback(double frac)
+	{
+		emit(stepCalulated(frac));
+		return !breakLoading;
+	}
+signals:
+	void stepCalulated(double);
+};
 

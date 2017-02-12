@@ -155,6 +155,13 @@ bool OctFilesModel::openFile(const QString& filename)
 		msgBox.setIcon(QMessageBox::Critical);
 		msgBox.exec();
 	}
+	catch(const QString& str)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(str);
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+	}
 	catch(...)
 	{
 		QMessageBox msgBox;
