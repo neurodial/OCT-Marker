@@ -25,6 +25,7 @@
 
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/filesystem.hpp>
+#include <QMessageBox>
 
 namespace bpt = boost::property_tree;
 namespace bfs = boost::filesystem;
@@ -127,49 +128,55 @@ void OctDataManager::loadOctDataThreadFinish()
 	if(loadThread->success())
 	{
 		if(octData4Loading->size() == 0)
-			throw "OctDataManager::openFile: oct->size() == 0";
-
-		delete octData;
-		octData = octData4Loading;
-		octData4Loading = nullptr;
-
-		actPatient = octData->begin()->second;
-		if(actPatient->size() > 0)
 		{
-			actStudy = actPatient->begin()->second;
-
-			if(actStudy->size() > 0)
-			{
-				actSeries = actStudy->begin()->second;
-			}
+			QMessageBox msgBox;
+			msgBox.setText("OctDataManager::openFile: oct->size() == 0");
+			msgBox.setIcon(QMessageBox::Critical);
+			msgBox.exec();
 		}
+		else
+		{
+			delete octData;
+			octData = octData4Loading;
+			octData4Loading = nullptr;
 
-		actFilename = loadThread->getFilename();
+			actPatient = octData->begin()->second;
+			if(actPatient->size() > 0)
+			{
+				actStudy = actPatient->begin()->second;
+
+				if(actStudy->size() > 0)
+				{
+					actSeries = actStudy->begin()->second;
+				}
+			}
+
+			actFilename = loadThread->getFilename();
 
 
-		markerstree->clear();
+			markerstree->clear();
 
-		markerIO->loadDefaultMarker(actFilename.toStdString());
+			markerIO->loadDefaultMarker(actFilename.toStdString());
 
-		loadFileSignal(false);
+			loadFileSignal(false);
 
-		emit(octFileChanged(octData   ));
-		emit(patientChanged(actPatient));
-		emit(studyChanged  (actStudy  ));
-		emit(seriesChanged (actSeries ));
+			emit(octFileChanged(octData   ));
+			emit(patientChanged(actPatient));
+			emit(studyChanged  (actStudy  ));
+			emit(seriesChanged (actSeries ));
+		}
 	}
 	else
 	{
-		QString loadError = loadThread->getError();
+		const QString& loadError = loadThread->getError();
 
 		if(!loadError.isEmpty())
 		{
-			delete loadThread;
-			delete octData4Loading;
-			loadThread      = nullptr;
-			octData4Loading = nullptr;
+			QMessageBox msgBox;
+			msgBox.setText(loadError);
+			msgBox.setIcon(QMessageBox::Critical);
+			msgBox.exec();
 
-			throw loadError;
 		}
 	}
 
