@@ -1,6 +1,6 @@
 #include <QApplication>
 
- #include <QTranslator>
+#include <QTranslator>
 #include <QLocale>
 #include <QFile>
 
@@ -8,6 +8,24 @@
 #include "data_structure/programoptions.h"
 
 #include <buildconstants.h>
+
+#include <iostream>
+
+#include <QDir>
+#include <QFileInfo>
+
+
+bool loadMarkerTranslatorFile(QTranslator& translator, const QString& dir)
+{
+	return translator.load(QLocale::system(), "octmarker", "-", dir, ".qm");
+}
+
+void loadMarkerTranslator(QTranslator& translator, const QString& programDir)
+{
+	if(loadMarkerTranslatorFile(translator, programDir)) return;
+	if(loadMarkerTranslatorFile(translator, "/usr/share/octmarker/locale/")) return;
+	loadMarkerTranslatorFile(translator, "");
+}
 
 int main(int argc, char **argv)
 {
@@ -24,14 +42,9 @@ int main(int argc, char **argv)
 	// translator.load("/usr/share/qt4/translations/qt_" + QLocale::system().name());
 	translator.load(QLocale::system(), "qt", "_", "/usr/share/qt5/translations", ".qm");
 
-	QFile file("octmarker-de.qm");
-	if(file.exists())
-	{
-		qDebug("Load local translation %s", file.fileName().toStdString().c_str());
-		translator2.load(file.fileName());
-	}
-	else
-		translator2.load(QLocale::system(), "octmarker", "-", "/usr/share/octmarker/locale/", ".qm");
+	QDir d = QFileInfo(argv[0]).absoluteDir();
+	loadMarkerTranslator(translator2, d.absolutePath());
+
 	app.installTranslator(&translator);
 	app.installTranslator(&translator2);
 
