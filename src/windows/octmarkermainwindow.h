@@ -12,6 +12,8 @@ class OctMarkerManager;
 class DWSloImage;
 class CScan;
 class QProgressBar;
+class QUrl;
+class QMenu;
 
 
 class OCTMarkerMainWindow : public QMainWindow
@@ -31,9 +33,11 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	QSpinBox*     bscanChooser     = nullptr;
 	QLabel*       labelMaxBscan    = nullptr;
-	QLabel*       labelActZoom     = nullptr;
 	QProgressBar* loadProgressBar  = nullptr;
+	QAction*      zoomInAction     = nullptr;
+	QAction*      zoomOutAction    = nullptr;
 
+	QMenu* zoomMenu = nullptr;
 
 	// void setActionToggel();
 	void configBscanChooser();
@@ -42,9 +46,11 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	bool loadFile(const QString& filename);
 	bool addFile(const QString& filename);
-// 	bool loadFolder(const QString& foldername);
+	std::size_t loadFolder(const QString& foldername, int numMaxRecursiv = 10);
 
 	virtual void closeEvent(QCloseEvent* e);
+
+	void handleOpenUrl(const QUrl& url, bool singleInput);
 
 protected:
 	virtual void dropEvent     (QDropEvent     * event);
@@ -64,7 +70,6 @@ signals:
 
 private slots:
 	void newCscanLoaded();
-	void loadLastFileSlot();
 	void zoomChanged(double zoom);
 
 	void loadFileStatusSlot(bool loading);
@@ -73,7 +78,8 @@ private slots:
 public slots:
 
 	virtual void showAboutDialog();
-    virtual void showLoadImageDialog();
+	virtual void showLoadImageDialog();
+	virtual void showImportFromFolderDialog();
 
 	// virtual void showAddMarkersDialog();
 	virtual void showLoadMarkersDialog();

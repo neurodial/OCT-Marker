@@ -49,6 +49,10 @@
 
 #include <globaldefinitions.h>
 #include <buildconstants.h>
+#include <QWidgetAction>
+
+
+#include <QPushButton>
 
 
 
@@ -101,7 +105,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	setAcceptDrops(true);
 
 	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged   , this, &OCTMarkerMainWindow::newCscanLoaded);
-	connect(this, &OCTMarkerMainWindow::loadLastFile, this, &OCTMarkerMainWindow::loadLastFileSlot, Qt::QueuedConnection);
+	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &OCTMarkerMainWindow::zoomChanged);
 
 	
 	for(BscanMarkerBase* marker : markerManager->getBscanMarker())
@@ -116,16 +120,8 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	if(filename)
 		loadFile(filename);
 	else if(!ProgramOptions::loadOctdataAtStart().isEmpty())
-		emit(loadLastFile());
-
-}
-
-void OCTMarkerMainWindow::loadLastFileSlot()
-{
-	if(!ProgramOptions::loadOctdataAtStart().isEmpty())
 		loadFile(ProgramOptions::loadOctdataAtStart());
 }
-
 
 OCTMarkerMainWindow::~OCTMarkerMainWindow()
 {
@@ -162,9 +158,16 @@ void OCTMarkerMainWindow::setupMenu()
 	QAction* actionLoadImage = new QAction(this);
 	actionLoadImage->setText(tr("Load OCT scan"));
 	actionLoadImage->setShortcut(Qt::CTRL | Qt::Key_O);
-	actionLoadImage->setIcon(QIcon(":/icons/folder.png"));
+	actionLoadImage->setIcon(QIcon(":/icons/folder_image.png"));
 	connect(actionLoadImage, &QAction::triggered, this, &OCTMarkerMainWindow::showLoadImageDialog);
 	fileMenu->addAction(actionLoadImage);
+
+	QAction* actionImportFolder = new QAction(this);
+	actionImportFolder->setText(tr("Add OCT scans from folder"));
+	actionImportFolder->setShortcut(Qt::CTRL | Qt::Key_O);
+	actionImportFolder->setIcon(QIcon(":/icons/folder_add.png"));
+	connect(actionImportFolder, &QAction::triggered, this, &OCTMarkerMainWindow::showImportFromFolderDialog);
+	fileMenu->addAction(actionImportFolder);
 
 	fileMenu->addSeparator();
 
@@ -361,27 +364,59 @@ void OCTMarkerMainWindow::setupMenu()
 
 
 
-
-
 	toolBar->addSeparator();
-	QAction* zoomIn = new QAction(this);
-	zoomIn->setText(tr("Zoom +"));
-	zoomIn->setIcon(QIcon(":/icons/zoom_in.png"));
-	connect(zoomIn, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
-	toolBar->addAction(zoomIn);
-
-	labelActZoom = new QLabel(this);
-	labelActZoom->setText("1");
-	toolBar->addWidget(labelActZoom);
-	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &OCTMarkerMainWindow::zoomChanged);
+	zoomInAction = new QAction(this);
+	zoomInAction->setText(tr("Zoom +"));
+	zoomInAction->setIcon(QIcon(":/icons/zoom_in.png"));
+	connect(zoomInAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
+	toolBar->addAction(zoomInAction);
 
 
-	QAction* zoomOut = new QAction(this);
-	zoomOut->setText(tr("Zoom -"));
-	zoomOut->setIcon(QIcon(":/icons/zoom_out.png"));
-	connect(zoomOut, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
-	toolBar->addAction(zoomOut);
+	zoomMenu = new QMenu(tr("actual zoom"));
+// 	zoomMenu->menuAction()->setIcon(QIcon(":/icons/zoom.png"));
 
+	QAction* actionZoom1 = new QAction(this);
+	actionZoom1->setText(tr("Zoom %1").arg(1));
+	actionZoom1->setIcon(QIcon(":/icons/zoom.png"));
+	zoomMenu->addAction(actionZoom1);
+	connect(actionZoom1, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom1);
+
+	QAction* actionZoom2 = new QAction(this);
+	actionZoom2->setText(tr("Zoom %1").arg(2));
+	actionZoom2->setIcon(QIcon(":/icons/zoom.png"));
+	zoomMenu->addAction(actionZoom2);
+	connect(actionZoom2, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom2);
+
+	QAction* actionZoom3 = new QAction(this);
+	actionZoom3->setText(tr("Zoom %1").arg(3));
+	actionZoom3->setIcon(QIcon(":/icons/zoom.png"));
+	zoomMenu->addAction(actionZoom3);
+	connect(actionZoom3, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom3);
+
+	QAction* actionZoom4 = new QAction(this);
+	actionZoom4->setText(tr("Zoom %1").arg(4));
+	actionZoom4->setIcon(QIcon(":/icons/zoom.png"));
+	zoomMenu->addAction(actionZoom4);
+	connect(actionZoom4, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom4);
+
+	QAction* actionZoom5 = new QAction(this);
+	actionZoom5->setText(tr("Zoom %1").arg(5));
+	actionZoom5->setIcon(QIcon(":/icons/zoom.png"));
+	zoomMenu->addAction(actionZoom5);
+	connect(actionZoom5, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom5);
+
+	toolBar->addAction(zoomMenu->menuAction());
+
+
+
+
+	zoomOutAction = new QAction(this);
+	zoomOutAction->setText(tr("Zoom -"));
+	zoomOutAction->setIcon(QIcon(":/icons/zoom_out.png"));
+	connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
+	toolBar->addAction(zoomOutAction);
+
+	zoomChanged(bscanMarkerWidget->getImageScaleFactor());
 
 
 	addToolBar(toolBar);
@@ -405,9 +440,23 @@ void OCTMarkerMainWindow::setupStatusBar()
 
 
 
+
 void OCTMarkerMainWindow::zoomChanged(double zoom)
 {
-	labelActZoom->setText(QString("%1").arg(zoom));
+	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 5);
+	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 1);
+
+	if(zoomMenu)
+	{
+		QPixmap pixmap(16,16);
+		pixmap.fill(Qt::transparent);
+		QPainter painter(&pixmap);
+		QString string = QString("%1").arg(zoom);
+		painter.drawText(0,0,16,16,Qt::AlignHCenter | Qt::AlignVCenter, string);
+
+
+		zoomMenu->menuAction()->setIcon(QIcon(pixmap));
+	}
 }
 
 
@@ -473,6 +522,22 @@ void OCTMarkerMainWindow::showAboutDialog()
 }
 
 
+
+void OCTMarkerMainWindow::showImportFromFolderDialog()
+{
+	QFileDialog fd;
+	// fd.selectFile(lineEditFile->text());
+	fd.setWindowTitle(tr("Choose a folder to load Files"));
+	fd.setAcceptMode(QFileDialog::AcceptOpen);
+	fd.setFileMode(QFileDialog::Directory);
+	if(fd.exec())
+	{
+		QStringList foldernames = fd.selectedFiles();
+		loadFolder(foldernames[0]);
+	}
+}
+
+
 void OCTMarkerMainWindow::showLoadImageDialog()
 {
 	QFileDialog fd;
@@ -530,6 +595,24 @@ void OCTMarkerMainWindow::showLoadImageDialog()
 }
 
 
+void OCTMarkerMainWindow::handleOpenUrl(const QUrl& url, bool singleInput)
+{
+	QString filePath = url.toLocalFile();
+	QFileInfo fileInfo = QFileInfo(filePath);
+	if(fileInfo.isDir())
+	{
+		loadFolder(filePath);
+	}
+	if(OctData::OctFileRead::isLoadable(filePath.toStdString()))
+	{
+		if(singleInput)
+			loadFile(filePath);
+		else
+			addFile(filePath);
+	}
+}
+
+
 void OCTMarkerMainWindow::dropEvent(QDropEvent* event)
 {
 	const QMimeData* mimeData = event->mimeData();
@@ -541,16 +624,13 @@ void OCTMarkerMainWindow::dropEvent(QDropEvent* event)
 		QList<QUrl> urlList = mimeData->urls();
 		if(urlList.size() == 1)
 		{
-			loadFile(urlList.at(0).toLocalFile());
+			handleOpenUrl(urlList.at(0), true);
 		}
 		else
 		{
 			for(const QUrl& url : urlList)
 			{
-				if(OctData::OctFileRead::isLoadable(url.toLocalFile().toStdString()))
-				{
-					addFile(url.toLocalFile());
-				}
+				handleOpenUrl(url, false);
 			}
 		}
 	}
@@ -565,7 +645,14 @@ void OCTMarkerMainWindow::dragEnterEvent(QDragEnterEvent* event)
 		QList<QUrl> urlList = mimeData->urls();
 		for(const QUrl& url : urlList)
 		{
-			if(OctData::OctFileRead::isLoadable(url.toLocalFile().toStdString()))
+			QString filePath = url.toLocalFile();
+			QFileInfo fileInfo = QFileInfo(filePath);
+			if(fileInfo.isDir())
+			{
+				event->acceptProposedAction();
+				break;
+			}
+			if(OctData::OctFileRead::isLoadable(filePath.toStdString()))
 			{
 				event->acceptProposedAction();
 				break;
@@ -595,11 +682,44 @@ bool OCTMarkerMainWindow::addFile(const QString& filename)
 	return OctFilesModel::getInstance().addFile(filename);
 }
 
-// bool OCTMarkerMainWindow::loadFolder(const QString& foldername)
-// {
-// 	return OctFilesModel::getInstance().addFile(filename);
-// }
-//
+std::size_t OCTMarkerMainWindow::loadFolder(const QString& foldername, int numMaxRecursiv)
+{
+	QDir folder(foldername);
+
+	if(!folder.exists())
+		return 0;
+
+	OctFilesModel& filesModel = OctFilesModel::getInstance();
+
+	std::size_t filesAdded = 0;
+
+	const QStringList list = folder.entryList();
+
+	for(int i = 0; i < list.size(); i++)
+	{
+		const QString& dirEntry = list[i];
+		QString filePath = foldername + "/" + dirEntry;
+		QFileInfo fileInfo = QFileInfo(filePath);
+		// Skip  "." and ".."
+		if(dirEntry == "." || dirEntry == "..")
+			continue;
+		if(fileInfo.isDir())
+		{
+			if(numMaxRecursiv > 0)
+				filesAdded += loadFolder(filePath + "/", numMaxRecursiv-1);
+		}
+		else if(fileInfo.exists())
+		{
+			if(OctData::OctFileRead::isLoadable(filePath.toStdString()))
+			{
+				filesModel.addFile(filePath);
+				++filesAdded;
+			}
+		}
+	}
+	return filesAdded;
+}
+
 
 
 

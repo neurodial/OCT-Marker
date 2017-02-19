@@ -37,8 +37,10 @@ SloObjectMarker::~SloObjectMarker()
 
 void SloObjectMarker::resetScene()
 {
+	const double scaleFactor = getScaleFactor();
+
 	RectItem* onhMarker = rectItems["ONH"];
-	onhMarker->setRect(QRectF(25, 25, 50, 50));
+	onhMarker->setRect(QRectF(0.25*scaleFactor, 0.25*scaleFactor, 0.50*scaleFactor, 0.50*scaleFactor));
 }
 
 RectItem* SloObjectMarker::getRectItem(const std::string& id)

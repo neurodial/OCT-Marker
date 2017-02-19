@@ -2,6 +2,7 @@
 <qresource>
 	<file>icons/folder.png</file>
 	<file>icons/folder_add.png</file>
+	<file>icons/folder_image.png</file>
 	<file>icons/disk.png</file>
 	<file>icons/door_in.png</file>
 
