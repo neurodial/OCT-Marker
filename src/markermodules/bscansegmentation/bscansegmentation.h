@@ -35,6 +35,8 @@ class BScanSegmentation : public BscanMarkerBase
 	
 	typedef std::vector<SimpleCvMatCompress*> SegMats;
 
+	bool stateChangedSinceLastSave = false;
+
 	bool inWidget = false;
 	QPoint mousePoint;
 
@@ -78,7 +80,10 @@ class BScanSegmentation : public BscanMarkerBase
 
 	int seglinePaintSize = 1;
 
-	bool setActMat(std::size_t nr, bool saveOldState = true) const;
+	bool setActMat(std::size_t nr, bool saveOldState = true);
+
+	void saveActMatState();
+	void rejectMatChanges();
 
 public:
 
@@ -99,6 +104,9 @@ public:
 
 	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
 	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
+
+	virtual void setActBScan(std::size_t bscan)  override           { setActMat(bscan, true); }
+	virtual bool hasChangedSinceLastSave() const override           { return stateChangedSinceLastSave; }
 
 	std::size_t getNumBScans() const                                { return segments.size(); }
 	

@@ -29,6 +29,12 @@ class SimpleMatCompress
 			ar & length;
 			ar & value;
 		}
+
+		bool operator==(const MatSegment& other) const
+		{
+			return length == other.length
+			    && value  == other.value ;
+		}
 	};
 
 	std::vector<MatSegment> segmentsChange;
@@ -53,6 +59,9 @@ public:
 
 	bool readFromMat(const uint8_t* mat, int rows, int cols);
 	bool writeToMat (      uint8_t* mat, int rows, int cols) const;
+
+	bool isEqual(const uint8_t* mat, int rows, int cols) const;
+	bool operator==(const SimpleMatCompress& other) const;
 };
 
 

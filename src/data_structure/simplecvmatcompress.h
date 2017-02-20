@@ -12,6 +12,9 @@ public:
 
 	void writeToMat(cv::Mat& mat) const;
 
+	bool operator==(const cv::Mat& mat) const;
+	bool operator!=(const cv::Mat& mat) const                       { return !(this->operator==(mat)); }
+
 };
 
 #endif // SIMPLECVMATCOMPRESS_H

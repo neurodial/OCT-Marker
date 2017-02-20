@@ -77,6 +77,9 @@ void OctMarkerManager::chooseBScan(int bscan)
 
 	actBScan = bscan;
 
+	if(actBscanMarker)
+		actBscanMarker->setActBScan(actBScan);
+
 	emit(newBScanShowed(series->getBScan(actBScan)));
 	emit(bscanChanged(actBScan));
 }
@@ -127,7 +130,10 @@ void OctMarkerManager::setBscanMarker(int id)
 		if(actBscanMarker)
 			actBscanMarker->activate(false);
 		if(newMarker)
+		{
+			newMarker->setActBScan(actBScan);
 			newMarker->activate(true);
+		}
 		
 		actBscanMarker = newMarker;
 		emit(bscanChanged(actBScan));

@@ -65,3 +65,26 @@ bool SimpleMatCompress::isEmpty(uint8_t defaultValue) const
 		return segmentsChange[0].value == defaultValue;
 	return false;
 }
+
+bool SimpleMatCompress::isEqual(const uint8_t* mat, int rows, int cols) const
+{
+	if(this->rows != rows || this->cols != cols || mat == nullptr)
+		return false;
+
+	for(const MatSegment& segment : segmentsChange)
+	{
+		uint8_t segmentValue = segment.value;
+		for(int i=0; i<segment.length; ++i, ++mat)
+			if(*mat != segmentValue)
+				return false;
+	}
+	return true;
+}
+
+bool SimpleMatCompress::operator==(const SimpleMatCompress& other) const
+{
+	return rows           == other.rows
+	    && cols           == other.cols
+	    && segmentsChange == other.segmentsChange;
+}
+

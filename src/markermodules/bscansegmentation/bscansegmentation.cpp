@@ -116,7 +116,11 @@ namespace
 template<typename T>
 void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const QRect& rect) const
 {
-	setActMat(getActBScanNr());
+	if(actMatNr != getActBScanNr())
+	{
+		qDebug("BScanSegmentation::drawSegmentLine: actMatNr != getActBScanNr()");
+		return;
+	}
 	if(!actMat || actMat->empty())
 		return;
 
@@ -372,6 +376,12 @@ bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 		case Qt::Key_5:
 			setLocalMethod(BScanSegmentationMarker::LocalMethod::NN);
 			return true;
+		case Qt::Key_Z:
+			if(e->modifiers() == Qt::ControlModifier)
+			{
+				rejectMatChanges();
+				return true;
+			}
 	}
 
 	return false;
@@ -473,6 +483,7 @@ void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::pr
 
 void BScanSegmentation::saveState(boost::property_tree::ptree& markerTree)
 {
+	saveActMatState();
 	BScanSegmentationPtree::fillPTree(markerTree, this);
 }
 
@@ -614,15 +625,15 @@ void BScanSegmentation::setSeglinePaintSize(int size)
 }
 
 
-bool BScanSegmentation::setActMat(std::size_t nr, bool saveOldState) const
+bool BScanSegmentation::setActMat(std::size_t nr, bool saveOldState)
 {
 	if(nr == actMatNr && saveOldState)
 		return true;
 
 	if(actMat)
 	{
-		if(saveOldState && segments.size() > actMatNr)
-			segments[actMatNr]->readFromMat(*actMat); // save state from old bscan
+		if(saveOldState)
+			saveActMatState(); // save state from old bscan
 
 		if(segments.size() > nr)
 		{
@@ -643,3 +654,21 @@ bool BScanSegmentation::setActMat(std::size_t nr, bool saveOldState) const
 	}
 	return false;
 }
+
+void BScanSegmentation::rejectMatChanges()
+{
+	setActMat(actMatNr, false);
+}
+
+void BScanSegmentation::saveActMatState()
+{
+	if(actMat && segments.size() > actMatNr)
+	{
+		if((*segments[actMatNr]) != *actMat)
+		{
+			segments[actMatNr]->readFromMat(*actMat);
+			stateChangedSinceLastSave = true;
+		}
+	}
+}
+

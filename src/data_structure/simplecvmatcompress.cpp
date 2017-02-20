@@ -15,3 +15,10 @@ void SimpleCvMatCompress::writeToMat(cv::Mat& mat) const
 	// TODO: check datatype
 	SimpleMatCompress::writeToMat(mat.ptr<uint8_t>(), mat.rows, mat.cols);
 }
+
+
+bool SimpleCvMatCompress::operator==(const cv::Mat& mat) const
+{
+	return SimpleMatCompress::isEqual(mat.ptr<uint8_t>(), mat.rows, mat.cols);
+}
+

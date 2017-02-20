@@ -52,6 +52,9 @@ public:
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) { return false; }
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) { return false; }
 	virtual bool setMarkerActive  (bool        , BScanMarkerWidget*);
+
+	virtual void setActBScan(std::size_t /*bscan*/)                 {}
+	virtual bool hasChangedSinceLastSave() const                    { return false; }
 	
 	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
 	virtual QWidget*  getWidget ()                                  { return nullptr; }
