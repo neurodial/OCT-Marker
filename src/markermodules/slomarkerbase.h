@@ -43,6 +43,7 @@ public:
 	virtual void newSeriesLoaded(const OctData::Series*, boost::property_tree::ptree&)
 	                                                                {}
 
+	virtual bool hasChangedSinceLastSave() const                    { return false; }
 
 	virtual const QString& getName()                                { return name; }
 	virtual const QString& getMarkerId()                            { return id;   }

@@ -63,6 +63,7 @@ class BScanSegmentation : public BscanMarkerBase
 
 	void clearSegments();
 	void createSegments();
+	void createSegments(const OctData::Series* series);
 
 	template<typename T>
 	void drawSegmentLine(QPainter&, double factor, const QRect&) const;
@@ -85,6 +86,8 @@ class BScanSegmentation : public BscanMarkerBase
 	void saveActMatState();
 	void rejectMatChanges();
 
+	bool hasActMatChanged() const;
+
 public:
 
 	BScanSegmentation(OctMarkerManager* markerManager);
@@ -106,7 +109,7 @@ public:
 	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
 
 	virtual void setActBScan(std::size_t bscan)  override           { setActMat(bscan, true); }
-	virtual bool hasChangedSinceLastSave() const override           { return stateChangedSinceLastSave; }
+	virtual bool hasChangedSinceLastSave() const override           { if(stateChangedSinceLastSave) return true; return hasActMatChanged(); }
 
 	std::size_t getNumBScans() const                                { return segments.size(); }
 	

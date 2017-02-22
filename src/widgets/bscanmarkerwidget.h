@@ -40,7 +40,7 @@ class BScanMarkerWidget : public CVImageWidget
 	bool checkControlUsed(QKeyEvent  * event);
 	bool checkControlUsed(bool modPressed);
 public:
-	BScanMarkerWidget(OctMarkerManager& markerManger);
+	BScanMarkerWidget();
 
 	virtual ~BScanMarkerWidget();
 

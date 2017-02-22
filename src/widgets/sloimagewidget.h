@@ -37,7 +37,7 @@ class SLOImageWidget : public CVImageWidget
 
 	void updateGraphicsViewSize();
 public:
-	SLOImageWidget(OctMarkerManager& markerManger);
+	SLOImageWidget();
 
     virtual ~SLOImageWidget();
 

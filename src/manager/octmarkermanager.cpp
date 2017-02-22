@@ -95,6 +95,12 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 
 	actBScan = 0;
 
+	if(actBscanMarker && !stateChangedSinceLastSave)
+		stateChangedSinceLastSave = actBscanMarker->hasChangedSinceLastSave();
+
+	if(actSloMarker && !stateChangedSinceLastSave)
+		stateChangedSinceLastSave = actSloMarker->hasChangedSinceLastSave();
+
 
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
@@ -128,7 +134,10 @@ void OctMarkerManager::setBscanMarker(int id)
 	{
 		actBscanMarkerId = id;
 		if(actBscanMarker)
+		{
 			actBscanMarker->activate(false);
+			stateChangedSinceLastSave &= actBscanMarker->hasChangedSinceLastSave();
+		}
 		if(newMarker)
 		{
 			newMarker->setActBScan(actBScan);
@@ -230,3 +239,10 @@ void OctMarkerManager::udateFromMarkerModul()
 	 }
 }
 
+bool OctMarkerManager::hasActMarkerChanged() const
+{
+	bool result = false;
+	if(actBscanMarker) result |= actBscanMarker->hasChangedSinceLastSave();
+	if(actSloMarker)   result |= actSloMarker  ->hasChangedSinceLastSave();
+	return result;
+}

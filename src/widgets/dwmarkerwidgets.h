@@ -13,11 +13,8 @@ class DWMarkerWidgets : public QDockWidget
 {
 	Q_OBJECT
 
-    // QStackedWidget* stackedMarkerWidgets;
-	OctMarkerManager* markerManager;
-
 public:
-	explicit DWMarkerWidgets(OctMarkerManager* markerManager, QWidget* parent);
+	explicit DWMarkerWidgets(QWidget* parent);
 	virtual ~DWMarkerWidgets();
 
 private slots:

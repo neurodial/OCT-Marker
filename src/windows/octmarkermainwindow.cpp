@@ -59,10 +59,10 @@
 
 OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 : QMainWindow()
-, markerManager      (new OctMarkerManager      )
 , dwSloImage         (new QDockWidget(this))
-, bscanMarkerWidget  (new BScanMarkerWidget(*markerManager))
+, bscanMarkerWidget  (new BScanMarkerWidget)
 {
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
 	QSettings& settings = ProgramOptions::getSettings();
 	restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
 	
@@ -78,7 +78,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	createMarkerToolbar();
 	// DockWidgets
 	dwSloImage->setObjectName("DWSloImage");
-	dwSloImage->setWidget(new WgSloImage(*markerManager, this));
+	dwSloImage->setWidget(new WgSloImage(this));
 	dwSloImage->setWindowTitle(tr("SLO image"));
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
 
@@ -90,11 +90,10 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	addDockWidget(Qt::RightDockWidgetArea, treeDock);
 	
 	DwOctInformations* dwoctinformations = new DwOctInformations(this);
-	dwoctinformations->setBScanMarkerManager(markerManager);
 	dwoctinformations->setObjectName("DwOctInformations");
 	addDockWidget(Qt::RightDockWidgetArea, dwoctinformations);
 
-	DWMarkerWidgets* dwmarkerwidgets = new DWMarkerWidgets(markerManager, this);
+	DWMarkerWidgets* dwmarkerwidgets = new DWMarkerWidgets(this);
 	dwmarkerwidgets->setObjectName("DwMarkerWidgets");
 	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
 
@@ -108,7 +107,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &OCTMarkerMainWindow::zoomChanged);
 
 	
-	for(BscanMarkerBase* marker : markerManager->getBscanMarker())
+	for(BscanMarkerBase* marker : markerManager.getBscanMarker())
 	{
 		QToolBar* toolbar = marker->createToolbar(this);
 		if(toolbar)
@@ -125,7 +124,6 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 
 OCTMarkerMainWindow::~OCTMarkerMainWindow()
 {
-	delete markerManager;
 }
 
 
@@ -148,6 +146,7 @@ namespace
 
 void OCTMarkerMainWindow::setupMenu()
 {
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
 
 	// ----------
 	// fileMenu
@@ -329,11 +328,11 @@ void OCTMarkerMainWindow::setupMenu()
 	nextBScan->setText(tr("next bscan"));
 	nextBScan->setIcon(QIcon(":/icons/arrow_right.png"));
 	nextBScan->setShortcut(Qt::RightArrow);
-	connect(nextBScan, SIGNAL(triggered()), markerManager, SLOT(nextBScan()));
+	connect(nextBScan, SIGNAL(triggered()), &markerManager, SLOT(nextBScan()));
 
 	bscanChooser = new QSpinBox(this);
-	connect(bscanChooser, SIGNAL(valueChanged(int)), markerManager, SLOT(chooseBScan(int)));
-	connect(markerManager, SIGNAL(bscanChanged(int)), bscanChooser, SLOT(setValue(int)));
+	connect(bscanChooser, SIGNAL(valueChanged(int)), &markerManager, SLOT(chooseBScan(int)));
+	connect(&markerManager, SIGNAL(bscanChanged(int)), bscanChooser, SLOT(setValue(int)));
 
 	labelMaxBscan = new QLabel(this);
 	labelMaxBscan->setText("/0");
@@ -343,7 +342,7 @@ void OCTMarkerMainWindow::setupMenu()
 	previousBScan->setText(tr("previous bscan"));
 	previousBScan->setIcon(QIcon(":/icons/arrow_left.png"));
 	previousBScan->setShortcut(Qt::LeftArrow);
-	connect(previousBScan, SIGNAL(triggered(bool)), markerManager, SLOT(previousBScan()));
+	connect(previousBScan, SIGNAL(triggered(bool)), &markerManager, SLOT(previousBScan()));
 
 	QAction* showSeglines = ProgramOptions::bscansShowSegmentationslines.getAction();
 	showSeglines->setText(tr("show segmentationslines"));
@@ -462,7 +461,8 @@ void OCTMarkerMainWindow::zoomChanged(double zoom)
 
 void OCTMarkerMainWindow::createMarkerToolbar()
 {
-	const std::vector<BscanMarkerBase*>& markers = markerManager->getBscanMarker();
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
+	const std::vector<BscanMarkerBase*>& markers = markerManager.getBscanMarker();
 	
 	QToolBar*      toolBar            = new QToolBar(tr("Marker"));
 	QActionGroup*  actionGroupMarker  = new QActionGroup(this);
@@ -474,7 +474,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	markerAction->setCheckable(true);
 	markerAction->setText(tr("no marker"));
 	markerAction->setIcon(QIcon(":/icons/image.png"));
-	markerAction->setChecked(markerManager->getActBscanMarkerId() == -1);
+	markerAction->setChecked(markerManager.getActBscanMarkerId() == -1);
 	connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
 	signalMapperMarker->setMapping(markerAction, -1);
 	actionGroupMarker->addAction(markerAction);
@@ -487,7 +487,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		markerAction->setCheckable(true);
 		markerAction->setText(marker->getName());
 		markerAction->setIcon(marker->getIcon());
-		markerAction->setChecked(markerManager->getActBscanMarkerId() == id);
+		markerAction->setChecked(markerManager.getActBscanMarkerId() == id);
 		connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
 		signalMapperMarker->setMapping(markerAction, id);
 
@@ -495,7 +495,7 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		toolBar->addAction(markerAction);
 		++id;
 	}
-	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), markerManager, &OctMarkerManager::setBscanMarker);
+	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), &markerManager, &OctMarkerManager::setBscanMarker);
 	
 	addToolBar(toolBar);
 }
@@ -840,7 +840,7 @@ void OCTMarkerMainWindow::configBscanChooser()
 	}
 	
 	bscanChooser->setMaximum(static_cast<int>(maxBscan));
-	bscanChooser->setValue(markerManager->getActBScan());
+	bscanChooser->setValue(OctMarkerManager::getInstance().getActBScan());
 
 	labelMaxBscan->setText(QString("/%1").arg(maxBscan));
 }

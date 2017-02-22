@@ -4,10 +4,10 @@
 #include <markermodules/bscanmarkerbase.h>
 
 
-DWMarkerWidgets::DWMarkerWidgets(OctMarkerManager* markerManager, QWidget* parent)
+DWMarkerWidgets::DWMarkerWidgets(QWidget* parent)
 : QDockWidget(parent)
-, markerManager(markerManager)
 {
+	OctMarkerManager* markerManager = &OctMarkerManager::getInstance();
 	setWindowTitle(tr("Marker widgets"));
 	connect(markerManager, &OctMarkerManager::bscanMarkerChanged, this, &DWMarkerWidgets::markerChanged);
 
@@ -16,10 +16,20 @@ DWMarkerWidgets::DWMarkerWidgets(OctMarkerManager* markerManager, QWidget* paren
 
 DWMarkerWidgets::~DWMarkerWidgets()
 {
+	// widgets are owned by the BscanMarker -> removed it from DockWidget scope
+	QWidget* oldWidget = widget();
+	if(oldWidget)
+		oldWidget->setParent(nullptr);
+	setWidget(nullptr);
 }
 
 void DWMarkerWidgets::markerChanged(BscanMarkerBase* marker)
 {
+	// widgets are owned by the BscanMarker -> removed it from DockWidget scope
+	QWidget* oldWidget = widget();
+	if(oldWidget)
+		oldWidget->setParent(nullptr);
+
 	if(marker)
 	{
 		QWidget* widget = marker->getWidget();

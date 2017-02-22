@@ -7,6 +7,7 @@
 #include <QTime>
 
 #include "octmarkerio.h"
+#include "octmarkermanager.h"
 
 
 #include <octdata/datastruct/series.h>
@@ -51,16 +52,15 @@ OctDataManager::~OctDataManager()
 void OctDataManager::saveMarkersDefault()
 {
 	if(ProgramOptions::autoSaveOctMarkers())
-	{
-		saveMarkerState(actSeries);
-		markerIO->saveDefaultMarker(actFilename.toStdString());
-	}
+		triggerSaveMarkersDefault();
 }
 
 void OctDataManager::triggerSaveMarkersDefault()
 {
 	saveMarkerState(actSeries);
 	markerIO->saveDefaultMarker(actFilename.toStdString());
+	OctMarkerManager::getInstance().resetChangedSinceLastSaveState();
+
 }
 
 
@@ -80,7 +80,7 @@ void OctDataManagerThread::run()
 		octOptions.fillEmptyPixelWhite = ProgramOptions::fillEmptyPixelWhite();
 		octOptions.holdRawData         = ProgramOptions::holdOCTRawData();
 
-		*oct = std::move(OctData::OctFileRead::openFile(filename.toStdString(), octOptions, this));
+		*oct = OctData::OctFileRead::openFile(filename.toStdString(), octOptions, this);
 	}
 	catch(boost::exception& e)
 	{
@@ -108,6 +108,27 @@ void OctDataManager::openFile(const QString& filename)
 {
 	if(loadThread)
 		return;
+
+	if(!ProgramOptions::autoSaveOctMarkers())
+	{
+		if(OctMarkerManager::getInstance().hasChangedSinceLastSave()) // TODO: move to new class for handel gui
+		{
+			QMessageBox::StandardButton result = QMessageBox::warning(nullptr, tr("Unsaved changes"), tr("You have unsaved changes, what will you do?"), QMessageBox::Save|QMessageBox::Cancel|QMessageBox::Ignore);
+			switch(result)
+			{
+				case QMessageBox::Cancel:
+					return;
+				case QMessageBox::Ignore:
+					break;
+				case QMessageBox::Save:
+					triggerSaveMarkersDefault();
+					break;
+				default:
+					qDebug("OctDataManager::openFile: unexpected StandardButton %d", result);
+					return;
+			}
+		}
+	}
 
 	loadFileSignal(true);
 	saveMarkersDefault();
@@ -155,7 +176,6 @@ void OctDataManager::loadOctDataThreadFinish()
 
 
 			markerstree->clear();
-
 			markerIO->loadDefaultMarker(actFilename.toStdString());
 
 			loadFileSignal(false);
@@ -164,6 +184,8 @@ void OctDataManager::loadOctDataThreadFinish()
 			emit(patientChanged(actPatient));
 			emit(studyChanged  (actStudy  ));
 			emit(seriesChanged (actSeries ));
+
+			OctMarkerManager::getInstance().resetChangedSinceLastSaveState();
 		}
 	}
 	else
@@ -256,6 +278,7 @@ bool OctDataManager::loadMarkers(QString filename, OctMarkerFileformat format)
 	markerstree->clear();
 	markerIO->loadMarkers(filename.toStdString(), format);
 	emit(loadMarkerStateAll());
+	OctMarkerManager::getInstance().resetChangedSinceLastSaveState();
 	return true;
 }
 
@@ -263,5 +286,6 @@ void OctDataManager::saveMarkers(QString filename, OctMarkerFileformat format)
 {
 	saveMarkerState(actSeries);
 	markerIO->saveMarkers(filename.toStdString(), format);
+	OctMarkerManager::getInstance().resetChangedSinceLastSaveState();
 }
 

@@ -25,6 +25,7 @@ public:
 	virtual void newSeriesLoaded(const OctData::Series*, boost::property_tree::ptree& ptree) override
 	                                                                { loadState(ptree); }
 
+	virtual bool hasChangedSinceLastSave() const                    { return false; } // TODO: implement!
 
 	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
 	virtual void loadState(boost::property_tree::ptree& markerTree)  override;

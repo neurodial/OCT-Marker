@@ -33,9 +33,9 @@ namespace
 	}
 }
 
-BScanMarkerWidget::BScanMarkerWidget(OctMarkerManager& markerManger)
+BScanMarkerWidget::BScanMarkerWidget()
 : CVImageWidget()
-, markerManger(markerManger)
+, markerManger(OctMarkerManager::getInstance())
 {
 	
 	OctDataManager& octdataManager = OctDataManager::getInstance();

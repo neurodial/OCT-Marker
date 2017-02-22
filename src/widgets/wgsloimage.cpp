@@ -10,10 +10,10 @@
 #include <QSignalMapper>
 #include <markermodules/slomarkerbase.h>
 
-WgSloImage::WgSloImage(OctMarkerManager& markerManager, QWidget* parent)
+WgSloImage::WgSloImage(QWidget* parent)
 : QMainWindow(parent)
-, imageWidget(new SLOImageWidget(markerManager))
-, markerManager(markerManager)
+, imageWidget(new SLOImageWidget)
+, markerManager(OctMarkerManager::getInstance())
 {
 
 	imageWidget->setImageSize(size());

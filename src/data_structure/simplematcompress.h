@@ -52,6 +52,9 @@ class SimpleMatCompress
 	void addSegment(int length, uint8_t value);
 
 public:
+	SimpleMatCompress() = default;
+	SimpleMatCompress(int rows, int cols, uint8_t initValue);
+
 	bool isEmpty(uint8_t defaultValue) const;
 
 	int getRows() const { return rows; }

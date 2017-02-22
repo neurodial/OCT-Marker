@@ -42,8 +42,8 @@ namespace
 }
 
 
-SLOImageWidget::SLOImageWidget(OctMarkerManager& markerManger)
-: markerManger(markerManger)
+SLOImageWidget::SLOImageWidget()
+: markerManger(OctMarkerManager::getInstance())
 , drawBScans(ProgramOptions::sloShowBscans())
 , drawOnylActBScan(ProgramOptions::sloShowOnylActBScan())
 {

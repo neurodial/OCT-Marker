@@ -17,7 +17,7 @@ class WgSloImage : public QMainWindow
 
 	void createMarkerToolbar();
 public:
-	explicit WgSloImage(OctMarkerManager& markerManager, QWidget* parent = nullptr);
+	explicit WgSloImage(QWidget* parent = nullptr);
 	
 	
 	virtual void resizeEvent(QResizeEvent* event);

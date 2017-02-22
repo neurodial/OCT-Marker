@@ -1,5 +1,14 @@
 #include "simplematcompress.h"
 
+
+
+SimpleMatCompress::SimpleMatCompress(int rows, int cols, uint8_t initValue)
+: rows(rows)
+, cols(cols)
+{
+	addSegment(rows*cols, initValue);
+}
+
 bool SimpleMatCompress::readFromMat(const uint8_t* mat, int rows, int cols)
 {
 	this->rows = rows;

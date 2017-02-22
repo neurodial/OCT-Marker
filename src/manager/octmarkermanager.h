@@ -18,8 +18,7 @@ class SloMarkerBase;
 class OctMarkerManager : public QObject
 {
 public:
-	OctMarkerManager();
-	virtual ~OctMarkerManager();
+	static OctMarkerManager& getInstance()                          { static OctMarkerManager instance; return instance; }
 
 	int getActBScan() const                                         { return actBScan; }
 	const OctData::Series* getSeries() const                        { return series;   }
@@ -33,7 +32,13 @@ public:
 	int getActSloMarkerId() const                                   { return actSloMarkerId; }
 	const std::vector<SloMarkerBase*>& getSloMarker() const         { return sloMarkerObj; }
 
+	bool hasChangedSinceLastSave() const                            { if(stateChangedSinceLastSave) return true; return hasActMarkerChanged(); }
+	void resetChangedSinceLastSaveState()                           { stateChangedSinceLastSave = false; }
+
 private:
+	OctMarkerManager();
+	virtual ~OctMarkerManager();
+
 	int                    actBScan = 0;
 	const OctData::Series* series   = nullptr;
 	
@@ -44,7 +49,9 @@ private:
 	std::vector<SloMarkerBase*> sloMarkerObj;
 	SloMarkerBase* actSloMarker = nullptr;
 	int actSloMarkerId = -1;
+	bool stateChangedSinceLastSave = false;
 
+	bool hasActMarkerChanged() const;
 
 private slots:
 	virtual void saveMarkerStateSlot(const OctData::Series* series);

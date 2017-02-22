@@ -456,16 +456,11 @@ void BScanSegmentation::createSegments()
 		return;
 
 	clearSegments();
-
-	for(std::size_t i=0; i<series->bscanCount(); ++i)
-	{
-		SimpleCvMatCompress* mat = new SimpleCvMatCompress;
-		segments.push_back(mat);
-	}
+	createSegments(series);
 }
 
 
-void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
+void BScanSegmentation::createSegments(const OctData::Series* series)
 {
 	if(!series)
 		return;
@@ -474,10 +469,26 @@ void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::pr
 
 	for(std::size_t i=0; i<series->bscanCount(); ++i)
 	{
-		SimpleCvMatCompress* mat = new SimpleCvMatCompress;
+		SimpleCvMatCompress* mat;
+		const OctData::BScan* bscan = getBScan(i);
+		if(bscan)
+			mat = new SimpleCvMatCompress(bscan->getHeight(), bscan->getWidth(), BScanSegmentationMarker::markermatInitialValue);
+		else
+			mat = new SimpleCvMatCompress;
 		segments.push_back(mat);
 	}
+}
 
+
+
+
+
+
+void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
+{
+	if(!series)
+		return;
+	createSegments(series);
 	loadState(markerTree);
 }
 
@@ -485,12 +496,14 @@ void BScanSegmentation::saveState(boost::property_tree::ptree& markerTree)
 {
 	saveActMatState();
 	BScanSegmentationPtree::fillPTree(markerTree, this);
+	stateChangedSinceLastSave = false;
 }
 
 void BScanSegmentation::loadState(boost::property_tree::ptree& markerTree)
 {
 	BScanSegmentationPtree::parsePTree(markerTree, this);
 	setActMat(getActBScanNr(), false);
+	stateChangedSinceLastSave = false;
 }
 
 
@@ -542,6 +555,7 @@ void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::T
 		}
 		++bscanCount;
 	}
+	setActMat(getActBScanNr());
 	requestUpdate();
 }
 
@@ -583,6 +597,7 @@ void BScanSegmentation::initSeriesFromSegline()
 		}
 		++bscanCount;
 	}
+	setActMat(getActBScanNr());
 	requestUpdate();
 }
 
@@ -672,3 +687,9 @@ void BScanSegmentation::saveActMatState()
 	}
 }
 
+bool BScanSegmentation::hasActMatChanged() const
+{
+	if(actMat && segments.size() > actMatNr)
+		return (*segments[actMatNr]) != *actMat;
+	return false;
+}
