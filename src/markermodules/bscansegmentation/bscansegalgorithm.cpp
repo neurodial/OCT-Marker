@@ -3,6 +3,7 @@
 #include <opencv/cv.h>
 #include <cassert>
 #include <limits>
+#include <cmath>
 
 
 #include <octdata/datastruct/bscan.h>
@@ -175,6 +176,63 @@ namespace
 			}
 		}
 	};
+
+
+
+	void fillRow(BScanSegmentationMarker::internalMatType* colIt
+	           , const std::size_t colSize
+	           , const std::size_t rowSize
+	           , BScanSegmentationMarker::internalMatType upperValue
+	           , BScanSegmentationMarker::internalMatType lowerValue
+	           , const std::size_t valueChangeOnRow)
+	{
+		const std::size_t rowCh = std::min(valueChangeOnRow, rowSize);
+
+		for(std::size_t row = 0; row < rowCh; ++row)
+		{
+			*colIt = upperValue;
+			colIt += colSize;
+		}
+
+		for(std::size_t row = rowCh; row < rowSize; ++row)
+		{
+			*colIt = lowerValue;
+			colIt += colSize;
+		}
+	}
+
+	void findUnemptyBroder(int colEnd
+	                     , int rowAdd
+	                     , int rowSize
+	                     , int colSize
+	                     , BScanSegmentationMarker::internalMatType* imgIt
+	                     , BScanSegmentationMarker::internalMatType& upperValue
+	                     , BScanSegmentationMarker::internalMatType& lowerValue
+	                     , int& foundCol
+	                     , int& foundRow
+	)
+	{
+		for(int i = 0; i < colEnd; ++i)
+		{
+			BScanSegmentationMarker::internalMatType* colIt = imgIt;
+
+			upperValue = *colIt;
+
+			for(int j = 1; j < rowSize; ++j)
+			{
+				colIt += colSize;
+				if(*colIt != upperValue)
+				{
+					lowerValue = *colIt;
+					foundCol = i;
+					foundRow = j;
+					i = colEnd; // break outer for
+					break;
+				}
+			}
+			imgIt += rowAdd;
+		}
+	}
 }
 
 void BScanSegAlgorithm::initFromThresholdDirection(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdDirectionData& data)
@@ -256,20 +314,21 @@ void BScanSegAlgorithm::initFromSegline(const OctData::BScan& bscan, cv::Mat& se
 
 		for(double value : segline)
 		{
-			const std::size_t rowCh = std::min(static_cast<std::size_t>(value), rowSize);
-			BScanSegmentationMarker::internalMatType* rowIt = colIt;
-
-			for(std::size_t row = 0; row < rowCh; ++row)
-			{
-				*rowIt = BScanSegmentationMarker::paintArea0Value;
-				rowIt += colSize;
-			}
-
-			for(std::size_t row = rowCh; row < rowSize; ++row)
-			{
-				*rowIt = BScanSegmentationMarker::paintArea1Value;
-				rowIt += colSize;
-			}
+			fillRow(colIt, colSize, rowSize, BScanSegmentationMarker::paintArea0Value, BScanSegmentationMarker::paintArea1Value, static_cast<std::size_t>(value));
+// 			const std::size_t rowCh = std::min(static_cast<std::size_t>(value), rowSize);
+// 			BScanSegmentationMarker::internalMatType* rowIt = colIt;
+//
+// 			for(std::size_t row = 0; row < rowCh; ++row)
+// 			{
+// 				*rowIt = BScanSegmentationMarker::paintArea0Value;
+// 				rowIt += colSize;
+// 			}
+//
+// 			for(std::size_t row = rowCh; row < rowSize; ++row)
+// 			{
+// 				*rowIt = BScanSegmentationMarker::paintArea1Value;
+// 				rowIt += colSize;
+// 			}
 
 			++colIt;
 		}
@@ -285,9 +344,77 @@ void BScanSegAlgorithm::openClose(cv::Mat& dest, cv::Mat* src)
 		src = &dest;
 
 	int iterations = 1;
-	cv::erode (*src, *src, cv::Mat(), cv::Point(-1, -1), iterations  , cv::BORDER_REFLECT_101, 1);
-	cv::dilate(*src, *src, cv::Mat(), cv::Point(-1, -1), iterations*2, cv::BORDER_REFLECT_101, 1);
 	cv::erode (*src, dest, cv::Mat(), cv::Point(-1, -1), iterations  , cv::BORDER_REFLECT_101, 1);
+	cv::dilate(dest, dest, cv::Mat(), cv::Point(-1, -1), iterations*2, cv::BORDER_REFLECT_101, 1);
+	cv::erode (dest, dest, cv::Mat(), cv::Point(-1, -1), iterations  , cv::BORDER_REFLECT_101, 1);
 }
 
 
+bool BScanSegAlgorithm::removeUnconectedAreas(cv::Mat& image)
+{
+	int rows = image.rows;
+	int cols = image.cols;
+
+	int posX = cols/2;
+	int posY1 = 0;
+	int posY2 = rows - 1;
+
+	auto v1 = image.at<BScanSegmentationMarker::internalMatType>(cv::Point(posX, posY1));
+	auto v2 = image.at<BScanSegmentationMarker::internalMatType>(cv::Point(posX, posY2));
+
+	if(v1 == v2)
+		return false;
+
+	cv::floodFill(image, cv::Point(posX , posY1), 255); // save upper area
+	cv::floodFill(image, cv::Point(posX , posY2), v1);  // convert v2 -> v1 : v1 areas in lower scope is included in lower area
+	cv::floodFill(image, cv::Point(posX , posY2), 254); // save lower area
+	cv::floodFill(image, cv::Point(posX , posY1), v2);  // convert v1 -> v2 : work on upper area
+	cv::floodFill(image, cv::Point(posX , posY1), v1);  // retrieval upper area
+	cv::floodFill(image, cv::Point(posX , posY2), v2);  // retrieval lower area
+	return true;
+}
+
+
+
+
+bool BScanSegAlgorithm::extendLeftRightSpace(cv::Mat& image, int limit)
+{
+	if(!image.isContinuous())
+		return false;
+
+	if(limit < 0)
+		limit = std::numeric_limits<int>::max();
+
+	int rowSize = image.rows;
+	int colSize = image.cols;
+
+	int endCol1 = std::min(colSize, limit);
+	int endCol2 = std::max(0, rowSize-limit);
+
+	int foundCol = 0;
+	int foundRow = 0;
+
+	BScanSegmentationMarker::internalMatType upperValue;
+	BScanSegmentationMarker::internalMatType lowerValue;
+
+	BScanSegmentationMarker::internalMatType* imgIt = image.ptr<BScanSegmentationMarker::internalMatType>(0);
+	findUnemptyBroder(endCol1, 1, rowSize, colSize, imgIt, upperValue, lowerValue, foundCol, foundRow);
+
+	for(int i = 0; i < foundCol; ++i)
+	{
+		fillRow(imgIt, colSize, rowSize, upperValue, lowerValue, static_cast<std::size_t>(foundRow));
+		++imgIt;
+	}
+
+
+	imgIt = image.ptr<BScanSegmentationMarker::internalMatType>(1)-1; // end of line 0
+	findUnemptyBroder(endCol2, -1, rowSize, colSize, imgIt, upperValue, lowerValue, foundCol, foundRow);
+
+	for(int i = 0; i < foundCol; ++i)
+	{
+		fillRow(imgIt, colSize, rowSize, upperValue, lowerValue, static_cast<std::size_t>(foundRow));
+		--imgIt;
+	}
+
+	return true;
+}

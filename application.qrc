@@ -40,6 +40,7 @@
 	<file>icons/paint_disc.png</file>
 	<file>icons/paint_quadrat.png</file>
 	<file>icons/pen.png</file>
+	<file>icons/cut_red.png</file>
 
 	<file>icons/resultset_next.png</file>
 	<file>icons/resultset_previous.png</file>

@@ -84,7 +84,6 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	actionInitFromIlm->setText(tr("Init from ILM"));
 	actionInitFromIlm->setIcon(QIcon(":/icons/wand.png"));
 	connect(actionInitFromIlm, &QAction::triggered, this, &BScanSegmentation::initFromSegmentline);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionInitFromIlm, &QAction::setChecked);
 	toolBar->addAction(actionInitFromIlm);
 
 
@@ -92,7 +91,6 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	actionInitFromTrashold->setText(tr("Init from threshold"));
 	actionInitFromTrashold->setIcon(QIcon(":/icons/wand.png"));
 	connect(actionInitFromTrashold, &QAction::triggered, this, &BScanSegmentation::initFromThreshold);
-	connect(this, &BScanSegmentation::paintArea1Selected, actionInitFromTrashold, &QAction::setChecked);
 	toolBar->addAction(actionInitFromTrashold);
 
 	toolBar->addSeparator();
@@ -102,7 +100,6 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	actionErodeBScan->setText(tr("Erode"));
 	actionErodeBScan->setIcon(QIcon(":/icons/arrow_in.png"));
 	connect(actionErodeBScan, &QAction::triggered, seg, &BScanSegmentation::erodeBScan);
-	connect(seg, &BScanSegmentation::paintArea1Selected, actionErodeBScan, &QAction::setChecked);
 	addAction(actionErodeBScan);
 
 
@@ -110,21 +107,24 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	actionDilateBScan->setText(tr("Dilate"));
 	actionDilateBScan->setIcon(QIcon(":/icons/arrow_out.png"));
 	connect(actionDilateBScan, &QAction::triggered, seg, &BScanSegmentation::dilateBScan);
-	connect(seg, &BScanSegmentation::paintArea1Selected, actionDilateBScan, &QAction::setChecked);
 	addAction(actionDilateBScan);
 
 	QAction* actionOpenCloseBScan = new QAction(this);
 	actionOpenCloseBScan->setText(tr("Open/Close"));
 	actionOpenCloseBScan->setIcon(QIcon(":/icons/arrow_inout.png"));
 	connect(actionOpenCloseBScan, &QAction::triggered, seg, &BScanSegmentation::opencloseBScan);
-	connect(seg, &BScanSegmentation::paintArea1Selected, actionOpenCloseBScan, &QAction::setChecked);
 	addAction(actionOpenCloseBScan);
 
 	QAction* actionMedianBScan = new QAction(this);
 	actionMedianBScan->setText(tr("Median"));
 	actionMedianBScan->setIcon(QIcon(":/icons/arrow_inout.png"));
 	connect(actionMedianBScan, &QAction::triggered, seg, &BScanSegmentation::medianBScan);
-	connect(seg, &BScanSegmentation::paintArea1Selected, actionMedianBScan, &QAction::setChecked);
 	addAction(actionMedianBScan);
+
+	QAction* actionCutUnconectedAreas = new QAction(this);
+	actionCutUnconectedAreas->setText(tr("remove unconected areas"));
+	actionCutUnconectedAreas->setIcon(QIcon(":/icons/cut_red.png"));
+	connect(actionCutUnconectedAreas, &QAction::triggered, seg, &BScanSegmentation::removeUnconectedAreas);
+	addAction(actionCutUnconectedAreas);
 
 }

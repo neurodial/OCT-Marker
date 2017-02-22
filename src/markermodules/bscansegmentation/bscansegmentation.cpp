@@ -361,6 +361,12 @@ bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 		case Qt::Key_V:
 			medianBScan();
 			return true;
+		case Qt::Key_U:
+			removeUnconectedAreas();
+			return true;
+		case Qt::Key_I:
+			extendLeftRightSpace();
+			return true;
 		case Qt::Key_1:
 			setLocalMethod(BScanSegmentationMarker::LocalMethod::ThresholdDirection);
 			return true;
@@ -437,6 +443,25 @@ void BScanSegmentation::medianBScan()
 
 	requestUpdate();
 }
+
+void BScanSegmentation::removeUnconectedAreas()
+{
+	if(!actMat)
+		return;
+
+	if(BScanSegAlgorithm::removeUnconectedAreas(*actMat))
+		requestUpdate();
+}
+
+void BScanSegmentation::extendLeftRightSpace()
+{
+	if(!actMat)
+		return;
+
+	if(BScanSegAlgorithm::extendLeftRightSpace(*actMat))
+		requestUpdate();
+}
+
 
 
 
@@ -693,3 +718,4 @@ bool BScanSegmentation::hasActMatChanged() const
 		return (*segments[actMatNr]) != *actMat;
 	return false;
 }
+

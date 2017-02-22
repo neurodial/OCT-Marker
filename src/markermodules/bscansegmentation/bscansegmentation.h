@@ -135,6 +135,9 @@ public slots:
 	virtual void dilateBScan();
 	virtual void opencloseBScan();
 	virtual void medianBScan();
+	virtual void removeUnconectedAreas();
+	virtual void extendLeftRightSpace();
+
 
 	virtual void setLocalMethod(BScanSegmentationMarker::LocalMethod method);
 
