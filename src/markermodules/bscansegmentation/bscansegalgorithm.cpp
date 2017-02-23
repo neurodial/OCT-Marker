@@ -201,7 +201,7 @@ namespace
 		}
 	}
 
-	void findUnemptyBroder(int colEnd
+	void findUnemptyBroder(int maxNumCols
 	                     , int rowAdd
 	                     , int rowSize
 	                     , int colSize
@@ -212,7 +212,7 @@ namespace
 	                     , int& foundRow
 	)
 	{
-		for(int i = 0; i < colEnd; ++i)
+		for(int i = 0; i < maxNumCols; ++i)
 		{
 			BScanSegmentationMarker::internalMatType* colIt = imgIt;
 
@@ -226,7 +226,7 @@ namespace
 					lowerValue = *colIt;
 					foundCol = i;
 					foundRow = j;
-					i = colEnd; // break outer for
+					i = maxNumCols; // break outer for
 					break;
 				}
 			}
@@ -388,8 +388,7 @@ bool BScanSegAlgorithm::extendLeftRightSpace(cv::Mat& image, int limit)
 	int rowSize = image.rows;
 	int colSize = image.cols;
 
-	int endCol1 = std::min(colSize, limit);
-	int endCol2 = std::max(0, rowSize-limit);
+	int maxNumCols = std::min(colSize, limit);
 
 	int foundCol = 0;
 	int foundRow = 0;
@@ -398,7 +397,7 @@ bool BScanSegAlgorithm::extendLeftRightSpace(cv::Mat& image, int limit)
 	BScanSegmentationMarker::internalMatType lowerValue;
 
 	BScanSegmentationMarker::internalMatType* imgIt = image.ptr<BScanSegmentationMarker::internalMatType>(0);
-	findUnemptyBroder(endCol1, 1, rowSize, colSize, imgIt, upperValue, lowerValue, foundCol, foundRow);
+	findUnemptyBroder(maxNumCols, 1, rowSize, colSize, imgIt, upperValue, lowerValue, foundCol, foundRow);
 
 	for(int i = 0; i < foundCol; ++i)
 	{
@@ -408,7 +407,7 @@ bool BScanSegAlgorithm::extendLeftRightSpace(cv::Mat& image, int limit)
 
 
 	imgIt = image.ptr<BScanSegmentationMarker::internalMatType>(1)-1; // end of line 0
-	findUnemptyBroder(endCol2, -1, rowSize, colSize, imgIt, upperValue, lowerValue, foundCol, foundRow);
+	findUnemptyBroder(maxNumCols, -1, rowSize, colSize, imgIt, upperValue, lowerValue, foundCol, foundRow);
 
 	for(int i = 0; i < foundCol; ++i)
 	{

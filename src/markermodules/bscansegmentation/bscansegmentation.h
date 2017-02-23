@@ -138,6 +138,9 @@ public slots:
 	virtual void removeUnconectedAreas();
 	virtual void extendLeftRightSpace();
 
+	virtual void seriesRemoveUnconectedAreas();
+	virtual void seriesExtendLeftRightSpace();
+
 
 	virtual void setLocalMethod(BScanSegmentationMarker::LocalMethod method);
 

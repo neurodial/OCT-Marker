@@ -462,6 +462,34 @@ void BScanSegmentation::extendLeftRightSpace()
 		requestUpdate();
 }
 
+void BScanSegmentation::seriesRemoveUnconectedAreas()
+{
+	const OctData::Series* series = getSeries();
+	for(std::size_t i=0; i<series->bscanCount(); ++i)
+	{
+		if(setActMat(i))
+		{
+			removeUnconectedAreas();
+		}
+	}
+	setActMat(getActBScanNr());
+	requestUpdate();
+}
+
+void BScanSegmentation::seriesExtendLeftRightSpace()
+{
+	const OctData::Series* series = getSeries();
+	for(std::size_t i=0; i<series->bscanCount(); ++i)
+	{
+		if(setActMat(i))
+		{
+			extendLeftRightSpace();
+		}
+	}
+	setActMat(getActBScanNr());
+	requestUpdate();
+}
+
 
 
 

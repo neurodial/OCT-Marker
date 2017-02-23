@@ -127,4 +127,10 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	connect(actionCutUnconectedAreas, &QAction::triggered, seg, &BScanSegmentation::removeUnconectedAreas);
 	addAction(actionCutUnconectedAreas);
 
+	QAction* actionExtendLeftRightSpace = new QAction(this);
+	actionExtendLeftRightSpace->setText(tr("remove unconected areas"));
+	actionExtendLeftRightSpace->setIcon(QIcon(":/icons/tag.png"));
+	connect(actionExtendLeftRightSpace, &QAction::triggered, seg, &BScanSegmentation::extendLeftRightSpace);
+	addAction(actionExtendLeftRightSpace);
+
 }

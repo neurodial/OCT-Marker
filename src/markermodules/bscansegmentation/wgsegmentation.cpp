@@ -225,6 +225,10 @@ void WGSegmentation::createConnections()
 	connect(buttonBScanInitFromSeg        , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initBScanFromSegline    );
 	connect(buttonSeriesInitFromSeg       , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initSeriesFromSegline   );
 	connect(buttonSeriesDeleteSegmentation, &QAbstractButton::clicked, segmentation, &BScanSegmentation::removeSeriesSegmentation);
+
+
+	connect(buttonSeriesExtendLeftRightSpace , &QAbstractButton::clicked, segmentation, &BScanSegmentation::seriesExtendLeftRightSpace);
+	connect(buttonSeriesRemoveUnconectedAreas, &QAbstractButton::clicked, segmentation, &BScanSegmentation::seriesRemoveUnconectedAreas);
 }
 
 
@@ -448,6 +452,9 @@ void WGSegmentation::setCreateNewSeriesStartValueEnable(bool b)
 	buttonSeriesInitFromThreshold ->setEnabled(b);
 	buttonSeriesInitFromSeg       ->setEnabled(b);
 	buttonSeriesDeleteSegmentation->setEnabled(b);
+
+	buttonSeriesExtendLeftRightSpace ->setEnabled(b);
+	buttonSeriesRemoveUnconectedAreas->setEnabled(b);
 
 	checkBoxCreateNewSeriesStartValue->setChecked(b);
 
