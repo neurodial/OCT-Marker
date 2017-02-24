@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+#include <imagefilter/filterimage.h>
+
 CVImageWidget::CVImageWidget(QWidget* parent): QWidget(parent), contextMenu(new QMenu)
 {
 	
@@ -152,21 +154,26 @@ void CVImageWidget::cvImage2qtImage()
 		return;
 	}
 
-	assert(cvImage.isContinuous());
+	if(imageFilter)
+		imageFilter->applyFilter(cvImage, outputImage);
+	else
+		outputImage = cvImage;
+
+	assert(outputImage.isContinuous());
 	// Assign OpenCV's image buffer to the QImage. Note that the bytesPerLine parameter
 	// (http://qt-project.org/doc/qt-4.8/qimage.html#QImage-6) is 3*width because each pixel
 	// has three bytes.
 	if(grayCvImage)
-		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols, QImage::Format_Grayscale8);
+		qtImage = QImage(outputImage.data, outputImage.cols, outputImage.rows, outputImage.cols, QImage::Format_Grayscale8);
 	else
-		qtImage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols*3, QImage::Format_RGB888);
+		qtImage = QImage(outputImage.data, outputImage.cols, outputImage.rows, outputImage.cols*3, QImage::Format_RGB888);
 
 
 	switch(scaleMethod)
 	{
 		case ScaleMethod::Factor:
-			imageScale.setHeight(static_cast<int>(cvImage.rows * scaleFactor + 0.5));
-			imageScale.setWidth (static_cast<int>(cvImage.cols * scaleFactor + 0.5));
+			imageScale.setHeight(static_cast<int>(outputImage.rows * scaleFactor + 0.5));
+			imageScale.setWidth (static_cast<int>(outputImage.cols * scaleFactor + 0.5));
 			setFixedSize(imageScale);
 			break;
 		case ScaleMethod::Size:
@@ -175,8 +182,8 @@ void CVImageWidget::cvImage2qtImage()
 	}
 
 	if(scaleFactor != 1)
-		qtImage = qtImage.scaled(static_cast<int>(cvImage.cols*scaleFactor + 0.5)
-		                       , static_cast<int>(cvImage.rows*scaleFactor + 0.5)
+		qtImage = qtImage.scaled(static_cast<int>(outputImage.cols*scaleFactor + 0.5)
+		                       , static_cast<int>(outputImage.rows*scaleFactor + 0.5)
 		                       , Qt::KeepAspectRatio
 		                       , Qt::FastTransformation);
 
@@ -268,5 +275,22 @@ QString CVImageWidget::translateFileFormat(const QString& format) const
 	return tr("%1 File").arg(format);
 }
 
+void CVImageWidget::setImageFilter(const FilterImage* imageFilter)
+{
+	if(this->imageFilter)
+		disconnect(this->imageFilter, &FilterImage::parameterChanged, this, &CVImageWidget::imageParameterChanged);
+
+	this->imageFilter = imageFilter;
+	if(imageFilter)
+		connect(imageFilter, &FilterImage::parameterChanged, this, &CVImageWidget::imageParameterChanged);
+
+	cvImage2qtImage();
+}
+
+void CVImageWidget::imageParameterChanged()
+{
+
+	cvImage2qtImage();
+}
 
 

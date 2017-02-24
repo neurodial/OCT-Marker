@@ -53,6 +53,7 @@
 
 
 #include <QPushButton>
+#include <widgets/dwimagecoloradjustments.h>
 
 
 
@@ -82,6 +83,10 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	dwSloImage->setWindowTitle(tr("SLO image"));
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
 
+	DWImageColorAdjustments* dwImageColorAdjustments = new DWImageColorAdjustments(this);
+	dwImageColorAdjustments->setObjectName("DWImageContrast");
+	addDockWidget(Qt::LeftDockWidgetArea, dwImageColorAdjustments);
+	bscanMarkerWidget->setImageFilter(dwImageColorAdjustments->getImageFilter());
 
 	WGOctDataTree* tree = new WGOctDataTree();
 	QDockWidget* treeDock = new QDockWidget(tr("Oct Data"), this);

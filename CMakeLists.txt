@@ -60,7 +60,7 @@ if(BUILD_QT_PROGRAMM)
 	endif()
 
 
-	set(srcs_directories data_structure octxmlread widgets windows manager markermodules model markerobjects helper)
+	set(srcs_directories data_structure octxmlread widgets windows manager markermodules model markerobjects helper imagefilter)
 
 	foreach(loop_var ${srcs_directories})
 		file(GLOB sources_base "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")
@@ -124,5 +124,4 @@ if(BUILD_OCTAVE_MEX_FUNCTIONS)
 	target_include_directories(oct_read_seg SYSTEM PRIVATE ${OCTAVE_INCLUDE_DIRS} PUBLIC ${CMAKE_SOURCE_DIR}/src/)
 
 endif()
-
 

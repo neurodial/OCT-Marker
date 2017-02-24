@@ -12,6 +12,9 @@
 
 class QMenu;
 class QContextMenuEvent;
+
+class FilterImage;
+
 class CVImageWidget : public QWidget
 {
 	Q_OBJECT
@@ -22,6 +25,8 @@ class CVImageWidget : public QWidget
 	double scaleFactor = 1.;
 	bool grayCvImage;
 	ScaleMethod scaleMethod = ScaleMethod::Factor;
+
+	const FilterImage* imageFilter = nullptr;
 	
 public:
 	enum class FloatGrayTransform { Auto, Fix, ZeroToOne };
@@ -49,11 +54,15 @@ public:
 	void setGrayTransformValueA(double val)                     { grayTransformA = val; }
 	void setGrayTransformValueB(double val)                     { grayTransformB = val; }
 
+	void setImageFilter(const FilterImage* imageFilter);
+
 protected:
 	void paintEvent(QPaintEvent* event);
 
 	QImage   qtImage;
 	cv::Mat  cvImage;
+	cv::Mat  outputImage;
+
 	QMenu*   contextMenu;
 	QAction* saveAction;
 	QSize    imageScale;
@@ -79,6 +88,9 @@ public slots:
 
 	void zoom_in()                                               { setZoom(scaleFactor+1); }
 	void zoom_out()                                              { setZoom(scaleFactor-1); }
+
+private slots:
+	void imageParameterChanged();
 
 signals:
 	void zoomChanged(double);
