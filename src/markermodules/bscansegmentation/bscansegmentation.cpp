@@ -469,7 +469,8 @@ void BScanSegmentation::seriesRemoveUnconectedAreas()
 	{
 		if(setActMat(i))
 		{
-			removeUnconectedAreas();
+			if(actMat)
+				BScanSegAlgorithm::removeUnconectedAreas(*actMat);
 		}
 	}
 	setActMat(getActBScanNr());
@@ -483,7 +484,8 @@ void BScanSegmentation::seriesExtendLeftRightSpace()
 	{
 		if(setActMat(i))
 		{
-			extendLeftRightSpace();
+			if(actMat)
+				BScanSegAlgorithm::extendLeftRightSpace(*actMat);
 		}
 	}
 	setActMat(getActBScanNr());
