@@ -76,8 +76,8 @@ namespace BScanSegmentationMarker
 		int         maxIterations = 200;
 		TrainMethod trainMethod   = TrainMethod::Backpropergation;
 
-		double learnRate   = 0.01;
-		double momentScale = 0.01;
+		double learnRate   = 0.005;
+		double momentScale = 0.05;
 
 		double delta0      = 0.1;
 		double nuePlus     = 0.9;

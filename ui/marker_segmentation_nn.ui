@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>270</width>
-    <height>636</height>
+    <height>659</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,11 @@
     </widget>
    </item>
    <item row="25" column="2">
-    <widget class="QDoubleSpinBox" name="sbDelta0"/>
+    <widget class="QDoubleSpinBox" name="sbDelta0">
+     <property name="decimals">
+      <number>5</number>
+     </property>
+    </widget>
    </item>
    <item row="27" column="1">
     <widget class="QLabel" name="label_20">
@@ -146,7 +150,11 @@
     </widget>
    </item>
    <item row="23" column="2">
-    <widget class="QDoubleSpinBox" name="sbMomentScale"/>
+    <widget class="QDoubleSpinBox" name="sbMomentScale">
+     <property name="decimals">
+      <number>5</number>
+     </property>
+    </widget>
    </item>
    <item row="24" column="0" colspan="3">
     <widget class="QRadioButton" name="rbRPROP">
@@ -272,10 +280,18 @@
     </widget>
    </item>
    <item row="26" column="2">
-    <widget class="QDoubleSpinBox" name="sbNuePlus"/>
+    <widget class="QDoubleSpinBox" name="sbNuePlus">
+     <property name="decimals">
+      <number>5</number>
+     </property>
+    </widget>
    </item>
    <item row="27" column="2">
-    <widget class="QDoubleSpinBox" name="sbNueMinus"/>
+    <widget class="QDoubleSpinBox" name="sbNueMinus">
+     <property name="decimals">
+      <number>5</number>
+     </property>
+    </widget>
    </item>
    <item row="4" column="0" colspan="2">
     <widget class="QLabel" name="label_2">
@@ -299,7 +315,11 @@
     </widget>
    </item>
    <item row="22" column="2">
-    <widget class="QDoubleSpinBox" name="sbLearnRate"/>
+    <widget class="QDoubleSpinBox" name="sbLearnRate">
+     <property name="decimals">
+      <number>5</number>
+     </property>
+    </widget>
    </item>
    <item row="7" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -355,10 +375,18 @@
     </layout>
    </item>
    <item row="29" column="2">
-    <widget class="QDoubleSpinBox" name="sbDeltaMax"/>
+    <widget class="QDoubleSpinBox" name="sbDeltaMax">
+     <property name="decimals">
+      <number>5</number>
+     </property>
+    </widget>
    </item>
    <item row="28" column="2">
-    <widget class="QDoubleSpinBox" name="sbDeltaMin"/>
+    <widget class="QDoubleSpinBox" name="sbDeltaMin">
+     <property name="decimals">
+      <number>5</number>
+     </property>
+    </widget>
    </item>
    <item row="8" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout_8">

@@ -135,8 +135,14 @@ void WgSegNN::slotSave()
 void WgSegNN::slotAddBscanExampels()
 {
 	localOpNN->addBscanExampels();
+	updateExampleInfo();
+}
+
+void WgSegNN::updateExampleInfo()
+{
 	labelNumberExampels->setText(QString("%1").arg(localOpNN->numExampels()));
 }
+
 
 void WgSegNN::updateActLayerInfo()
 {
@@ -182,6 +188,7 @@ void WgSegNN::changeNNConfig()
 	localOpNN->setNNConfig(nnHiddenLayers.toStdString(), inputHWidth, inputHeight, outputHWidth, outputHeight);
 
 	updateActLayerInfo();
+	updateExampleInfo();
 }
 
 void WgSegNN::showInOutWindow(bool show)

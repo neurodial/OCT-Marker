@@ -229,6 +229,9 @@ void WGSegmentation::createConnections()
 
 	connect(buttonSeriesExtendLeftRightSpace , &QAbstractButton::clicked, segmentation, &BScanSegmentation::seriesExtendLeftRightSpace);
 	connect(buttonSeriesRemoveUnconectedAreas, &QAbstractButton::clicked, segmentation, &BScanSegmentation::seriesRemoveUnconectedAreas);
+
+	connect(buttonBScanExtendLeftRightSpace , &QAbstractButton::clicked, segmentation, &BScanSegmentation::extendLeftRightSpace);
+	connect(buttonBScanRemoveUnconectedAreas, &QAbstractButton::clicked, segmentation, &BScanSegmentation::removeUnconectedAreas);
 }
 
 

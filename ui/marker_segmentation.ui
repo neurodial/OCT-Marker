@@ -434,7 +434,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="4">
+          <item row="0" column="6">
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -466,6 +466,28 @@
             <property name="icon">
              <iconset resource="../application.qrc">
               <normaloff>:/icons/arrow_inout.png</normaloff>:/icons/arrow_inout.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QToolButton" name="buttonBScanRemoveUnconectedAreas">
+            <property name="text">
+             <string>Remove unconected areas</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/cut_red.png</normaloff>:/icons/cut_red.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <widget class="QToolButton" name="buttonBScanExtendLeftRightSpace">
+            <property name="text">
+             <string>Extend segmentation left and right</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../application.qrc">
+              <normaloff>:/icons/tag.png</normaloff>:/icons/tag.png</iconset>
             </property>
            </widget>
           </item>

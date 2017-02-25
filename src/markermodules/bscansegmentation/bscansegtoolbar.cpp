@@ -128,7 +128,7 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	addAction(actionCutUnconectedAreas);
 
 	QAction* actionExtendLeftRightSpace = new QAction(this);
-	actionExtendLeftRightSpace->setText(tr("remove unconected areas"));
+	actionExtendLeftRightSpace->setText(tr("extend segmentation left and right"));
 	actionExtendLeftRightSpace->setIcon(QIcon(":/icons/tag.png"));
 	connect(actionExtendLeftRightSpace, &QAction::triggered, seg, &BScanSegmentation::extendLeftRightSpace);
 	addAction(actionExtendLeftRightSpace);

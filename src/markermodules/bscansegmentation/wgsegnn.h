@@ -33,6 +33,7 @@ class WgSegNN : public QWidget, Ui::BScanSegWidgetNN
 	void getNNData(      BScanSegmentationMarker::NNTrainData& data);
 
 	void updateActLayerInfo();
+	void updateExampleInfo();
 
 public:
 	WgSegNN(WGSegmentation* parent, BScanSegmentation* seg);

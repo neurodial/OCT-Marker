@@ -54,10 +54,16 @@ void BScanSegLocalOpNN::createNN()
 
 		mlp->create(layers, CvANN_MLP::SIGMOID_SYM, 1, 1);
 
-		if(tranSampels)
-			*tranSampels   = cv::Mat();
-		if(outputSampels)
-			*outputSampels = cv::Mat();
+		if(!tranSampels || !outputSampels
+		 || tranSampels  ->rows*tranSampels  ->cols != maskSizeInput
+		 || outputSampels->rows*outputSampels->cols != maskSizeOutput)
+		{
+			delete tranSampels;
+			delete outputSampels;
+
+			tranSampels   = nullptr;
+			outputSampels = nullptr;
+		}
 	}
 }
 
@@ -447,7 +453,9 @@ void BScanSegLocalOpNN::setNNConfig(const std::string& neuronsPerHiddenLayer, in
 
 int BScanSegLocalOpNN::numExampels() const
 {
-	return tranSampels->rows;
+	if(tranSampels)
+		return tranSampels->rows;
+	return 0;
 }
 
 const cv::Mat& BScanSegLocalOpNN::getLayerSizes() const
