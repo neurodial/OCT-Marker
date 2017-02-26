@@ -11,6 +11,8 @@
 
 #include <helper/callback.h>
 
+#include <fann.h>
+#include <fann_cpp.h>
 
 namespace
 {
@@ -21,12 +23,53 @@ namespace
 		y1 = (y+1)/2;
 		y2 = y/2;
 	}
+
+        typedef struct user_context_type
+        {
+            FANN::callback_type user_callback; // Pointer to user callback function
+            void *user_data; // Arbitrary data pointer passed to the callback
+            FANN::neural_net *net; // This pointer for the neural network
+        } user_context;
+
+//         // Internal callback used to convert from pointers to class references
+//         static int FANN_API internal_callback(struct fann *ann, struct fann_train_data *train,
+//             unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs)
+//         {
+//             user_context *user_data = static_cast<user_context *>(fann_get_user_data(ann));
+//             if (user_data != NULL)
+
+
+	int nn_callback(FANN::neural_net &net
+	              , FANN::training_data& /*train*/
+	              , unsigned int max_epochs
+	              , unsigned int /*epochs_between_reports*/
+	              , float        /*desired_error*/
+	              , unsigned int epochs
+	              , void* user_data2)
+	{
+		std::cout << "Epochs     " << std::setw(8) << epochs << ". " << "Current Error: " << std::left << net.get_MSE() << std::right << std::endl;
+
+		user_context* context = static_cast<user_context *>(user_data2);
+		void* user_data = context->user_data;
+		if(user_data)
+		{
+// 			BScanSegLocalOpNN* nn = reinterpret_cast<BScanSegLocalOpNN*>(user_data);
+// 			if(nn->callCallback(static_cast<double>(epochs)/static_cast<double>(max_epochs)))
+			Callback* callback = reinterpret_cast<Callback*>(user_data);
+			QString text = QString("Current Error: %1").arg(net.get_MSE());
+			bool continueTrain = callback->callback(static_cast<double>(epochs)/static_cast<double>(max_epochs), text.toUtf8().data());
+
+			return continueTrain?0:-1;
+		}
+		return 0;
+	}
 }
+
 
 
 BScanSegLocalOpNN::BScanSegLocalOpNN(BScanSegmentation& parent)
 : BScanSegLocalOp(parent)
-, mlp(new CvANN_MLP)
+, nNet(new FANN::neural_net)
 {
 	calcMaskSizes();
 	createNN();
@@ -34,7 +77,8 @@ BScanSegLocalOpNN::BScanSegLocalOpNN(BScanSegmentation& parent)
 
 BScanSegLocalOpNN::~BScanSegLocalOpNN()
 {
-	delete mlp;
+// 	delete mlp;
+	delete nNet;
 	delete tranSampels  ;
 	delete outputSampels;
 }
@@ -43,16 +87,12 @@ void BScanSegLocalOpNN::createNN()
 {
 	if(maskSizeInput > 0 && maskSizeOutput > 0)
 	{
-		int numHiddenLayers = static_cast<int>(neuronsPerHiddenLayer.size());
+		std::vector<unsigned int> layers;
+		layers.push_back(static_cast<unsigned>(maskSizeInput));
+		layers.insert(layers.end(), neuronsPerHiddenLayer.begin(), neuronsPerHiddenLayer.end());
+		layers.push_back(static_cast<unsigned>(maskSizeOutput));
 
-		cv::Mat layers = cv::Mat(numHiddenLayers+2, 1, CV_32SC1);
-
-		layers.row(0) = cv::Scalar(maskSizeInput);
-		for(int i = 0; i < numHiddenLayers; ++i)
-			layers.row(i+1) = cv::Scalar(neuronsPerHiddenLayer[static_cast<std::size_t>(i)]);
-		layers.row(numHiddenLayers+1) = cv::Scalar(maskSizeOutput);
-
-		mlp->create(layers, CvANN_MLP::SIGMOID_SYM, 1, 1);
+		nNet->create_standard_array(static_cast<unsigned>(layers.size()), layers.data());
 
 		if(!tranSampels || !outputSampels
 		 || tranSampels  ->rows*tranSampels  ->cols != maskSizeInput
@@ -156,64 +196,59 @@ void BScanSegLocalOpNN::drawMarkerPaint(QPainter& painter, const QPoint& centerD
 }
 
 
-
-bool BScanSegLocalOpNN::applyNN(int x, int y)
-{
-	cv::Mat image, seg;
-	getSubMaps(image, seg, x, y);
-
-	if(image.rows*image.cols != maskSizeInput || seg.rows*seg.cols != maskSizeOutput)
-		return false;
-
-	cv::Mat imageFloat, segFloat;
-	image.copyTo(imageFloat);
-	// imageFloat.convertTo(imageFloat, cv::DataType<float>::type);
-	imageFloat.convertTo(imageFloat, cv::DataType<float>::type, 1./128., -1);
-
-	cv::Mat imageFloatLin = imageFloat.reshape(0, 1);
-	// segFloat  .reshape(0, 1);
-
-	mlp->predict(imageFloatLin, segFloat);
-
-	if(callbackInOutNeurons)
-		callbackInOutNeurons->processedInOutNeurons(imageFloat, segFloat.reshape(0, seg.rows));
-
-// 	double min1, max1, min2, max2;
-// 	cv::minMaxLoc(segFloat, &min1, &max1);
-// 	cv::minMaxLoc(imageFloatLin, &min2, &max2);
-	// std::cerr << "ApplyNN: " << min1 << "\t" << max1 << "\t" << min2 << "\t" << max2 << "\n";
-
-	segFloat.convertTo(segFloat, cv::DataType<uint8_t>::type, BScanSegmentationMarker::paintArea1Value, 0.5*BScanSegmentationMarker::paintArea1Value);
-	segFloat.reshape(0, seg.rows).copyTo(seg);
-
-
-	return true;
-}
-
 namespace
 {
 	void convert2FloatRow(const cv::Mat& in, cv::Mat& out, double factor, double add)
 	{
 		cv::Mat tmp;
 		in.copyTo(tmp);
-		tmp.convertTo(tmp, cv::DataType<float>::type, factor, add);
+		tmp.convertTo(tmp, cv::DataType<fann_type>::type, factor, add);
 		out = tmp.reshape(0, 1);
+	}
+
+}
+
+void BScanSegLocalOpNN::convertInputMat(const cv::Mat& in, cv::Mat& out) const
+{
+	convert2FloatRow(in, out, 1./255., 0);
+}
+void BScanSegLocalOpNN::convertOutputMat(const cv::Mat& in, cv::Mat& out, bool learnDirection) const
+{
+	if(learnDirection)
+		convert2FloatRow(in, out, 1./BScanSegmentationMarker::paintArea1Value, 0);
+	else
+	{
+		in.convertTo(out, cv::DataType<uint8_t>::type, BScanSegmentationMarker::paintArea1Value, 0);
+		out.reshape(0, paintSizeHeightOutput);
 	}
 }
 
-/*
-	CvTermCriteria criteria;
-	criteria.max_iter = 200;
-	criteria.epsilon = 0.000001f;
-	criteria.type = CV_TERMCRIT_ITER | CV_TERMCRIT_EPS;
+bool BScanSegLocalOpNN::applyNN(int x, int y)
+{
 
-	CvANN_MLP_TrainParams params;
-	params.train_method = CvANN_MLP_TrainParams::BACKPROP;
-	params.bp_dw_scale = 0.005f;
-	params.bp_moment_scale = 0.05f;
-	params.term_crit = criteria;
+	cv::Mat image, seg;
+	getSubMaps(image, seg, x, y);
 
-*/
+	if(image.rows*image.cols != maskSizeInput || seg.rows*seg.cols != maskSizeOutput)
+		return false;
+
+	cv::Mat imageFloat;
+	convertInputMat(image, imageFloat);
+
+	fann_type* output = nNet->run(imageFloat.ptr<fann_type>());
+	cv::Mat segFloat(1, maskSizeOutput, cv::DataType<fann_type>::type, output);
+
+	if(callbackInOutNeurons)
+		callbackInOutNeurons->processedInOutNeurons(image, segFloat.reshape(0, paintSizeHeightOutput));
+
+
+	segFloat.convertTo(segFloat, cv::DataType<uint8_t>::type, BScanSegmentationMarker::paintArea1Value, 0);
+	segFloat.reshape(0, seg.rows).copyTo(seg);
+
+
+	return true;
+}
+
 
 void BScanSegLocalOpNN::setInputOutputSize(int widthIn, int heighIn, int widthOut, int heighOut)
 {
@@ -235,38 +270,13 @@ void BScanSegLocalOpNN::calcMaskSizes()
 
 void BScanSegLocalOpNN::loadNN(const QString& file)
 {
-	mlp->load(file.toStdString().c_str(), "mlp");
-
-	cv::Mat sizeInOut;
-	cv::FileStorage storage(file.toStdString(), cv::FileStorage::READ);
-	storage["sizeInOut"] >> sizeInOut;
-	storage.release();
-
-	if(sizeInOut.rows != 4 || sizeInOut.cols != 1 || sizeInOut.type() != cv::DataType<int>::type)
-		setInputOutputSize(10, 24, 2, 24);
-	else
-		setInputOutputSize(sizeInOut.at<int>(0)
-		                 , sizeInOut.at<int>(1)
-		                 , sizeInOut.at<int>(2)
-		                 , sizeInOut.at<int>(3));
-
+	nNet->create_from_file(file.toUtf8().data());
 }
 
 
 void BScanSegLocalOpNN::saveNN(const QString& file) const
 {
-	cv::FileStorage fs(file.toStdString(), cv::FileStorage::WRITE); // or xml
-
-	cv::Mat sizeInOut = cv::Mat(4, 1, cv::DataType<int>::type);
-	sizeInOut.row(0) = paintSizeWidthInput  ;
-	sizeInOut.row(1) = paintSizeHeightInput ;
-	sizeInOut.row(2) = paintSizeWidthOutput ;
-	sizeInOut.row(3) = paintSizeHeightOutput;
-	fs << "sizeInOut" << sizeInOut;
-
-	mlp->write(*fs, "mlp"); // don't think too much about the deref, it casts to a FileNode
-
-	fs.release();
+	nNet->save(file.toUtf8().data());
 }
 
 
@@ -354,8 +364,8 @@ void BScanSegLocalOpNN::addBscanExampels()
 			if(parent->getSubMaps(img, seg, &subImage, &subSeg, x, y) == maskSizeInput)
 			{
 				cv::Mat imageFloatLin, segFloatLin;
-				convert2FloatRow(subImage, imageFloatLin, 1./255.                                    , -0.5);
-				convert2FloatRow(subSeg  , segFloatLin  , 1./BScanSegmentationMarker::paintArea1Value, -0.5);
+				parent->convertInputMat (subImage, imageFloatLin);
+				parent->convertOutputMat(subSeg  , segFloatLin  , true);
 
 				cv::Rect actRecI = cv::Rect(0, actTrainSampel, maskSizeInput , 1);
 				cv::Rect actRecO = cv::Rect(0, actTrainSampel, maskSizeOutput, 1);
@@ -398,36 +408,41 @@ void BScanSegLocalOpNN::addBscanExampels()
 	iterateBscanSeg(*seg, addExapmelsOp);
 }
 
-void BScanSegLocalOpNN::trainNN(BScanSegmentationMarker::NNTrainData& trainData)
+void BScanSegLocalOpNN::trainNN(BScanSegmentationMarker::NNTrainData& trainData, Callback& callback)
 {
 	if((tranSampels == nullptr) || (outputSampels == nullptr) || tranSampels->rows != outputSampels->rows) // TODO: Error Message
 		return;
 
-	CvTermCriteria criteria;
-	criteria.max_iter = trainData.maxIterations;
-	criteria.epsilon  = trainData.epsilon;
-	criteria.type = CV_TERMCRIT_ITER | CV_TERMCRIT_EPS;
 
-	CvANN_MLP_TrainParams params;
-	params.term_crit       = criteria;
-	switch(trainData.trainMethod)
+	FANN::training_data data;
+
+	unsigned int num_data   = static_cast<unsigned>(tranSampels->rows);
+	unsigned int num_input  = static_cast<unsigned>(tranSampels->cols);
+	fann_type**  input      = new fann_type*[num_data];
+// 	fann_type*   input      = tranSampels->ptr<fann_type>();
+	unsigned int num_output = static_cast<unsigned>(outputSampels->cols);
+	fann_type**  output     = new fann_type*[num_data];
+// 	fann_type*   output     = outputSampels->ptr<fann_type>();
+
+	fann_type* inIt  = tranSampels  ->ptr<fann_type>();
+	fann_type* outIt = outputSampels->ptr<fann_type>();
+
+	for(unsigned i = 0; i<num_data; ++i)
 	{
-		case BScanSegmentationMarker::NNTrainData::TrainMethod::Backpropergation:
-			params.train_method    = CvANN_MLP_TrainParams::BACKPROP;
-			params.bp_dw_scale     = trainData.learnRate;
-			params.bp_moment_scale = trainData.momentScale;
-			break;
-		case BScanSegmentationMarker::NNTrainData::TrainMethod::RPROP:
-			params.train_method    = CvANN_MLP_TrainParams::RPROP;
-			params.rp_dw0          = trainData.delta0  ;
-			params.rp_dw_plus      = trainData.nuePlus ;
-			params.rp_dw_minus     = trainData.nueMinus;
-			params.rp_dw_min       = trainData.deltaMin;
-			params.rp_dw_max       = trainData.deltaMax;
-			break;
+		input [i] = inIt ;
+		output[i] = outIt;
+		inIt  += tranSampels->cols;
+		outIt += outputSampels->cols;
 	}
 
-	mlp->train(*tranSampels, *outputSampels, cv::Mat(), cv::Mat(), params, CvANN_MLP::NO_OUTPUT_SCALE | CvANN_MLP::NO_INPUT_SCALE);
+	data.set_train_data(num_data, num_input, input, num_output, output);
+
+	callback.callback(0.);
+
+	nNet->set_callback(nn_callback, &callback);
+	nNet->train_on_data(data, trainData.maxIterations, 1, static_cast<float>(trainData.epsilon));
+
+	nNet->set_callback(nn_callback, nullptr);
 }
 
 void BScanSegLocalOpNN::setNeuronsPerHiddenLayer(const std::string& neuronsStr)
@@ -458,15 +473,10 @@ int BScanSegLocalOpNN::numExampels() const
 	return 0;
 }
 
-const cv::Mat& BScanSegLocalOpNN::getLayerSizes() const
+const std::vector<unsigned int> BScanSegLocalOpNN::getLayerSizes() const
 {
-	static cv::Mat layers;
-	const CvMat* layersC = mlp->get_layer_sizes();
-
-	if(layersC)
-		layers = cv::Mat(layersC);
-	else
-		layers = cv::Mat();
+	std::vector<unsigned int> layers(nNet->get_num_layers());
+	nNet->get_layer_array(layers.data());
 
 	return layers;
 }

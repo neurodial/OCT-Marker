@@ -56,6 +56,7 @@ if(BUILD_QT_PROGRAMM)
 
 
 	if(BUILD_WITH_SEGMENTATION_ML)
+		find_package(FANN REQUIRED)
 		add_definitions(-DML_SUPPORT)
 	endif()
 
@@ -94,6 +95,7 @@ if(BUILD_QT_PROGRAMM)
 	target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 	target_link_libraries(octmarker ${LibOctData_LIBRARIES})
 	target_link_libraries(octmarker ${CppFramework_LIBRARIES})
+	target_link_libraries(octmarker ${FANN_LIBRARIES})
 
 	install(TARGETS octmarker RUNTIME DESTINATION bin)
 

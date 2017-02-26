@@ -8,10 +8,10 @@
 
 #ifdef ML_SUPPORT
 
-class CvANN_MLP;
 class Callback;
 
 namespace cv { class Mat; }
+namespace FANN { class neural_net; }
 
 class BScanSegLocalOpNN : public BScanSegLocalOp
 {
@@ -31,11 +31,12 @@ private:
 
 	const CallbackInOutNeurons* callbackInOutNeurons = nullptr;
 
-	CvANN_MLP* mlp           = nullptr;
+
+	FANN::neural_net* nNet   = nullptr;
 	cv::Mat*   tranSampels   = nullptr;
 	cv::Mat*   outputSampels = nullptr;
 
-	std::vector<int> neuronsPerHiddenLayer = {150, 100};
+	std::vector<int> neuronsPerHiddenLayer = {50};
 
 	bool applyNN(int x, int y);
 
@@ -51,8 +52,11 @@ private:
 	void setInputOutputSize(int widthIn, int heighIn, int widthOut, int heighOut);
 	void setNeuronsPerHiddenLayer(const std::string& neuronsStr);
 
-	// void learnBScanMats(const cv::Mat& image, cv::Mat& seg, Callback&);
+
+	void convertInputMat(const cv::Mat& in, cv::Mat& out)                       const;
+	void convertOutputMat(const cv::Mat& in, cv::Mat& out, bool learnDirection) const;
 public:
+
 	BScanSegLocalOpNN(BScanSegmentation& parent);
 	~BScanSegLocalOpNN();
 
@@ -71,7 +75,7 @@ public:
 
 	int numExampels() const;
 	void addBscanExampels();
-	void trainNN(BScanSegmentationMarker::NNTrainData& trainData);
+	void trainNN(BScanSegmentationMarker::NNTrainData& trainData, Callback& callback);
 
 	void setCallbackInOutNeurons(const CallbackInOutNeurons* callback)
 	                                                                { callbackInOutNeurons = callback; }
@@ -83,7 +87,7 @@ public:
 
 	void setNNConfig(const std::string& neuronsPerHiddenLayer, int widthIn, int heighIn, int widthOut, int heighOut);
 
-    const cv::Mat& getLayerSizes() const;
+    const std::vector<unsigned int> getLayerSizes() const;
 };
 
 #else

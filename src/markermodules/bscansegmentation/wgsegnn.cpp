@@ -109,15 +109,15 @@ void WgSegNN::setNNData(const BScanSegmentationMarker::NNTrainData& data)
 
 void WgSegNN::slotTrain()
 {
-//	CallbackProgressDialog process("Learn BScan", "Cancel");
+	CallbackProgressDialog process("Learn", "Cancel");
 	BScanSegmentationMarker::NNTrainData data;
 	getNNData(data);
-	localOpNN->trainNN(data);
+	localOpNN->trainNN(data, process);
 }
 
 void WgSegNN::slotLoad()
 {
-	QString file = QFileDialog::getOpenFileName(this, tr("Load NN"), QString(), "*.yml");
+	QString file = QFileDialog::getOpenFileName(this, tr("Load NN"), QString(), "*.fann");
 	if(!file.isEmpty())
 	{
 		localOpNN->loadNN(file);
@@ -127,7 +127,7 @@ void WgSegNN::slotLoad()
 
 void WgSegNN::slotSave()
 {
-	QString file = QFileDialog::getSaveFileName(this, tr("Save NN"), QString(), "*.yml");
+	QString file = QFileDialog::getSaveFileName(this, tr("Save NN"), QString(), "*.fann");
 	if(!file.isEmpty())
 		localOpNN->saveNN(file);
 }
@@ -151,27 +151,27 @@ void WgSegNN::updateActLayerInfo()
 	const int outputHeight = localOpNN->getOutputHeight();
 	const int outputWidth  = localOpNN->getOutputWidth ();
 
-	const cv::Mat& layers  = localOpNN->getLayerSizes();
+	const std::vector<unsigned int> layers  = localOpNN->getLayerSizes();
 
-	int inputNeurons  = 0;
-	int outputNeurons = 0;
-	int numLayers = static_cast<int>(layers.rows*layers.cols);
+	unsigned int inputNeurons  = 0;
+	unsigned int outputNeurons = 0;
+	std::size_t numLayers = layers.size();
 
 	if(numLayers > 1)
 	{
-		inputNeurons  = layers.at<int>(0);
-		outputNeurons = layers.at<int>(numLayers-1);
+		inputNeurons  = layers[0];
+		outputNeurons = layers[numLayers-1];
 	}
 
 	labelActInputSize ->setText(QString("%1 x %2 (%3)").arg(inputWidth ).arg(inputHeight ).arg(inputNeurons ));
 	labelActOutputSize->setText(QString("%1 x %2 (%3)").arg(outputWidth).arg(outputHeight).arg(outputNeurons));
 
 	QString layerString;
-	for(int i = 1; i<numLayers-1; ++i)
+	for(std::size_t i = 1; i<numLayers-1; ++i)
 	{
 		if(i > 1)
 			layerString += " ";
-		layerString += QString("%1").arg(layers.at<int>(i));
+		layerString += QString("%1").arg(layers[i]);
 	}
 	labelActHiddenLayers->setText(layerString);
 }

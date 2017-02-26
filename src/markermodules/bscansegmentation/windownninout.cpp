@@ -66,10 +66,10 @@ void WindowNNInOut::showInOutMat(const cv::Mat& in, const cv::Mat& out)
 // 	std::cout << "In Channels: " << in.channels() << "\tgr: " << in.rows << " x " << in.cols << "\t Out Channels: " << out.channels() << "\tgr: " << out.rows << " x " << out.cols << std::endl;
 
 	cv::Mat inImg, outImg;
-	in .convertTo( inImg, cv::DataType<uint8_t>::type, 128, 0.5*255);
-	out.convertTo(outImg, cv::DataType<uint8_t>::type, 128, 0.5*255);
+// 	in .convertTo( inImg, cv::DataType<uint8_t>::type, 128, 0.5*255);
+	out.convertTo(outImg, cv::DataType<uint8_t>::type, 255, 0);
 
-	inputNeurons ->showImage(inImg );
+	inputNeurons ->showImage(in );
 	outputNeurons->showImage(outImg);
 }
 
