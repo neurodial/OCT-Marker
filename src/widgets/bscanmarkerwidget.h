@@ -47,6 +47,9 @@ public:
 protected:
 	void paintEvent(QPaintEvent* event) override;
 
+
+    bool event(QEvent *event) override;
+
 	virtual void mouseMoveEvent   (QMouseEvent*) override;
 	virtual void mousePressEvent  (QMouseEvent*) override;
 	virtual void mouseReleaseEvent(QMouseEvent*) override;

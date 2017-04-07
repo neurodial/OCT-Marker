@@ -228,6 +228,22 @@ void BScanMarkerWidget::viewOptionsChangedSlot()
 }
 
 
+bool BScanMarkerWidget::event(QEvent* event)
+{
+	if(event->type() == QEvent::ToolTip)
+	{
+		BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
+		if(actMarker)
+		{
+			if(!actMarker->toolTipEvent(event, this))
+				event->ignore();
+		}
+		return true;
+	}
+	return QWidget::event(event);
+}
+
+
 
 void BScanMarkerWidget::wheelEvent(QWheelEvent* wheelE)
 {

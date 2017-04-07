@@ -336,7 +336,8 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(nextBScan, SIGNAL(triggered()), &markerManager, SLOT(nextBScan()));
 
 	bscanChooser = new QSpinBox(this);
-	connect(bscanChooser, SIGNAL(valueChanged(int)), &markerManager, SLOT(chooseBScan(int)));
+	connect(bscanChooser, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), &markerManager, &OctMarkerManager::chooseBScan);
+// 	connect(bscanChooser, SIGNAL(valueChanged(int)), &markerManager, SLOT(chooseBScan(int)));
 	connect(&markerManager, SIGNAL(bscanChanged(int)), bscanChooser, SLOT(setValue(int)));
 
 	labelMaxBscan = new QLabel(this);

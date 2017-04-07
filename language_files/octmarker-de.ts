@@ -4,8 +4,8 @@
 <context>
     <name>BScanIntervalMarker</name>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="40"/>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="53"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="43"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="98"/>
         <source>Interval marker</source>
         <translation>Intervallmarkierung</translation>
     </message>
@@ -14,12 +14,12 @@
         <translation type="obsolete">Intervallmarkierung</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="87"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="119"/>
         <source>paint marker</source>
         <translation>Zeichne Intervall</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="97"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="129"/>
         <source>fill marker</source>
         <translation>Fülle Intervall</translation>
     </message>
@@ -48,24 +48,24 @@
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="66"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="429"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="445"/>
         <source>Save raw data as matrix</source>
         <translation>Rohdaten als openCV-Matrix speichern</translation>
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="75"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="443"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="459"/>
         <source>Save raw data as bin</source>
         <translation>Rohdaten im Bin-Format speichern</translation>
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="81"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="455"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="471"/>
         <source>Save image data as bin</source>
         <translation>Bild im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="467"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="483"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
@@ -116,101 +116,101 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="253"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="291"/>
         <source>ε</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="297"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="352"/>
         <source>add bscan</source>
         <translation>B-Scan hinzufügen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="442"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="521"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="175"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="207"/>
         <source>1234</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="260"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="298"/>
         <source>Max iterations</source>
         <translation>Max. Iterationen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="137"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="153"/>
         <source>back-propagation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="144"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="160"/>
         <source>Train</source>
         <translation>Trainieren</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="168"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="200"/>
         <source>moment scale</source>
         <translation>Moment</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="154"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="180"/>
         <source>RPROP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="223"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="261"/>
         <source>learn rate</source>
         <translation>Lernrate</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="182"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="214"/>
         <source>Exampels</source>
         <translation>Beispiele</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="216"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="251"/>
         <source>Δ&lt;sub&gt;0&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="433"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="512"/>
         <source>Δ&lt;sub&gt;min&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="30"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="43"/>
         <source>η&lt;sup&gt;-&lt;/sup&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="65"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="283"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="78"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="338"/>
         <source>Output size</source>
         <translation>Ausgabegröße</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="20"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="23"/>
         <source>η&lt;sup&gt;+&lt;/sup&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="161"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="190"/>
         <source>Δ&lt;sub&gt;max&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="89"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="99"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="102"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="112"/>
         <source>Hidden layers</source>
         <translation>verdeckte Schichten</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="120"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="196"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="206"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="133"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="228"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="238"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -219,19 +219,19 @@
         <translation type="vanished">Ausgabegröße</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="75"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="88"/>
         <source>change</source>
         <translation>Ändern</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="130"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="290"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="143"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="345"/>
         <source>Input size</source>
         <translation>Eingabegröße</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="325"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="384"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="387"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="460"/>
         <source>x</source>
         <translation type="unfinished"></translation>
     </message>
@@ -616,6 +616,74 @@
     </message>
 </context>
 <context>
+    <name>DefinedIntervalMarker</name>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="6"/>
+        <source>signal quality</source>
+        <translation>Signalqualität</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="8"/>
+        <source>good signal</source>
+        <translation>Gutes Signal</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="9"/>
+        <source>middle signal</source>
+        <translation>Mittlmäßiges Signal</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="10"/>
+        <source>bad signal</source>
+        <translation>Schlechtes Signal</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="17"/>
+        <source>quality failures</source>
+        <translation>Qualitätsfehler</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="19"/>
+        <source>signal missing</source>
+        <translation>Signal fehlt</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="20"/>
+        <source>ILM upper</source>
+        <translation>ILM schneidet oben</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="21"/>
+        <source>ILM lower</source>
+        <translation>ILM schneidet unten</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="22"/>
+        <source>BM upper</source>
+        <translation>BM schneidet oben</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="23"/>
+        <source>BM lower</source>
+        <translation>BM schneidet unten</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="24"/>
+        <source>missing ILM segmentation</source>
+        <translation>ILM-Segmentierung fehlt</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="25"/>
+        <source>missing BM segmentation</source>
+        <translation>BM-Segmentierung fehlt</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="26"/>
+        <source>multi error</source>
+        <translation>Mehrere Fehler</translation>
+    </message>
+</context>
+<context>
     <name>DwOctInformations</name>
     <message>
         <location filename="../src/widgets/dwoctinformations.cpp" line="152"/>
@@ -935,13 +1003,13 @@
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="275"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="855"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="856"/>
         <source>Save Matlab Bin Code</source>
         <translation>Matlab-Code für Bin-Format speichern</translation>
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="281"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="862"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="863"/>
         <source>Save Matlab Write Bin Code</source>
         <translation>Matlab-Schreibcode für Bin-Format speichern</translation>
     </message>
@@ -962,7 +1030,7 @@
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="301"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="526"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="527"/>
         <source>About</source>
         <translation>Über OCTMarker</translation>
     </message>
@@ -982,91 +1050,91 @@
         <translation>Nächster B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="347"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="348"/>
         <source>previous bscan</source>
         <translation>Vorheriger B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="353"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="354"/>
         <source>show segmentationslines</source>
         <translation>Segmentierungslinien anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="356"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="357"/>
         <source>B-Scan</source>
         <translation>B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="373"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="374"/>
         <source>Zoom +</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="379"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="380"/>
         <source>actual zoom</source>
         <translation>Aktueller Zoom</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="383"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="389"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="395"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="401"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="407"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="384"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="390"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="396"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="402"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="408"/>
         <source>Zoom %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="418"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="419"/>
         <source>Zoom -</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="472"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="473"/>
         <source>Marker</source>
         <translation>Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="480"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="481"/>
         <source>no marker</source>
         <translation>Keine Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="535"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="536"/>
         <source>Choose a folder to load Files</source>
         <translation>Ordner für das Einlesen auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="759"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="760"/>
         <source>OCT Markers</source>
         <translation>OCT-Marker</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="760"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="761"/>
         <source>OCT Markers Json file</source>
         <translation>OCT-Marker-Json-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="761"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="762"/>
         <source>OCT Markers XML file</source>
         <translation>OCT-Marker-XML-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="762"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="763"/>
         <source>OCT Markers INFO file</source>
         <translation>OCT-Marker-Info-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="894"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="895"/>
         <source>Unknown error on autosave</source>
         <translation>Unbekannter Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="898"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="899"/>
         <source>Error on autosave</source>
         <translation>Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="898"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="899"/>
         <source>Autosave fail with message: %1 &lt;br /&gt;Quit program?</source>
         <translation>Automatisches Speichern mit Meldung:&lt;br /&gt;%1&lt;br /&gt;fehlgeschlagen.&lt;br /&gt;Programm beenden?</translation>
     </message>
@@ -1079,17 +1147,17 @@
         <translation type="vanished">Fülle Intervall</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="550"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="551"/>
         <source>Choose a filename to load a File</source>
         <translation>Dateinamen zum Laden wählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="583"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="584"/>
         <source>All readabel (%1)</source>
         <translation>Alle lesbaren (%1)</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="584"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="585"/>
         <source>All files (* *.*)</source>
         <translation>Alle Dateien</translation>
     </message>
@@ -1118,17 +1186,17 @@
         <translation type="vanished">OCT-Marierungsdatei (*.xml)</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="800"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="801"/>
         <source>Choose a file to load markers</source>
         <translation>Markierungsdatei zum Laden auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="816"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="817"/>
         <source>Choose a filename to save markers</source>
         <translation>Markierungsdatei zum Speichern auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="831"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="832"/>
         <source>OCT-Marker - %1</source>
         <translation>OCT-Marker - %1</translation>
     </message>

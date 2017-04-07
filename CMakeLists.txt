@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 project(octmarker)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_module/)
 
-set_property(GLOBAL PROPERTY CXX_STANDARD 11)
-set_property(GLOBAL PROPERTY CXX_STANDARD_REQUIRED ON)
+set( CMAKE_CXX_STANDARD 11 )
 
 
 find_package(Qt5Core)
@@ -58,6 +57,7 @@ if(BUILD_QT_PROGRAMM)
 	if(BUILD_WITH_SEGMENTATION_ML)
 		find_package(FANN REQUIRED)
 		add_definitions(-DML_SUPPORT)
+		include_directories(SYSTEM ${FANN_INCLUDE_DIR})
 	endif()
 
 
@@ -126,4 +126,6 @@ if(BUILD_OCTAVE_MEX_FUNCTIONS)
 	target_include_directories(oct_read_seg SYSTEM PRIVATE ${OCTAVE_INCLUDE_DIRS} PUBLIC ${CMAKE_SOURCE_DIR}/src/)
 
 endif()
+
+
 

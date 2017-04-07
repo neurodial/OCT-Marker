@@ -49,6 +49,7 @@ public:
 	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) { return RedrawRequest(); }
 	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) { return RedrawRequest(); }
 	
+	virtual bool toolTipEvent     (QEvent*     , BScanMarkerWidget*) { return false; }
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) { return false; }
 	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) { return false; }
 	virtual bool setMarkerActive  (bool        , BScanMarkerWidget*);
