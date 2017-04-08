@@ -1304,6 +1304,14 @@
     </message>
 </context>
 <context>
+    <name>WGIntervalMarker</name>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="73"/>
+        <source>remove mark</source>
+        <translation>Markierung entfernen</translation>
+    </message>
+</context>
+<context>
     <name>WgSegNN</name>
     <message>
         <location filename="../src/markermodules/bscansegmentation/wgsegnn.cpp" line="120"/>

@@ -5,12 +5,14 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QToolBox>
+#include <QButtonGroup>
 #include <QSignalMapper>
 
 #include <helper/actionclasses.h>
 
 #include "bscanintervalmarker.h"
 #include "definedintervalmarker.h"
+#include <QToolButton>
 
 namespace
 {
@@ -26,20 +28,22 @@ namespace
 
 WGIntervalMarker::WGIntervalMarker(BScanIntervalMarker* parent)
 : parent(parent)
+, toolboxCollections(new QToolBox(this))
 {
-
-	QToolBox* toolbox = new QToolBox(this);
 
 	for(const auto& obj : DefinedIntervalMarker::getInstance().getIntervallMarkerMap())
 	{
-		addMarkerCollection(obj.second, toolbox);
+		addMarkerCollection(obj.second);
 	}
 
 	QVBoxLayout* layout = new QVBoxLayout();
-	layout->addWidget(toolbox);
+	layout->addWidget(createMarkerToolButtons());
+	layout->addWidget(toolboxCollections);
 	setLayout(layout);
 
-	connect(toolbox, &QToolBox::currentChanged, this, &WGIntervalMarker::changeIntervalCollection);
+	connect(toolboxCollections, &QToolBox::currentChanged, this, &WGIntervalMarker::changeIntervalCollection);
+
+	connect(parent, &BScanIntervalMarker::markerIdChanged, this, &WGIntervalMarker::changeMarkerId);
 
 }
 
@@ -49,40 +53,90 @@ WGIntervalMarker::~WGIntervalMarker()
 }
 
 
+namespace
+{
+	QToolButton* createActionToolButton(QWidget* parent, QAction* action)
+	{
+		QToolButton* button = new QToolButton(parent);
+		button->setDefaultAction(action);
+		return button;
+	}
+}
 
 
-void WGIntervalMarker::addMarkerCollection(const IntervalMarker& markers, QToolBox* toolbox)
+QWidget* WGIntervalMarker::createMarkerToolButtons()
+{
+	QWidget* widget = new QWidget(this);
+	QHBoxLayout* layout = new QHBoxLayout(this);
+
+	for(QAction* action : parent->getMarkerMethodActions())
+		layout->addWidget(createActionToolButton(this, action));
+/*
+	QActionGroup*  actionGroupMethod  = new QActionGroup(this);
+
+	BScanIntervalMarker::Method markerMethod = parent->getMarkerMethod();
+
+	IntValueAction* paintMarkerAction = new IntValueAction(static_cast<int>(BScanIntervalMarker::Method::Paint), this);
+	paintMarkerAction->setCheckable(true);
+	paintMarkerAction->setText(tr("paint marker"));
+	paintMarkerAction->setIcon(QIcon(":/icons/paintbrush.png"));
+	paintMarkerAction->setChecked(markerMethod == BScanIntervalMarker::Method::Paint);
+	connect(paintMarkerAction, &IntValueAction::triggered               , parent           , static_cast<void(BScanIntervalMarker::*)(int)>(&BScanIntervalMarker::chooseMethodID));
+	connect(parent           , &BScanIntervalMarker::markerMethodChanged, paintMarkerAction, &IntValueAction::valueChanged        );
+	actionGroupMethod->addAction(paintMarkerAction);
+
+	IntValueAction* fillMarkerAction = new IntValueAction(static_cast<int>(BScanIntervalMarker::Method::Fill), this);
+	fillMarkerAction->setCheckable(true);
+	fillMarkerAction->setText(tr("fill marker"));
+	fillMarkerAction->setIcon(QIcon(":/icons/paintcan.png"));
+	fillMarkerAction->setChecked(markerMethod == BScanIntervalMarker::Method::Fill);
+	connect(fillMarkerAction, &IntValueAction::triggered               , parent          , static_cast<void(BScanIntervalMarker::*)(int)>(&BScanIntervalMarker::chooseMethodID));
+	connect(parent          , &BScanIntervalMarker::markerMethodChanged, fillMarkerAction, &IntValueAction::valueChanged        );
+	actionGroupMethod->addAction(fillMarkerAction);
+
+
+	actionGroupMethod->setExclusive(true);
+
+
+	layout->addWidget(createActionToolButton(this, paintMarkerAction));
+	layout->addWidget(createActionToolButton(this, fillMarkerAction));*/
+
+	layout->addStretch();
+	widget->setLayout(layout);
+	return widget;
+}
+
+
+
+
+
+void WGIntervalMarker::addMarkerCollection(const IntervalMarker& markers)
 {
 	QSignalMapper* signalMapper = new QSignalMapper(this);
+	QButtonGroup*  buttonGroup  = new QButtonGroup(this);
+
 
 	QScrollArea* scrollArea = new QScrollArea;
 	QVBoxLayout* layout = new QVBoxLayout();
 	scrollArea->setLayout(layout);
 
-	std::size_t markerId = 0;
+	int markerId = 0;
 	for(const IntervalMarker::Marker& marker : markers.getIntervalMarkerList())
 	{
 		QIcon icon = createColorIcon(QColor::fromRgb(marker.getRed(), marker.getGreen(), marker.getBlue()));
 
-// 		SizetValueAction* markerAction = new SizetValueAction(markerId, this);
-// 		// markerAction->setCheckable(true);
-// 		markerAction->setText(QString::fromStdString(marker.getName()));
-// 		markerAction->setIcon(icon);
-// 		markerAction->setChecked(actMarkerId == markerId);
-// 		connect(markerAction, &SizetValueAction::triggered         , parent      , &BScanIntervalMarker::chooseMarkerID);
-// 		connect(parent      , &BScanIntervalMarker::markerIdChanged, markerAction, &SizetValueAction::valueChanged     );
-//
-// 		actionGroupMarker.addAction(markerAction);
-// 		markerToolbar.addAction(markerAction);
-//
-// 		actionList.push_back(markerAction);
+		QString buttonText = QString::fromStdString(marker.getName());
+		if(!marker.isDefined())
+			buttonText = tr("remove mark");
 
-// 		QLabel* testlabel = new QLabel();
-		QPushButton* button = new QPushButton(icon, QString::fromStdString(marker.getName()), this);
-// 		connect(this, &QPushButton::clicked, markerAction, &SizetValueAction::trigger);
+		QPushButton* button = new QPushButton(icon, buttonText, this);
         connect(button, &QPushButton::clicked, signalMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
         signalMapper->setMapping(button, markerId);
 // 		button->setStyleSheet("Text-align:left");
+		button->setCheckable(true);
+
+		buttonGroup->addButton(button);
+		buttonGroup->setId(button, markerId);
 
 		layout->addWidget(button);
 		++markerId;
@@ -97,9 +151,10 @@ void WGIntervalMarker::addMarkerCollection(const IntervalMarker& markers, QToolB
 	wgCollection->setLayout(wgLayout);
 	wgLayout->addWidget(scrollArea);
 
-	toolbox->addItem(wgCollection, QString::fromStdString(markers.getViewName()));
+	toolboxCollections->addItem(wgCollection, QString::fromStdString(markers.getViewName()));
 
 	collectionsInternalNames.push_back(markers.getInternalName());
+	collectionsButtonGroups .push_back(buttonGroup);
 }
 
 
@@ -109,6 +164,19 @@ void WGIntervalMarker::changeIntervalCollection(std::size_t index)
 	if(index < collectionsInternalNames.size())
 	{
 		parent->setMarkerCollection(collectionsInternalNames[index]);
+		parent->chooseMarkerID(collectionsButtonGroups[index]->checkedId());
+	}
+}
+
+void WGIntervalMarker::changeMarkerId(std::size_t index)
+{
+	int actCollectionIndex = toolboxCollections->currentIndex();
+	if(actCollectionIndex >= 0 && collectionsButtonGroups.size() > static_cast<std::size_t>(actCollectionIndex))
+	{
+		QButtonGroup* buttonGroup = collectionsButtonGroups[static_cast<std::size_t>(actCollectionIndex)];
+		QAbstractButton* button = buttonGroup->button(static_cast<int>(index));
+		if(button)
+			button->setChecked(true);
 	}
 }
 

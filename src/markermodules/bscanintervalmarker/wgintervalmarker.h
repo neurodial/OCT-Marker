@@ -7,6 +7,7 @@
 #include <string>
 
 class QToolBox;
+class QButtonGroup;
 
 class BScanIntervalMarker;
 class IntervalMarker;
@@ -16,10 +17,13 @@ class WGIntervalMarker : public QWidget
 	Q_OBJECT;
 
 	BScanIntervalMarker* parent;
+	QToolBox* toolboxCollections = nullptr;
 
 	std::vector<std::string> collectionsInternalNames;
+	std::vector<QButtonGroup*> collectionsButtonGroups;
 
-	void addMarkerCollection(const IntervalMarker& markers, QToolBox* toolbox);
+	void addMarkerCollection(const IntervalMarker& markers);
+	QWidget* createMarkerToolButtons();
 
 public:
 	WGIntervalMarker(BScanIntervalMarker* parent);
@@ -27,6 +31,7 @@ public:
 
 private slots:
 	void changeIntervalCollection(std::size_t index);
+	void changeMarkerId(std::size_t index);
 };
 
 #endif // WGINTERVALMARKER_H

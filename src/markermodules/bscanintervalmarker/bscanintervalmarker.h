@@ -28,6 +28,7 @@ public:
 	enum class Method { Paint, Fill };
 	
 	Method getMarkerMethod() const                                  { return markerMethod; }
+	const std::vector<QAction*>& getMarkerMethodActions()     const { return markerMethodActions; }
 	
 	void setMarker(int x1, int x2)                                       ;
 	void setMarker(int x1, int x2, const Marker& type)                   ;
@@ -94,10 +95,10 @@ private:
 	QWidget* widgetPtr2WGIntevalMarker = nullptr;
 
 	Method markerMethod = Method::Paint;
+	std::vector<QAction*> markerMethodActions;
 
 	struct MarkersCollectionData
 	{
-		std::vector<QAction*>  markersActions;
 		std::vector<MarkerMap> markers;
 		const IntervalMarker*  markerCollection = nullptr;
 	};
@@ -114,6 +115,7 @@ private:
 
 	static std::size_t getMarkerMapSize(const MarkersCollectionData* collection) { if(collection) return collection->markers.size(); return 0; }
 
+	void createMarkerMethodActions();
 	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor, const QPoint* p3 = nullptr);
 // 	void addMarkerCollection2Toolbar(const IntervalMarker& markers, QToolBar& markerToolbar, QActionGroup& actionGroupMarker, std::vector<QAction*>& actionList, QObject* parent);
 	void resetMarkers(const OctData::Series* series);
