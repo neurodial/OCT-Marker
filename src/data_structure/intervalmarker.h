@@ -14,7 +14,7 @@ public:
 
 		static std::size_t markerCounter;
 
-		size_t internalId;
+// 		size_t internalId;
 		std::string internalName;
 		std::string name;
 		bool defined;
@@ -37,12 +37,12 @@ public:
 		const std::string getInternalName() const               { return internalName; }
 		const std::string getName()         const               { return name;         }
 
-		bool operator==(const Marker& other) const              { return internalId == other.internalId; }
-		bool operator!=(const Marker& other) const              { return internalId != other.internalId; }
-
+		bool operator==(const Marker& other) const              { return internalName == other.internalName; }
+		bool operator!=(const Marker& other) const              { return internalName != other.internalName; }
+//
 		bool isDefined() const                                  { return defined; }
 
-		std::size_t getInternalId() const                       { return internalId; }
+// 		std::size_t getInternalId() const                       { return internalId; }
 		static std::size_t getMaxInternalId()                   { return markerCounter; }
 	};
 

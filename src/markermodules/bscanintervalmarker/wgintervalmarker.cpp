@@ -59,9 +59,9 @@ void WGIntervalMarker::addMarkerCollection(const IntervalMarker& markers, QToolB
 	QVBoxLayout* layout = new QVBoxLayout();
 	scrollArea->setLayout(layout);
 
+	std::size_t markerId = 0;
 	for(const IntervalMarker::Marker& marker : markers.getIntervalMarkerList())
 	{
-		std::size_t markerId = marker.getInternalId();
 		QIcon icon = createColorIcon(QColor::fromRgb(marker.getRed(), marker.getGreen(), marker.getBlue()));
 
 // 		SizetValueAction* markerAction = new SizetValueAction(markerId, this);
@@ -85,6 +85,7 @@ void WGIntervalMarker::addMarkerCollection(const IntervalMarker& markers, QToolB
 // 		button->setStyleSheet("Text-align:left");
 
 		layout->addWidget(button);
+		++markerId;
 	}
 	layout->addStretch();
 

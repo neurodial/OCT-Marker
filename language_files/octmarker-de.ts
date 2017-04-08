@@ -5,7 +5,7 @@
     <name>BScanIntervalMarker</name>
     <message>
         <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="43"/>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="98"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="99"/>
         <source>Interval marker</source>
         <translation>Intervallmarkierung</translation>
     </message>
@@ -14,12 +14,12 @@
         <translation type="obsolete">Intervallmarkierung</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="119"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="121"/>
         <source>paint marker</source>
         <translation>Zeichne Intervall</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="129"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="131"/>
         <source>fill marker</source>
         <translation>Fülle Intervall</translation>
     </message>
@@ -639,46 +639,66 @@
     </message>
     <message>
         <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="17"/>
+        <source>object zones</source>
+        <translation>Objektbereiche</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="19"/>
+        <source>macula</source>
+        <translation>Makula</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="20"/>
+        <source>edge</source>
+        <translation>Rand</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="21"/>
+        <source>blood vesel</source>
+        <translation>Ader</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="28"/>
         <source>quality failures</source>
         <translation>Qualitätsfehler</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="19"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="30"/>
         <source>signal missing</source>
         <translation>Signal fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="20"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="31"/>
         <source>ILM upper</source>
         <translation>ILM schneidet oben</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="21"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="32"/>
         <source>ILM lower</source>
         <translation>ILM schneidet unten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="22"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="33"/>
         <source>BM upper</source>
         <translation>BM schneidet oben</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="23"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="34"/>
         <source>BM lower</source>
         <translation>BM schneidet unten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="24"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="35"/>
         <source>missing ILM segmentation</source>
         <translation>ILM-Segmentierung fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="25"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="36"/>
         <source>missing BM segmentation</source>
         <translation>BM-Segmentierung fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="26"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="37"/>
         <source>multi error</source>
         <translation>Mehrere Fehler</translation>
     </message>

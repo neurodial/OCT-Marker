@@ -329,7 +329,8 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 {
 	double scaleFactor = widget->getImageScaleFactor();
 	
-	for(const MarkerMap::interval_mapping_type pair : getMarkers())
+	const MarkerMap& markerMap = getMarkers();
+	for(const MarkerMap::interval_mapping_type pair : markerMap)
 	{
 		IntervalMarker::Marker marker = pair.second;
 		if(marker.isDefined())
@@ -405,7 +406,7 @@ void BScanIntervalMarker::resetMarkers(const OctData::Series* series)
 
 	const std::size_t numBscans = series->bscanCount();
 
-	for(MarkersCollectionsDataList::value_type obj : markersCollectionsData)
+	for(MarkersCollectionsDataList::value_type& obj : markersCollectionsData)
 	{
 		std::vector<MarkerMap>& markers = obj.second.markers;
 		markers.clear();
@@ -475,6 +476,7 @@ bool BScanIntervalMarker::setMarkerCollection(const std::string& internalName)
 	if(it != markersCollectionsData.end())
 	{
 		actCollection = &(it->second);
+		requestUpdate();
 		return true;
 	}
 	return false;
@@ -493,5 +495,17 @@ void BScanIntervalMarker::chooseMarkerID(int id)
 		actMarker = markerCollection->getMarkerFromID(id);
 		markerIdChanged(id);
 	}
+}
+
+const BScanIntervalMarker::MarkerMap& BScanIntervalMarker::getMarkers(const std::string& collection, std::size_t bscan) const
+{
+	MarkersCollectionsDataList::const_iterator it = markersCollectionsData.find(collection);
+	if(it != markersCollectionsData.end())
+	{
+		const MarkersCollectionData* foundCollection = &(it->second);
+		if(foundCollection && bscan < foundCollection->markers.size())
+			return foundCollection->markers[bscan];
+	}
+	return nullMarkerMap;
 }
 

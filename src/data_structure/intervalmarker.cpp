@@ -28,8 +28,8 @@ IntervalMarker::IntervalMarker(const std::string& internalName, const std::strin
 }
 
 IntervalMarker::Marker::Marker()
-: internalId(0)
-, internalName("undefined")
+// : internalId(0)
+: internalName("undefined")
 , name("undefined")
 , defined(false)
 {
@@ -40,8 +40,8 @@ IntervalMarker::Marker::Marker()
 
 
 IntervalMarker::Marker::Marker(const std::string& internalName, const std::string& name, uint8_t red, uint8_t green, uint8_t blue)
-: internalId(++markerCounter)
-, internalName(internalName)
+// : internalId(++markerCounter)
+: internalName(internalName)
 , name(name)
 , defined(true)
 {

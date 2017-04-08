@@ -14,6 +14,17 @@ DefinedIntervalMarker::DefinedIntervalMarker()
 
 
 
+	IntervalMarker objectZones("objectZones", tr("object zones").toStdString());
+
+	objectZones.addMarker(IntervalMarker::Marker("macula"        , tr("macula"                  ).toStdString(),   0, 255,   0));
+	objectZones.addMarker(IntervalMarker::Marker("edge"          , tr("edge"                    ).toStdString(), 255, 255,   0));
+	objectZones.addMarker(IntervalMarker::Marker("bloodVessel"   , tr("blood vesel"             ).toStdString(), 255,   0,   0));
+
+	intervallMarkerMap.emplace("objectZones", objectZones);
+
+
+
+
 	IntervalMarker qualityFailures("qualityFailures", tr("quality failures").toStdString());
 
 	qualityFailures.addMarker(IntervalMarker::Marker("signalmissing" , tr("signal missing"          ).toStdString(),   0, 140, 140));

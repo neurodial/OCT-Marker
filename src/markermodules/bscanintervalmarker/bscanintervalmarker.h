@@ -58,6 +58,7 @@ public:
 	
 	const MarkerMap& getMarkers() const                             { return getMarkers(getActBScanNr()); }
 	const MarkerMap& getMarkers(std::size_t bscan) const            { if(actCollection && bscan < actCollection->markers.size()) return actCollection->markers[bscan]; return nullMarkerMap; }
+	const MarkerMap& getMarkers(const std::string& collection, std::size_t bscan) const;
 
 	std::size_t getNumBScans() const                                { if(actCollection) return actCollection->markers.size(); return 0; }
 
