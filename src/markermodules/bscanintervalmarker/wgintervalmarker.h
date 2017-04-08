@@ -3,6 +3,9 @@
 
 #include <QWidget>
 
+#include <vector>
+#include <string>
+
 class QToolBox;
 
 class BScanIntervalMarker;
@@ -14,11 +17,16 @@ class WGIntervalMarker : public QWidget
 
 	BScanIntervalMarker* parent;
 
+	std::vector<std::string> collectionsInternalNames;
+
 	void addMarkerCollection(const IntervalMarker& markers, QToolBox* toolbox);
 
 public:
 	WGIntervalMarker(BScanIntervalMarker* parent);
 	~WGIntervalMarker();
+
+private slots:
+	void changeIntervalCollection(std::size_t index);
 };
 
 #endif // WGINTERVALMARKER_H

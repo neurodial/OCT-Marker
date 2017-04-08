@@ -25,16 +25,16 @@
 #include "definedintervalmarker.h"
 #include "wgintervalmarker.h"
 
-namespace
-{
-	QIcon createColorIcon(const QColor& color)
-	{
-		QPixmap pixmap(15, 15);
-		pixmap.fill(color);
-		return QIcon(pixmap);
-	}
-}
-
+// namespace
+// {
+// 	QIcon createColorIcon(const QColor& color)
+// 	{
+// 		QPixmap pixmap(15, 15);
+// 		pixmap.fill(color);
+// 		return QIcon(pixmap);
+// 	}
+// }
+//
 
 BScanIntervalMarker::BScanIntervalMarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
@@ -470,6 +470,7 @@ QRect BScanIntervalMarker::getWidgetPaintSize(const QPoint& p1, const QPoint& p2
 
 bool BScanIntervalMarker::setMarkerCollection(const std::string& internalName)
 {
+	qDebug("setMarkerCollection(const std::string& internalName): %s", internalName.c_str());
 	MarkersCollectionsDataList::iterator it = markersCollectionsData.find(internalName);
 	if(it != markersCollectionsData.end())
 	{
@@ -482,6 +483,7 @@ bool BScanIntervalMarker::setMarkerCollection(const std::string& internalName)
 
 void BScanIntervalMarker::chooseMarkerID(int id)
 {
+	qDebug("chooseMarkerID(int id): %d", id);
 	if(actCollection)
 	{
 		const IntervalMarker* markerCollection = actCollection->markerCollection;
