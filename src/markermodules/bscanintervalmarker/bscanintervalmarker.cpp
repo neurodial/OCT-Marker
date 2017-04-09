@@ -52,6 +52,7 @@ BScanIntervalMarker::BScanIntervalMarker(OctMarkerManager* markerManager)
 		markersCollectionsData[obj.first].markerCollection = &(obj.second);
 	}
 
+	actCollection = markersCollectionsData.begin();
 }
 
 BScanIntervalMarker::~BScanIntervalMarker()
@@ -171,21 +172,32 @@ BscanMarkerBase::RedrawRequest BScanIntervalMarker::mouseReleaseEvent(QMouseEven
 
 void BScanIntervalMarker::setMarker(int x1, int x2)
 {
-	setMarker(x1, x2, actMarker, getActBScanNr());
+	setMarker(x1, x2, actMarker, getActBScanNr(), actCollection);
 }
 
 void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type)
 {
-	setMarker(x1, x2, type     , getActBScanNr());
+	setMarker(x1, x2, type     , getActBScanNr(), actCollection);
 }
 
 void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, std::size_t bscan)
 {
-	if(!actCollection || bscan >= getMarkerMapSize(actCollection))
+	setMarker(x1, x2, type, bscan, actCollection);
+}
+
+void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, std::size_t bscan, BScanIntervalMarker::MarkerCollectionWork& w)
+{
+	setMarker(x1, x2, type, bscan, w.actCollection);
+}
+
+
+void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, std::size_t bscan, MarkersCollectionsDataList::iterator& collection)
+{
+	if(collection == markersCollectionsData.end())
 		return;
 
-// 	printf("BScanMarkerManager::setMarker(%d, %d, %d)", x1, x2, type);
-// 	std::cout << std::endl;
+	if(bscan >= collection->second.markers.size())
+		return;
 
 	if(x2 < x1)
 		std::swap(x1, x2);
@@ -200,19 +212,20 @@ void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, std::siz
 	if(x2 >= maxWidth)
 		x2 = maxWidth - 1;
 
-	actCollection->markers[bscan].set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
+	collection->second.markers[bscan].set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
 	dataChanged = true;
 }
+
 
 
 void BScanIntervalMarker::fillMarker(int x, const Marker& type)
 {
 	std::size_t bscan = getActBScanNr();
 
-	if(!actCollection || bscan >= getMarkerMapSize(actCollection))
+	if(bscan >= getMarkerMapSize())
 		return;
 
-	MarkerMap& map = actCollection->markers[bscan];
+	MarkerMap& map = actCollection->second.markers[bscan];
 	MarkerMap::const_iterator it = map.find(x);
 
 	boost::icl::discrete_interval<int> intervall = it->first;
@@ -327,7 +340,7 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 
 void BScanIntervalMarker::drawBScanSLOLine(QPainter& painter, int bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& end_px, SLOImageWidget*) const
 {
-	if(!actCollection || bscanNr < 0 || bscanNr >= static_cast<int>(getMarkerMapSize(actCollection)))
+	if(bscanNr < 0 || bscanNr >= static_cast<int>(getMarkerMapSize()))
 		return;
 
 	double bscanWidth = getBScanWidth();
@@ -431,19 +444,26 @@ bool BScanIntervalMarker::setMarkerCollection(const std::string& internalName)
 	MarkersCollectionsDataList::iterator it = markersCollectionsData.find(internalName);
 	if(it != markersCollectionsData.end())
 	{
-		actCollection = &(it->second);
+		actCollection = it;
+		markerCollectionChanged(internalName);
 		requestUpdate();
 		return true;
 	}
 	return false;
 }
 
+BScanIntervalMarker::MarkerCollectionWork BScanIntervalMarker::getMarkerCollection(const std::string& internalName)
+{
+	return MarkerCollectionWork(markersCollectionsData.find(internalName));
+}
+
+
 
 void BScanIntervalMarker::chooseMarkerID(int id)
 {
-	if(actCollection)
+	if(actCollectionValid())
 	{
-		const IntervalMarker* markerCollection = actCollection->markerCollection;
+		const IntervalMarker* markerCollection = actCollection->second.markerCollection;
 		if(!markerCollection)
 			return;
 
@@ -451,6 +471,18 @@ void BScanIntervalMarker::chooseMarkerID(int id)
 		markerIdChanged(id);
 	}
 }
+
+const BScanIntervalMarker::MarkerMap& BScanIntervalMarker::getMarkers(std::size_t bscan) const
+{
+	if(actCollectionValid())
+	{
+		const std::vector<MarkerMap>& markerMaps = actCollection->second.markers;
+		if(markerMaps.size() > bscan)
+			return actCollection->second.markers[bscan];
+	}
+	return nullMarkerMap;
+}
+
 
 const BScanIntervalMarker::MarkerMap& BScanIntervalMarker::getMarkers(const std::string& collection, std::size_t bscan) const
 {
@@ -463,4 +495,5 @@ const BScanIntervalMarker::MarkerMap& BScanIntervalMarker::getMarkers(const std:
 	}
 	return nullMarkerMap;
 }
+
 

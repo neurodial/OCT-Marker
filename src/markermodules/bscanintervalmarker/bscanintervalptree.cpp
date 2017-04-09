@@ -14,7 +14,7 @@ namespace bpt = boost::property_tree;
 
 namespace
 {
-	bool parsePTreeMarkerCollection(const bpt::ptree& ptree, BScanIntervalMarker* markerManager, const std::string& markerCollectionInternalName, const IntervalMarker& markerCollection)
+	bool parsePTreeMarkerCollection(const bpt::ptree& ptree, BScanIntervalMarker* markerManager, const std::string& markerCollectionInternalName, const IntervalMarker& markerCollection, BScanIntervalMarker::MarkerCollectionWork& collectionSetterHelper)
 	{
 		boost::optional<const bpt::ptree&> bscansNode = ptree.get_child_optional(markerCollectionInternalName);
 		if(!bscansNode)
@@ -45,7 +45,7 @@ namespace
 				try
 				{
 					IntervalMarker::Marker marker = markerCollection.getMarkerFromString(intervallClass);
-					markerManager->setMarker(start, end, marker, bscanId);
+					markerManager->setMarker(start, end, marker, bscanId, collectionSetterHelper);
 				}
 				catch(std::out_of_range& r)
 				{
@@ -111,6 +111,7 @@ namespace
 
 bool BScanIntervalPTree::parsePTree(const bpt::ptree& ptree, BScanIntervalMarker* markerManager)
 {
+// 	std::string oldMarkerCollection = markerManager->getActMarkerCollectionInternalName();
 	bool result = true;
 	const DefinedIntervalMarker::IntervallMarkerMap& definedIntervalMarker = DefinedIntervalMarker::getInstance().getIntervallMarkerMap();
 	for(auto& obj : definedIntervalMarker)
@@ -118,8 +119,9 @@ bool BScanIntervalPTree::parsePTree(const bpt::ptree& ptree, BScanIntervalMarker
 		const std::string& markerCollectionInternalName = obj.first;
 		const IntervalMarker& markerCollection = obj.second;
 
-		markerManager->setMarkerCollection(markerCollectionInternalName);
-		result &= parsePTreeMarkerCollection(ptree, markerManager, markerCollectionInternalName, markerCollection);
+		BScanIntervalMarker::MarkerCollectionWork collectionSetterHelper = markerManager->getMarkerCollection(markerCollectionInternalName);
+// 		markerManager->setMarkerCollection(markerCollectionInternalName);
+		result &= parsePTreeMarkerCollection(ptree, markerManager, markerCollectionInternalName, markerCollection, collectionSetterHelper);
 	}
 
 
@@ -127,10 +129,12 @@ bool BScanIntervalPTree::parsePTree(const bpt::ptree& ptree, BScanIntervalMarker
 	const DefinedIntervalMarker::IntervallMarkerMap::const_iterator signalQuality = definedIntervalMarker.find("signalQuality");
 	if(signalQuality != definedIntervalMarker.end())
 	{
-		markerManager->setMarkerCollection("signalQuality");
-		result &= parsePTreeMarkerCollection(ptree, markerManager, "Quality", signalQuality->second);
+// // 		markerManager->setMarkerCollection("signalQuality");
+		BScanIntervalMarker::MarkerCollectionWork collectionSetterHelper = markerManager->getMarkerCollection("signalQuality");
+		result &= parsePTreeMarkerCollection(ptree, markerManager, "Quality", signalQuality->second, collectionSetterHelper);
 	}
 
+// 	markerManager->setMarkerCollection(oldMarkerCollection);
 
 	return result;
 }

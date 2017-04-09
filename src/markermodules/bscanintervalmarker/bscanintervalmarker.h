@@ -19,11 +19,27 @@ class BScanIntervalMarker : public BscanMarkerBase
 {
 	Q_OBJECT
 public:
+	typedef IntervalMarker::Marker Marker;
+	typedef boost::icl::interval_map<int, Marker, boost::icl::partial_enricher> MarkerMap;
+
+	struct MarkersCollectionData
+	{
+		std::vector<MarkerMap> markers;
+		const IntervalMarker*  markerCollection = nullptr;
+	};
+	typedef std::map<std::string, MarkersCollectionData> MarkersCollectionsDataList;
+
+	class MarkerCollectionWork
+	{
+		friend class BScanIntervalMarker;
+		MarkersCollectionsDataList::iterator actCollection;
+	public:
+		MarkerCollectionWork(MarkersCollectionsDataList::iterator actCollection) : actCollection(actCollection) {}
+	};
+
 	BScanIntervalMarker(OctMarkerManager* markerManager);
 	~BScanIntervalMarker();
 
-	typedef IntervalMarker::Marker Marker;
-	typedef boost::icl::interval_map<int, Marker, boost::icl::partial_enricher> MarkerMap;
 
 	enum class Method { Paint, Fill };
 	
@@ -33,6 +49,7 @@ public:
 	void setMarker(int x1, int x2)                                       ;
 	void setMarker(int x1, int x2, const Marker& type)                   ;
 	void setMarker(int x1, int x2, const Marker& type, std::size_t bscan);
+	void setMarker(int x1, int x2, const Marker& type, std::size_t bscan, MarkerCollectionWork& w);
 
 	void fillMarker(int x)                                          { fillMarker(x, actMarker); }
 	void fillMarker(int x, const Marker& type);
@@ -58,13 +75,15 @@ public:
 	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
 	
 	const MarkerMap& getMarkers() const                             { return getMarkers(getActBScanNr()); }
-	const MarkerMap& getMarkers(std::size_t bscan) const            { if(actCollection && bscan < actCollection->markers.size()) return actCollection->markers[bscan]; return nullMarkerMap; }
+	const MarkerMap& getMarkers(std::size_t bscan) const;
 	const MarkerMap& getMarkers(const std::string& collection, std::size_t bscan) const;
 
-	std::size_t getNumBScans() const                                { if(actCollection) return actCollection->markers.size(); return 0; }
+	std::size_t getNumBScans() const                                { if(actCollectionValid()) return actCollection->second.markers.size(); return 0; }
+	const std::string& getActMarkerCollectionInternalName()   const { if(actCollectionValid()) return actCollection->first; static std::string nullString; return nullString; }
 
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree) override;
 
+	MarkerCollectionWork getMarkerCollection(const std::string& internalName);
 
 public slots:
 	bool setMarkerCollection(const std::string& internalName);
@@ -77,6 +96,7 @@ public slots:
 signals:
 	void markerIdChanged(int id);
 	void markerMethodChanged(int id);
+	void markerCollectionChanged(const std::string& internalName);
 	
 private:
 	
@@ -97,23 +117,25 @@ private:
 	Method markerMethod = Method::Paint;
 	std::vector<QAction*> markerMethodActions;
 
-	struct MarkersCollectionData
-	{
-		std::vector<MarkerMap> markers;
-		const IntervalMarker*  markerCollection = nullptr;
-	};
 
-	MarkersCollectionData* actCollection = nullptr;
+// 	MarkersCollectionData* actCollection = nullptr;
 // 	std::vector<MarkerMap>* actMarkerMap = nullptr;
 // 	IntervalMarker* markerCollection = nullptr;
 
 	MarkerMap nullMarkerMap; // TODO
 
 
-	typedef std::map<std::string, MarkersCollectionData> MarkersCollectionsDataList;
 	MarkersCollectionsDataList markersCollectionsData;
+	MarkersCollectionsDataList::iterator actCollection;
 
-	static std::size_t getMarkerMapSize(const MarkersCollectionData* collection) { if(collection) return collection->markers.size(); return 0; }
+
+	void setMarker(int x1, int x2, const Marker& type, std::size_t bscan, MarkersCollectionsDataList::iterator& collection);
+
+	bool actCollectionValid() const                                 { return actCollection != markersCollectionsData.end(); }
+
+	static std::size_t getMarkerMapSize(const MarkersCollectionData& collection)
+	                                                                { return collection.markers.size(); }
+	std::size_t getMarkerMapSize()                            const { if(actCollectionValid()) return getMarkerMapSize(actCollection->second); return 0; }
 
 	void createMarkerMethodActions();
 	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor, const QPoint* p3 = nullptr);

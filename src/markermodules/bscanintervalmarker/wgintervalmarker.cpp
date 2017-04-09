@@ -14,6 +14,8 @@
 #include "definedintervalmarker.h"
 #include <QToolButton>
 
+#include <algorithm>
+
 namespace
 {
 	QIcon createColorIcon(const QColor& color)
@@ -43,7 +45,8 @@ WGIntervalMarker::WGIntervalMarker(BScanIntervalMarker* parent)
 
 	connect(toolboxCollections, &QToolBox::currentChanged, this, &WGIntervalMarker::changeIntervalCollection);
 
-	connect(parent, &BScanIntervalMarker::markerIdChanged, this, &WGIntervalMarker::changeMarkerId);
+	connect(parent, &BScanIntervalMarker::markerIdChanged        , this, &WGIntervalMarker::changeMarkerId        );
+	connect(parent, &BScanIntervalMarker::markerCollectionChanged, this, &WGIntervalMarker::changeMarkerCollection);
 
 }
 
@@ -71,35 +74,6 @@ QWidget* WGIntervalMarker::createMarkerToolButtons()
 
 	for(QAction* action : parent->getMarkerMethodActions())
 		layout->addWidget(createActionToolButton(this, action));
-/*
-	QActionGroup*  actionGroupMethod  = new QActionGroup(this);
-
-	BScanIntervalMarker::Method markerMethod = parent->getMarkerMethod();
-
-	IntValueAction* paintMarkerAction = new IntValueAction(static_cast<int>(BScanIntervalMarker::Method::Paint), this);
-	paintMarkerAction->setCheckable(true);
-	paintMarkerAction->setText(tr("paint marker"));
-	paintMarkerAction->setIcon(QIcon(":/icons/paintbrush.png"));
-	paintMarkerAction->setChecked(markerMethod == BScanIntervalMarker::Method::Paint);
-	connect(paintMarkerAction, &IntValueAction::triggered               , parent           , static_cast<void(BScanIntervalMarker::*)(int)>(&BScanIntervalMarker::chooseMethodID));
-	connect(parent           , &BScanIntervalMarker::markerMethodChanged, paintMarkerAction, &IntValueAction::valueChanged        );
-	actionGroupMethod->addAction(paintMarkerAction);
-
-	IntValueAction* fillMarkerAction = new IntValueAction(static_cast<int>(BScanIntervalMarker::Method::Fill), this);
-	fillMarkerAction->setCheckable(true);
-	fillMarkerAction->setText(tr("fill marker"));
-	fillMarkerAction->setIcon(QIcon(":/icons/paintcan.png"));
-	fillMarkerAction->setChecked(markerMethod == BScanIntervalMarker::Method::Fill);
-	connect(fillMarkerAction, &IntValueAction::triggered               , parent          , static_cast<void(BScanIntervalMarker::*)(int)>(&BScanIntervalMarker::chooseMethodID));
-	connect(parent          , &BScanIntervalMarker::markerMethodChanged, fillMarkerAction, &IntValueAction::valueChanged        );
-	actionGroupMethod->addAction(fillMarkerAction);
-
-
-	actionGroupMethod->setExclusive(true);
-
-
-	layout->addWidget(createActionToolButton(this, paintMarkerAction));
-	layout->addWidget(createActionToolButton(this, fillMarkerAction));*/
 
 	layout->addStretch();
 	widget->setLayout(layout);
@@ -178,5 +152,26 @@ void WGIntervalMarker::changeMarkerId(std::size_t index)
 		if(button)
 			button->setChecked(true);
 	}
+}
+
+void WGIntervalMarker::changeMarkerCollection(const std::string& internalName)
+{
+	int actToolBoxTab = toolboxCollections->currentIndex();
+
+	if(actToolBoxTab >= 0)
+	{
+		if(static_cast<std::size_t>(actToolBoxTab) >= collectionsInternalNames.size())
+		{
+			qDebug("internal Error: WGIntervalMarker::changeMarkerCollection: actToolBoxTab >= collectionsInternalNames.size() | %d >= %d", actToolBoxTab, static_cast<int>(collectionsInternalNames.size()));
+			return;
+		}
+
+		if(internalName == collectionsInternalNames[static_cast<std::size_t>(actToolBoxTab)])
+			return;
+	}
+
+	auto pos = std::find(collectionsInternalNames.begin(), collectionsInternalNames.end(), internalName);
+	if(pos != collectionsInternalNames.end())
+		toolboxCollections->setCurrentIndex(static_cast<int>(pos - collectionsInternalNames.begin()));
 }
 
