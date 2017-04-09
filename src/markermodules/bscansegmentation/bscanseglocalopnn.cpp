@@ -14,6 +14,9 @@
 #include <fann.h>
 #include <fann_cpp.h>
 
+#include <cmath>
+#include <algorithm>
+
 namespace
 {
 	void getRelOpSize(int& x1, int& x2, int& y1, int& y2, int x, int y)

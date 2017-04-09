@@ -75,7 +75,7 @@ void mexFunction(int            nlhs  ,
 	OctMarkerIO markerIO(&octmarkerTree);
 	if(!markerIO.loadDefaultMarker(filename))
 	{
-		mexErrMsgIdAndTxt("MATLAB:mexcpp:nargin", "cant open marker file for %s", filename.c_str());
+		mexErrMsgIdAndTxt("MATLAB:mexcpp:nargin", "can't open marker file for %s", filename.c_str());
 		return;
 	}
 

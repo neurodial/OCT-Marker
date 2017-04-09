@@ -95,7 +95,7 @@ if(BUILD_QT_PROGRAMM)
 	target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 	target_link_libraries(octmarker ${LibOctData_LIBRARIES})
 	target_link_libraries(octmarker ${CppFramework_LIBRARIES})
-	target_link_libraries(octmarker ${FANN_LIBRARIES})
+	target_link_libraries(octmarker ${FANN_LIBRARY})
 
 	install(TARGETS octmarker RUNTIME DESTINATION bin)
 
