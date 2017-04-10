@@ -78,6 +78,8 @@ public:
 	const MarkerMap& getMarkers(std::size_t bscan) const;
 	const MarkerMap& getMarkers(const std::string& collection, std::size_t bscan) const;
 
+	virtual bool hasChangedSinceLastSave() const override           { return stateChangedSinceLastSave; }
+
 	std::size_t getNumBScans() const                                { if(actCollectionValid()) return actCollection->second.markers.size(); return 0; }
 	const std::string& getActMarkerCollectionInternalName()   const { if(actCollectionValid()) return actCollection->first; static std::string nullString; return nullString; }
 
@@ -110,7 +112,7 @@ private:
 // 	QAction* paintMarkerAction = nullptr;
 	
 	Marker           actMarker;
-	bool             dataChanged = false;
+	bool             stateChangedSinceLastSave = false;
 
 	QWidget* widgetPtr2WGIntevalMarker = nullptr;
 

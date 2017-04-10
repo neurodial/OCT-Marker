@@ -199,6 +199,9 @@ void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, std::siz
 	if(bscan >= collection->second.markers.size())
 		return;
 
+	if(x1 == x2)
+		return;
+
 	if(x2 < x1)
 		std::swap(x1, x2);
 
@@ -209,11 +212,11 @@ void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, std::siz
 
 	if(x1 < 0)
 		x1 = 0;
-	if(x2 >= maxWidth)
-		x2 = maxWidth - 1;
+	if(x2 > maxWidth)
+		x2 = maxWidth;
 
 	collection->second.markers[bscan].set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
-	dataChanged = true;
+	stateChangedSinceLastSave = true;
 }
 
 
@@ -228,12 +231,15 @@ void BScanIntervalMarker::fillMarker(int x, const Marker& type)
 	MarkerMap& map = actCollection->second.markers[bscan];
 	MarkerMap::const_iterator it = map.find(x);
 
+	if(it->second == type)
+		return;
+
 	boost::icl::discrete_interval<int> intervall = it->first;
 
 	if(intervall.upper() > 0)
 	{
 		map.set(std::make_pair(boost::icl::discrete_interval<int>::closed(intervall.lower(), intervall.upper()), type));
-		dataChanged = true;
+		stateChangedSinceLastSave = true;
 		requestUpdate();
 	}
 }
@@ -320,6 +326,20 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 
 	if(mouseInWidget && markerActive && getMarkerMethod() == Method::Paint)
 	{
+		class QPainterRestorer
+		{
+			QPainter& painter;
+			bool restored = false;
+		public:
+			QPainterRestorer(QPainter& painter) : painter(painter) { painter.save(); }
+			~QPainterRestorer() { if(!restored) painter.restore(); }
+			void restore() { if(!restored) painter.restore(); restored = true; }
+		};
+
+		QPainterRestorer painterRestorer(painter);
+		painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+		painter.setPen(QColor(0xff, 0xff, 0xff));
+
 		painter.drawLine(mousePos.x(), 0, mousePos.x(), widget->height());
 
 		if(markerActiv)
@@ -328,6 +348,8 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 			if(mousePos.x() != clickPos.x())
 			{
 				painter.drawLine(clickPos.x(), 0, clickPos.x(), widget->height());
+				painterRestorer.restore();
+
 				QPen pen;
 				pen.setColor(QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
 				pen.setWidth(5);
@@ -399,12 +421,14 @@ void BScanIntervalMarker::newSeriesLoaded(const OctData::Series* series, boost::
 	
 	resetMarkers(series);
 	BScanIntervalPTree::parsePTree(markerTree, this);
+	stateChangedSinceLastSave = false;
 }
 
 
 void BScanIntervalMarker::saveState(boost::property_tree::ptree& markerTree)
 {
 	BScanIntervalPTree::fillPTree(markerTree, this);
+	stateChangedSinceLastSave = false;
 }
 
 
@@ -412,6 +436,7 @@ void BScanIntervalMarker::loadState(boost::property_tree::ptree& markerTree)
 {
 	resetMarkers(getSeries());
 	BScanIntervalPTree::parsePTree(markerTree, this);
+	stateChangedSinceLastSave = false;
 }
 
 
