@@ -13,6 +13,7 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <qlibraryinfo.h>
 
 
 bool loadMarkerTranslatorFile(QTranslator& translator, const QString& dir)
@@ -27,6 +28,20 @@ void loadMarkerTranslator(QTranslator& translator, const QString& programDir)
 	loadMarkerTranslatorFile(translator, "");
 }
 
+bool loadQtTranslatorFile(QTranslator& translator, const QString& dir)
+{
+	return translator.load(QLocale::system(), "qt", "_", dir, ".qm");
+}
+
+void loadQtTranslator(QTranslator& translator, const QString& programDir)
+{
+	QString translationsPath(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+	if(loadQtTranslatorFile(translator, programDir)) return;
+	if(loadQtTranslatorFile(translator, translationsPath)) return;
+	if(loadQtTranslatorFile(translator, "/usr/share/qt5/translations")) return;
+	loadQtTranslatorFile(translator, "");
+}
+
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
@@ -38,15 +53,17 @@ int main(int argc, char **argv)
 	qDebug("Compiler Id     : %s", BuildConstants::compilerId);
 	qDebug("Compiler Version: %s", BuildConstants::compilerVersion);
 
-	QTranslator translator, translator2;
-	// translator.load("/usr/share/qt4/translations/qt_" + QLocale::system().name());
-	translator.load(QLocale::system(), "qt", "_", "/usr/share/qt5/translations", ".qm");
+	QTranslator translator;
+
+	QTranslator qtTranslator;
+
 
 	QDir d = QFileInfo(argv[0]).absoluteDir();
-	loadMarkerTranslator(translator2, d.absolutePath());
+	loadQtTranslator(qtTranslator, d.absolutePath());
+	loadMarkerTranslator(translator, d.absolutePath());
 
+	app.installTranslator(&qtTranslator);
 	app.installTranslator(&translator);
-	app.installTranslator(&translator2);
 
 
 	ProgramOptions::readAllOptions();
