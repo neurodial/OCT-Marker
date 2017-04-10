@@ -57,7 +57,7 @@ public:
 	void setImageFilter(const FilterImage* imageFilter);
 
 protected:
-	void paintEvent(QPaintEvent* event);
+	virtual void paintEvent(QPaintEvent* event) override;
 
 	QImage   qtImage;
 	cv::Mat  cvImage;

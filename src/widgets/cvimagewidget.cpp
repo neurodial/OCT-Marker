@@ -223,7 +223,9 @@ void CVImageWidget::saveImage()
 	QString filename;
 	if(fileDialog(filename))
 	{
-		qtImage.save(filename);
+		QPixmap pixmap(size());
+		render(&pixmap);
+		pixmap.save(filename);
 	}
 }
 
