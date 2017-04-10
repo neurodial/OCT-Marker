@@ -85,16 +85,16 @@ namespace
 {
 	struct PaintFactor1
 	{
-		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, int /*factor*/)
+		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, double /*factor*/)
 		{
 			if(*p00 != *p10)
 			{
-				painter.drawPoint(w, h);
+				painter.drawPoint(w  , h);
 				painter.drawPoint(w+1, h);
 			}
 			if(*p00 != *p01)
 			{
-				painter.drawPoint(w, h);
+				painter.drawPoint(w, h  );
 				painter.drawPoint(w, h+1);
 			}
 		}
@@ -102,12 +102,10 @@ namespace
 
 	struct PaintFactorN
 	{
-		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, int factor)
+		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, double factor)
 		{
-			if(*p00 != *p10)
-				painter.drawLine((w+1)*factor, (h)*factor, (w+1)*factor, (h+1)*factor);
-			if(*p00 != *p01)
-				painter.drawLine((w)*factor, (h+1)*factor, (w+1)*factor, (h+1)*factor);
+			if(*p00 != *p10) painter.drawLine(static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h  )*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
+			if(*p00 != *p01) painter.drawLine(static_cast<int>((w  )*factor + 0.5), static_cast<int>((h+1)*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
 		}
 	};
 }
@@ -156,13 +154,13 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 
 		for(int w = startW; w < endW; ++w)
 		{
-			T::paint(painter, p00, p10, p01, w, h, static_cast<int>(factor)); // for faster drawing, only int supported (and only int used at the moment)
+			T::paint(painter, p00, p10, p01, w, h, factor); // for faster drawing, only int supported (and only int used at the moment)
 
 			++p00;
 			++p10;
 			++p01;
 		}
-		T::paint(painter, p00, p00, p01, endW, h, static_cast<int>(factor)); // last col p10 replaced by p00, because p10 is outside
+		T::paint(painter, p00, p00, p01, endW, h, factor); // last col p10 replaced by p00, because p10 is outside
 	}
 	// TODO draw last row
 }

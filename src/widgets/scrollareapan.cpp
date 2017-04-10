@@ -6,6 +6,7 @@
 
 #include <QDebug>
 
+
 namespace
 {
 	inline bool modPressed(QKeyEvent* e)
@@ -17,6 +18,17 @@ namespace
 		return e->modifiers() == Qt::ControlModifier;
 	}
 }
+
+ScrollAreaPan::ScrollAreaPan(QWidget* parent)
+: QScrollArea(parent)
+{
+// 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+// 	setVerticalScrollBarPolicy  (Qt::ScrollBarAlwaysOn);
+//
+// 	setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+// 	setVerticalScrollBarPolicy  (Qt::ScrollBarAsNeeded);
+}
+
 
 void ScrollAreaPan::mousePressEvent(QMouseEvent* e)
 {
@@ -122,3 +134,12 @@ bool ScrollAreaPan::upadtePanStatus(bool modifierPressed, MausButton mouseButton
 	return false;
 }
 
+int ScrollAreaPan::getVScrollbarWidth() const
+{
+	return verticalScrollBar()->width();
+}
+
+int ScrollAreaPan::getHScrollbarHeight() const
+{
+	return horizontalScrollBar()->height();
+}

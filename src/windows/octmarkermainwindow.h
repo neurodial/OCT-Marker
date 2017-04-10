@@ -7,12 +7,14 @@ class QLabel;
 class QSpinBox;
 class QAction;
 class QFileDialog;
-class BScanMarkerWidget;
-class DWSloImage;
-class CScan;
 class QProgressBar;
 class QUrl;
 class QMenu;
+
+class BScanMarkerWidget;
+class DWSloImage;
+class CScan;
+class ScrollAreaPan;
 
 
 class OCTMarkerMainWindow : public QMainWindow
@@ -25,8 +27,9 @@ class OCTMarkerMainWindow : public QMainWindow
 	void createMarkerToolbar();
 
 
-	QDockWidget*       dwSloImage        = nullptr;
-	BScanMarkerWidget* bscanMarkerWidget = nullptr;
+	QDockWidget*       dwSloImage                  = nullptr;
+	ScrollAreaPan*     bscanMarkerWidgetScrollArea = nullptr;
+	BScanMarkerWidget* bscanMarkerWidget           = nullptr;
 
 
 	QSpinBox*     bscanChooser     = nullptr;
@@ -85,6 +88,9 @@ public slots:
 
 	virtual void saveMatlabBinCode();
 	virtual void saveMatlabWriteBinCode();
+
+	virtual void strechBScanImage2MaxWidth();
+	virtual void strechBScanImage2MaxHeight();
 
 };
 

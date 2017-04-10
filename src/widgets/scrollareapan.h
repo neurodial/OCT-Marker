@@ -11,7 +11,10 @@ class ScrollAreaPan : public QScrollArea
 	enum class MausButton { Undef, Pressed, Unpressed };
 
 public:
-	explicit ScrollAreaPan(QWidget *parent = Q_NULLPTR) : QScrollArea(parent) {}
+	explicit ScrollAreaPan(QWidget *parent = Q_NULLPTR);
+
+	int getVScrollbarWidth () const;
+	int getHScrollbarHeight() const;
 protected:
 	void mousePressEvent  (QMouseEvent* e) override;
 	void mouseMoveEvent   (QMouseEvent* e) override;

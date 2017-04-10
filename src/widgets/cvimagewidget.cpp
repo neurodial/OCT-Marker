@@ -146,6 +146,21 @@ void CVImageWidget::updateScaleFactor()
 }
 
 
+void CVImageWidget::fitImage2Width(int width)
+{
+	if(cvImage.cols > 0)
+		setZoom(static_cast<double>(width)/cvImage.cols);
+}
+
+void CVImageWidget::fitImage2Height(int heigth)
+{
+	if(cvImage.rows > 0)
+		setZoom(static_cast<double>(heigth)/cvImage.rows);
+}
+
+
+
+
 void CVImageWidget::cvImage2qtImage()
 {
 	if(cvImage.empty())
@@ -289,7 +304,6 @@ void CVImageWidget::setImageFilter(const FilterImage* imageFilter)
 
 void CVImageWidget::imageParameterChanged()
 {
-
 	cvImage2qtImage();
 }
 

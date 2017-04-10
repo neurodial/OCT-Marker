@@ -68,7 +68,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
 	
 	
-	ScrollAreaPan* bscanMarkerWidgetScrollArea = new ScrollAreaPan(this);
+	bscanMarkerWidgetScrollArea = new ScrollAreaPan(this);
 	bscanMarkerWidgetScrollArea->setWidget(bscanMarkerWidget);
 
 	// General Objects
@@ -421,6 +421,19 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
 	toolBar->addAction(zoomOutAction);
 
+
+	QAction* actionStrechBScanImage2MaxWidth = new QAction(this);
+	actionStrechBScanImage2MaxWidth->setText(tr("Adjust image in width"));
+	actionStrechBScanImage2MaxWidth->setIcon(QIcon(":/icons/stretch_width.png"));
+	connect(actionStrechBScanImage2MaxWidth, &QAction::triggered, this, &OCTMarkerMainWindow::strechBScanImage2MaxWidth);
+	toolBar->addAction(actionStrechBScanImage2MaxWidth);
+
+	QAction* actionStrechBScanImage2MaxHeight = new QAction(this);
+	actionStrechBScanImage2MaxHeight->setText(tr("Adjust image in height"));
+	actionStrechBScanImage2MaxHeight->setIcon(QIcon(":/icons/stretch_height.png"));
+	connect(actionStrechBScanImage2MaxHeight, &QAction::triggered, this, &OCTMarkerMainWindow::strechBScanImage2MaxHeight);
+	toolBar->addAction(actionStrechBScanImage2MaxHeight);
+
 	zoomChanged(bscanMarkerWidget->getImageScaleFactor());
 
 
@@ -453,16 +466,27 @@ void OCTMarkerMainWindow::zoomChanged(double zoom)
 
 	if(zoomMenu)
 	{
-		QPixmap pixmap(16,16);
+		QPixmap pixmap(24, 16);
 		pixmap.fill(Qt::transparent);
 		QPainter painter(&pixmap);
-		QString string = QString("%1").arg(zoom);
-		painter.drawText(0,0,16,16,Qt::AlignHCenter | Qt::AlignVCenter, string);
+		QString string = QString::number(zoom, 'f', 1 );
+		painter.drawText(0, 0, 24, 16, Qt::AlignHCenter | Qt::AlignVCenter, string);
 
 
 		zoomMenu->menuAction()->setIcon(QIcon(pixmap));
 	}
 }
+
+void OCTMarkerMainWindow::strechBScanImage2MaxWidth()
+{
+	bscanMarkerWidget->fitImage2Width(bscanMarkerWidgetScrollArea->width () - bscanMarkerWidgetScrollArea->getVScrollbarWidth () - 2);
+}
+void OCTMarkerMainWindow::strechBScanImage2MaxHeight()
+{
+	bscanMarkerWidget->fitImage2Height(bscanMarkerWidgetScrollArea->height() - bscanMarkerWidgetScrollArea->getHScrollbarHeight() - 2);
+}
+
+
 
 
 void OCTMarkerMainWindow::createMarkerToolbar()

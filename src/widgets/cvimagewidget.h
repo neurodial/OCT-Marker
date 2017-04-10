@@ -78,7 +78,10 @@ public slots:
 	virtual void saveImage();
 	void showImage(const cv::Mat& image);
 
-	void setZoom(double factor)                                  { if(scaleFactor != factor && factor <= 5 && factor > 0) { scaleFactor = factor; cvImage2qtImage(); zoomChanged(factor); } }
+	void setZoom(double factor)                                  { if(scaleFactor != factor && factor <= 8 && factor > 0) { scaleFactor = factor; cvImage2qtImage(); zoomChanged(factor); } }
+
+	void fitImage2Width (int width );
+	void fitImage2Height(int heigth);
 
 	void setZoom1()                                              { setZoom(1); }
 	void setZoom2()                                              { setZoom(2); }
@@ -86,8 +89,8 @@ public slots:
 	void setZoom4()                                              { setZoom(4); }
 	void setZoom5()                                              { setZoom(5); }
 
-	void zoom_in()                                               { setZoom(scaleFactor+1); }
-	void zoom_out()                                              { setZoom(scaleFactor-1); }
+	void zoom_in()                                               { setZoom(scaleFactor+0.5); }
+	void zoom_out()                                              { setZoom(scaleFactor-0.5); }
 
 private slots:
 	void imageParameterChanged();

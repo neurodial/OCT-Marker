@@ -31,6 +31,8 @@
 	<file>icons/zoom.png</file>
 	<file>icons/zoom_in.png</file>
 	<file>icons/zoom_out.png</file>
+	<file>icons/stretch_width.png</file>
+	<file>icons/stretch_height.png</file>
 	
 	<file>icons/image.png</file>
 	<file>icons/wand.png</file>
