@@ -15,6 +15,7 @@
 
 
 #include <algorithm>
+#include <QFileDialog>
 
 namespace
 {
@@ -76,6 +77,14 @@ QWidget* WGIntervalMarker::createMarkerToolButtons()
 		layout->addWidget(createActionToolButton(this, action));
 
 	layout->addStretch();
+
+	QAction* importMarkerFromBin = new QAction(this);
+	importMarkerFromBin->setText(tr("Import marker from bin file"));
+	importMarkerFromBin->setIcon(QIcon(":/icons/folder_image.png"));
+	connect(importMarkerFromBin, &QAction::triggered, this, &WGIntervalMarker::importMarkerFromBinSlot);
+	layout->addWidget(createActionToolButton(this, importMarkerFromBin));
+
+
 	widget->setLayout(layout);
 	return widget;
 }
@@ -174,4 +183,14 @@ void WGIntervalMarker::changeMarkerCollection(const std::string& internalName)
 	if(pos != collectionsInternalNames.end())
 		toolboxCollections->setCurrentIndex(static_cast<int>(pos - collectionsInternalNames.begin()));
 }
+
+void WGIntervalMarker::importMarkerFromBinSlot()
+{
+	QString file = QFileDialog::getOpenFileName(this, tr("Import marker from bin file"), QString(), "*.bin");
+	if(!file.isEmpty())
+	{
+		parent->importMarkerFromBin(file.toStdString());
+	}
+}
+
 

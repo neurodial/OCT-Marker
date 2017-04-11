@@ -87,6 +87,8 @@ public:
 
 	MarkerCollectionWork getMarkerCollection(const std::string& internalName);
 
+	bool importMarkerFromBin(const std::string& filename);
+
 public slots:
 	bool setMarkerCollection(const std::string& internalName);
 

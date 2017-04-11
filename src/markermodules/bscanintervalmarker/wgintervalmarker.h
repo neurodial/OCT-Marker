@@ -33,6 +33,9 @@ private slots:
 	void changeIntervalCollection(std::size_t index);
 	void changeMarkerId(std::size_t index);
 	void changeMarkerCollection(const std::string& internalName);
+
+
+	void importMarkerFromBinSlot();
 };
 
 #endif // WGINTERVALMARKER_H

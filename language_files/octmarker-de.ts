@@ -4,8 +4,8 @@
 <context>
     <name>BScanIntervalMarker</name>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="42"/>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="96"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="43"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="97"/>
         <source>Interval marker</source>
         <translation>Intervallmarkierung</translation>
     </message>
@@ -14,12 +14,12 @@
         <translation type="obsolete">Intervallmarkierung</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="72"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="73"/>
         <source>paint marker</source>
         <translation>Zeichne Intervall</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="82"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="83"/>
         <source>fill marker</source>
         <translation>Fülle Intervall</translation>
     </message>
@@ -532,47 +532,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="246"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="248"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="276"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="278"/>
         <source>BMP - Windows Bitmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="278"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="280"/>
         <source>JPG - Joint Photographic Experts Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="280"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="282"/>
         <source>PNG - Portable Network Graphics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="282"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="284"/>
         <source>PPM - Portable Pixmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="284"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="286"/>
         <source>TIFF - Tagged Image File Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="286"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="288"/>
         <source>XBM - X11 Bitmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="288"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="290"/>
         <source>XPM - X11 Pixmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="290"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="292"/>
         <source>%1 File</source>
         <translation>%1-Datei</translation>
     </message>
@@ -1154,17 +1154,17 @@
         <translation>OCT-Marker-Info-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="919"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="921"/>
         <source>Unknown error on autosave</source>
         <translation>Unbekannter Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="923"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="925"/>
         <source>Error on autosave</source>
         <translation>Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="923"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="925"/>
         <source>Autosave fail with message: %1 &lt;br /&gt;Quit program?</source>
         <translation>Automatisches Speichern mit Meldung:&lt;br /&gt;%1&lt;br /&gt;fehlgeschlagen.&lt;br /&gt;Programm beenden?</translation>
     </message>
@@ -1234,12 +1234,12 @@
 <context>
     <name>OctDataManager</name>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="116"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="111"/>
         <source>Unsaved changes</source>
         <translation>Ungespeicherte Änderungen</translation>
     </message>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="116"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="111"/>
         <source>You have unsaved changes, what will you do?</source>
         <translation>Es gibt ungespeicherte Änderungen, was wollen Sie tun?</translation>
     </message>
@@ -1316,7 +1316,13 @@
 <context>
     <name>WGIntervalMarker</name>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="104"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="82"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="189"/>
+        <source>Import marker from bin file</source>
+        <translation type="unfinished">Marker aus Bin-Datei importieren</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="111"/>
         <source>remove mark</source>
         <translation>Markierung entfernen</translation>
     </message>

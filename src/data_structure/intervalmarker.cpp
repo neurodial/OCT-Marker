@@ -11,24 +11,9 @@ IntervalMarker::IntervalMarker(const std::string& internalName, const std::strin
 , viewName    (viewName    )
 {
 	markerList.push_back(Marker());
-
-/*
-	markerList.push_back(Marker("good"          , "good signal"             ,   0, 255,   0));
-	markerList.push_back(Marker("mid"           , "middle signal"           , 255, 255,   0));
-	markerList.push_back(Marker("bad"           , "bad signal"              , 255,   0,   0));
-
-	markerList.push_back(Marker("signalmissing" , "signal missing"          ,   0, 140, 140));
-	markerList.push_back(Marker("ILM_upper"     , "ILM upper"               ,   0, 205, 205));
-	markerList.push_back(Marker("ILM_lower"     , "ILM lower"               , 255, 255,   0));
-	markerList.push_back(Marker("BM_upper"      , "BM upper"                , 240, 110,  90));
-	markerList.push_back(Marker("BM_lower"      , "BM lower"                , 255, 140,   0));
-	markerList.push_back(Marker("SegILMmissing" , "missing ILM segmentation", 255,   0,   0));
-	markerList.push_back(Marker("SegBMmissing"  , "missing BM segmentation" , 255, 200,   0));
-	markerList.push_back(Marker("MultiError"    , "multi error"             , 138,  43, 226));*/
 }
 
 IntervalMarker::Marker::Marker()
-// : internalId(0)
 : internalName("undefined")
 , name("undefined")
 , defined(false)

@@ -24,6 +24,7 @@
 #include "bscanintervalptree.h"
 #include "definedintervalmarker.h"
 #include "wgintervalmarker.h"
+#include "importintervalmarker.h"
 
 // namespace
 // {
@@ -521,4 +522,20 @@ const BScanIntervalMarker::MarkerMap& BScanIntervalMarker::getMarkers(const std:
 	return nullMarkerMap;
 }
 
+
+bool BScanIntervalMarker::importMarkerFromBin(const std::string& filename)
+{
+	if(!actCollectionValid())
+		return false;
+
+	const IntervalMarker* markerCollection = actCollection->second.markerCollection;
+	if(!markerCollection)
+		return false;
+
+	bool result = ImportIntervalMarker::importBin(this, *markerCollection, filename);
+	if(result)
+		requestUpdate();
+
+	return result;
+}
 
