@@ -1,8 +1,7 @@
 #include "wgintervalmarker.h"
 
-#include <QScrollArea>
 #include <QPushButton>
-#include <QLabel>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QToolBox>
 #include <QButtonGroup>
@@ -12,7 +11,7 @@
 
 #include "bscanintervalmarker.h"
 #include "definedintervalmarker.h"
-#include <QToolButton>
+
 
 #include <algorithm>
 
@@ -90,9 +89,7 @@ void WGIntervalMarker::addMarkerCollection(const IntervalMarker& markers)
 	QButtonGroup*  buttonGroup  = new QButtonGroup(this);
 
 
-	QScrollArea* scrollArea = new QScrollArea;
 	QVBoxLayout* layout = new QVBoxLayout();
-	scrollArea->setLayout(layout);
 
 	int markerId = 0;
 	for(const IntervalMarker::Marker& marker : markers.getIntervalMarkerList())
@@ -103,11 +100,15 @@ void WGIntervalMarker::addMarkerCollection(const IntervalMarker& markers)
 		if(!marker.isDefined())
 			buttonText = tr("remove mark");
 
-		QPushButton* button = new QPushButton(icon, buttonText, this);
+		QPushButton* button = new QPushButton(this);
+		button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+		button->setIcon(icon);
+		button->setText(buttonText);
+		button->setCheckable(true);
+		button->setStyleSheet("Text-align:left; padding:3px;");
+
         connect(button, &QPushButton::clicked, signalMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
         signalMapper->setMapping(button, markerId);
-// 		button->setStyleSheet("Text-align:left");
-		button->setCheckable(true);
 
 		buttonGroup->addButton(button);
 		buttonGroup->setId(button, markerId);
@@ -117,15 +118,13 @@ void WGIntervalMarker::addMarkerCollection(const IntervalMarker& markers)
 	}
 	layout->addStretch();
 
-
     connect(signalMapper, static_cast<void (QSignalMapper::*)(int)>(&QSignalMapper::mapped), parent, &BScanIntervalMarker::chooseMarkerID);
 
-	QWidget* wgCollection = new QWidget(this);
-	QVBoxLayout* wgLayout = new QVBoxLayout();
-	wgCollection->setLayout(wgLayout);
-	wgLayout->addWidget(scrollArea);
+	QWidget* widget = new QWidget(this);
+	widget->setLayout(layout);
 
-	toolboxCollections->addItem(wgCollection, QString::fromStdString(markers.getViewName()));
+	toolboxCollections->addItem(widget, QString::fromStdString(markers.getViewName()));
+
 
 	collectionsInternalNames.push_back(markers.getInternalName());
 	collectionsButtonGroups .push_back(buttonGroup);
