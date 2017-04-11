@@ -8,6 +8,7 @@
 #include <QSignalMapper>
 
 #include <helper/actionclasses.h>
+#include <widgets/numberpushbutton.h>
 
 #include "bscanintervalmarker.h"
 #include "definedintervalmarker.h"
@@ -100,7 +101,7 @@ void WGIntervalMarker::addMarkerCollection(const IntervalMarker& markers)
 		if(!marker.isDefined())
 			buttonText = tr("remove mark");
 
-		QPushButton* button = new QPushButton(this);
+		QPushButton* button = new NumberPushButton(markerId, this);
 		button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 		button->setIcon(icon);
 		button->setText(buttonText);
