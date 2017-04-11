@@ -104,6 +104,29 @@ void OctDataManagerThread::run()
 	}
 }
 
+bool OctDataManager::checkAndAskSaveBeforContinue()
+{
+	if(OctMarkerManager::getInstance().hasChangedSinceLastSave()) // TODO: move to new class for handel gui
+	{
+		QMessageBox::StandardButton result = QMessageBox::warning(nullptr, tr("Unsaved changes"), tr("You have unsaved changes, what will you do?"), QMessageBox::Save|QMessageBox::Cancel|QMessageBox::Ignore);
+		switch(result)
+		{
+			case QMessageBox::Cancel:
+				return false;
+			case QMessageBox::Ignore:
+				break;
+			case QMessageBox::Save:
+				triggerSaveMarkersDefault();
+				break;
+			default:
+				qDebug("OctDataManager::openFile: unexpected StandardButton %d", result);
+				return false;;
+		}
+	}
+	return true;
+}
+
+
 void OctDataManager::openFile(const QString& filename)
 {
 	if(loadThread)
@@ -111,23 +134,8 @@ void OctDataManager::openFile(const QString& filename)
 
 	if(!ProgramOptions::autoSaveOctMarkers())
 	{
-		if(OctMarkerManager::getInstance().hasChangedSinceLastSave()) // TODO: move to new class for handel gui
-		{
-			QMessageBox::StandardButton result = QMessageBox::warning(nullptr, tr("Unsaved changes"), tr("You have unsaved changes, what will you do?"), QMessageBox::Save|QMessageBox::Cancel|QMessageBox::Ignore);
-			switch(result)
-			{
-				case QMessageBox::Cancel:
-					return;
-				case QMessageBox::Ignore:
-					break;
-				case QMessageBox::Save:
-					triggerSaveMarkersDefault();
-					break;
-				default:
-					qDebug("OctDataManager::openFile: unexpected StandardButton %d", result);
-					return;
-			}
-		}
+		if(!checkAndAskSaveBeforContinue())
+			return;
 	}
 
 	loadFileSignal(true);

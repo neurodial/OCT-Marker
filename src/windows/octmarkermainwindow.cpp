@@ -897,6 +897,8 @@ void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
 	try
 	{
 		OctDataManager::getInstance().saveMarkersDefault();
+		if(!OctDataManager::getInstance().checkAndAskSaveBeforContinue())
+			return e->ignore();
 	}
 	catch(boost::exception& e)
 	{

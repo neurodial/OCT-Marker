@@ -45,6 +45,7 @@ public:
 	                                                                { return getMarkerTreeSeries(series); }
 	
 	void saveMarkersDefault();
+	bool checkAndAskSaveBeforContinue();
 
 private slots:
 	void loadOctDataThreadProgress(double frac)                     { emit(loadFileProgress(frac)); }
