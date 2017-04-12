@@ -75,18 +75,16 @@ bool ImportIntervalMarker::importBin(BScanIntervalMarker* markerManager, const I
 		const uint8_t* markerFieldIt = mat.ptr<uint8_t>(static_cast<int>(row));
 
 		int lastMarkerPos = 0;
-		IntervalMarker::Marker lastMarker = getMarker(*markerFieldIt, markerMap);
+		IntervalMarker::Marker lastMarker = getMarker(markerFieldIt[0], markerMap);
 		for(int col = 1; col < mat.cols; ++col)
 		{
-			const IntervalMarker::Marker actMarker = getMarker(*markerFieldIt, markerMap);
+			const IntervalMarker::Marker actMarker = getMarker(markerFieldIt[col], markerMap);
 			if(actMarker != lastMarker)
 			{
 				markerManager->setMarker(lastMarkerPos, col, lastMarker, row);
 				lastMarkerPos = col;
 				lastMarker = actMarker;
 			}
-
-			++markerFieldIt;
 		}
 		markerManager->setMarker(lastMarkerPos, mat.cols, lastMarker, row);
 	}
