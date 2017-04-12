@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <QFileDialog>
+#include <QSlider>
 
 namespace
 {
@@ -24,6 +25,18 @@ namespace
 		QPixmap pixmap(15, 15);
 		pixmap.fill(color);
 		return QIcon(pixmap);
+	}
+
+	QSlider* getTransparencySlider(BScanIntervalMarker* parent)
+	{
+		QSlider* slider = new QSlider;
+		slider->setMaximum(255);
+		slider->setValue(parent->getTransparency());
+		slider->setOrientation(Qt::Horizontal);
+
+		BscanMarkerBase::connect(slider, &QSlider::valueChanged, parent, &BScanIntervalMarker::setTransparency);
+
+		return slider;
 	}
 }
 
@@ -42,6 +55,7 @@ WGIntervalMarker::WGIntervalMarker(BScanIntervalMarker* parent)
 	QVBoxLayout* layout = new QVBoxLayout();
 	layout->addWidget(createMarkerToolButtons());
 	layout->addWidget(toolboxCollections);
+	layout->addWidget(getTransparencySlider(parent));
 	setLayout(layout);
 
 	connect(toolboxCollections, &QToolBox::currentChanged, this, &WGIntervalMarker::changeIntervalCollection);

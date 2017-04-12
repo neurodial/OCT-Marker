@@ -318,9 +318,9 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 			               , static_cast<int>((itv.upper()-itv.lower())*scaleFactor + 0.5)
 			               , widget->height()
 			               , QColor(marker.getRed()
-			               , marker.getGreen()
-			               , marker.getBlue()
-			               , 60));
+			                      , marker.getGreen()
+			                      , marker.getBlue()
+			                      , transparency));
 		}
 	}
 	

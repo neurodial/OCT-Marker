@@ -89,12 +89,16 @@ public:
 
 	bool importMarkerFromBin(const std::string& filename);
 
+	uint8_t getTransparency() const                                 { return transparency; }
+
 public slots:
 	bool setMarkerCollection(const std::string& internalName);
 
 	virtual void chooseMarkerID(int id);
 	virtual void chooseMethodID(int id)                             { markerMethod = static_cast<Method>(id); markerMethodChanged(id); }
 	virtual void chooseMethodID(Method id)                          { markerMethod = id; markerMethodChanged(static_cast<int>(id)); }
+
+	virtual void setTransparency(int value)                         { if(value != transparency) {transparency = static_cast<uint8_t>(value); requestUpdate();} }
 
 
 signals:
@@ -115,6 +119,7 @@ private:
 	
 	Marker           actMarker;
 	bool             stateChangedSinceLastSave = false;
+	uint8_t          transparency = 60;
 
 	QWidget* widgetPtr2WGIntevalMarker = nullptr;
 
