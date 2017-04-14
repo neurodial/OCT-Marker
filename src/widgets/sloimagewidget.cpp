@@ -89,17 +89,17 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	painter.fillRect(25, 0, 20, height(), brush);
 */
 
-	QPen normalBscan;
-	QPen activBscan;
+	QPen normalBscanPen;
+	QPen activBscanPen;
 
-	normalBscan.setWidth(2);
-	normalBscan.setColor(QColor(0,0,0));
+	normalBscanPen.setWidth(2);
+	normalBscanPen.setColor(QColor(0,0,0));
 
 
-	activBscan.setWidth(2);
-	activBscan.setColor(QColor(255,0,0));
+	activBscanPen.setWidth(2);
+	activBscanPen.setColor(QColor(255,0,0));
 
-	int activBScan                          = markerManger.getActBScan();
+
 	const OctData::Series* series           = OctDataManager::getInstance().getSeries();
 	if(!series)
 		return;
@@ -114,6 +114,10 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
 	const std::size_t numBScans = bscans.size();
+
+	int activBScan                          = markerManger.getActBScan();
+	if(numBScans <= 1)
+		activBScan = -1;
 
 	if(drawBScans)
 	{
@@ -134,14 +138,14 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 
 			if(!drawOnylActBScan)
 			{
-				painter.setPen(normalBscan);
+				painter.setPen(normalBscanPen);
 				paintBScan(painter, *bscan, factor, shift, transform, bscanCounter, true);
 			}
 		}
 
-		if(actBScan && numBScans > 1)
+		if(actBScan)
 		{
-			painter.setPen(activBscan);
+			painter.setPen(activBscanPen);
 			paintBScan(painter, *actBScan, factor, shift, transform, -1, false);
 		}
 	}
@@ -186,7 +190,7 @@ void SLOImageWidget::paintBScanCircle(QPainter& painter, const OctData::BScan& b
 	{
 		BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 		if(actMarker)
-			actMarker->drawBScanSLOCircle(painter, bscanNr, start_px, center_px, this);
+			actMarker->drawBScanSLOCircle(painter, bscanNr, start_px, center_px, bscan.getClockwiseRot(), this);
 	}
 }
 

@@ -1,6 +1,15 @@
 #include "bscanintervalmarker.h"
 
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+// for mingw
+#ifndef M_PI
+	#define M_PI 3.1415926535897932384626433832795
+#endif
+
+
 #include <QIcon>
 #include <QColor>
 #include <QPixmap>
@@ -391,7 +400,7 @@ void BScanIntervalMarker::drawBScanSLOLine(QPainter& painter, int bscanNr, const
 	}
 }
 
-void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, int bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& center_px, SLOImageWidget*) const
+void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, int bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& center_px, bool clockwise, SLOImageWidget*) const
 {
 	if(bscanNr < 0 || bscanNr >= static_cast<int>(getMarkerMapSize()))
 		return;
@@ -402,7 +411,12 @@ void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, int bscanNr, con
 
 
 	double radius = start_px.abs(center_px);
+	double ratio  = start_px.getXf() - center_px.getXf();
+	double nullAngle = acos( ratio/radius )/M_PI/2;
 
+	painter.drawLine(QPointF(start_px.getXf(), start_px.getYf()), QPointF(center_px.getXf(), center_px.getYf()));
+
+	const int rotationFactor = clockwise?-1:1;
 
 	for(const MarkerMap::interval_mapping_type pair : getMarkers(static_cast<std::size_t>(bscanNr)))
 	{
@@ -413,17 +427,12 @@ void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, int bscanNr, con
 
 			double f1 = static_cast<double>(itv.lower())/bscanWidth;
 			double f2 = static_cast<double>(itv.upper())/bscanWidth;
-//
-// 			const OctData::CoordSLOpx p1 = start_px*(1.-f1) + center_px*f1;
-// 			const OctData::CoordSLOpx p2 = start_px*(1.-f2) + center_px*f2;
-
 
 			pen.setColor(QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
 			painter.setPen(pen);
-			// TODO: handle start angle (start_px)
 			QRectF rectangle(center_px.getX()-radius, center_px.getY()-radius, radius*2, radius*2);
-			int startAngle = -static_cast<int>( f1    *360*16);
-			int spanAngle  = -static_cast<int>((f2-f1)*360*16);
+			int startAngle = static_cast<int>((f1+nullAngle)*360*16)*rotationFactor;
+			int spanAngle  = static_cast<int>((f2-f1       )*360*16)*rotationFactor;
 
 			painter.drawArc(rectangle, startAngle, spanAngle);
 
