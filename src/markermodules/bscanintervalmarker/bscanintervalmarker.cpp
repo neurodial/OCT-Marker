@@ -391,6 +391,48 @@ void BScanIntervalMarker::drawBScanSLOLine(QPainter& painter, int bscanNr, const
 	}
 }
 
+void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, int bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& center_px, SLOImageWidget*) const
+{
+	if(bscanNr < 0 || bscanNr >= static_cast<int>(getMarkerMapSize()))
+		return;
+
+	double bscanWidth = getBScanWidth();
+	QPen pen;
+	pen.setWidth(3);
+
+
+	double radius = start_px.abs(center_px);
+
+
+	for(const MarkerMap::interval_mapping_type pair : getMarkers(static_cast<std::size_t>(bscanNr)))
+	{
+		IntervalMarker::Marker marker = pair.second;
+		if(marker.isDefined())
+		{
+			boost::icl::discrete_interval<int> itv  = pair.first;
+
+			double f1 = static_cast<double>(itv.lower())/bscanWidth;
+			double f2 = static_cast<double>(itv.upper())/bscanWidth;
+//
+// 			const OctData::CoordSLOpx p1 = start_px*(1.-f1) + center_px*f1;
+// 			const OctData::CoordSLOpx p2 = start_px*(1.-f2) + center_px*f2;
+
+
+			pen.setColor(QColor(marker.getRed(), marker.getGreen(), marker.getBlue(), 255));
+			painter.setPen(pen);
+			// TODO: handle start angle (start_px)
+			QRectF rectangle(center_px.getX()-radius, center_px.getY()-radius, radius*2, radius*2);
+			int startAngle = -static_cast<int>( f1    *360*16);
+			int spanAngle  = -static_cast<int>((f2-f1)*360*16);
+
+			painter.drawArc(rectangle, startAngle, spanAngle);
+
+
+		}
+	}
+}
+
+
 
 void BScanIntervalMarker::resetMarkers(const OctData::Series* series)
 {

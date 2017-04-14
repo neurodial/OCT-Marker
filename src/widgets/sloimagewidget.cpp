@@ -113,6 +113,8 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	const OctData::CoordTransform& transform = sloImage.getTransform();
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
+	const std::size_t numBScans = bscans.size();
+
 	if(drawBScans)
 	{
 		int bscanCounter = -1;
@@ -137,7 +139,7 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 			}
 		}
 
-		if(actBScan)
+		if(actBScan && numBScans > 1)
 		{
 			painter.setPen(activBscan);
 			paintBScan(painter, *actBScan, factor, shift, transform, -1, false);
@@ -150,14 +152,7 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker)
 {
 	if(bscan.getCenter())
-	{
-		const OctData::CoordSLOpx&  start_px = (transform * bscan.getStart() ) * factor + shift;
-		const OctData::CoordSLOpx& center_px = (transform * bscan.getCenter()) * factor + shift;
-
-		double radius = center_px.abs(start_px);
-
-		painter.drawEllipse(QPointF(center_px.getXf(), center_px.getYf()), radius, radius);
-	}
+		paintBScanCircle(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
 	else
 		paintBScanLine(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
 }
@@ -175,6 +170,23 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bsc
 		BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 		if(actMarker)
 			actMarker->drawBScanSLOLine(painter, bscanNr, start_px, end_px, this);
+	}
+}
+
+void SLOImageWidget::paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker)
+{
+	const OctData::CoordSLOpx&  start_px = (transform * bscan.getStart() ) * factor + shift;
+	const OctData::CoordSLOpx& center_px = (transform * bscan.getCenter()) * factor + shift;
+
+	double radius = center_px.abs(start_px);
+
+	painter.drawEllipse(QPointF(center_px.getXf(), center_px.getYf()), radius, radius);
+
+	if(paintMarker)
+	{
+		BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
+		if(actMarker)
+			actMarker->drawBScanSLOCircle(painter, bscanNr, start_px, center_px, this);
 	}
 }
 
