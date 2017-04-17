@@ -414,8 +414,6 @@ void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, int bscanNr, con
 	double ratio  = start_px.getXf() - center_px.getXf();
 	double nullAngle = acos( ratio/radius )/M_PI/2;
 
-	painter.drawLine(QPointF(start_px.getXf(), start_px.getYf()), QPointF(center_px.getXf(), center_px.getYf()));
-
 	const int rotationFactor = clockwise?-1:1;
 
 	for(const MarkerMap::interval_mapping_type pair : getMarkers(static_cast<std::size_t>(bscanNr)))
