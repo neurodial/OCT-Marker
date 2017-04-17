@@ -99,7 +99,7 @@ public slots:
 	virtual void chooseMethodID(int id)                             { markerMethod = static_cast<Method>(id); markerMethodChanged(id); }
 	virtual void chooseMethodID(Method id)                          { markerMethod = id; markerMethodChanged(static_cast<int>(id)); }
 
-	virtual void setTransparency(int value)                         { if(value != transparency) {transparency = static_cast<uint8_t>(value); requestUpdate();} }
+	virtual void setTransparency(int value)                         { if(value != transparency) {transparency = static_cast<uint8_t>(value); requestFullUpdate();} }
 
 
 signals:

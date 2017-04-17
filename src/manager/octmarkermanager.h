@@ -50,8 +50,10 @@ private:
 	SloMarkerBase* actSloMarker = nullptr;
 	int actSloMarkerId = -1;
 	bool stateChangedSinceLastSave = false;
+	bool singelBScanScan = false;
 
 	bool hasActMarkerChanged() const;
+
 
 private slots:
 	virtual void saveMarkerStateSlot(const OctData::Series* series);
@@ -59,6 +61,8 @@ private slots:
 	virtual void reloadMarkerStateSlot()                            { loadMarkerStateSlot(series); }
 
 	virtual void udateFromMarkerModul();
+
+	void handleSloRedrawAfterMarkerChange();
 
 public slots:
 	virtual void chooseBScan(int bscan);

@@ -76,7 +76,8 @@ public:
 	std::size_t getActBScanNr() const;
 signals:
 	void enabledToolbar(bool b);
-	void requestUpdate();
+	void requestFullUpdate();
+	void sloViewHasChanged();
 	
 	
 protected:

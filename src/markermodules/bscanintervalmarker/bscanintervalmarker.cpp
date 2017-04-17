@@ -227,6 +227,7 @@ void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, std::siz
 
 	collection->second.markers[bscan].set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
 	stateChangedSinceLastSave = true;
+	sloViewHasChanged();
 }
 
 
@@ -250,7 +251,8 @@ void BScanIntervalMarker::fillMarker(int x, const Marker& type)
 	{
 		map.set(std::make_pair(boost::icl::discrete_interval<int>::closed(intervall.lower(), intervall.upper()), type));
 		stateChangedSinceLastSave = true;
-		requestUpdate();
+		requestFullUpdate();
+// 		sloViewHasChanged(); // handled by requestFullUpdate
 	}
 }
 
@@ -521,7 +523,7 @@ bool BScanIntervalMarker::setMarkerCollection(const std::string& internalName)
 	{
 		actCollection = it;
 		markerCollectionChanged(internalName);
-		requestUpdate();
+		requestFullUpdate();
 		return true;
 	}
 	return false;
@@ -583,7 +585,7 @@ bool BScanIntervalMarker::importMarkerFromBin(const std::string& filename)
 
 	bool result = ImportIntervalMarker::importBin(this, *markerCollection, filename);
 	if(result)
-		requestUpdate();
+		requestFullUpdate();
 
 	return result;
 }

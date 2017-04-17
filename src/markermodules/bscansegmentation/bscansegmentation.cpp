@@ -404,7 +404,7 @@ void BScanSegmentation::dilateBScan()
 	int iterations = 1;
 	cv::dilate(*actMat, *actMat, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
 
-	requestUpdate();
+	requestFullUpdate();
 }
 
 void BScanSegmentation::erodeBScan()
@@ -416,7 +416,7 @@ void BScanSegmentation::erodeBScan()
 	int iterations = 1;
 	cv::erode(*actMat, *actMat, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
 
-	requestUpdate();
+	requestFullUpdate();
 }
 
 void BScanSegmentation::opencloseBScan()
@@ -427,7 +427,7 @@ void BScanSegmentation::opencloseBScan()
 
 	BScanSegAlgorithm::openClose(*actMat);
 
-	requestUpdate();
+	requestFullUpdate();
 }
 
 
@@ -439,7 +439,7 @@ void BScanSegmentation::medianBScan()
 
 	medianBlur(*actMat, *actMat, 3);
 
-	requestUpdate();
+	requestFullUpdate();
 }
 
 void BScanSegmentation::removeUnconectedAreas()
@@ -448,7 +448,7 @@ void BScanSegmentation::removeUnconectedAreas()
 		return;
 
 	if(BScanSegAlgorithm::removeUnconectedAreas(*actMat))
-		requestUpdate();
+		requestFullUpdate();
 }
 
 void BScanSegmentation::extendLeftRightSpace()
@@ -457,7 +457,7 @@ void BScanSegmentation::extendLeftRightSpace()
 		return;
 
 	if(BScanSegAlgorithm::extendLeftRightSpace(*actMat))
-		requestUpdate();
+		requestFullUpdate();
 }
 
 void BScanSegmentation::seriesRemoveUnconectedAreas()
@@ -472,7 +472,7 @@ void BScanSegmentation::seriesRemoveUnconectedAreas()
 		}
 	}
 	setActMat(getActBScanNr());
-	requestUpdate();
+	requestFullUpdate();
 }
 
 void BScanSegmentation::seriesExtendLeftRightSpace()
@@ -487,7 +487,7 @@ void BScanSegmentation::seriesExtendLeftRightSpace()
 		}
 	}
 	setActMat(getActBScanNr());
-	requestUpdate();
+	requestFullUpdate();
 }
 
 
@@ -563,7 +563,7 @@ void BScanSegmentation::loadState(boost::property_tree::ptree& markerTree)
 void BScanSegmentation::updateCursor()
 {
 	if(inWidget)
-		requestUpdate();
+		requestFullUpdate();
 }
 
 
@@ -588,7 +588,7 @@ void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::Th
 
 	BScanSegAlgorithm::initFromThresholdDirection(image, *actMat, data);
 
-	requestUpdate();
+	requestFullUpdate();
 }
 
 
@@ -609,7 +609,7 @@ void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::T
 		++bscanCount;
 	}
 	setActMat(getActBScanNr());
-	requestUpdate();
+	requestFullUpdate();
 }
 
 void BScanSegmentation::initBScanFromSegline()
@@ -628,7 +628,7 @@ void BScanSegmentation::initBScanFromSegline()
 
 	BScanSegAlgorithm::initFromSegline(*bscan, *actMat);
 
-	requestUpdate();
+	requestFullUpdate();
 }
 
 void BScanSegmentation::initSeriesFromSegline()
@@ -651,7 +651,7 @@ void BScanSegmentation::initSeriesFromSegline()
 		++bscanCount;
 	}
 	setActMat(getActBScanNr());
-	requestUpdate();
+	requestFullUpdate();
 }
 
 
@@ -689,7 +689,7 @@ void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod meth
 void BScanSegmentation::setSeglinePaintSize(int size)
 {
 	seglinePaintSize = size;
-	requestUpdate();
+	requestFullUpdate();
 }
 
 

@@ -148,7 +148,7 @@ public slots:
 
 	virtual void setSeglinePaintSize(int size);
 
-	void removeSeriesSegmentation()                                 { createSegments(); requestUpdate(); }
+	void removeSeriesSegmentation()                                 { createSegments(); requestFullUpdate(); }
 	void initSeriesFromSegline();
 	void initBScanFromSegline();
 

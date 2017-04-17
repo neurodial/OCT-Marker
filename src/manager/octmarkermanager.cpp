@@ -47,7 +47,8 @@ OctMarkerManager::OctMarkerManager()
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
 		obj->activate(false);
-		connect(obj, &BscanMarkerBase::requestUpdate, this, &OctMarkerManager::udateFromMarkerModul);
+		connect(obj, &BscanMarkerBase::requestFullUpdate, this, &OctMarkerManager::udateFromMarkerModul            );
+		connect(obj, &BscanMarkerBase::sloViewHasChanged, this, &OctMarkerManager::handleSloRedrawAfterMarkerChange);
 	}
 
 
@@ -115,6 +116,8 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->newSeriesLoaded(s, subtree);
 	}
+
+	singelBScanScan = (series->bscanCount() == 1);
 
 	emit(newBScanShowed(series->getBScan(actBScan)));
 	emit(newSeriesShowed(s));
@@ -246,3 +249,10 @@ bool OctMarkerManager::hasActMarkerChanged() const
 	if(actSloMarker)   result |= actSloMarker  ->hasChangedSinceLastSave();
 	return result;
 }
+
+void OctMarkerManager::handleSloRedrawAfterMarkerChange()
+{
+	if(singelBScanScan)
+		 emit(bscanChanged(actBScan));
+}
+
