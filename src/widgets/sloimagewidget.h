@@ -36,6 +36,8 @@ class SLOImageWidget : public CVImageWidget
 	void createIntervallColors();
 	void deleteIntervallColors();
 
+	int getBScanNearPos(int x, int y, double tol);
+
 	void updateGraphicsViewSize();
 public:
 	SLOImageWidget();
@@ -52,6 +54,7 @@ public slots:
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
+	virtual void mousePressEvent(QMouseEvent*) override;
 
 	void paintBScan      (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
 	void paintBScanLine  (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);

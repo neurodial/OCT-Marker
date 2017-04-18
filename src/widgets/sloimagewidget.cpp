@@ -20,6 +20,8 @@
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
 
+#include <cmath>
+#include <limits>
 
 namespace
 {
@@ -103,7 +105,7 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	
 	const OctData::Series::BScanList bscans = series->getBScans();
 
-	const OctData::SloImage& sloImage = series->getSloImage();
+	const OctData::SloImage&       sloImage  = series->getSloImage();
 
 	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
 	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
@@ -268,4 +270,92 @@ void SLOImageWidget::sloViewChanged()
 		repaint();
 }
 
+
+namespace
+{
+	double calcAbsBScanLine(const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, const OctData::CoordSLOpx& clickPos)
+	{
+		const OctData::CoordSLOpx& start_px = (transform * bscan.getStart())*factor + shift;
+		const OctData::CoordSLOpx&   end_px = (transform * bscan.getEnd()  )*factor + shift;
+
+
+		const OctData::CoordSLOpx geradenvektor = end_px  -start_px;
+		const OctData::CoordSLOpx kraftvektor   = clickPos-start_px;
+		double alpha = (kraftvektor*geradenvektor) / geradenvektor.normquadrat();
+		if(alpha>0 && alpha<1)
+		{
+			return (geradenvektor*alpha).abs(kraftvektor);
+		}
+		return std::numeric_limits<double>::infinity();
+	}
+
+	double calcAbsBScanCircle(const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, const OctData::CoordSLOpx& clickPos)
+	{
+		const OctData::CoordSLOpx&  start_px = (transform * bscan.getStart() ) * factor + shift;
+		const OctData::CoordSLOpx& center_px = (transform * bscan.getCenter()) * factor + shift;
+
+		double radiusCircle = center_px.abs(start_px);
+		double distCenter   = center_px.abs(clickPos);
+
+		return std::abs(distCenter - radiusCircle);
+	}
+
+
+	double calcAbsBScan(const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, const OctData::CoordSLOpx& clickPos)
+	{
+		if(bscan.getCenter())
+			return calcAbsBScanCircle(bscan, factor, shift, transform, clickPos);
+		else
+			return calcAbsBScanLine(bscan, factor, shift, transform, clickPos);
+	}
+}
+
+
+
+int SLOImageWidget::getBScanNearPos(int x, int y, double tol)
+{
+	const OctData::Series* series            = OctDataManager::getInstance().getSeries();
+	if(!series)
+		return -1;
+	const OctData::Series::BScanList bscans  = series->getBScans();
+
+	const OctData::SloImage&       sloImage  = series->getSloImage();
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::CoordTransform& transform = sloImage.getTransform();
+
+	const OctData::CoordSLOpx      clickPos(x,y);
+
+	int    nearstScan = 0;
+	double nearstDist = std::numeric_limits<double>::infinity();
+
+	int bscanCounter = 0;
+	for(const OctData::BScan* bscan : bscans)
+	{
+		if(bscan)
+		{
+			double dist = calcAbsBScan(*bscan, factor, shift, transform, clickPos);
+			if(dist < nearstDist)
+			{
+				nearstScan = bscanCounter;
+				nearstDist = dist;
+			}
+		}
+		++bscanCounter;
+	}
+
+	if(nearstDist < tol)
+		return nearstScan;
+	return -1;
+}
+
+void SLOImageWidget::mousePressEvent(QMouseEvent* e)
+{
+	int bscan = getBScanNearPos(e->x(), e->y(), 5);
+	if(bscan >= 0)
+	{
+		e->accept();
+		OctMarkerManager::getInstance().chooseBScan(bscan);
+	}
+}
 
