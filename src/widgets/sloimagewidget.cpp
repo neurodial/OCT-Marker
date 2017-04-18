@@ -50,6 +50,7 @@ SLOImageWidget::SLOImageWidget()
 	OctDataManager& octDataManager = OctDataManager::getInstance();
 	connect(&octDataManager, &OctDataManager::seriesChanged     , this, &SLOImageWidget::reladSLOImage   );
 	connect(&markerManger  , &OctMarkerManager::bscanChanged    , this, &SLOImageWidget::bscanChanged    );
+	connect(&markerManger  , &OctMarkerManager::sloViewChanged  , this, &SLOImageWidget::sloViewChanged  );
 	connect(&markerManger  , &OctMarkerManager::sloMarkerChanged, this, &SLOImageWidget::sloMarkerChanged);
 
 	setMinimumSize(150,150);
@@ -80,14 +81,10 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 {
 	CVImageWidget::paintEvent(event);
 
+	if(!drawBScans)
+		return;
 
 	QPainter painter(this);
-/*
-	QBrush brush(QColor(255,0,0,80));
-
-	// painter.setBrush(brush);
-	painter.fillRect(25, 0, 20, height(), brush);
-*/
 
 	QPen normalBscanPen;
 	QPen activBscanPen;
@@ -111,49 +108,54 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
 	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
 	const OctData::CoordTransform& transform = sloImage.getTransform();
+	std::size_t activBScan                   = static_cast<std::size_t>(markerManger.getActBScan());
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
-	const std::size_t numBScans = bscans.size();
 
-	int activBScan                          = markerManger.getActBScan();
-	if(numBScans <= 1)
-		activBScan = -1;
-
-	if(drawBScans)
+	if(singelBScanScan || drawOnylActBScan)
 	{
-		int bscanCounter = -1;
+		if(bscans.size() > activBScan)
+		{
+			const OctData::BScan* actBScan = bscans.at(static_cast<std::size_t>(activBScan));
+			if(actBScan)
+			{
+				painter.setPen(normalBscanPen);
+				paintBScan(painter, *actBScan, factor, shift, transform, activBScan, true);
+			}
+		}
+	}
+	else
+	{
+		std::size_t bscanCounter = 0;
 		const OctData::BScan* actBScan = nullptr;
 		for(const OctData::BScan* bscan : bscans)
 		{
+			if(bscan)
+			{
+				if(bscanCounter == activBScan)
+				{
+					actBScan = bscan;
+				}
+				else
+				{
+					painter.setPen(normalBscanPen);
+					paintBScan(painter, *bscan, factor, shift, transform, bscanCounter, true);
+				}
+			}
 			++bscanCounter;
-
-			if(!bscan)
-				continue;
-
-			if(bscanCounter == activBScan)
-			{
-				actBScan = bscan;
-				continue;
-			}
-
-			if(!drawOnylActBScan)
-			{
-				painter.setPen(normalBscanPen);
-				paintBScan(painter, *bscan, factor, shift, transform, bscanCounter, true);
-			}
 		}
 
 		if(actBScan)
 		{
 			painter.setPen(activBscanPen);
-			paintBScan(painter, *actBScan, factor, shift, transform, -1, false);
+			paintBScan(painter, *actBScan, factor, shift, transform, 0, false);
 		}
 	}
 
 	painter.end();
 }
 
-void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker)
 {
 	if(bscan.getCenter())
 		paintBScanCircle(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
@@ -162,7 +164,7 @@ void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, 
 }
 
 
-void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker)
 {
 	const OctData::CoordSLOpx& start_px = (transform * bscan.getStart())*factor + shift;
 	const OctData::CoordSLOpx&   end_px = (transform * bscan.getEnd()  )*factor + shift;
@@ -177,7 +179,7 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bsc
 	}
 }
 
-void SLOImageWidget::paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker)
 {
 	const OctData::CoordSLOpx&  start_px = (transform * bscan.getStart() ) * factor + shift;
 	const OctData::CoordSLOpx& center_px = (transform * bscan.getCenter()) * factor + shift;
@@ -203,6 +205,9 @@ void SLOImageWidget::reladSLOImage()
 	const OctData::SloImage& sloImage = series->getSloImage();
 	//if(sloImage)
 		showImage(sloImage.getImage());
+
+
+	singelBScanScan = (series->bscanCount() == 1);
 
 	updateGraphicsViewSize();
 // 	gv->setSceneRect(0, 0, imageWidth(), imageHight());
@@ -256,4 +261,11 @@ void SLOImageWidget::sloMarkerChanged(SloMarkerBase* marker)
 	gv->setVisible(scene != nullptr);
 	updateGraphicsViewSize();
 }
+
+void SLOImageWidget::sloViewChanged()
+{
+	if(singelBScanScan || drawOnylActBScan)
+		repaint();
+}
+
 

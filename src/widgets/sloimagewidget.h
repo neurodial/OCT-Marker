@@ -31,6 +31,7 @@ class SLOImageWidget : public CVImageWidget
 	// std::vector<QColor*> intervallColors;
 	bool drawBScans = true;
 	bool drawOnylActBScan = true;
+	bool singelBScanScan  = false;
 
 	void createIntervallColors();
 	void deleteIntervallColors();
@@ -52,14 +53,15 @@ public slots:
 protected:
 	void paintEvent(QPaintEvent* event) override;
 
-	void paintBScan      (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker);
-	void paintBScanLine  (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker);
-	void paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, int bscanNr, bool paintMarker);
+	void paintBScan      (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
+	void paintBScanLine  (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
+	void paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
 
 private slots:
 	void reladSLOImage();
 	void bscanChanged(int);
 	void sloMarkerChanged(SloMarkerBase* marker);
+	void sloViewChanged  ();
 };
 
 #endif // SLOIMAGE_H

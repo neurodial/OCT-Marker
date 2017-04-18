@@ -50,7 +50,6 @@ private:
 	SloMarkerBase* actSloMarker = nullptr;
 	int actSloMarkerId = -1;
 	bool stateChangedSinceLastSave = false;
-	bool singelBScanScan = false;
 
 	bool hasActMarkerChanged() const;
 
@@ -78,6 +77,7 @@ public slots:
 
 signals:
 	void bscanChanged      (int bscan);
+	void sloViewChanged    ();
 	void newSeriesShowed   (const OctData::Series* series);
 	void newBScanShowed    (const OctData::BScan * series);
 	void bscanMarkerChanged(BscanMarkerBase* marker);

@@ -372,16 +372,16 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 	}
 }
 
-void BScanIntervalMarker::drawBScanSLOLine(QPainter& painter, int bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& end_px, SLOImageWidget*) const
+void BScanIntervalMarker::drawBScanSLOLine(QPainter& painter, std::size_t bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& end_px, SLOImageWidget*) const
 {
-	if(bscanNr < 0 || bscanNr >= static_cast<int>(getMarkerMapSize()))
+	if(bscanNr >= getMarkerMapSize())
 		return;
 
 	double bscanWidth = getBScanWidth();
 	QPen pen;
 	pen.setWidth(3);
 
-	for(const MarkerMap::interval_mapping_type pair : getMarkers(static_cast<std::size_t>(bscanNr)))
+	for(const MarkerMap::interval_mapping_type pair : getMarkers(bscanNr))
 	{
 		IntervalMarker::Marker marker = pair.second;
 		if(marker.isDefined())
@@ -402,9 +402,9 @@ void BScanIntervalMarker::drawBScanSLOLine(QPainter& painter, int bscanNr, const
 	}
 }
 
-void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, int bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& center_px, bool clockwise, SLOImageWidget*) const
+void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, std::size_t bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& center_px, bool clockwise, SLOImageWidget*) const
 {
-	if(bscanNr < 0 || bscanNr >= static_cast<int>(getMarkerMapSize()))
+	if(bscanNr >= getMarkerMapSize())
 		return;
 
 	double bscanWidth = getBScanWidth();
@@ -418,7 +418,7 @@ void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, int bscanNr, con
 
 	const int rotationFactor = clockwise?-1:1;
 
-	for(const MarkerMap::interval_mapping_type pair : getMarkers(static_cast<std::size_t>(bscanNr)))
+	for(const MarkerMap::interval_mapping_type pair : getMarkers(bscanNr))
 	{
 		IntervalMarker::Marker marker = pair.second;
 		if(marker.isDefined())

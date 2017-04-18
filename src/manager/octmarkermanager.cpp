@@ -28,6 +28,8 @@
 
 #include <boost/property_tree/ptree.hpp>
 
+#include <helper/signalblocker.h>
+
 namespace bpt = boost::property_tree;
 
 
@@ -105,6 +107,7 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
+		SignalBlocker sigBlock(obj);
 		const QString& markerId = obj->getMarkerId();
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->newSeriesLoaded(s, subtree);
@@ -116,8 +119,6 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->newSeriesLoaded(s, subtree);
 	}
-
-	singelBScanScan = (series->bscanCount() == 1);
 
 	emit(newBScanShowed(series->getBScan(actBScan)));
 	emit(newSeriesShowed(s));
@@ -211,6 +212,7 @@ void OctMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 	if(series != s)
 		return;
 
+
 	bpt::ptree* markerTree = OctDataManager::getInstance().getMarkerTree(s);
 
 	if(!markerTree)
@@ -219,6 +221,8 @@ void OctMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
+		SignalBlocker sigBlock(obj);
+
 		const QString& markerId = obj->getMarkerId();
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->loadState(subtree);
@@ -252,7 +256,6 @@ bool OctMarkerManager::hasActMarkerChanged() const
 
 void OctMarkerManager::handleSloRedrawAfterMarkerChange()
 {
-	if(singelBScanScan)
-		 emit(bscanChanged(actBScan));
+	emit(sloViewChanged());
 }
 
