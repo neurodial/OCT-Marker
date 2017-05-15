@@ -46,9 +46,9 @@ const IntervalMarker::Marker& IntervalMarker::getMarkerFromString(const std::str
 
 const IntervalMarker::Marker& IntervalMarker::getMarkerFromID(int id) const
 {
-	if(id>=0 && id < static_cast<int>(markerList.size()))
-		return markerList[id];
-	return markerList[0]; // TODO: besserer Rückgabewert
+	if(id>=0 && id < static_cast<int>(size()))
+		return markerList[static_cast<std::size_t>(id)];
+	throw std::out_of_range("invalid marker id: IntervalMarker::getMarkerFromID");
 }
 
 void IntervalMarker::addMarker(const IntervalMarker::Marker& marker)

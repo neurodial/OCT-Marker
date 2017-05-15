@@ -287,7 +287,7 @@ bool BScanIntervalMarker::keyPressEvent(QKeyEvent* e ,BScanMarkerWidget*)
 	int key = e->key();
 	if(key >= Qt::Key_0 && key <= Qt::Key_9)
 	{
-		chooseMarkerID(key-Qt::Key_0);
+		return chooseMarkerID(key-Qt::Key_0);
 	}
 	else
 	{
@@ -536,17 +536,28 @@ BScanIntervalMarker::MarkerCollectionWork BScanIntervalMarker::getMarkerCollecti
 
 
 
-void BScanIntervalMarker::chooseMarkerID(int id)
+bool BScanIntervalMarker::chooseMarkerID(int id)
 {
 	if(actCollectionValid())
 	{
 		const IntervalMarker* markerCollection = actCollection->second.markerCollection;
 		if(!markerCollection)
-			return;
+			return false;
+		if(markerCollection->size() <= static_cast<std::size_t>(id) || id < 0)
+			return false;
 
-		actMarker = markerCollection->getMarkerFromID(id);
-		markerIdChanged(id);
+		try
+		{
+			actMarker = markerCollection->getMarkerFromID(id);
+			markerIdChanged(id);
+			return true;
+		}
+		catch(std::out_of_range& e)
+		{
+			std::cerr << "Exception in BScanIntervalMarker::chooseMarkerID(int id)\n" << e.what() << '\n';
+		}
 	}
+	return false;
 }
 
 const BScanIntervalMarker::MarkerMap& BScanIntervalMarker::getMarkers(std::size_t bscan) const
