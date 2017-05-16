@@ -21,6 +21,6 @@ void MouseCoordStatus::mouseLeaveImage()
 
 void MouseCoordStatus::mousePosInImage(int x, int y)
 {
-	setText(QString("%1 %2").arg(x).arg(y));
+	setText(QString("X: %1 Y: %2").arg(x, 4).arg(y, 4));
 }
 

@@ -15,11 +15,14 @@ class BScanMarkerWidget;
 class DWSloImage;
 class CScan;
 class ScrollAreaPan;
+class DWDebugOutput;
 
 
 class OCTMarkerMainWindow : public QMainWindow
 {
 	Q_OBJECT
+
+	static void messageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg);
 
 	void setupMenu();
 	void setupStatusBar();
@@ -27,9 +30,10 @@ class OCTMarkerMainWindow : public QMainWindow
 	void createMarkerToolbar();
 
 
-	QDockWidget*       dwSloImage                  = nullptr;
-	ScrollAreaPan*     bscanMarkerWidgetScrollArea = nullptr;
-	BScanMarkerWidget* bscanMarkerWidget           = nullptr;
+	QDockWidget*          dwSloImage                  = nullptr;
+	ScrollAreaPan*        bscanMarkerWidgetScrollArea = nullptr;
+	BScanMarkerWidget*    bscanMarkerWidget           = nullptr;
+	static DWDebugOutput* dwDebugOutput;
 
 
 	QSpinBox*     bscanChooser     = nullptr;

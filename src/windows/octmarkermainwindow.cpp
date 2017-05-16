@@ -58,6 +58,8 @@
 #include <widgets/dwimagecoloradjustments.h>
 
 
+DWDebugOutput* OCTMarkerMainWindow::dwDebugOutput = nullptr;
+
 
 
 OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
@@ -90,7 +92,8 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	addDockWidget(Qt::LeftDockWidgetArea, dwImageColorAdjustments);
 	bscanMarkerWidget->setImageFilter(dwImageColorAdjustments->getImageFilter());
 
-	DWDebugOutput* dwDebugOutput = new DWDebugOutput(this);
+	if(!dwDebugOutput)
+		dwDebugOutput = new DWDebugOutput(this);
 	dwDebugOutput->setObjectName("DWDebugOutput");
 	addDockWidget(Qt::RightDockWidgetArea, dwDebugOutput);
 
@@ -132,10 +135,19 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 		loadFile(filename);
 	else if(!ProgramOptions::loadOctdataAtStart().isEmpty())
 		loadFile(ProgramOptions::loadOctdataAtStart());
+
+
+	qInstallMessageHandler(OCTMarkerMainWindow::messageOutput);
 }
 
 OCTMarkerMainWindow::~OCTMarkerMainWindow()
 {
+}
+
+void OCTMarkerMainWindow::messageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
+{
+	if(dwDebugOutput)
+		dwDebugOutput->printMessages(type, context, msg);
 }
 
 

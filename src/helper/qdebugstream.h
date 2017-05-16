@@ -7,15 +7,17 @@
 
 #include <QTextEdit>
 
+#include <widgets/dwdebugoutput.h>
+
 class Q_DebugStream : public std::basic_streambuf<char>
 {
 public:
-	Q_DebugStream(std::ostream& stream, QTextEdit* text_edit, const QString& pretext)
+	Q_DebugStream(std::ostream& stream, DWDebugOutput* debug, const QString& pretext)
 	: m_stream(stream)
 	, pretext(pretext)
 	{
-		log_window = text_edit;
-		m_old_buf  = stream.rdbuf();
+		debugOutputObj = debug;
+		m_old_buf      = stream.rdbuf();
 		stream.rdbuf(this);
 
 		pretextEmpty = QString(pretext.length(), ' ');
@@ -25,7 +27,7 @@ public:
 	{
 	// output anything that is left
 		if(!m_string.empty())
-			log_window->append(m_string.c_str());
+			debugOutputObj->printMessage(m_string.c_str());
 
 		m_stream.rdbuf(m_old_buf);
 
@@ -50,7 +52,7 @@ protected:
 	{
 		if(v == '\n')
 		{
-			log_window->append(m_string.c_str());
+			debugOutputObj->printMessage(m_string.c_str());
 			m_string.erase(m_string.begin(), m_string.end());
 		}
 		else
@@ -64,8 +66,6 @@ protected:
 	{
 		m_string.append(p, p + n);
 
-		qDebug("%s", p);
-
 		int pos = 0;
 		while(pos != std::string::npos)
 		{
@@ -73,7 +73,7 @@ protected:
 			if(pos != std::string::npos)
 			{
 				std::string tmp(m_string.begin(), m_string.begin() + pos);
-				log_window->append(tmp.c_str());
+				debugOutputObj->printMessage(pretext + ": " + tmp.c_str());
 				m_string.erase(m_string.begin(), m_string.begin() + pos + 1);
 			}
 		}
@@ -84,7 +84,7 @@ protected:
 private:
 	std::ostream&   m_stream;
 	std::streambuf* m_old_buf;
-	QTextEdit*      log_window;
+	DWDebugOutput*  debugOutputObj;
 	QString         pretext;
 	QString         pretextEmpty;
 	std::string m_string;
