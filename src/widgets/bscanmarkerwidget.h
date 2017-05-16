@@ -39,6 +39,14 @@ class BScanMarkerWidget : public CVImageWidget
 	bool checkControlUsed(QMouseEvent* event);
 	bool checkControlUsed(QKeyEvent  * event);
 	bool checkControlUsed(bool modPressed);
+
+	void transformCoordWidget2Img(int xWidget, int yWidget, int& xImg, int& yImg)
+	{
+		double factor = getImageScaleFactor();
+		yImg = static_cast<int>(yWidget/factor + 0.5);
+		xImg = static_cast<int>(xWidget/factor + 0.5);
+	}
+
 public:
 	BScanMarkerWidget();
 
@@ -76,6 +84,9 @@ public slots:
 	
 signals:
 	void bscanChangeInkrement(int delta);
+	void mousePosInImage(int x, int y);
+	void mouseLeaveImage();
+
 };
 
 #endif // BSCANMARKERWIDGET_H

@@ -21,6 +21,7 @@
 #include <widgets/dwoctinformations.h>
 #include <widgets/dwmarkerwidgets.h>
 #include <widgets/scrollareapan.h>
+#include <widgets/mousecoordstatus.h>
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
@@ -454,6 +455,10 @@ void OCTMarkerMainWindow::setupStatusBar()
 	loadProgressBar->setVisible(false);
 
 	statusBar()->addPermanentWidget(loadProgressBar);
+
+	MouseCoordStatus* mouseStatus = new MouseCoordStatus(bscanMarkerWidget);
+	statusBar()->addPermanentWidget(mouseStatus);
+
 }
 
 
