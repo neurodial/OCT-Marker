@@ -19,7 +19,7 @@ class DWImageColorAdjustments : public QDockWidget
 
 public:
 
-	explicit DWImageColorAdjustments(QWidget *parent = nullptr);
+	explicit DWImageColorAdjustments(QWidget* parent = nullptr);
 	virtual ~DWImageColorAdjustments();
 
 	const FilterImage* getImageFilter() const;

@@ -22,6 +22,7 @@
 #include <widgets/dwmarkerwidgets.h>
 #include <widgets/scrollareapan.h>
 #include <widgets/mousecoordstatus.h>
+#include <widgets/dwdebugoutput.h>
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
@@ -88,6 +89,11 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	dwImageColorAdjustments->setObjectName("DWImageContrast");
 	addDockWidget(Qt::LeftDockWidgetArea, dwImageColorAdjustments);
 	bscanMarkerWidget->setImageFilter(dwImageColorAdjustments->getImageFilter());
+
+	DWDebugOutput* dwDebugOutput = new DWDebugOutput(this);
+	dwDebugOutput->setObjectName("DWDebugOutput");
+	addDockWidget(Qt::RightDockWidgetArea, dwDebugOutput);
+
 
 	WGOctDataTree* tree = new WGOctDataTree();
 	QDockWidget* treeDock = new QDockWidget(tr("Oct Data"), this);
