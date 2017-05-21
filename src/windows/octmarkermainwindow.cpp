@@ -187,7 +187,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* actionImportFolder = new QAction(this);
 	actionImportFolder->setText(tr("Add OCT scans from folder"));
-	actionImportFolder->setShortcut(Qt::CTRL | Qt::Key_O);
+	actionImportFolder->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_O);
 	actionImportFolder->setIcon(QIcon(":/icons/folder_add.png"));
 	connect(actionImportFolder, &QAction::triggered, this, &OCTMarkerMainWindow::showImportFromFolderDialog);
 	fileMenu->addAction(actionImportFolder);

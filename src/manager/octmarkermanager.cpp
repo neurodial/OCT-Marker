@@ -22,6 +22,7 @@
 #include <markermodules/slomarkerbase.h>
 #include <markermodules/bscanintervalmarker/bscanintervalmarker.h>
 #include <markermodules/bscansegmentation/bscansegmentation.h>
+#include <markermodules/bscanlayersegmentation/bscanlayersegmentation.h>
 #include <markermodules/sloobjects/sloobjectmarker.h>
 
 #include <helper/ptreehelper.h>
@@ -45,6 +46,7 @@ OctMarkerManager::OctMarkerManager()
 
 	bscanMarkerObj.push_back(new BScanSegmentation(this));
 	bscanMarkerObj.push_back(new BScanIntervalMarker(this));
+	bscanMarkerObj.push_back(new BScanLayerSegmentation(this));
 	
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{

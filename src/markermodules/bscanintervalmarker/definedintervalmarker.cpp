@@ -12,6 +12,14 @@ DefinedIntervalMarker::DefinedIntervalMarker()
 	intervallMarkerMap.emplace("signalQuality", signalQuality);
 
 
+	IntervalMarker segmentationQuality("segmentationQuality", tr("segmentation quality").toStdString());
+
+	segmentationQuality.addMarker(IntervalMarker::Marker("good"          , tr("good"             ).toStdString(),   0, 255,   0));
+// 	segmentationQuality.addMarker(IntervalMarker::Marker("mid"           , tr("middle"           ).toStdString(), 255, 255,   0));
+// 	segmentationQuality.addMarker(IntervalMarker::Marker("bad"           , tr("bad"              ).toStdString(), 255,   0,   0));
+
+	intervallMarkerMap.emplace("segmentationQuality", segmentationQuality);
+
 
 
 	IntervalMarker objectZones("objectZones", tr("object zones").toStdString());
