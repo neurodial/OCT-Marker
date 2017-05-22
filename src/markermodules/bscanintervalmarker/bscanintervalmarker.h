@@ -75,6 +75,9 @@ public:
 	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
 	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
 	
+	const IntervalMarker* getMarkersList(const MarkerCollectionWork& collection) const
+	                                                                { if(collection.actCollection == markersCollectionsData.end()) return nullptr; return collection.actCollection->second.markerCollection; }
+
 	const MarkerMap& getMarkers() const                             { return getMarkers(getActBScanNr()); }
 	const MarkerMap& getMarkers(std::size_t bscan) const;
 	const MarkerMap& getMarkers(const std::string& collection, std::size_t bscan) const;
@@ -87,6 +90,7 @@ public:
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree) override;
 
 	MarkerCollectionWork getMarkerCollection(const std::string& internalName);
+	MarkerCollectionWork getActMarkerCollection()                   { return MarkerCollectionWork(actCollection); }
 
 	bool importMarkerFromBin(const std::string& filename);
 
@@ -127,10 +131,6 @@ private:
 	Method markerMethod = Method::Paint;
 	std::vector<QAction*> markerMethodActions;
 
-
-// 	MarkersCollectionData* actCollection = nullptr;
-// 	std::vector<MarkerMap>* actMarkerMap = nullptr;
-// 	IntervalMarker* markerCollection = nullptr;
 
 	MarkerMap nullMarkerMap; // TODO
 

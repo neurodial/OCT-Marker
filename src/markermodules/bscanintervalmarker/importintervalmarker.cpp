@@ -20,74 +20,122 @@ namespace
 			return IntervalMarker::Marker();
 		return mapping[static_cast<std::size_t>(nr)];
 	}
+
+
+	bool parseMarkerCollection(const CppFW::CVMatTree& node, BScanIntervalMarker* markerManager, BScanIntervalMarker::MarkerCollectionWork& collectionSetterHelper)
+	{
+		const CppFW::CVMatTree* marker = node.getDirNodeOpt("marker");
+		const CppFW::CVMatTree* field  = node.getDirNodeOpt("field");
+
+		if(!marker || !field)
+			return false;
+
+		if(marker->type() != CppFW::CVMatTree::Type::List
+		|| field ->type() != CppFW::CVMatTree::Type::Mat )
+			return false;
+
+
+		const CppFW::CVMatTree::NodeList& markerNodeList = marker->getNodeList();
+		cv::Mat                           mat            = field->getMat();
+		if(mat.type() != cv::DataType<uint8_t>::type)
+			return false;
+
+		const IntervalMarker* markerCollection = markerManager->getMarkersList(collectionSetterHelper);
+
+		std::vector<IntervalMarker::Marker> markerMap(markerNodeList.size());
+
+		// create marker list
+		auto itMarkerMap = markerMap.begin();
+		for(const CppFW::CVMatTree* markerNode : markerNodeList)
+		{
+			if(markerNode->type() == CppFW::CVMatTree::Type::String)
+			{
+				try
+				{
+					IntervalMarker::Marker marker = markerCollection->getMarkerFromString(markerNode->getString());
+					*itMarkerMap = marker;
+				}
+				catch(const std::out_of_range& e)
+				{
+					std::cerr << e.what() << '\n';
+				}
+			}
+			++itMarkerMap;
+		}
+
+		// TODO: bscan & ascan größe prüfen
+
+		std::size_t numBScans = markerManager->getNumBScans();
+		if(static_cast<std::size_t>(mat.rows) != numBScans && static_cast<std::size_t>(mat.cols) == numBScans)
+			mat = mat.t();
+
+		std::size_t importBScans = std::min(numBScans, static_cast<std::size_t>(mat.rows));
+
+		for(std::size_t row = 0; row < importBScans; ++row)
+		{
+			const uint8_t* markerFieldIt = mat.ptr<uint8_t>(static_cast<int>(row));
+
+			int lastMarkerPos = 0;
+			IntervalMarker::Marker lastMarker = getMarker(markerFieldIt[0], markerMap);
+			for(int col = 1; col < mat.cols; ++col)
+			{
+				const IntervalMarker::Marker actMarker = getMarker(markerFieldIt[col], markerMap);
+				if(actMarker != lastMarker)
+				{
+					markerManager->setMarker(lastMarkerPos, col, lastMarker, row, collectionSetterHelper);
+					lastMarkerPos = col;
+					lastMarker = actMarker;
+				}
+			}
+			markerManager->setMarker(lastMarkerPos, mat.cols, lastMarker, row, collectionSetterHelper);
+		}
+
+		return true;
+	}
 }
 
 
-bool ImportIntervalMarker::importBin(BScanIntervalMarker* markerManager, const IntervalMarker& markerCollection, const std::string& filename)
+bool ImportIntervalMarker::importBin(BScanIntervalMarker* markerManager, const std::string& filename)
 {
 	CppFW::CVMatTree tree = CppFW::CVMatTreeStructBin::readBin(filename);
 
-	const CppFW::CVMatTree* marker = tree.getDirNodeOpt("marker");
-	const CppFW::CVMatTree* field  = tree.getDirNodeOpt("field");
 
-	if(!marker || !field)
-		return false;
 
-	if(marker->type() != CppFW::CVMatTree::Type::List
-	|| field ->type() != CppFW::CVMatTree::Type::Mat )
-		return false;
-
-	const CppFW::CVMatTree::NodeList& markerNodeList = marker->getNodeList();
-	cv::Mat                           mat            = field->getMat();
-	if(mat.type() != cv::DataType<uint8_t>::type)
-		return false;
-
-	std::vector<IntervalMarker::Marker> markerMap(markerNodeList.size());
-
-	auto itMarkerMap = markerMap.begin();
-	for(const CppFW::CVMatTree* markerNode : markerNodeList)
+	if(tree.type() == CppFW::CVMatTree::Type::Dir)
 	{
-		if(markerNode->type() == CppFW::CVMatTree::Type::String)
+		const CppFW::CVMatTree* markerMapsNode = tree.getDirNodeOpt("marker_maps");
+		if(markerMapsNode)
 		{
-			try
+			bool result = true;
+
+			if(markerMapsNode->type() == CppFW::CVMatTree::Type::List)
 			{
-				IntervalMarker::Marker marker = markerCollection.getMarkerFromString(markerNode->getString());
-				*itMarkerMap = marker;
-			}
-			catch(const std::out_of_range& e)
-			{
-				std::cerr << e.what() << '\n';
+				for(const CppFW::CVMatTree* node : markerMapsNode->getNodeList())
+				{
+					if(!node)
+						continue;
+					const CppFW::CVMatTree* collectionNameNode = node->getDirNodeOpt("marker_collection");
+					if(collectionNameNode && collectionNameNode->type() == CppFW::CVMatTree::Type::String)
+					{
+						const std::string& collectionName = collectionNameNode->getString();
+						std::cerr << "marker_collection: " << collectionName << "\n";
+						BScanIntervalMarker::MarkerCollectionWork collectionSetterHelper = markerManager->getMarkerCollection(collectionName);
+						result &= parseMarkerCollection(*node, markerManager, collectionSetterHelper);
+					}
+					else
+						result = false;
+				}
+				return result;
 			}
 		}
-		++itMarkerMap;
-	}
-
-	// TODO: bscan & ascan größe prüfen
-
-	std::size_t numBScans = markerManager->getNumBScans();
-	if(static_cast<std::size_t>(mat.rows) != numBScans && static_cast<std::size_t>(mat.cols) == numBScans)
-		mat = mat.t();
-
-	std::size_t importBScans = std::min(numBScans, static_cast<std::size_t>(mat.rows));
-
-	for(std::size_t row = 0; row < importBScans; ++row)
-	{
-		const uint8_t* markerFieldIt = mat.ptr<uint8_t>(static_cast<int>(row));
-
-		int lastMarkerPos = 0;
-		IntervalMarker::Marker lastMarker = getMarker(markerFieldIt[0], markerMap);
-		for(int col = 1; col < mat.cols; ++col)
+		else // import old data structure
 		{
-			const IntervalMarker::Marker actMarker = getMarker(markerFieldIt[col], markerMap);
-			if(actMarker != lastMarker)
-			{
-				markerManager->setMarker(lastMarkerPos, col, lastMarker, row);
-				lastMarkerPos = col;
-				lastMarker = actMarker;
-			}
+			BScanIntervalMarker::MarkerCollectionWork collectionSetterHelper = markerManager->getActMarkerCollection();
+			return parseMarkerCollection(tree, markerManager, collectionSetterHelper);
 		}
-		markerManager->setMarker(lastMarkerPos, mat.cols, lastMarker, row);
 	}
 
-	return true;
+
+	std::cerr << "Wrong import format\n";
+	return false;
 }

@@ -682,6 +682,7 @@
     </message>
     <message>
         <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="31"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="42"/>
         <source>ILM upper</source>
         <translation>ILM schneidet oben</translation>
     </message>
@@ -697,21 +698,28 @@
     </message>
     <message>
         <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="34"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="43"/>
         <source>BM lower</source>
         <translation>BM schneidet unten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="35"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="40"/>
+        <source>segmentation failures</source>
+        <translation>Segmentierungsfehler</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="44"/>
         <source>missing ILM segmentation</source>
         <translation>ILM-Segmentierung fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="36"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="45"/>
         <source>missing BM segmentation</source>
         <translation>BM-Segmentierung fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="37"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="35"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="46"/>
         <source>multi error</source>
         <translation>Mehrere Fehler</translation>
     </message>

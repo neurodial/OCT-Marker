@@ -32,12 +32,20 @@ DefinedIntervalMarker::DefinedIntervalMarker()
 	qualityFailures.addMarker(IntervalMarker::Marker("ILM_lower"     , tr("ILM lower"               ).toStdString(), 240, 110,  90));
 	qualityFailures.addMarker(IntervalMarker::Marker("BM_upper"      , tr("BM upper"                ).toStdString(), 255, 140,   0));
 	qualityFailures.addMarker(IntervalMarker::Marker("BM_lower"      , tr("BM lower"                ).toStdString(), 255, 200,   0));
-	qualityFailures.addMarker(IntervalMarker::Marker("SegILMmissing" , tr("missing ILM segmentation").toStdString(),   0, 205, 205));
-	qualityFailures.addMarker(IntervalMarker::Marker("SegBMmissing"  , tr("missing BM segmentation" ).toStdString(),   0, 140, 140));
 	qualityFailures.addMarker(IntervalMarker::Marker("MultiError"    , tr("multi error"             ).toStdString(), 138,  43, 226));
 
 	intervallMarkerMap.emplace("qualityFailures", qualityFailures);
 
+
+	IntervalMarker segmentationFailures("segmentationFailures", tr("segmentation failures").toStdString());
+
+	segmentationFailures.addMarker(IntervalMarker::Marker("ILM_upper"     , tr("ILM upper"               ).toStdString(), 255,   0,   0));
+	segmentationFailures.addMarker(IntervalMarker::Marker("BM_lower"      , tr("BM lower"                ).toStdString(), 255, 200,   0));
+	segmentationFailures.addMarker(IntervalMarker::Marker("SegILMmissing" , tr("missing ILM segmentation").toStdString(),   0, 205, 205));
+	segmentationFailures.addMarker(IntervalMarker::Marker("SegBMmissing"  , tr("missing BM segmentation" ).toStdString(),   0, 140, 140));
+	segmentationFailures.addMarker(IntervalMarker::Marker("MultiError"    , tr("multi error"             ).toStdString(), 138,  43, 226));
+
+	intervallMarkerMap.emplace("segmentationFailures", segmentationFailures);
 
 }
 

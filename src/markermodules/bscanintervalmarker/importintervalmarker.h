@@ -10,7 +10,7 @@ class IntervalMarker;
 class ImportIntervalMarker
 {
 public:
-	static bool importBin(BScanIntervalMarker* markerManager, const IntervalMarker& markerCollection, const std::string& filename);
+	static bool importBin(BScanIntervalMarker* markerManager, const std::string& filename);
 };
 
 #endif // IMPORTINTERVALMARKER_H

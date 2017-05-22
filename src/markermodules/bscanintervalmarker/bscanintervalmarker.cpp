@@ -594,7 +594,7 @@ bool BScanIntervalMarker::importMarkerFromBin(const std::string& filename)
 	if(!markerCollection)
 		return false;
 
-	bool result = ImportIntervalMarker::importBin(this, *markerCollection, filename);
+	bool result = ImportIntervalMarker::importBin(this, filename);
 	if(result)
 		requestFullUpdate();
 
