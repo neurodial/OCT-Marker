@@ -59,6 +59,7 @@ public:
 	QToolBar* createToolbar(QObject* parent) override;
 	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGIntevalMarker; }
 	
+	virtual bool drawingBScanOnSLO() const                          { return true; }
 	virtual void drawBScanSLOLine  (QPainter&, std::size_t bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& end_px   , SLOImageWidget*) const override;
 	virtual void drawBScanSLOCircle(QPainter&, std::size_t bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& center_px, bool clockwise, SLOImageWidget*) const override;
 	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect&) const override;

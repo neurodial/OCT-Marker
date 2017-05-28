@@ -40,6 +40,7 @@ public:
 	BscanMarkerBase(OctMarkerManager* markerManager) : markerManager(markerManager) {}
 	virtual ~BscanMarkerBase()                                      {}
 	
+	virtual bool drawingBScanOnSLO() const                          { return false; }
 	virtual void drawBScanSLOLine  (QPainter&, std::size_t /*bscanNr*/, const OctData::CoordSLOpx& /*start_px*/, const OctData::CoordSLOpx& /*end_px*/   , SLOImageWidget*) const
 	                                                                {}
 	virtual void drawBScanSLOCircle(QPainter&, std::size_t /*bscanNr*/, const OctData::CoordSLOpx& /*start_px*/, const OctData::CoordSLOpx& /*center_px*/, bool /*clockwise*/, SLOImageWidget*) const
