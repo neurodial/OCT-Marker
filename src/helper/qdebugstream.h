@@ -56,7 +56,7 @@ protected:
 			m_string.erase(m_string.begin(), m_string.end());
 		}
 		else
-			m_string += v;
+			m_string += static_cast<char>(v);
 
 		return v;
 	}
@@ -66,7 +66,7 @@ protected:
 	{
 		m_string.append(p, p + n);
 
-		int pos = 0;
+		std::size_t pos = 0;
 		while(pos != std::string::npos)
 		{
 			pos = m_string.find('\n');

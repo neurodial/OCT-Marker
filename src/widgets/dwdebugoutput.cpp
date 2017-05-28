@@ -30,7 +30,7 @@ DWDebugOutput::DWDebugOutput(QWidget* parent)
 	buttonBox = new QDialogButtonBox(this);
 	buttonBox->setStandardButtons(QDialogButtonBox::Reset | QDialogButtonBox::Save);
 
-	QVBoxLayout* boxlayout = new QVBoxLayout(this);
+	QVBoxLayout* boxlayout = new QVBoxLayout;
 	boxlayout->addWidget(debugMessages);
 	boxlayout->addWidget(buttonBox);
 
@@ -52,7 +52,7 @@ DWDebugOutput::~DWDebugOutput()
 	delete debugStreamCerr;
 }
 
-void DWDebugOutput::printMessages(QtMsgType type, const QMessageLogContext& context, const QString& msg)
+void DWDebugOutput::printMessages(QtMsgType type, const QMessageLogContext& /*context*/, const QString& msg)
 {
 	QTime time = QTime::currentTime();
 	QString messages = time.toString(); // QString("%1:%2:%3 :").arg(time.hour()).arg(time.minute()).arg(time.second());
