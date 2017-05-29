@@ -136,6 +136,9 @@ private slots:
 	
 	void setLocalOperator(BScanSegmentationMarker::LocalMethod method);
 
+
+	void importSegmentationFromOctSlot();
+
 };
 
 #endif // WGSEGMENTATION_H

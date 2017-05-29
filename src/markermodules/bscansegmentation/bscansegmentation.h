@@ -32,6 +32,7 @@ class BScanSegmentation : public BscanMarkerBase
 
 	friend class BScanSegmentationPtree;
 	friend class BScanSegLocalOp;
+	friend class ImportSegmentation;
 	
 	typedef std::vector<SimpleCvMatCompress*> SegMats;
 
@@ -151,6 +152,8 @@ public slots:
 	void removeSeriesSegmentation()                                 { createSegments(); requestFullUpdate(); }
 	void initSeriesFromSegline();
 	void initBScanFromSegline();
+
+	void importSegmentationFromOct(const std::string& filename);
 
 signals:
 	void paintArea0Selected(bool = true);

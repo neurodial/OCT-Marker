@@ -23,6 +23,7 @@
 #include "bscanseglocalopnn.h"
 
 #include <data_structure/simplecvmatcompress.h>
+#include "importsegmentation.h"
 
 
 BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
@@ -85,14 +86,14 @@ namespace
 {
 	struct PaintFactor1
 	{
-		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, double /*factor*/)
+		inline static void paint(QPainter& painter, const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double /*factor*/)
 		{
-			if(*p00 != *p10)
+			if((*p00 & mask) != (*p10 & mask))
 			{
 				painter.drawPoint(w  , h);
 				painter.drawPoint(w+1, h);
 			}
-			if(*p00 != *p01)
+			if((*p00 & mask) != (*p01 & mask))
 			{
 				painter.drawPoint(w, h  );
 				painter.drawPoint(w, h+1);
@@ -102,12 +103,39 @@ namespace
 
 	struct PaintFactorN
 	{
-		inline static void paint(QPainter& painter, uint8_t* p00, uint8_t* p10, uint8_t* p01, int w, int h, double factor)
+		inline static void paint(QPainter& painter, const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double factor)
 		{
-			if(*p00 != *p10) painter.drawLine(static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h  )*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
-			if(*p00 != *p01) painter.drawLine(static_cast<int>((w  )*factor + 0.5), static_cast<int>((h+1)*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
+			if((*p00 & mask) != (*p10 & mask)) painter.drawLine(static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h  )*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
+			if((*p00 & mask) != (*p01 & mask)) painter.drawLine(static_cast<int>((w  )*factor + 0.5), static_cast<int>((h+1)*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
 		}
 	};
+
+	template<typename T>
+	void drawSegmentLineRec(QPainter& painter, const cv::Mat& actMat, uint8_t mask, double factor, int startH, int endH, int startW, int endW)
+	{
+		for(int h = startH; h < endH; ++h)
+		{
+			const uint8_t* p00 = actMat.ptr<uint8_t>(h);
+			const uint8_t* p10 = p00+1;
+			const uint8_t* p01 = actMat.ptr<uint8_t>(h+1);
+
+			p00 += startW;
+			p10 += startW;
+			p01 += startW;
+
+			for(int w = startW; w < endW; ++w)
+			{
+				T::paint(painter, p00, p10, p01, w, h, mask, factor); // for faster drawing, only int supported (and only int used at the moment)
+
+				++p00;
+				++p10;
+				++p01;
+			}
+			T::paint(painter, p00, p00, p01, endW, h, mask, factor); // last col p10 replaced by p00, because p10 is outside
+		}
+	}
+	// TODO draw last row
+
 }
 
 
@@ -130,9 +158,6 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 	int drawWidth  = static_cast<int>((rect.width() )/factor + 0.5)+4;
 	int drawHeight = static_cast<int>((rect.height())/factor + 0.5)+4;
 
-	QPen pen(Qt::red);
-	pen.setWidth(seglinePaintSize);
-	painter.setPen(pen);
 
 	int mapHeight = actMat->rows-1; // -1 for p01
 	int mapWidth  = actMat->cols-1; // -1 for p10
@@ -142,6 +167,16 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 	int startW = std::max(drawX, 0);
 	int endW   = std::min(drawX+drawWidth , mapWidth);
 
+	painter.setPen(QPen(Qt::green));
+	drawSegmentLineRec<T>(painter, *actMat, 1 << 1, factor, startH, endH, startW, endW);
+
+
+	QPen pen(Qt::red);
+	pen.setWidth(seglinePaintSize);
+	painter.setPen(pen);
+	drawSegmentLineRec<T>(painter, *actMat, 1 << 0, factor, startH, endH, startW, endW);
+
+	/*
 	for(int h = startH; h < endH; ++h)
 	{
 		uint8_t* p00 = actMat->ptr<uint8_t>(h);
@@ -163,6 +198,7 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 		T::paint(painter, p00, p00, p01, endW, h, factor); // last col p10 replaced by p00, because p10 is outside
 	}
 	// TODO draw last row
+	*/
 }
 
 void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat)
@@ -746,4 +782,12 @@ bool BScanSegmentation::hasActMatChanged() const
 		return (*segments[actMatNr]) != *actMat;
 	return false;
 }
+
+
+void BScanSegmentation::importSegmentationFromOct(const std::string& filename)
+{
+	if(ImportSegmentation::importOct(this, filename))
+		requestFullUpdate();
+}
+
 

@@ -8,6 +8,7 @@
 #include "wgsegnn.h"
 
 #include <QButtonGroup>
+#include <QFileDialog>
 
 WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 : segmentation(parent)
@@ -198,15 +199,16 @@ WGSegmentation::~WGSegmentation()
 
 void WGSegmentation::createConnections()
 {
-	connect(buttonSeriesInitFromThreshold, &QPushButton::pressed, this, &WGSegmentation::slotSeriesInitFromThresh);
+	connect(buttonSeriesInitFromThreshold, &QPushButton::clicked, this, &WGSegmentation::slotSeriesInitFromThresh);
 
-	connect(buttonBScanInitFromThreshold , &QPushButton::pressed, this, &WGSegmentation::slotBscanInitFromThresh );
+	connect(buttonBScanInitFromThreshold , &QPushButton::clicked, this, &WGSegmentation::slotBscanInitFromThresh );
+	connect(buttonImportOCT              , &QPushButton::clicked, this, &WGSegmentation::importSegmentationFromOctSlot );
 
 
-	connect(buttonBScanErode             , &QPushButton::pressed, segmentation, &BScanSegmentation::erodeBScan          );
-	connect(buttonBScanDilate            , &QPushButton::pressed, segmentation, &BScanSegmentation::dilateBScan         );
-	connect(buttonBScanOpenClose         , &QPushButton::pressed, segmentation, &BScanSegmentation::opencloseBScan      );
-	connect(buttonBScanMedian            , &QPushButton::pressed, segmentation, &BScanSegmentation::medianBScan         );
+	connect(buttonBScanErode             , &QPushButton::clicked, segmentation, &BScanSegmentation::erodeBScan          );
+	connect(buttonBScanDilate            , &QPushButton::clicked, segmentation, &BScanSegmentation::dilateBScan         );
+	connect(buttonBScanOpenClose         , &QPushButton::clicked, segmentation, &BScanSegmentation::opencloseBScan      );
+	connect(buttonBScanMedian            , &QPushButton::clicked, segmentation, &BScanSegmentation::medianBScan         );
 
 	// set local threshold
 	connect(&thresLocal       , &WGSegmentationThreshold::blockAction, this, &WGSegmentation::activateLocalThreshDir);
@@ -684,6 +686,16 @@ void WGSegmentationThreshold::relativeSpinBoxChanged()
 void WGSegmentationThreshold::widgetActivated()
 {
 	emit(blockAction());
+}
+
+void WGSegmentation::importSegmentationFromOctSlot()
+{
+	QString file = QFileDialog::getOpenFileName(this, tr("Import marker from oct file"), QString(), "*");
+	if(!file.isEmpty())
+	{
+		segmentation->importSegmentationFromOct(file.toStdString());
+	}
+
 }
 
 
