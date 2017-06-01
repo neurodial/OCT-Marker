@@ -10,7 +10,10 @@
 #include <globaldefinitions.h>
 
 
-OptionBool ProgramOptions::bscansShowSegmentationslines(true, "bscansShowSegmentationslines");
+
+OptionBool  ProgramOptions::bscansShowSegmentationslines(true   , "bscansShowSegmentationslines");
+OptionColor ProgramOptions::bscanSegmetationLineColor   (Qt::red, "bscanSegmetationLineColor"   );
+OptionInt   ProgramOptions::bscanSegmetationLineThicknes(1      , "bscanSegmetationLineThicknes");
 
 
 OptionBool ProgramOptions::fillEmptyPixelWhite(true , "fillEmptyPixelWhite");
@@ -19,12 +22,12 @@ OptionBool ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      );
 
 OptionBool ProgramOptions::holdOCTRawData     (false, "holdOCTRawData"     );
 
-OptionInt  ProgramOptions::e2eGrayTransform(1, "e2eGrayTransform");
+OptionInt  ProgramOptions::e2eGrayTransform   (1    , "e2eGrayTransform"   );
 
 
-OptionBool ProgramOptions::sloShowBscans(true , "sloShowBscans");
+OptionBool ProgramOptions::sloShowBscans       (true , "sloShowBscans");
 OptionBool ProgramOptions::sloShowOnylActBScan(false, "sloShowOnylActBScan");
-OptionBool ProgramOptions::sloShowLabels(false, "sloShowLabels");
+OptionBool ProgramOptions::sloShowLabels      (false, "sloShowLabels");
 
 
 OptionString ProgramOptions::octDirectory      (".", "octDirectory");

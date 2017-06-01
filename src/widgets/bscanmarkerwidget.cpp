@@ -48,7 +48,9 @@ BScanMarkerWidget::BScanMarkerWidget()
 
 	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &OctMarkerManager::inkrementBScan);
 
-	connect(&ProgramOptions::bscansShowSegmentationslines, &OptionBool::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+	connect(&ProgramOptions::bscansShowSegmentationslines, &OptionBool ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+	connect(&ProgramOptions::bscanSegmetationLineColor   , &OptionColor::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+	connect(&ProgramOptions::bscanSegmetationLineThicknes, &OptionInt  ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 	
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);
@@ -124,8 +126,8 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 	QPainter segPainter(this);
 	QPen pen;
-	pen.setColor(QColor(255, 0, 0, 180));
-	pen.setWidth(1);
+	pen.setColor(ProgramOptions::bscanSegmetationLineColor());
+	pen.setWidth(ProgramOptions::bscanSegmetationLineThicknes());
 	segPainter.setPen(pen);
 	int bScanHeight = actBscan->getHeight();
 	double scaleFactor = getImageScaleFactor();

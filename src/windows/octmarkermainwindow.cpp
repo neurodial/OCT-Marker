@@ -284,6 +284,20 @@ void OCTMarkerMainWindow::setupMenu()
 	addMenuProgramOptionGroup(tr("INFO"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFinfo  , markersFileFormatGroup, this);
 
 	// ----------
+	// View
+	// ----------
+
+	QMenu* viewMenu = new QMenu(this);
+	viewMenu->setTitle(tr("View"));
+
+	QAction* actionChangeSegmetationLineColor = new QAction(this);
+	actionChangeSegmetationLineColor->setText(tr("change segmentation line color"));
+	actionChangeSegmetationLineColor->setIcon(QIcon(":/icons/color_wheel.png"));
+	connect(actionChangeSegmetationLineColor, &QAction::triggered, &ProgramOptions::bscanSegmetationLineColor, &OptionColor::showColorDialog);
+	viewMenu->addAction(actionChangeSegmetationLineColor);
+
+
+	// ----------
 	// Extras
 	// ----------
 
@@ -326,6 +340,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	menuBar()->addMenu(fileMenu);
 	menuBar()->addMenu(optionsMenu);
+	menuBar()->addMenu(viewMenu);
 	menuBar()->addMenu(extrisMenu);
 	menuBar()->addMenu(helpMenu);
 

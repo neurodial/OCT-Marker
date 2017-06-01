@@ -158,7 +158,9 @@ class ProgramOptions
 {
 	ProgramOptions() = delete;
 public:
-	static OptionBool bscansShowSegmentationslines;
+	static OptionBool  bscansShowSegmentationslines;
+	static OptionColor bscanSegmetationLineColor;
+	static OptionInt   bscanSegmetationLineThicknes;
 	
 	static OptionBool fillEmptyPixelWhite;
 	static OptionBool registerBScans;
@@ -180,6 +182,7 @@ public:
 
 	static OptionInt  bscanMarkerToolId;
 	static OptionInt    sloMarkerToolId;
+
 	
 	
 	static std::vector<Option*> getAllOptions();
