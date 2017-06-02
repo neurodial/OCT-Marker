@@ -40,24 +40,6 @@ OptionInt  ProgramOptions::bscanMarkerToolId(-1, "bscanMarkerToolId");
 OptionInt  ProgramOptions::  sloMarkerToolId(-1,   "sloMarkerToolId");
 
 
-void OptionColor::showColorDialog()
-{
-	QColorDialog dialog;
-	dialog.setCurrentColor(value);
-	if(dialog.exec())
-	{
-		value = dialog.currentColor();
-		emit(valueChanged(value));
-	}
-}
-
-
-std::vector<Option*> ProgramOptions::getAllOptions()
-{
-	std::vector<Option*> options = {&bscansShowSegmentationslines, &fillEmptyPixelWhite, &registerBScans, &e2eGrayTransform, &sloShowBscans, &sloShowLabels, &octDirectory, &loadOctdataAtStart, &sloShowOnylActBScan, &autoSaveOctMarkers, &defaultFileformatOctMarkers, &bscanMarkerToolId, &sloMarkerToolId};
-	
-	return options;
-}
 
 void ProgramOptions::resetAllOptions()
 {
@@ -97,6 +79,21 @@ void ProgramOptions::writeAllOptions()
 	for(Option* opt : options)
 		settings.setValue(opt->getName(), opt->getVariant());
 	settings.endGroup();
+}
+
+
+std::vector<Option*>& ProgramOptions::getAllOptionsPrivate()
+{
+	static std::vector<Option*> options;
+
+	return options;
+}
+
+
+
+void ProgramOptions::registerOption(Option* option)
+{
+	getAllOptionsPrivate().push_back(option);
 }
 
 
