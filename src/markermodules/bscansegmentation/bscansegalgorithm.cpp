@@ -302,11 +302,11 @@ void BScanSegAlgorithm::initFromThreshold(const cv::Mat& image, cv::Mat& segMat,
 
 }
 
-void BScanSegAlgorithm::initFromSegline(const OctData::BScan& bscan, cv::Mat& segMat)
+void BScanSegAlgorithm::initFromSegline(const OctData::BScan& bscan, cv::Mat& segMat, OctData::Segmentationlines::SegmentlineType type)
 {
 	if(!segMat.empty())
 	{
-		const OctData::BScan::Segmentline& segline = bscan.getSegmentLine(OctData::BScan::SegmentlineType::ILM);
+		const OctData::Segmentationlines::Segmentline& segline = bscan.getSegmentLine(type);
 		BScanSegmentationMarker::internalMatType* colIt = segMat.ptr<BScanSegmentationMarker::internalMatType>();
 
 		std::size_t colSize = static_cast<std::size_t>(segMat.cols);

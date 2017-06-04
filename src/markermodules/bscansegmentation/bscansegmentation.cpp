@@ -648,7 +648,7 @@ void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::T
 	requestFullUpdate();
 }
 
-void BScanSegmentation::initBScanFromSegline()
+void BScanSegmentation::initBScanFromSegline(OctData::Segmentationlines::SegmentlineType type)
 {
 	setActMat(getActBScanNr());
 	if(!actMat || actMat->empty())
@@ -662,12 +662,12 @@ void BScanSegmentation::initBScanFromSegline()
 	if(!bscan)
 		return;
 
-	BScanSegAlgorithm::initFromSegline(*bscan, *actMat);
+	BScanSegAlgorithm::initFromSegline(*bscan, *actMat, type);
 
 	requestFullUpdate();
 }
 
-void BScanSegmentation::initSeriesFromSegline()
+void BScanSegmentation::initSeriesFromSegline(OctData::Segmentationlines::SegmentlineType type)
 {
 	const OctData::Series* series = getSeries();
 
@@ -681,7 +681,7 @@ void BScanSegmentation::initSeriesFromSegline()
 		if(setActMat(bscanCount))
 		{
 			if(actMat && !actMat->empty())
-				BScanSegAlgorithm::initFromSegline(*bscan, *actMat);
+				BScanSegAlgorithm::initFromSegline(*bscan, *actMat, type);
 
 		}
 		++bscanCount;

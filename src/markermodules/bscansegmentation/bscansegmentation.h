@@ -7,6 +7,7 @@
 
 #include <boost/icl/interval_map.hpp>
 #include <data_structure/intervalmarker.h>
+#include <octdata/datastruct/segmentationlines.h>
 #include <vector>
 
 #include <QPoint>
@@ -131,6 +132,9 @@ public:
 	BScanSegLocalOpOperation*          getLocalOpOperation()        { return localOpOperation; }
 	BScanSegLocalOpNN*                 getLocalOpNN       ()        { return localOpNN       ; }
 
+	void initSeriesFromSegline(OctData::Segmentationlines::SegmentlineType type);
+	void initBScanFromSegline (OctData::Segmentationlines::SegmentlineType type);
+
 public slots:
 	virtual void erodeBScan();
 	virtual void dilateBScan();
@@ -150,8 +154,6 @@ public slots:
 	virtual void setSeglinePaintSize(int size);
 
 	void removeSeriesSegmentation()                                 { createSegments(); requestFullUpdate(); }
-	void initSeriesFromSegline();
-	void initBScanFromSegline();
 
 	void importSegmentationFromOct(const std::string& filename);
 

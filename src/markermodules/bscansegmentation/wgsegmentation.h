@@ -100,6 +100,8 @@ class WGSegmentation : public QWidget, Ui::BScanSegmentationWidget
 
 	QButtonGroup* localMethodBG = nullptr;
 
+	void fillSeglineNames(QComboBox* combobox);
+
 public:
 	WGSegmentation(BScanSegmentation* parent);
 	virtual ~WGSegmentation();
@@ -138,6 +140,9 @@ private slots:
 
 
 	void importSegmentationFromOctSlot();
+
+	void initSeriesFromSegline();
+	void initBScanFromSegline();
 
 };
 

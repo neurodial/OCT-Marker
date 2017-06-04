@@ -10,6 +10,9 @@
 #include <QButtonGroup>
 #include <QFileDialog>
 
+
+#include <octdata/datastruct/segmentationlines.h>
+
 WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 : segmentation(parent)
 , thresSeries(this)
@@ -98,8 +101,8 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	localSizePaintSpinBox->setValue(localOpPaint->getOperatorHeight());
 	checkBoxApplyOnMove->setChecked(localOpThresholdDirection->getApplyOnMouseMove());
 
-	comboBoxSeriesInitFromSeg->addItem("ILM");
-	comboBoxBScanFromSegline ->addItem("ILM");
+	fillSeglineNames(comboBoxSeriesInitFromSeg);
+	fillSeglineNames(comboBoxBScanFromSegline );
 
 	// Button groups for local
 
@@ -195,6 +198,28 @@ WGSegmentation::~WGSegmentation()
 {
 }
 
+void WGSegmentation::fillSeglineNames(QComboBox* combobox)
+{
+	if(!combobox)
+		return;
+	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::segmentlineTypes)
+		combobox->addItem(OctData::Segmentationlines::getSegmentlineName(type));
+}
+
+void WGSegmentation::initBScanFromSegline()
+{
+	int index = comboBoxBScanFromSegline->currentIndex();
+	if(index < OctData::Segmentationlines::numSegmentlineType)
+		segmentation->initBScanFromSegline(static_cast<OctData::Segmentationlines::SegmentlineType>(index));
+}
+
+void WGSegmentation::initSeriesFromSegline()
+{
+	int index = comboBoxSeriesInitFromSeg->currentIndex();
+	if(index < OctData::Segmentationlines::numSegmentlineType)
+		segmentation->initSeriesFromSegline(static_cast<OctData::Segmentationlines::SegmentlineType>(index));
+}
+
 
 
 void WGSegmentation::createConnections()
@@ -224,8 +249,8 @@ void WGSegmentation::createConnections()
 	connect(buttonLocalThresholdDirLeft , &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
 	connect(buttonLocalThresholdDirRight, &QAbstractButton::clicked, this, &WGSegmentation::setLocalThresholdOrientationHorizontal);
 
-	connect(buttonBScanInitFromSeg        , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initBScanFromSegline    );
-	connect(buttonSeriesInitFromSeg       , &QAbstractButton::clicked, segmentation, &BScanSegmentation::initSeriesFromSegline   );
+	connect(buttonBScanInitFromSeg        , &QAbstractButton::clicked, this, &WGSegmentation::initBScanFromSegline    );
+	connect(buttonSeriesInitFromSeg       , &QAbstractButton::clicked, this, &WGSegmentation::initSeriesFromSegline   );
 	connect(buttonSeriesDeleteSegmentation, &QAbstractButton::clicked, segmentation, &BScanSegmentation::removeSeriesSegmentation);
 
 
