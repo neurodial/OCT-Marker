@@ -225,7 +225,7 @@ void SLOImageWidget::reladSLOImage()
 
 void SLOImageWidget::bscanChanged(int /*bscan*/)
 {
-	repaint();
+	update();
 }
 
 void SLOImageWidget::showBScans(bool show)
@@ -275,7 +275,7 @@ void SLOImageWidget::sloMarkerChanged(SloMarkerBase* marker)
 void SLOImageWidget::sloViewChanged()
 {
 	if(singelBScanScan || drawOnylActBScan)
-		repaint();
+		update();
 }
 
 

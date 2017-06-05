@@ -388,6 +388,14 @@ void OCTMarkerMainWindow::setupMenu()
 	showSeglines->setText(tr("show segmentationslines"));
 	showSeglines->setIcon(QIcon(":/icons/chart_curve.png"));
 
+
+	QSpinBox* paintsizeSegLines = new QSpinBox(this);
+	paintsizeSegLines->setMinimum(1);
+	paintsizeSegLines->setMaximum(8);
+	paintsizeSegLines->setValue(ProgramOptions::bscanSegmetationLineThicknes());
+	connect(paintsizeSegLines, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), &ProgramOptions::bscanSegmetationLineThicknes, &OptionInt::setValue);
+	connect(&ProgramOptions::bscanSegmetationLineThicknes, &OptionInt::valueChanged, paintsizeSegLines, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::setValue));
+
 	QToolBar* toolBar = new QToolBar(tr("B-Scan"));
 	toolBar->setObjectName("ToolBarBScan");
 	toolBar->addAction(previousOctScan);
@@ -400,6 +408,7 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addWidget(labelMaxBscan);
 	toolBar->addSeparator();
 	toolBar->addAction(showSeglines);
+	toolBar->addWidget(paintsizeSegLines);
 
 
 

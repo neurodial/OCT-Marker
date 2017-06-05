@@ -62,20 +62,20 @@ class OptionBool : public Option
 	}
 	
 public:
-	virtual void resetValue() { setValuePrivat(defaultValue); };
+	virtual void resetValue()                                       { setValuePrivat(defaultValue); };
 
 	
-	bool getValue() const { return value; }
-	bool operator()() const { return value; }
+	bool getValue()   const                                         { return value; }
+	bool operator()() const                                         { return value; }
 
-	QAction* getAction()                                         { return &action; }
+	QAction* getAction()                                            { return &action; }
 	
-	virtual QVariant getVariant() { return QVariant(value); }
-	virtual void setVariant(const QVariant& variant) { value = variant.toBool(); }
+	virtual QVariant getVariant()                                   { return QVariant(value); }
+	virtual void setVariant(const QVariant& variant)                { setValuePrivat(variant.toBool()); }
 	
 public slots:
-	void setValue(bool v) { setValuePrivat(v); }
-	void setValueInvers(bool v) { setValuePrivat(!v); }
+	void setValue(bool v)                                           { setValuePrivat(v); }
+	void setValueInvers(bool v)                                     { setValuePrivat(!v); }
 	
 signals:
 	void valueChanged(bool v);
