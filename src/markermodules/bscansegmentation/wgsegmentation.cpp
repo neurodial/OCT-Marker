@@ -202,21 +202,21 @@ void WGSegmentation::fillSeglineNames(QComboBox* combobox)
 {
 	if(!combobox)
 		return;
-	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::segmentlineTypes)
+	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 		combobox->addItem(OctData::Segmentationlines::getSegmentlineName(type));
 }
 
 void WGSegmentation::initBScanFromSegline()
 {
-	int index = comboBoxBScanFromSegline->currentIndex();
-	if(index < OctData::Segmentationlines::numSegmentlineType)
+	std::size_t index = static_cast<std::size_t>(comboBoxBScanFromSegline->currentIndex());
+	if(index < OctData::Segmentationlines::getSegmentlineTypes().size())
 		segmentation->initBScanFromSegline(static_cast<OctData::Segmentationlines::SegmentlineType>(index));
 }
 
 void WGSegmentation::initSeriesFromSegline()
 {
-	int index = comboBoxSeriesInitFromSeg->currentIndex();
-	if(index < OctData::Segmentationlines::numSegmentlineType)
+	std::size_t index = static_cast<std::size_t>(comboBoxSeriesInitFromSeg->currentIndex());
+	if(index < OctData::Segmentationlines::getSegmentlineTypes().size())
 		segmentation->initSeriesFromSegline(static_cast<OctData::Segmentationlines::SegmentlineType>(index));
 }
 
