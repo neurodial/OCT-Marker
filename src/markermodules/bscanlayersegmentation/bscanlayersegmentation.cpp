@@ -8,6 +8,8 @@
 #include <QMouseEvent>
 #include <data_structure/programoptions.h>
 
+#include "wglayerseg.h"
+
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 {
@@ -15,6 +17,7 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 	id   = "layerSegmentation";
 	icon = QIcon(":/icons/seglinelayer_edit.png");
 
+	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
 }
 
 namespace
@@ -62,12 +65,26 @@ void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* wi
 	double scaleFactor = widget->getImageScaleFactor();
 
 
-	QPen pen;
-	pen.setColor(Qt::red);
-	pen.setWidth(4);
-	painter.setPen(pen);
+	QPen penEdit;
+	penEdit.setColor(Qt::red);
+	penEdit.setWidth(2);
 
-	paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].getSegmentLine(OctData::Segmentationlines::SegmentlineType::ILM  ), scaleFactor);
+	QPen penNormal;
+	penNormal.setColor(Qt::blue);
+	penNormal.setWidth(1);
+
+
+	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
+	{
+		if(type == actEditType)
+			painter.setPen(penEdit);
+		else
+			painter.setPen(penNormal);
+
+		paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].getSegmentLine(type), scaleFactor);
+	}
+
+	paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].getSegmentLine(OctData::Segmentationlines::SegmentlineType::BM  ), scaleFactor);
 }
 
 BScanLayerSegmentation::SegPoint BScanLayerSegmentation::calcPoint(int x, int y, double scaleFactor, int bscanWidth)
@@ -131,7 +148,7 @@ BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mouseMoveEvent(QMouseEven
 	double scaleFactor = widget->getImageScaleFactor();
 	SegPoint segPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
 
-	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(OctData::Segmentationlines::SegmentlineType::ILM);
+	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(actEditType);
 
 	setLinePoint2Point(lastPoint, segPoint, segLine);
 
@@ -178,8 +195,21 @@ void BScanLayerSegmentation::resetMarkers(const OctData::Series* series)
 	{
 		int bscanWidth = series->getBScan(i)->getWidth();
 
-		lines[i].getSegmentLine(OctData::Segmentationlines::SegmentlineType::ILM  ).resize(bscanWidth);
+		for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
+			lines[i].getSegmentLine(type).resize(bscanWidth);
 	}
 
 }
+
+
+void BScanLayerSegmentation::setActEditLinetype(OctData::Segmentationlines::SegmentlineType type)
+{
+	if(type == actEditType)
+		return;
+
+	actEditType = type;
+
+	requestFullUpdate();
+}
+
 

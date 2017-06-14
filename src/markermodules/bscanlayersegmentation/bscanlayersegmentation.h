@@ -5,6 +5,8 @@
 
 #include "../bscanmarkerbase.h"
 
+class QWidget;
+
 class BScanLayerSegmentation : public BscanMarkerBase
 {
 	Q_OBJECT
@@ -18,6 +20,7 @@ class BScanLayerSegmentation : public BscanMarkerBase
 		double      y;
 	};
 	std::vector<OctData::Segmentationlines> lines;
+	OctData::Segmentationlines::SegmentlineType actEditType = OctData::Segmentationlines::SegmentlineType::ILM;
 
 	void resetMarkers(const OctData::Series* series);
 
@@ -30,17 +33,24 @@ class BScanLayerSegmentation : public BscanMarkerBase
 
 	QRect getWidgetPaintSize(const SegPoint& p1, const SegPoint& p2, double scaleFactor);
 
+
+	QWidget* widgetPtr2WGLayerSeg = nullptr;
+
 public:
 	BScanLayerSegmentation(OctMarkerManager* markerManager);
 
-	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/) const;
+	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/) const override;
 
-	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*);
-	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*);
-	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*);
+	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
+	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
+	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
+
+	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGLayerSeg; }
+
+	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& ptree) override;
 
 
-	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& ptree);
+	void setActEditLinetype(OctData::Segmentationlines::SegmentlineType type);
 };
 
 #endif // BSCANLAYERSEGMENTATION_H
