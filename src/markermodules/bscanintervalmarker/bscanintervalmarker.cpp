@@ -291,7 +291,7 @@ bool BScanIntervalMarker::keyPressEvent(QKeyEvent* e ,BScanMarkerWidget*)
 	}
 	else
 	{
-		switch(e->key())
+		switch(key)
 		{
 			case Qt::Key_Escape:
 				markerActiv = false;

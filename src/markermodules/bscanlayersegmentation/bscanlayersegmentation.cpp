@@ -10,6 +10,7 @@
 
 #include "wglayerseg.h"
 
+
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 {
@@ -43,13 +44,13 @@ namespace
 
 QRect BScanLayerSegmentation::getWidgetPaintSize(const BScanLayerSegmentation::SegPoint& p1, const BScanLayerSegmentation::SegPoint& p2, double scaleFactor)
 {
-	const int broder = 5;
+	const int broder = 2;
 
-	int minX = static_cast<int>(std::min(p1.x, p2.x)*scaleFactor) - broder;
-	int maxX = static_cast<int>(std::max(p1.x, p2.x)*scaleFactor) + broder;
+	int minX = static_cast<int>((static_cast<double>(std::min(p1.x, p2.x) - broder))*scaleFactor);
+	int maxX = static_cast<int>((static_cast<double>(std::max(p1.x, p2.x) + broder))*scaleFactor);
 
-	int minY = static_cast<int>(std::min(p1.y, p2.y)*scaleFactor) - broder;
-	int maxY = static_cast<int>(std::max(p1.y, p2.y)*scaleFactor) + broder;
+// 	int minY = static_cast<int>(std::min(p1.y, p2.y)*scaleFactor) - broder;
+// 	int maxY = static_cast<int>(std::max(p1.y, p2.y)*scaleFactor) + broder;
 
 // 	QRect rect = QRect(minX, minY, maxX-minX, maxY-minY);
 	QRect rect = QRect(minX, 0, maxX-minX, static_cast<int>(getBScanHight()*scaleFactor+0.5)); // old and new pos
@@ -95,7 +96,7 @@ BScanLayerSegmentation::SegPoint BScanLayerSegmentation::calcPoint(int x, int y,
 	std::size_t xTransformed = static_cast<std::size_t>(x/scaleFactor);
 	double      yTransformed =                          y/scaleFactor ;
 
-	if(xTransformed>bscanWidth-1)
+	if(xTransformed > static_cast<std::size_t>(bscanWidth-1))
 		xTransformed = static_cast<std::size_t>(bscanWidth-1);
 
 	return SegPoint(xTransformed, yTransformed);
@@ -134,7 +135,8 @@ void BScanLayerSegmentation::setLinePoint2Point(const BScanLayerSegmentation::Se
 
 	for(std::size_t pos = 0; pos <= length; ++pos)
 	{
-		segLine[pos+pMin] = pMinY*(1. - pos/lengthD) + pMaxY*(pos/lengthD);
+		double posD = static_cast<double>(pos);
+		segLine[pos+pMin] = pMinY*(1. - posD/lengthD) + pMaxY*(posD/lengthD);
 	}
 // 	qDebug("%lf", segLine[length+pMin]);
 }
@@ -213,3 +215,54 @@ void BScanLayerSegmentation::setActEditLinetype(OctData::Segmentationlines::Segm
 }
 
 
+bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
+{
+	int key = event->key();
+	switch(key)
+	{
+		case Qt::Key_C:
+			copySegLinesFromOctData();
+			return true;
+
+// 		case Qt::Key_T:
+// 			splineTest();
+// 			return true;
+	}
+
+	return false;
+}
+
+void BScanLayerSegmentation::copySegLinesFromOctData()
+{
+	const OctData::BScan* bscan = getActBScan();
+	if(!bscan)
+		return;
+
+	lines[getActBScanNr()] = bscan->getSegmentLines();
+
+	requestFullUpdate();
+}
+/*
+void BScanLayerSegmentation::splineTest()
+{
+	std::vector<double> xVal;
+	std::vector<double> yVal;
+
+	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(actEditType);
+	for(std::size_t x = 0; x < segLine.size(); ++x)
+	{
+		double val = segLine[x];
+		if(val < 1000 && val > 0)
+		{
+			xVal.push_back(x);
+			yVal.push_back(val);
+		}
+	}
+
+
+	BSpline<double> spline(xVal.data(), static_cast<int>(xVal.size()), yVal.data(), 2.);
+
+	std::cout << spline.getNodes().size() << std::endl;
+	std::cout << spline.getX().size() << std::endl;
+}
+*/

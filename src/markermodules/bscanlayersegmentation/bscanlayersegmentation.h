@@ -36,6 +36,8 @@ class BScanLayerSegmentation : public BscanMarkerBase
 
 	QWidget* widgetPtr2WGLayerSeg = nullptr;
 
+// 	void splineTest();
+
 public:
 	BScanLayerSegmentation(OctMarkerManager* markerManager);
 
@@ -45,10 +47,14 @@ public:
 	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
 
+	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;
+
 	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGLayerSeg; }
 
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& ptree) override;
 
+
+	void copySegLinesFromOctData();
 
 	void setActEditLinetype(OctData::Segmentationlines::SegmentlineType type);
 };
