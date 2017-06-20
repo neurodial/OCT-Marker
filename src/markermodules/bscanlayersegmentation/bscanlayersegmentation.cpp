@@ -195,7 +195,7 @@ void BScanLayerSegmentation::resetMarkers(const OctData::Series* series)
 
 	for(std::size_t i = 0; i<numBscans; ++i)
 	{
-		int bscanWidth = series->getBScan(i)->getWidth();
+		const int bscanWidth = series->getBScan(i)->getWidth();
 
 		for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 			lines[i].getSegmentLine(type).resize(bscanWidth);
@@ -238,7 +238,13 @@ void BScanLayerSegmentation::copySegLinesFromOctData()
 	if(!bscan)
 		return;
 
-	lines[getActBScanNr()] = bscan->getSegmentLines();
+	const std::size_t actBScanNr = getActBScanNr();
+
+	lines[actBScanNr] = bscan->getSegmentLines();
+
+	const int bscanWidth = bscan->getWidth();
+	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
+		lines[actBScanNr].getSegmentLine(type).resize(bscanWidth);
 
 	requestFullUpdate();
 }
