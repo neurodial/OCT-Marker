@@ -93,7 +93,7 @@ public:
 #else
 class BScanSegLocalOpNN : public BScanSegLocalOp
 {
-	BScanSegLocalOpNN(BScanSegmentation& parent) : BScanSegLocalOp(parent) {} // null implementation, private is right
+	BScanSegLocalOpNN(BScanSegmentation& parent) : BScanSegLocalOp(parent) {} // null implementation, private scope is correct
 };
 #endif
 #endif // BSCANSEGLOCALOPNN_H

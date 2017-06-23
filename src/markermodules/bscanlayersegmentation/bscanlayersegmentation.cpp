@@ -10,16 +10,33 @@
 
 #include "wglayerseg.h"
 
+#include"douglaspeuckeralgorithm.h"
+#include "pchip.h"
+
+#include"editbase.h"
+#include"editpen.h"
+#include"editspline.h"
 
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
+, editMethodSpline(new EditSpline(this))
+, editMethodPen(new EditPen(this))
 {
 	name = tr("Layer Segmentation");
 	id   = "layerSegmentation";
 	icon = QIcon(":/icons/seglinelayer_edit.png");
 
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
+
+	actEditMethod = editMethodPen;
 }
+
+BScanLayerSegmentation::~BScanLayerSegmentation()
+{
+	delete editMethodSpline;
+	delete editMethodPen;
+}
+
 
 namespace
 {
@@ -37,6 +54,26 @@ namespace
 			lastEnt = value;
 			++xCoord;
 		}
+	}
+
+
+	void paintPolygon(QPainter& painter, const std::vector<Point2D>& polygon, double factor)
+	{
+		if(polygon.size() < 2)
+			return;
+
+		      std::vector<Point2D>::const_iterator it    = polygon.begin();
+		const std::vector<Point2D>::const_iterator itEnd = polygon.end();
+		Point2D lastPoint = *it;
+		++it;
+		while(it != itEnd)
+		{
+			painter.drawEllipse(lastPoint.getX()*factor-4, lastPoint.getY()*factor-4, 8, 8);
+// 			painter.drawLine(lastPoint.getX()*factor, lastPoint.getY()*factor, it->getX()*factor, it->getY()*factor);
+			lastPoint = *it;
+			++it;
+		}
+		painter.drawEllipse(lastPoint.getX()*factor, lastPoint.getY()*factor, 5, 5);
 	}
 
 }
@@ -85,7 +122,11 @@ void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* wi
 		paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].getSegmentLine(type), scaleFactor);
 	}
 
-	paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].getSegmentLine(OctData::Segmentationlines::SegmentlineType::BM  ), scaleFactor);
+// 	paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].getSegmentLine(OctData::Segmentationlines::SegmentlineType::BM  ), scaleFactor);
+
+	paintPolygon(painter, polygon, scaleFactor);
+	paintSegmentationLine(painter, bScanHeight, interpolated, scaleFactor);
+
 }
 
 BScanLayerSegmentation::SegPoint BScanLayerSegmentation::calcPoint(int x, int y, double scaleFactor, int bscanWidth)
@@ -224,9 +265,9 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 			copySegLinesFromOctData();
 			return true;
 
-// 		case Qt::Key_T:
-// 			splineTest();
-// 			return true;
+		case Qt::Key_T:
+			splineTest();
+			return true;
 	}
 
 	return false;
@@ -248,13 +289,36 @@ void BScanLayerSegmentation::copySegLinesFromOctData()
 
 	requestFullUpdate();
 }
-/*
+
 void BScanLayerSegmentation::splineTest()
 {
+	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(actEditType);
+
+	std::vector<Point2D> vals;
+	for(std::size_t x = 0; x < segLine.size(); ++x)
+	{
+		double val = segLine[x];
+		if(val < 1000 && val > 0)
+		{
+			vals.push_back(Point2D(x, val));
+		}
+	}
+	DouglasPeuckerAlgorithm alg(vals);
+
+	polygon.clear();
+	std::copy(alg.getPoints().begin(), alg.getPoints().end(),  std::back_inserter(polygon));
+
+	PChip pchip(polygon, segLine.size());
+
+	interpolated = pchip.getValues();
+/*
+	for(double v : interpolated)
+		std::cout << v << std::endl;*/
+
+	/*
 	std::vector<double> xVal;
 	std::vector<double> yVal;
 
-	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(actEditType);
 	for(std::size_t x = 0; x < segLine.size(); ++x)
 	{
 		double val = segLine[x];
@@ -270,5 +334,6 @@ void BScanLayerSegmentation::splineTest()
 
 	std::cout << spline.getNodes().size() << std::endl;
 	std::cout << spline.getX().size() << std::endl;
+	*/
 }
-*/
+

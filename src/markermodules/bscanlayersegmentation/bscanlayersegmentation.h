@@ -5,7 +5,13 @@
 
 #include "../bscanmarkerbase.h"
 
+#include<data_structure/point2d.h>
+
 class QWidget;
+
+class EditBase;
+class EditSpline;
+class EditPen;
 
 class BScanLayerSegmentation : public BscanMarkerBase
 {
@@ -36,10 +42,18 @@ class BScanLayerSegmentation : public BscanMarkerBase
 
 	QWidget* widgetPtr2WGLayerSeg = nullptr;
 
-// 	void splineTest();
+	void splineTest();
+
+	std::vector<Point2D> polygon;
+	std::vector<double> interpolated;
+
+	EditBase  * actEditMethod    = nullptr;
+	EditSpline* editMethodSpline = nullptr;
+	EditPen   * editMethodPen    = nullptr;
 
 public:
 	BScanLayerSegmentation(OctMarkerManager* markerManager);
+	~BScanLayerSegmentation();
 
 	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/) const override;
 
