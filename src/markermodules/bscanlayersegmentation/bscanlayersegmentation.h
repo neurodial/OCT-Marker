@@ -18,42 +18,21 @@ class BScanLayerSegmentation : public BscanMarkerBase
 	Q_OBJECT
 
 	friend class EditBase;
-/*
-	struct SegPoint
-	{
-		SegPoint() : x(0), y(0) {}
-		SegPoint(std::size_t x, double y) : x(x), y(y) {}
-
-		std::size_t x;
-		double      y;
-	};*/
 	std::vector<OctData::Segmentationlines> lines;
 	OctData::Segmentationlines::SegmentlineType actEditType = OctData::Segmentationlines::SegmentlineType::ILM;
 
 	void resetMarkers(const OctData::Series* series);
-/*
-	SegPoint lastPoint;
-	bool paintSegLine = false;*/
-
-// 	SegPoint calcPoint(int x, int y, double scaleFactor, int bscanWidth);
-
-// 	void setLinePoint2Point(const SegPoint& p1, const SegPoint& p2, OctData::Segmentationlines::Segmentline& segLine);
-
-// 	QRect getWidgetPaintSize(const SegPoint& p1, const SegPoint& p2, double scaleFactor);
-
 
 	QWidget* widgetPtr2WGLayerSeg = nullptr;
 
-// 	void splineTest();
-
-// 	std::vector<Point2D> polygon;
-// 	std::vector<double> interpolated;
 
 	EditBase  * actEditMethod    = nullptr;
 	EditSpline* editMethodSpline = nullptr;
 	EditPen   * editMethodPen    = nullptr;
 
 public:
+	enum class SegMethod { None, Pen, Spline };
+
 	BScanLayerSegmentation(OctMarkerManager* markerManager);
 	~BScanLayerSegmentation();
 
@@ -73,6 +52,8 @@ public:
 	void copySegLinesFromOctData();
 
 	void setActEditLinetype(OctData::Segmentationlines::SegmentlineType type);
+
+	void setSegMethod(SegMethod method);
 };
 
 #endif // BSCANLAYERSEGMENTATION_H
