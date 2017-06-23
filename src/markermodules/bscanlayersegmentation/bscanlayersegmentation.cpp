@@ -2,16 +2,14 @@
 
 #include <widgets/bscanmarkerwidget.h>
 #include <QPainter>
+#include <QMouseEvent>
 
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
-#include <QMouseEvent>
 #include <data_structure/programoptions.h>
 
 #include "wglayerseg.h"
 
-#include"douglaspeuckeralgorithm.h"
-#include "pchip.h"
 
 #include"editbase.h"
 #include"editpen.h"
@@ -40,21 +38,21 @@ BScanLayerSegmentation::~BScanLayerSegmentation()
 
 namespace
 {
-	void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const OctData::Segmentationlines::Segmentline& segLine, double factor)
-	{
-		double lastEnt = std::numeric_limits<OctData::Segmentationlines::SegmentlineDataType>::quiet_NaN();
-		int xCoord = 0;
-		for(OctData::Segmentationlines::SegmentlineDataType value : segLine)
-		{
-			// std::cout << value << '\n';
-			if(!std::isnan(lastEnt) && lastEnt < bScanHeight && lastEnt > 0 && value < bScanHeight && value > 0)
-			{
-				segPainter.drawLine(QLineF((xCoord-1)*factor, lastEnt*factor, xCoord*factor, value*factor));
-			}
-			lastEnt = value;
-			++xCoord;
-		}
-	}
+// 	void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const OctData::Segmentationlines::Segmentline& segLine, double factor)
+// 	{
+// 		double lastEnt = std::numeric_limits<OctData::Segmentationlines::SegmentlineDataType>::quiet_NaN();
+// 		int xCoord = 0;
+// 		for(OctData::Segmentationlines::SegmentlineDataType value : segLine)
+// 		{
+// 			// std::cout << value << '\n';
+// 			if(!std::isnan(lastEnt) && lastEnt < bScanHeight && lastEnt > 0 && value < bScanHeight && value > 0)
+// 			{
+// 				segPainter.drawLine(QLineF((xCoord-1)*factor, lastEnt*factor, xCoord*factor, value*factor));
+// 			}
+// 			lastEnt = value;
+// 			++xCoord;
+// 		}
+// 	}
 
 
 	void paintPolygon(QPainter& painter, const std::vector<Point2D>& polygon, double factor)
@@ -79,25 +77,9 @@ namespace
 }
 
 
-QRect BScanLayerSegmentation::getWidgetPaintSize(const BScanLayerSegmentation::SegPoint& p1, const BScanLayerSegmentation::SegPoint& p2, double scaleFactor)
-{
-	const int broder = 2;
-
-	int minX = static_cast<int>((static_cast<double>(std::min(p1.x, p2.x) - broder))*scaleFactor);
-	int maxX = static_cast<int>((static_cast<double>(std::max(p1.x, p2.x) + broder))*scaleFactor);
-
-// 	int minY = static_cast<int>(std::min(p1.y, p2.y)*scaleFactor) - broder;
-// 	int maxY = static_cast<int>(std::max(p1.y, p2.y)*scaleFactor) + broder;
-
-// 	QRect rect = QRect(minX, minY, maxX-minX, maxY-minY);
-	QRect rect = QRect(minX, 0, maxX-minX, static_cast<int>(getBScanHight()*scaleFactor+0.5)); // old and new pos
-
-	return rect;
-}
 
 
-
-void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&) const
+void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& rec) const
 {
 	int bScanHeight = getBScanHight();
 	double scaleFactor = widget->getImageScaleFactor();
@@ -119,101 +101,72 @@ void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* wi
 		else
 			painter.setPen(penNormal);
 
-		paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].getSegmentLine(type), scaleFactor);
+		BScanMarkerWidget::paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].getSegmentLine(type), scaleFactor);
 	}
 
 // 	paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].getSegmentLine(OctData::Segmentationlines::SegmentlineType::BM  ), scaleFactor);
 
-	paintPolygon(painter, polygon, scaleFactor);
-	paintSegmentationLine(painter, bScanHeight, interpolated, scaleFactor);
+// 	paintPolygon(painter, polygon, scaleFactor);
+// 	paintSegmentationLine(painter, bScanHeight, interpolated, scaleFactor);
+//
 
+	if(actEditMethod)
+		actEditMethod->drawMarker(painter, widget, rec, scaleFactor);
 }
 
-BScanLayerSegmentation::SegPoint BScanLayerSegmentation::calcPoint(int x, int y, double scaleFactor, int bscanWidth)
-{
-	if(x<0)
-		x = 0;
+// BScanLayerSegmentation::SegPoint BScanLayerSegmentation::calcPoint(int x, int y, double scaleFactor, int bscanWidth)
+// {
+// 	if(x<0)
+// 		x = 0;
+//
+// 	std::size_t xTransformed = static_cast<std::size_t>(x/scaleFactor);
+// 	double      yTransformed =                          y/scaleFactor ;
+//
+// 	if(xTransformed > static_cast<std::size_t>(bscanWidth-1))
+// 		xTransformed = static_cast<std::size_t>(bscanWidth-1);
+//
+// 	return SegPoint(xTransformed, yTransformed);
+// }
 
-	std::size_t xTransformed = static_cast<std::size_t>(x/scaleFactor);
-	double      yTransformed =                          y/scaleFactor ;
-
-	if(xTransformed > static_cast<std::size_t>(bscanWidth-1))
-		xTransformed = static_cast<std::size_t>(bscanWidth-1);
-
-	return SegPoint(xTransformed, yTransformed);
-}
-
-void BScanLayerSegmentation::setLinePoint2Point(const BScanLayerSegmentation::SegPoint& p1, const BScanLayerSegmentation::SegPoint& p2, OctData::Segmentationlines::Segmentline& segLine)
-{
-	if(p1.x == p2.x)
-	{
-		segLine[p2.x] = p2.y;
-		return;
-	}
-
-	std::size_t pMin;
-	std::size_t pMax;
-	double pMinY;
-	double pMaxY;
-
-	if(p1.x < p2.x)
-	{
-		pMin = p1.x;
-		pMax = p2.x;
-		pMinY = p1.y;
-		pMaxY = p2.y;
-	}
-	else
-	{
-		pMin = p2.x;
-		pMax = p1.x;
-		pMinY = p2.y;
-		pMaxY = p1.y;
-	}
-
-	std::size_t length = pMax - pMin;
-	double lengthD = static_cast<double>(length);
-
-	for(std::size_t pos = 0; pos <= length; ++pos)
-	{
-		double posD = static_cast<double>(pos);
-		segLine[pos+pMin] = pMinY*(1. - posD/lengthD) + pMaxY*(posD/lengthD);
-	}
-// 	qDebug("%lf", segLine[length+pMin]);
-}
 
 
 BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mouseMoveEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
-	if(!paintSegLine)
-		return BscanMarkerBase::RedrawRequest();
-
-	double scaleFactor = widget->getImageScaleFactor();
-	SegPoint segPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
-
-	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(actEditType);
-
-	setLinePoint2Point(lastPoint, segPoint, segLine);
-
-	BscanMarkerBase::RedrawRequest request;
-	request.redraw = true;
-	request.rect = getWidgetPaintSize(lastPoint, segPoint, scaleFactor);
-
-	lastPoint = segPoint;
-	return request;
+// 	if(!paintSegLine)
+// 		return BscanMarkerBase::RedrawRequest();
+//
+// 	double scaleFactor = widget->getImageScaleFactor();
+// 	SegPoint segPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
+//
+// 	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(actEditType);
+//
+// 	setLinePoint2Point(lastPoint, segPoint, segLine);
+//
+// 	BscanMarkerBase::RedrawRequest request;
+// 	request.redraw = true;
+// 	request.rect = getWidgetPaintSize(lastPoint, segPoint, scaleFactor);
+//
+// 	lastPoint = segPoint;
+	if(actEditMethod)
+		return actEditMethod->mouseMoveEvent(event, widget);
+	return BscanMarkerBase::RedrawRequest();
 }
 
 BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mousePressEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
-	paintSegLine = true;
-	double scaleFactor = widget->getImageScaleFactor();
-	lastPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
+// 	paintSegLine = true;
+// 	double scaleFactor = widget->getImageScaleFactor();
+// 	lastPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
+	if(actEditMethod)
+		return actEditMethod->mousePressEvent(event, widget);
 	return BscanMarkerBase::RedrawRequest();
 }
 
-BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*)
+BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mouseReleaseEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
-	paintSegLine = false;
+	if(actEditMethod)
+		return actEditMethod->mouseReleaseEvent(event, widget);
+// 	paintSegLine = false;
 	return BscanMarkerBase::RedrawRequest();
 }
 
@@ -252,6 +205,10 @@ void BScanLayerSegmentation::setActEditLinetype(OctData::Segmentationlines::Segm
 
 	actEditType = type;
 
+
+	if(actEditMethod)
+		actEditMethod->segLineChanged(&lines[getActBScanNr()].getSegmentLine(actEditType));
+
 	requestFullUpdate();
 }
 
@@ -265,8 +222,16 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 			copySegLinesFromOctData();
 			return true;
 
-		case Qt::Key_T:
-			splineTest();
+// 		case Qt::Key_T:
+// 			splineTest();
+// 			return true;
+
+		case Qt::Key_1:
+			actEditMethod = editMethodPen;
+			return true;
+
+		case Qt::Key_2:
+			actEditMethod = editMethodSpline;
 			return true;
 	}
 
@@ -290,50 +255,50 @@ void BScanLayerSegmentation::copySegLinesFromOctData()
 	requestFullUpdate();
 }
 
-void BScanLayerSegmentation::splineTest()
-{
-	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(actEditType);
-
-	std::vector<Point2D> vals;
-	for(std::size_t x = 0; x < segLine.size(); ++x)
-	{
-		double val = segLine[x];
-		if(val < 1000 && val > 0)
-		{
-			vals.push_back(Point2D(x, val));
-		}
-	}
-	DouglasPeuckerAlgorithm alg(vals);
-
-	polygon.clear();
-	std::copy(alg.getPoints().begin(), alg.getPoints().end(),  std::back_inserter(polygon));
-
-	PChip pchip(polygon, segLine.size());
-
-	interpolated = pchip.getValues();
-/*
-	for(double v : interpolated)
-		std::cout << v << std::endl;*/
-
-	/*
-	std::vector<double> xVal;
-	std::vector<double> yVal;
-
-	for(std::size_t x = 0; x < segLine.size(); ++x)
-	{
-		double val = segLine[x];
-		if(val < 1000 && val > 0)
-		{
-			xVal.push_back(x);
-			yVal.push_back(val);
-		}
-	}
-
-
-	BSpline<double> spline(xVal.data(), static_cast<int>(xVal.size()), yVal.data(), 2.);
-
-	std::cout << spline.getNodes().size() << std::endl;
-	std::cout << spline.getX().size() << std::endl;
-	*/
-}
+// void BScanLayerSegmentation::splineTest()
+// {
+// 	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(actEditType);
+//
+// 	std::vector<Point2D> vals;
+// 	for(std::size_t x = 0; x < segLine.size(); ++x)
+// 	{
+// 		double val = segLine[x];
+// 		if(val < 1000 && val > 0)
+// 		{
+// 			vals.push_back(Point2D(x, val));
+// 		}
+// 	}
+// 	DouglasPeuckerAlgorithm alg(vals);
+//
+// 	polygon.clear();
+// 	std::copy(alg.getPoints().begin(), alg.getPoints().end(),  std::back_inserter(polygon));
+//
+// 	PChip pchip(polygon, segLine.size());
+//
+// 	interpolated = pchip.getValues();
+// /*
+// 	for(double v : interpolated)
+// 		std::cout << v << std::endl;*/
+//
+// 	/*
+// 	std::vector<double> xVal;
+// 	std::vector<double> yVal;
+//
+// 	for(std::size_t x = 0; x < segLine.size(); ++x)
+// 	{
+// 		double val = segLine[x];
+// 		if(val < 1000 && val > 0)
+// 		{
+// 			xVal.push_back(x);
+// 			yVal.push_back(val);
+// 		}
+// 	}
+//
+//
+// 	BSpline<double> spline(xVal.data(), static_cast<int>(xVal.size()), yVal.data(), 2.);
+//
+// 	std::cout << spline.getNodes().size() << std::endl;
+// 	std::cout << spline.getX().size() << std::endl;
+// 	*/
+// }
 

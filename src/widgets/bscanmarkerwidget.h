@@ -52,6 +52,8 @@ public:
 
 	virtual ~BScanMarkerWidget();
 
+	static void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const std::vector<double>& segLine, double factor);
+
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
 

@@ -93,6 +93,9 @@ namespace
 
 PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 {
+	if(points.size() < 3)
+		return;
+
 	// First derivatives
 	std::vector<double> h;
 	std::vector<double> delta;

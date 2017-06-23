@@ -13,6 +13,11 @@ public:
 
 	double getX() const { return x; }
 	double getY() const { return y; }
+
+	void setX(double v) { x = v; }
+	void setY(double v) { y = v; }
+
+	double euklidDist(const Point2D& p) const;
 };
 
 

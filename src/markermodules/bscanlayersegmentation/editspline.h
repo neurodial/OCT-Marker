@@ -11,17 +11,27 @@
 
 class EditSpline : public EditBase
 {
+	OctData::Segmentationlines::Segmentline* segLine = nullptr;
+
 	std::vector<Point2D> supportingPoints;
+
+	std::vector<double> interpolated;
+
+	void recalcInterpolation();
+
+	Point2D* actEditPoint = nullptr;
 
 public:
 	EditSpline(BScanLayerSegmentation* base) : EditBase(base) {}
 	virtual ~EditSpline() {}
 
-	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/) const override;
+	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/, double scaleFactor) const override;
 
-	virtual bool mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
-	virtual bool mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
-	virtual bool mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
+	virtual BscanMarkerBase::RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
+	virtual BscanMarkerBase::RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
+	virtual BscanMarkerBase::RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
+
+	void segLineChanged(OctData::Segmentationlines::Segmentline* segLine) override;
 };
 
 #endif // EDITSPLINE_H

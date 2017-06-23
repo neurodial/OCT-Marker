@@ -17,6 +17,8 @@ class BScanLayerSegmentation : public BscanMarkerBase
 {
 	Q_OBJECT
 
+	friend class EditBase;
+/*
 	struct SegPoint
 	{
 		SegPoint() : x(0), y(0) {}
@@ -24,28 +26,28 @@ class BScanLayerSegmentation : public BscanMarkerBase
 
 		std::size_t x;
 		double      y;
-	};
+	};*/
 	std::vector<OctData::Segmentationlines> lines;
 	OctData::Segmentationlines::SegmentlineType actEditType = OctData::Segmentationlines::SegmentlineType::ILM;
 
 	void resetMarkers(const OctData::Series* series);
-
+/*
 	SegPoint lastPoint;
-	bool paintSegLine = false;
+	bool paintSegLine = false;*/
 
-	SegPoint calcPoint(int x, int y, double scaleFactor, int bscanWidth);
+// 	SegPoint calcPoint(int x, int y, double scaleFactor, int bscanWidth);
 
-	void setLinePoint2Point(const SegPoint& p1, const SegPoint& p2, OctData::Segmentationlines::Segmentline& segLine);
+// 	void setLinePoint2Point(const SegPoint& p1, const SegPoint& p2, OctData::Segmentationlines::Segmentline& segLine);
 
-	QRect getWidgetPaintSize(const SegPoint& p1, const SegPoint& p2, double scaleFactor);
+// 	QRect getWidgetPaintSize(const SegPoint& p1, const SegPoint& p2, double scaleFactor);
 
 
 	QWidget* widgetPtr2WGLayerSeg = nullptr;
 
-	void splineTest();
+// 	void splineTest();
 
-	std::vector<Point2D> polygon;
-	std::vector<double> interpolated;
+// 	std::vector<Point2D> polygon;
+// 	std::vector<double> interpolated;
 
 	EditBase  * actEditMethod    = nullptr;
 	EditSpline* editMethodSpline = nullptr;

@@ -3,6 +3,8 @@
 
 #include<octdata/datastruct/segmentationlines.h>
 
+#include"../bscanmarkerbase.h"
+
 class QMouseEvent;
 class QPainter;
 class QRect;
@@ -10,19 +12,24 @@ class BScanMarkerWidget;
 
 class BScanLayerSegmentation;
 
+
 class EditBase
 {
-	BScanLayerSegmentation* base;
+	BScanLayerSegmentation* parent;
 public:
-	EditBase(BScanLayerSegmentation* base) : base(base) {}
+	EditBase(BScanLayerSegmentation* parent) : parent(parent) {}
 
-	virtual void drawMarker(QPainter& /*painter*/, BScanMarkerWidget* /*widget*/, const QRect& /*drawrect*/) const {};
+	virtual void drawMarker(QPainter& /*painter*/, BScanMarkerWidget* /*widget*/, const QRect& /*drawrect*/, double scaleFactor) const {};
 
-	virtual bool mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) { return false; };
-	virtual bool mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) { return false; };
-	virtual bool mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) { return false; };
+	virtual BscanMarkerBase::RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };
+	virtual BscanMarkerBase::RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };
+	virtual BscanMarkerBase::RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };
 
-	virtual void segLineChanged(OctData::Segmentationlines::Segmentline& segLine) {};
+	virtual void segLineChanged(OctData::Segmentationlines::Segmentline* segLine) {};
+
+protected:
+	int getBScanWidth() const;
+	int getBScanHight() const;
 
 };
 

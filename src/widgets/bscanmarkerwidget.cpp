@@ -91,24 +91,23 @@ BScanMarkerWidget::~BScanMarkerWidget()
 {
 }
 
-namespace
+void BScanMarkerWidget::paintSegmentationLine(QPainter& segPainter, int bScanHeight, const std::vector<double>& segLine, double factor)
 {
-	void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const OctData::Segmentationlines::Segmentline& segLine, double factor)
+	double lastEnt = std::numeric_limits<OctData::Segmentationlines::SegmentlineDataType>::quiet_NaN();
+	int xCoord = 0;
+	for(OctData::Segmentationlines::SegmentlineDataType value : segLine)
 	{
-		double lastEnt = std::numeric_limits<OctData::Segmentationlines::SegmentlineDataType>::quiet_NaN();
-		int xCoord = 0;
-		for(OctData::Segmentationlines::SegmentlineDataType value : segLine)
+		// std::cout << value << '\n';
+		if(!std::isnan(lastEnt) && lastEnt < bScanHeight && lastEnt > 0 && value < bScanHeight && value > 0)
 		{
-			// std::cout << value << '\n';
-			if(!std::isnan(lastEnt) && lastEnt < bScanHeight && lastEnt > 0 && value < bScanHeight && value > 0)
-			{
-				segPainter.drawLine(QLineF((xCoord-1)*factor, lastEnt*factor, xCoord*factor, value*factor));
-			}
-			lastEnt = value;
-			++xCoord;
+			segPainter.drawLine(QLineF((xCoord-1)*factor, lastEnt*factor, xCoord*factor, value*factor));
 		}
+		lastEnt = value;
+		++xCoord;
 	}
 }
+
+
 
 void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 {
@@ -134,6 +133,10 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 	if(ProgramOptions::bscansShowSegmentationslines())
 	{
+
+		for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
+			BScanMarkerWidget::paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(type), scaleFactor);
+		/*
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::ILM  ), scaleFactor);
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::BM   ), scaleFactor);
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::NFL  ), scaleFactor);
@@ -145,7 +148,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I8T3 ), scaleFactor);
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I14T1), scaleFactor);
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I15T1), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I16T1), scaleFactor);
+		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I16T1), scaleFactor);*/
 	}
 	
 	
