@@ -162,7 +162,7 @@ void BScanLayerSegmentation::setActEditLinetype(OctData::Segmentationlines::Segm
 }
 
 
-bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
+bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* widget)
 {
 	int key = event->key();
 	switch(key)
@@ -179,6 +179,9 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 			setSegMethod(BScanLayerSegmentation::SegMethod::Spline);
 			return true;
 	}
+
+	if(actEditMethod)
+		return actEditMethod->keyPressEvent(event, widget);
 
 	return false;
 }

@@ -12,3 +12,9 @@ int EditBase::getBScanWidth() const
 {
 	return parent->getBScanWidth();
 }
+
+void EditBase::requestFullUpdate()
+{
+	parent->requestFullUpdate();
+}
+

@@ -25,11 +25,14 @@ public:
 	virtual BscanMarkerBase::RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };
 	virtual BscanMarkerBase::RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };
 
+	virtual bool keyPressEvent(QKeyEvent*, BScanMarkerWidget*)      { return false;}
+
 	virtual void segLineChanged(OctData::Segmentationlines::Segmentline* segLine) {};
 
 protected:
 	int getBScanWidth() const;
 	int getBScanHight() const;
+	void requestFullUpdate();
 
 };
 

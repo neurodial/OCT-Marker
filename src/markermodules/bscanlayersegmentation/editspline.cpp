@@ -16,8 +16,6 @@ namespace
 {
 	void paintPolygon(QPainter& painter, const std::vector<Point2D>& polygon, double factor)
 	{
-		for(const Point2D& p : polygon)
-			painter.drawEllipse(p.getX()*factor-4, p.getY()*factor-4, 8, 8);
 
 #if true
 		if(polygon.size() < 2)
@@ -41,7 +39,7 @@ namespace
 
 	class RecPointAdder
 	{
-		static void addPoint(QRect& rec, std::vector<Point2D>::const_iterator p)
+		static void addPointPrivat(QRect& rec, std::vector<Point2D>::const_iterator p)
 		{
 			const int x1 = rec.x();
 			const int x2 = x1 + rec.width();
@@ -67,9 +65,21 @@ namespace
 			else if(y>y2)
 				rec.setHeight(y-y1+1);
 		}
-
 	public:
-		static void addPoint2Rec(QRect& rec, std::vector<Point2D>::const_iterator p, const std::vector<Point2D>& vec, const ssize_t addPos = 0)
+		static void addPoint(QRect& rec, std::vector<Point2D>::const_iterator p)
+		{
+			if(!rec.isValid())
+			{
+				rec.setX(static_cast<int>(p->getX()));
+				rec.setY(static_cast<int>(p->getY()));
+				rec.setWidth(1);
+				rec.setHeight(1);
+			}
+			else
+				addPointPrivat(rec, p);
+		}
+
+		static void addPoints2Rec(QRect& rec, std::vector<Point2D>::const_iterator p, const std::vector<Point2D>& vec, const ssize_t addPos = 0)
 		{
 			if(addPos > 0)
 			{
@@ -78,7 +88,7 @@ namespace
 					if(p+1 == vec.end())
 						break;
 					++p;
-					addPoint(rec, p);
+					addPointPrivat(rec, p);
 				}
 			}
 			else if(addPos < 0)
@@ -88,7 +98,7 @@ namespace
 					if(p == vec.begin())
 						break;
 					--p;
-					addPoint(rec, p);
+					addPointPrivat(rec, p);
 				}
 			}
 		}
@@ -146,11 +156,35 @@ namespace
 		return stream;
 	}
 
+	void updateRec4Paint(QRect& rect, double scaleFactor)
+	{
+		rect *= scaleFactor;
+		int adjustSize = 6;
+		rect.adjust(-adjustSize, -adjustSize, adjustSize, adjustSize);
+	}
 }
+
+
+void EditSpline::paintPoints(QPainter& painter, double factor) const
+{
+	painter.setPen(QPen(Qt::red));
+	painter.setBrush(QBrush(Qt::black));
+	for(const Point2D& p : supportingPoints)
+		painter.drawEllipse(p.getX()*factor-4, p.getY()*factor-4, 8, 8);
+
+	if(actEditPoint != supportingPoints.end())
+	{
+		painter.setBrush(QBrush(Qt::green));
+		painter.drawEllipse(actEditPoint->getX()*factor-4, actEditPoint->getY()*factor-4, 8, 8);
+	}
+}
+
+
 
 void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, double scaleFactor) const
 {
 	paintPolygon(painter, supportingPoints, scaleFactor);
+	paintPoints(painter, scaleFactor);
 	BScanMarkerWidget::paintSegmentationLine(painter, getBScanHight(), interpolated, scaleFactor);
 }
 
@@ -177,12 +211,10 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 		pointDrawPos -= pointMove;
 
 	QRect repaintRect = createRec(oldPoint, *actEditPoint);
-	RecPointAdder::addPoint2Rec(repaintRect, actEditPoint, supportingPoints, pointDrawPos);
-	RecPointAdder::addPoint2Rec(repaintRect, actEditPoint, supportingPoints, pointDrawNeg);
+	RecPointAdder::addPoints2Rec(repaintRect, actEditPoint, supportingPoints, pointDrawPos);
+	RecPointAdder::addPoints2Rec(repaintRect, actEditPoint, supportingPoints, pointDrawNeg);
 
-	repaintRect *= scaleFactor;
-	int adjustSize = 6;
-	repaintRect.adjust(-adjustSize, -adjustSize, adjustSize, adjustSize);
+	updateRec4Paint(repaintRect, scaleFactor);
 	BscanMarkerBase::RedrawRequest request;
 	request.redraw = true;
 	request.rect   = repaintRect;
@@ -208,7 +240,10 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 		}
 	}
 
-	if(minDist < 10*scaleFactor)
+
+	std::vector<Point2D>::iterator lastEditPoint = actEditPoint;
+
+	if(minDist < 10/scaleFactor)
 	{
 		movePoint = true;
 		actEditPoint = minDistPoint;
@@ -216,9 +251,25 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 	else
 	{
 		movePoint = false;
+		actEditPoint = supportingPoints.end();
 	}
 
-	return BscanMarkerBase::RedrawRequest();
+	BscanMarkerBase::RedrawRequest redraw;
+	if(lastEditPoint != supportingPoints.end() || actEditPoint != supportingPoints.end())
+	{
+		QRect repaintRect;
+		std::cout << repaintRect << std::endl;
+		if(lastEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, lastEditPoint);
+		std::cout << repaintRect << std::endl;
+		if(actEditPoint  != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, actEditPoint );
+
+		updateRec4Paint(repaintRect, scaleFactor);
+		redraw.redraw = true;
+		redraw.rect   = repaintRect;
+		std::cout << repaintRect << std::endl;
+	}
+
+	return redraw;
 }
 
 BscanMarkerBase::RedrawRequest EditSpline::mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*)
@@ -266,4 +317,22 @@ void EditSpline::recalcInterpolation()
 
 }
 
+
+bool EditSpline::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
+{
+	switch(event->key())
+	{
+		case Qt::Key_Delete:
+			if(actEditPoint != supportingPoints.end())
+			{
+				supportingPoints.erase(actEditPoint);
+				actEditPoint = supportingPoints.end();
+				recalcInterpolation();
+				requestFullUpdate();
+				return true;
+			}
+	}
+
+	return false;
+}
 

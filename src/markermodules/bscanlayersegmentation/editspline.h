@@ -22,6 +22,8 @@ class EditSpline : public EditBase
 	bool movePoint = false;
 	std::vector<Point2D>::iterator actEditPoint;
 
+	void paintPoints(QPainter& painter, double factor) const;
+
 public:
 	EditSpline(BScanLayerSegmentation* base) : EditBase(base) {}
 	virtual ~EditSpline() {}
@@ -31,6 +33,9 @@ public:
 	virtual BscanMarkerBase::RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual BscanMarkerBase::RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual BscanMarkerBase::RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
+
+
+	virtual bool keyPressEvent(QKeyEvent*, BScanMarkerWidget*) override;
 
 	void segLineChanged(OctData::Segmentationlines::Segmentline* segLine) override;
 };
