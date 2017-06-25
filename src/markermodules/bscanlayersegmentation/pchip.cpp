@@ -69,7 +69,7 @@ namespace
 	{
 		const std::size_t n = h.size();
 		std::vector<double> d;
-		d.resize(n);
+		d.resize(n+1);
 
 		for(std::size_t k = 1; k < n; ++k)
 		{
@@ -85,7 +85,7 @@ namespace
 
 		// Slopes at endpoints
 		d[0  ] = pchipendpoint(h[0  ], h[1  ], delta[0  ], delta[1  ]);
-		d[n-1] = pchipendpoint(h[n-1], h[n-2], delta[n-1], delta[n-2]);
+		d[n  ] = pchipendpoint(h[n-1], h[n-2], delta[n-1], delta[n-2]);
 		return d;
 	}
 }
@@ -122,7 +122,17 @@ PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 	double c;
 	double b;
 
-	for(std::size_t actPos = 0; actPos < length; ++actPos)
+	std::cout << "d.size()     : " << d.size() << std::endl;
+	std::cout << "delta.size() : " << delta.size() << std::endl;
+	std::cout << "points.size(): " << points.size() << std::endl;
+
+	std::size_t firstPos = points[0].getX()>0?points[0].getX():0;
+	std::size_t lastPos  = points[points.size()-1].getX();
+
+	if(lastPos > length)
+		lastPos = length;
+
+	for(std::size_t actPos = firstPos; actPos <= lastPos; ++actPos)
 	{
 		// Piecewise polynomial coefficients
 		if(actPos >= pointIntervalUntil)
@@ -134,10 +144,12 @@ PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 			b = (-2*delta[actPointIndex] +   d[actPointIndex] + d[actPointIndex+1])/(hVal*hVal);
 			pointYValue        = points[actPointIndex].getY();
 			pointXValue        = points[actPointIndex].getX();
-			if(nextPointIndex < points.size())
+			if(nextPointIndex < points.size()-1)
 				pointIntervalUntil = points[nextPointIndex].getX();
 			else
 				pointIntervalUntil = length;
+
+			std::cout << "actPointIndex: " << actPointIndex << std::endl;
 		}
 
 		// Evaluate interpolant

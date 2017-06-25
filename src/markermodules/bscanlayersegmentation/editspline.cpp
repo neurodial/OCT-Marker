@@ -14,8 +14,14 @@ namespace
 {
 	void paintPolygon(QPainter& painter, const std::vector<Point2D>& polygon, double factor)
 	{
+		for(const Point2D& p : polygon)
+			painter.drawEllipse(p.getX()*factor-4, p.getY()*factor-4, 8, 8);
+
+#if true
 		if(polygon.size() < 2)
 			return;
+
+		painter.setPen(QPen(Qt::green));
 
 		      std::vector<Point2D>::const_iterator it    = polygon.begin();
 		const std::vector<Point2D>::const_iterator itEnd = polygon.end();
@@ -23,12 +29,12 @@ namespace
 		++it;
 		while(it != itEnd)
 		{
-			painter.drawEllipse(lastPoint.getX()*factor-4, lastPoint.getY()*factor-4, 8, 8);
-// 			painter.drawLine(lastPoint.getX()*factor, lastPoint.getY()*factor, it->getX()*factor, it->getY()*factor);
+			painter.drawLine(lastPoint.getX()*factor, lastPoint.getY()*factor, it->getX()*factor, it->getY()*factor);
 			lastPoint = *it;
 			++it;
 		}
-		painter.drawEllipse(lastPoint.getX()*factor, lastPoint.getY()*factor, 5, 5);
+		painter.setPen(QPen(Qt::red));
+#endif
 	}
 
 }
