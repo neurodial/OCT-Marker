@@ -1,5 +1,7 @@
 #include "editspline.h"
 
+#include<algorithm>
+
 #include<QPainter>
 #include <QMouseEvent>
 
@@ -92,6 +94,26 @@ namespace
 		}
 	};
 
+	int reorderPoint(std::vector<Point2D>::iterator& p, const std::vector<Point2D>& vec)
+	{
+		int direction = 0;
+		double x = p->getX();
+		while(p != vec.begin() && (p-1)->getX() > x)
+		{
+			std::iter_swap(p, p-1);
+			--p;
+			--direction;
+		}
+
+		while((p+1) != vec.end() && (p+1)->getX() < x)
+		{
+			std::iter_swap(p, p+1);
+			++p;
+			++direction;
+		}
+		return direction;
+	}
+
 
 	QRect createRec(const Point2D& p1, const Point2D& p2)
 	{
@@ -141,11 +163,22 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 	double scaleFactor = widget->getImageScaleFactor();
 	actEditPoint->setX(event->x()/scaleFactor);
 	actEditPoint->setY(event->y()/scaleFactor);
+	int pointMove = reorderPoint(actEditPoint, supportingPoints);
+	recalcInterpolation();
+
+
+	// calc paint rect
+	int pointDrawPos =  2;
+	int pointDrawNeg = -2;
+
+	if(pointMove > 0)
+		pointDrawNeg -= pointMove;
+	else
+		pointDrawPos -= pointMove;
 
 	QRect repaintRect = createRec(oldPoint, *actEditPoint);
-	RecPointAdder::addPoint2Rec(repaintRect, actEditPoint, supportingPoints,  2);
-	RecPointAdder::addPoint2Rec(repaintRect, actEditPoint, supportingPoints, -2);
-	recalcInterpolation();
+	RecPointAdder::addPoint2Rec(repaintRect, actEditPoint, supportingPoints, pointDrawPos);
+	RecPointAdder::addPoint2Rec(repaintRect, actEditPoint, supportingPoints, pointDrawNeg);
 
 	repaintRect *= scaleFactor;
 	int adjustSize = 6;
@@ -154,7 +187,6 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 	request.redraw = true;
 	request.rect   = repaintRect;
 
-// 	std::cout << repaintRect << std::endl;
 	return request;
 }
 
