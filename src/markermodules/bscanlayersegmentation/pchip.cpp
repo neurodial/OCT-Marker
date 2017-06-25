@@ -121,10 +121,10 @@ PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 
 	double c;
 	double b;
-
+/*
 	std::cout << "d.size()     : " << d.size() << std::endl;
 	std::cout << "delta.size() : " << delta.size() << std::endl;
-	std::cout << "points.size(): " << points.size() << std::endl;
+	std::cout << "points.size(): " << points.size() << std::endl;*/
 
 	std::size_t firstPos = points[0].getX()>0?points[0].getX():0;
 	std::size_t lastPos  = points[points.size()-1].getX();
@@ -148,8 +148,6 @@ PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 				pointIntervalUntil = points[nextPointIndex].getX();
 			else
 				pointIntervalUntil = length;
-
-			std::cout << "actPointIndex: " << actPointIndex << std::endl;
 		}
 
 		// Evaluate interpolant

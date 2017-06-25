@@ -19,7 +19,8 @@ class EditSpline : public EditBase
 
 	void recalcInterpolation();
 
-	Point2D* actEditPoint = nullptr;
+	bool movePoint = false;
+	std::vector<Point2D>::iterator actEditPoint;
 
 public:
 	EditSpline(BScanLayerSegmentation* base) : EditBase(base) {}
