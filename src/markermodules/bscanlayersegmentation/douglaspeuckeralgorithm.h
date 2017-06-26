@@ -8,9 +8,13 @@
 
 class DouglasPeuckerAlgorithm
 {
+	typedef std::list<Point2D>::iterator PtIt;
+	typedef std::vector<Point2D>::const_iterator PtItSource;
+
 	constexpr static const double tol = 0.5;
 
-	void DouglasPeuckerAlgorithmRecursiv(std::list<Point2D>::iterator insertDpPointBefore, std::vector<Point2D>::const_iterator firstPoint, std::vector<Point2D>::const_iterator lastPoint);
+	void divideOnPoint(const PtItSource firstPoint, const PtItSource dividePoint, const PtItSource lastPoint, PtIt insertPointBefore);
+	void douglasPeuckerAlgorithmRecursiv(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint);
 
 	std::list<Point2D> destPoints;
 

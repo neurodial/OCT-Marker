@@ -8,6 +8,7 @@
 #include <widgets/bscanmarkerwidget.h>
 
 #include"douglaspeuckeralgorithm.h"
+#include"findsupportingpoints.h"
 #include"pchip.h"
 
 
@@ -222,6 +223,29 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 	return request;
 }
 
+bool EditSpline::testInsertPoint(const Point2D& insertPoint, double scaleFactor)
+{
+	int pX = static_cast<int>(std::round(insertPoint.getX()));
+	if(pX >= 0 && pX < interpolated.size())
+	{
+		double pY = insertPoint.getY();
+		if(std::abs(interpolated.at(pX) - pY) < 10./scaleFactor)
+		{
+			for(std::vector<Point2D>::iterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
+			{
+				if(p->getX() > pX)
+				{
+					actEditPoint = supportingPoints.insert(p, insertPoint);
+					return true;
+				}
+			}
+
+		}
+	}
+	return false;
+}
+
+
 BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
 	double scaleFactor = widget->getImageScaleFactor();
@@ -250,23 +274,20 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 	}
 	else
 	{
-		movePoint = false;
 		actEditPoint = supportingPoints.end();
+		movePoint = testInsertPoint(clickPoint, scaleFactor);
 	}
 
 	BscanMarkerBase::RedrawRequest redraw;
 	if(lastEditPoint != supportingPoints.end() || actEditPoint != supportingPoints.end())
 	{
 		QRect repaintRect;
-		std::cout << repaintRect << std::endl;
 		if(lastEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, lastEditPoint);
-		std::cout << repaintRect << std::endl;
 		if(actEditPoint  != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, actEditPoint );
 
 		updateRec4Paint(repaintRect, scaleFactor);
 		redraw.redraw = true;
 		redraw.rect   = repaintRect;
-		std::cout << repaintRect << std::endl;
 	}
 
 	return redraw;
@@ -300,7 +321,8 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 			vals.push_back(Point2D(x, val));
 		}
 	}
-	DouglasPeuckerAlgorithm alg(vals);
+// 	DouglasPeuckerAlgorithm alg(vals);
+	FindSupportingPoints alg(vals);
 
 	supportingPoints.clear();
 	std::copy(alg.getPoints().begin(), alg.getPoints().end(),  std::back_inserter(supportingPoints));

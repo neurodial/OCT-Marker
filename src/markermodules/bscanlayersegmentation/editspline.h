@@ -24,6 +24,8 @@ class EditSpline : public EditBase
 
 	void paintPoints(QPainter& painter, double factor) const;
 
+	bool testInsertPoint(const Point2D& p, double scaleFactor);
+
 public:
 	EditSpline(BScanLayerSegmentation* base) : EditBase(base) {}
 	virtual ~EditSpline() {}

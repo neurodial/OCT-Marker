@@ -14,23 +14,34 @@ DouglasPeuckerAlgorithm::DouglasPeuckerAlgorithm(const std::vector<Point2D>& val
 	destPoints.push_back(*firstPoint);
 	destPoints.push_back(*lastPoint);
 
-	DouglasPeuckerAlgorithmRecursiv(++destPoints.begin(), firstPoint, lastPoint);
+	douglasPeuckerAlgorithmRecursiv(++destPoints.begin(), firstPoint, lastPoint);
 }
 
-void DouglasPeuckerAlgorithm::DouglasPeuckerAlgorithmRecursiv(std::list<Point2D>::iterator insertDpPointBefore, std::vector<Point2D>::const_iterator firstPoint, std::vector<Point2D>::const_iterator lastPoint)
+void DouglasPeuckerAlgorithm::divideOnPoint(const PtItSource firstPoint, const PtItSource dividePoint, const PtItSource lastPoint, PtIt insertPointBefore)
+{
+	PtIt newPointIt = destPoints.insert(insertPointBefore, *dividePoint);
+	douglasPeuckerAlgorithmRecursiv(newPointIt, firstPoint, dividePoint);
+	douglasPeuckerAlgorithmRecursiv(insertPointBefore, dividePoint, lastPoint);
+}
+
+
+void DouglasPeuckerAlgorithm::douglasPeuckerAlgorithmRecursiv(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint)
 {
 	if(lastPoint == firstPoint)
 		return;
 
-	double length = lastPoint->getX() - firstPoint->getX();
+	const double point1X = firstPoint->getX();
+	const double point1Y = firstPoint->getY();
+	const double point2Y = lastPoint->getY();
+	double length = lastPoint->getX() - point1X;
 
 	double maxDist = 0;
 	std::vector<Point2D>::const_iterator maxDistIt = firstPoint;
 
 	for(std::vector<Point2D>::const_iterator it = firstPoint; it != lastPoint; ++it)
 	{
-		const double linePos   = (it->getX() - firstPoint->getX())/length;
-		const double lineValue = (firstPoint->getY())*(1. - linePos) + (lastPoint->getY())*linePos;
+		const double linePos   = (it->getX() - point1X)/length;
+		const double lineValue = (point1Y)*(1. - linePos) + (point2Y)*linePos;
 
 		const double dist = std::abs(lineValue - it->getY());
 		if(dist > maxDist)
@@ -41,10 +52,5 @@ void DouglasPeuckerAlgorithm::DouglasPeuckerAlgorithmRecursiv(std::list<Point2D>
 	}
 
 	if(maxDist > tol)
-	{
-// 		std::cout << "maxDist: " << maxDist << std::endl;
-		std::list<Point2D>::iterator newPointIt = destPoints.insert(insertDpPointBefore, *maxDistIt);
-		DouglasPeuckerAlgorithmRecursiv(newPointIt, firstPoint, maxDistIt);
-		DouglasPeuckerAlgorithmRecursiv(insertDpPointBefore, maxDistIt, lastPoint);
-	}
+		divideOnPoint(firstPoint, maxDistIt, lastPoint, insertPointBefore);
 }
