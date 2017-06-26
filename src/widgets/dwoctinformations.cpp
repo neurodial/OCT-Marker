@@ -63,6 +63,12 @@ namespace
 	public:
 		LayoutFiller(QWidget* parent) : parent(parent) {}
 
+		template<typename T>
+		void setInformationConvert(QFormLayout* formlayout, const QString& labelText, const T& information, DwOctInformations::OctInfoField& octInfo)
+		{
+			setInformation(formlayout, labelText, QString("%1").arg(information), octInfo);
+		}
+
 		void setInformation(QFormLayout* formlayout, const QString& labelText, const QString& information, DwOctInformations::OctInfoField& octInfo)
 		{
 			if(octInfo.labelDesc == nullptr)
@@ -107,7 +113,8 @@ DwOctInformations::DwOctInformations(QWidget* parent)
 {
 	setupUi(this);
 	
-	OctDataManager& dataManager = OctDataManager::getInstance();
+	OctDataManager  & dataManager   = OctDataManager  ::getInstance();
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
 	
 	patientInformations = new QFormLayout;
 	studyInformations   = new QFormLayout;
@@ -121,26 +128,12 @@ DwOctInformations::DwOctInformations(QWidget* parent)
 
 	groupBoxPatDiagnose->setVisible(false);
 		
-	connect(&dataManager, &OctDataManager::patientChanged, this, &DwOctInformations::setPatient);
-	connect(&dataManager, &OctDataManager::studyChanged  , this, &DwOctInformations::setStudy  );
-	connect(&dataManager, &OctDataManager::seriesChanged , this, &DwOctInformations::setSeries );
-
-	groupBoxBScan->setVisible(false);
+	connect(&dataManager  , &OctDataManager  ::patientChanged, this, &DwOctInformations::setPatient);
+	connect(&dataManager  , &OctDataManager  ::studyChanged  , this, &DwOctInformations::setStudy  );
+	connect(&dataManager  , &OctDataManager  ::seriesChanged , this, &DwOctInformations::setSeries );
+	connect(&markerManager, &OctMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan  );
 }
 
-
-
-void DwOctInformations::setBScanMarkerManager(OctMarkerManager* const manager)
-{
-	if(markerManager)
-		disconnect(markerManager, &OctMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan);
-	if(manager)
-		connect(manager, &OctMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan);
-
-	groupBoxBScan->setVisible(manager != nullptr);
-
-	markerManager = manager;
-}
 
 void DwOctInformations::setPatient(const OctData::Patient* patient)
 {
@@ -321,6 +314,11 @@ void DwOctInformations::setBScan(const OctData::BScan* bscan)
 	filler.setInformation(bscanInformations, tr("Acquisition time"), imageAcquisitionTime, bscanAcquisitionTime  );
 	filler.setInformation(bscanInformations, tr("Image quality"   ), imageQuality        , bscanImageQuality     );
 	filler.setInformation(bscanInformations, tr("Images average"  ), imageAverage        , bscanNumAverage       );
+
+	OctData::ScaleFactor sf = bscan->getScaleFactor();
+	filler.setInformationConvert(bscanInformations, tr("Scale X"  ), sf.getX()           , scaleFactorX          );
+	filler.setInformationConvert(bscanInformations, tr("Distance" ), sf.getY()           , scaleFactorY          );
+	filler.setInformationConvert(bscanInformations, tr("Scale Z"  ), sf.getZ()           , scaleFactorZ          );
 
 }
 
