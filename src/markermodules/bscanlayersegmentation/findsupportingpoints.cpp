@@ -1,27 +1,51 @@
 #include "findsupportingpoints.h"
 
 #include<iostream>
+#include<algorithm>
 #include<cmath>
+#include "pchip.h"
 
 FindSupportingPoints::FindSupportingPoints(const std::vector<Point2D>& values)
 {
 	if(values.size() < 2)
 		return;
 
-	std::vector<Point2D>::const_iterator firstPoint = values.begin();
-	std::vector<Point2D>::const_iterator lastPoint  = --(values.end());
+
+	PtItSource firstPoint = values.begin();
+	PtItSource lastPoint  = --(values.end());
+
+	if(lastPoint->getX() < 0)
+		return;
+
+	interpolated.resize(static_cast<std::size_t>(lastPoint->getX()+1));
 
 	destPoints.push_back(*firstPoint);
 // 	divideOnDerivative(values);
 	divideLocalMinMax(firstPoint, lastPoint);
 	destPoints.push_back(*lastPoint);
 
-// 	findSupportingPointsRecursiv(++destPoints.begin(), firstPoint, lastPoint);
+	updateInterpolated();
+
+	PtIt lastIt = destPoints.begin();
+	PtIt actIt = lastIt;
+	++actIt;
+	for(; actIt != destPoints.end(); ++actIt, ++lastIt)
+	{
+		PtItSource it1 = std::find_if(values.begin(), values.end(), [lastIt] (const Point2D& p) { return p.getX() >= lastIt->getX(); } );
+		PtItSource it2 = std::find_if(it1           , values.end(), [actIt ] (const Point2D& p) { return p.getX() >= actIt ->getX(); } );
+		findSupportingPointsRecursiv(actIt, it1, it2);
+	}
+
 }
 
 void FindSupportingPoints::divideOnPoint(const PtItSource firstPoint, const PtItSource dividePoint, const PtItSource lastPoint, PtIt insertPointBefore)
 {
+	if(firstPoint == dividePoint || lastPoint == dividePoint)
+		return;
+
 	PtIt newPointIt = destPoints.insert(insertPointBefore, *dividePoint);
+	updateInterpolated();
+
 	findSupportingPointsRecursiv(newPointIt, firstPoint, dividePoint);
 	findSupportingPointsRecursiv(insertPointBefore, dividePoint, lastPoint);
 }
@@ -56,25 +80,29 @@ void FindSupportingPoints::findSupportingPointsRecursiv(PtIt insertPointBefore, 
 	if(lastPoint == firstPoint)
 		return;
 
-	const double point1X = firstPoint->getX();
-	const double point1Y = firstPoint->getY();
-	const double point2Y = lastPoint ->getY();
+	if(lastPoint == firstPoint+1)
+		return;
 
-	double length = lastPoint->getX() - point1X;
+// 	const double point1X = firstPoint->getX();
+// 	const double point1Y = firstPoint->getY();
+// 	const double point2Y = lastPoint ->getY();
+//
+// 	double length = lastPoint->getX() - point1X;
+	PtItSource it = firstPoint;
+	++it;
 
-	MaxValuePt maxLineDist(firstPoint);
-	MaxValuePt maxHeightPt(firstPoint, point1Y);
-	MaxValuePt minHeightPt(firstPoint, point2Y);
-
-	maxHeightPt.updateDist(lastPoint, point2Y);
-
-
-	for(PtItSource it = firstPoint; it != lastPoint; ++it)
+	MaxValuePt maxLineDist(it);
+	for(; it != lastPoint; ++it)
 	{
-		const double linePos   = (it->getX() - point1X)/length;
-		const double lineValue = (point1Y)*(1. - linePos) + (point2Y)*linePos;
+// 		const double linePos   = (it->getX() - point1X)/length;
+// 		const double lineValue = (point1Y)*(1. - linePos) + (point2Y)*linePos;
 
-		const double dist = std::abs(lineValue - it->getY());
+// 		const double dist = std::abs(lineValue - it->getX());
+		std::size_t pos = static_cast<std::size_t>(it->getX());
+		double v1 = it->getY();
+		double v2 = interpolated[pos];
+		const double dist = std::abs(v1 - v2);
+
 		maxLineDist.updateDist(it, dist);
 	}
 
@@ -168,5 +196,17 @@ void FindSupportingPoints::divideOnDerivative(const std::vector<Point2D>& values
 		std::cout << abl << std::endl;
 	}
 
+}
+
+
+void FindSupportingPoints::updateInterpolated() // PtIt first, PtIt last)
+{
+	std::vector<Point2D> supportingPoints;
+// 	std::copy(first, last,  std::back_inserter(supportingPoints));
+	std::copy(destPoints.begin(), destPoints.end(),  std::back_inserter(supportingPoints));
+
+	PChip pchip(supportingPoints, interpolated.size());
+
+	interpolated = pchip.getValues();
 }
 

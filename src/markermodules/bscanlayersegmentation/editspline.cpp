@@ -17,8 +17,6 @@ namespace
 {
 	void paintPolygon(QPainter& painter, const std::vector<Point2D>& polygon, double factor)
 	{
-
-#if true
 		if(polygon.size() < 2)
 			return;
 
@@ -35,7 +33,6 @@ namespace
 			++it;
 		}
 		painter.setPen(QPen(Qt::red));
-#endif
 	}
 
 	class RecPointAdder
@@ -184,7 +181,7 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 
 void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, double scaleFactor) const
 {
-	paintPolygon(painter, supportingPoints, scaleFactor);
+// 	paintPolygon(painter, supportingPoints, scaleFactor);
 	paintPoints(painter, scaleFactor);
 	BScanMarkerWidget::paintSegmentationLine(painter, getBScanHight(), interpolated, scaleFactor);
 }

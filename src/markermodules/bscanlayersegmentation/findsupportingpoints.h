@@ -16,10 +16,12 @@ public:
 
 	const std::list<Point2D>& getPoints() const                     { return destPoints; }
 
+	std::vector<double> interpolated;
+
 
 private:
 
-	constexpr static const double tol = 0.5;
+	constexpr static const double tol = 0.2;
 
 	void divideLocalMinMax(const PtItSource firstPoint, const PtItSource lastPoint);
 
@@ -28,6 +30,7 @@ private:
 	void divideOnPoint(const PtItSource firstPoint, const PtItSource dividePoint, const PtItSource lastPoint, PtIt insertPointBefore);
 	void findSupportingPointsRecursiv(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint);
 
+	void updateInterpolated(); // PtIt first, PtIt last);
 	std::list<Point2D> destPoints;
 
 };
