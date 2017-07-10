@@ -21,6 +21,8 @@ class WGOctDataTree : public QWidget
 public:
 	WGOctDataTree();
 
+private slots:
+	void setSelectFileNum(QModelIndex index);
 
 };
 

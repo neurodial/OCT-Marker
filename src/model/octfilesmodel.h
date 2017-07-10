@@ -48,10 +48,13 @@ public slots:
 	std::size_t addFile(QString filename);
 	bool loadFile(QString filename);
 	
-    void slotClicked(QModelIndex index);
-    void slotDoubleClicked(QModelIndex index);
+	void slotClicked(QModelIndex index);
+	void slotDoubleClicked(QModelIndex index);
 
 	void loadNextFile();
 	void loadPreviousFile();
+
+signals:
+	void fileIdLoaded(QModelIndex index);
 };
 

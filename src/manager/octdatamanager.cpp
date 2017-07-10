@@ -79,6 +79,7 @@ void OctDataManagerThread::run()
 		octOptions.registerBScanns     = ProgramOptions::registerBScans();
 		octOptions.fillEmptyPixelWhite = ProgramOptions::fillEmptyPixelWhite();
 		octOptions.holdRawData         = ProgramOptions::holdOCTRawData();
+		octOptions.readBScans          = ProgramOptions::readBScans();
 
 		*oct = OctData::OctFileRead::openFile(filename.toStdString(), octOptions, this);
 	}

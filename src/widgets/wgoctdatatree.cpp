@@ -34,12 +34,20 @@ WGOctDataTree::WGOctDataTree()
 
 	layout->addWidget(splitter);
 
-	connect(listviewFiles  , &QListView::clicked       , modelFiles  , &OctFilesModel::slotClicked      );
-	connect(listviewFiles  , &QListView::doubleClicked , modelFiles  , &OctFilesModel::slotDoubleClicked);
-	connect(listviewFiles  , &QListView::activated     , modelFiles  , &OctFilesModel::slotClicked      );
-	
-	connect(listviewOctData, &QTableView::clicked      , modelOctData, &OctDataModel ::slotClicked      );
-	connect(listviewOctData, &QTableView::doubleClicked, modelOctData, &OctDataModel ::slotDoubleClicked);
-	connect(listviewOctData, &QTableView::activated    , modelOctData, &OctDataModel ::slotClicked      );
+	connect(listviewFiles  , &QListView::clicked         , modelFiles  , &OctFilesModel::slotClicked      );
+	connect(listviewFiles  , &QListView::doubleClicked   , modelFiles  , &OctFilesModel::slotDoubleClicked);
+	connect(listviewFiles  , &QListView::activated       , modelFiles  , &OctFilesModel::slotClicked      );
 
+	connect(listviewOctData, &QTableView::clicked        , modelOctData, &OctDataModel ::slotClicked      );
+	connect(listviewOctData, &QTableView::doubleClicked  , modelOctData, &OctDataModel ::slotDoubleClicked);
+	connect(listviewOctData, &QTableView::activated      , modelOctData, &OctDataModel ::slotClicked      );
+
+	connect(modelFiles     , &OctFilesModel::fileIdLoaded, this        , &WGOctDataTree::setSelectFileNum );
+}
+
+
+void WGOctDataTree::setSelectFileNum(QModelIndex index)
+{
+	listviewFiles->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+	listviewFiles->scrollTo(index);
 }

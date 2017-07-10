@@ -79,6 +79,7 @@ void OctFilesModel::loadNextFile()
 	{
 		openFile(filelist[requestFilePost]->getFilename());
 		loadedFilePos = requestFilePost;
+		fileIdLoaded(index(loadedFilePos));
 	}
 }
 
@@ -89,6 +90,7 @@ void OctFilesModel::loadPreviousFile()
 	{
 		--loadedFilePos;
 		openFile(filelist[loadedFilePos]->getFilename());
+		fileIdLoaded(index(loadedFilePos));
 	}
 }
 

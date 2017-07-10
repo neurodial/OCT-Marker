@@ -21,6 +21,7 @@ OptionBool ProgramOptions::registerBScans     (true , "registerBScans"     );
 OptionBool ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      );
 
 OptionBool ProgramOptions::holdOCTRawData     (false, "holdOCTRawData"     );
+OptionBool ProgramOptions::readBScans         (true , "readBScans"         );
 
 OptionInt  ProgramOptions::e2eGrayTransform   (1    , "e2eGrayTransform"   );
 

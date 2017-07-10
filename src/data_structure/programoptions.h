@@ -25,6 +25,7 @@ public:
 	static OptionBool loadRotateSlo;
 
 	static OptionBool holdOCTRawData;
+	static OptionBool readBScans;
 
 	static OptionInt  e2eGrayTransform;
 	
