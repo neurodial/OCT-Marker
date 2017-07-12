@@ -27,8 +27,8 @@ private:
 
 	void divideOnDerivative(const std::vector<Point2D>& values);
 
-	void divideOnPoint(const PtItSource firstPoint, const PtItSource dividePoint, const PtItSource lastPoint, PtIt insertPointBefore);
-	void findSupportingPointsRecursiv(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint);
+	void divideOnPoint(const PtItSource firstPoint, const PtItSource dividePoint, const PtItSource lastPoint, PtIt insertPointBefore, std::size_t depth);
+	void findSupportingPointsRecursiv(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint, std::size_t depth = 0);
 
 	void updateInterpolated(); // PtIt first, PtIt last);
 	std::list<Point2D> destPoints;

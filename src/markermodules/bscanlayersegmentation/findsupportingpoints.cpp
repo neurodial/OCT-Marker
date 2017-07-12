@@ -26,19 +26,20 @@ FindSupportingPoints::FindSupportingPoints(const std::vector<Point2D>& values)
 
 	updateInterpolated();
 
-	PtIt lastIt = destPoints.begin();
-	PtIt actIt = lastIt;
+	PtIt actIt = destPoints.begin();
 	++actIt;
-	for(; actIt != destPoints.end(); ++actIt, ++lastIt)
+	for(; actIt != destPoints.end(); ++actIt)
 	{
-		PtItSource it1 = std::find_if(values.begin(), values.end(), [lastIt] (const Point2D& p) { return p.getX() >= lastIt->getX(); } );
-		PtItSource it2 = std::find_if(it1           , values.end(), [actIt ] (const Point2D& p) { return p.getX() >= actIt ->getX(); } );
+		PtIt latestIt = actIt;
+		--latestIt;
+		PtItSource it1 = std::find_if(values.begin(), values.end(), [latestIt] (const Point2D& p) { return p.getX() >= latestIt->getX(); } );
+		PtItSource it2 = std::find_if(it1           , values.end(), [actIt   ] (const Point2D& p) { return p.getX() >= actIt   ->getX(); } );
 		findSupportingPointsRecursiv(actIt, it1, it2);
 	}
 
 }
 
-void FindSupportingPoints::divideOnPoint(const PtItSource firstPoint, const PtItSource dividePoint, const PtItSource lastPoint, PtIt insertPointBefore)
+void FindSupportingPoints::divideOnPoint(const PtItSource firstPoint, const PtItSource dividePoint, const PtItSource lastPoint, PtIt insertPointBefore, std::size_t depth)
 {
 	if(firstPoint == dividePoint || lastPoint == dividePoint)
 		return;
@@ -46,8 +47,8 @@ void FindSupportingPoints::divideOnPoint(const PtItSource firstPoint, const PtIt
 	PtIt newPointIt = destPoints.insert(insertPointBefore, *dividePoint);
 	updateInterpolated();
 
-	findSupportingPointsRecursiv(newPointIt, firstPoint, dividePoint);
-	findSupportingPointsRecursiv(insertPointBefore, dividePoint, lastPoint);
+	findSupportingPointsRecursiv(newPointIt       , firstPoint , dividePoint, depth);
+	findSupportingPointsRecursiv(insertPointBefore, dividePoint, lastPoint  , depth);
 }
 
 
@@ -75,12 +76,15 @@ namespace
 }
 
 
-void FindSupportingPoints::findSupportingPointsRecursiv(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint)
+void FindSupportingPoints::findSupportingPointsRecursiv(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint, std::size_t depth)
 {
 	if(lastPoint == firstPoint)
 		return;
 
 	if(lastPoint == firstPoint+1)
+		return;
+
+	if(depth == 1)
 		return;
 
 // 	const double point1X = firstPoint->getX();
@@ -107,7 +111,7 @@ void FindSupportingPoints::findSupportingPointsRecursiv(PtIt insertPointBefore, 
 	}
 
 	if(maxLineDist.getDist() > tol)
-		divideOnPoint(firstPoint, maxLineDist.getIt(), lastPoint, insertPointBefore);
+		divideOnPoint(firstPoint, maxLineDist.getIt(), lastPoint, insertPointBefore, depth + 1);
 }
 
 namespace
