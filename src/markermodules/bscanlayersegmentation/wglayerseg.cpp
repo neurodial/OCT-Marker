@@ -18,6 +18,11 @@ WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
 	QVBoxLayout* layout = new QVBoxLayout();
 	QSignalMapper* signalMapper = new QSignalMapper(this);
 
+	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
+	seglineButtons.resize(numSegLines);
+
+	const OctData::Segmentationlines::SegmentlineType actType = parent->getActEditSeglineType();
+
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 	{
 		QPushButton* button = new QPushButton(OctData::Segmentationlines::getSegmentlineName(type));
@@ -26,8 +31,12 @@ WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
         connect(button, &QPushButton::clicked, signalMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
         signalMapper->setMapping(button, static_cast<int>(type));
 
+		if(actType == type)
+			button->setChecked(true);
+
 		layerButtons->addButton(button);
 		layout->addWidget(button);
+		seglineButtons[static_cast<int>(type)] = button;
 	}
 
     connect(signalMapper, static_cast<void (QSignalMapper::*)(int)>(&QSignalMapper::mapped), this, &WGLayerSeg::changeSeglineId);
@@ -45,9 +54,9 @@ WGLayerSeg::~WGLayerSeg()
 
 void WGLayerSeg::changeSeglineId(std::size_t index)
 {
-	qDebug("Segline: %d", static_cast<int>(index));
+// 	qDebug("Segline: %d", static_cast<int>(index));
 
-	std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
+	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
 	if(index < numSegLines)
 		parent->setActEditLinetype(OctData::Segmentationlines::getSegmentlineTypes().at(index));
 }

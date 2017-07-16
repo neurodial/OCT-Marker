@@ -5,8 +5,26 @@
 #include<cmath>
 #include "pchip.h"
 
+
 FindSupportingPoints::FindSupportingPoints(const std::vector<Point2D>& values)
 {
+	class CallFindSupportingPointsRecursiv
+	{
+		FindSupportingPoints* m;
+	public:
+		CallFindSupportingPointsRecursiv(FindSupportingPoints* m) : m(m) {};
+		void operator()(FindSupportingPoints::PtIt insertPointBefore, const FindSupportingPoints::PtItSource firstPoint, const FindSupportingPoints::PtItSource lastPoint) { m->findSupportingPointsRecursiv(insertPointBefore, firstPoint, lastPoint); }
+	};
+
+	class CallFindSupportingPointsDerivatie
+	{
+		FindSupportingPoints* m;
+	public:
+		CallFindSupportingPointsDerivatie(FindSupportingPoints* m) : m(m) {};
+		void operator()(FindSupportingPoints::PtIt insertPointBefore, const FindSupportingPoints::PtItSource firstPoint, const FindSupportingPoints::PtItSource lastPoint) { m->divideOnDerivative(insertPointBefore, firstPoint, lastPoint); }
+	};
+
+
 	if(values.size() < 2)
 		return;
 
@@ -24,8 +42,12 @@ FindSupportingPoints::FindSupportingPoints(const std::vector<Point2D>& values)
 	divideLocalMinMax(firstPoint, lastPoint);
 	destPoints.push_back(*lastPoint);
 
-	updateInterpolated();
 
+
+	fillPoints(values, CallFindSupportingPointsDerivatie(this));
+	updateInterpolated();
+	fillPoints(values, CallFindSupportingPointsRecursiv(this));
+	/*
 	PtIt actIt = destPoints.begin();
 	++actIt;
 	for(; actIt != destPoints.end(); ++actIt)
@@ -36,8 +58,28 @@ FindSupportingPoints::FindSupportingPoints(const std::vector<Point2D>& values)
 		PtItSource it2 = std::find_if(it1           , values.end(), [actIt   ] (const Point2D& p) { return p.getX() >= actIt   ->getX(); } );
 		findSupportingPointsRecursiv(actIt, it1, it2);
 	}
+	*/
 
 }
+
+template<typename InsertPointsFunc>
+void FindSupportingPoints::fillPoints(const std::vector<Point2D>& values, InsertPointsFunc fun)
+{
+	PtIt actIt = destPoints.begin();
+	++actIt;
+	for(; actIt != destPoints.end(); ++actIt)
+	{
+		PtIt latestIt = actIt;
+		--latestIt;
+		PtItSource it1 = std::find_if(values.begin(), values.end(), [latestIt] (const Point2D& p) { return p.getX() >= latestIt->getX(); } );
+		PtItSource it2 = std::find_if(it1           , values.end(), [actIt   ] (const Point2D& p) { return p.getX() >= actIt   ->getX(); } );
+		if(it1 == values.end())
+			return;
+
+		fun(actIt, it1, it2);
+	}
+}
+
 
 void FindSupportingPoints::divideOnPoint(const PtItSource firstPoint, const PtItSource dividePoint, const PtItSource lastPoint, PtIt insertPointBefore, std::size_t depth)
 {
@@ -125,9 +167,9 @@ namespace
 		bool isDirectionChangeAndUpdate(double val)
 		{
 			Direction direction = Direction::None;
-			if(lastVal > val)
+			if(lastVal > val + tol)
 				direction = Direction::Down;
-			else if(lastVal > val)
+			else if(lastVal < val - tol)
 				direction = Direction::Up;
 
 			bool result = (direction != lastDirection);
@@ -139,6 +181,7 @@ namespace
 
 	private:
 		double lastVal = 0;
+		constexpr static const double tol = 0; // 1e-2;
 		Direction lastDirection = Direction::None;
 
 	};
@@ -163,22 +206,117 @@ void FindSupportingPoints::divideLocalMinMax(const PtItSource firstPoint, const 
 
 namespace
 {
-	double derivative3(FindSupportingPoints::PtItSource p)
+	double derivative2(FindSupportingPoints::PtItSource p)
 	{
-		double t = -p->getY();
+		double res = p->getY();
 		++p;
-		t += 2*p->getY();
+		res -= 2*p->getY();
 		++p;
-		++p;
-		t -= 2*p->getY();
-		++p;
-		t += p->getY();
-
-		return t*100;
+		res += p->getY();
+		return res;
 	}
 }
 
 
+namespace
+{
+	class PitchHelper
+	{
+	public:
+// 		enum class Direction { Up, None, Down };
+		PitchHelper() {}
+
+		bool isPitchChangeAndUpdate(double val)
+		{
+			double expectVal = 2*v2 - v1;
+			bool result = std::abs(expectVal - val) > tol ? true : false;
+
+			v1 = v2;
+			v2 = val;
+
+// 			std::cout << val << " - " << expectVal << " - " << std::abs(expectVal - val) << std::endl;
+
+			return result;
+		}
+
+	private:
+		double v1 = 0;
+		double v2 = 0;
+		constexpr static const double tol = 1e-2;
+// 		Direction lastDirection = Direction::None;
+
+	};
+}
+
+void FindSupportingPoints::divideOnDerivative(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint)
+{
+	if(lastPoint - firstPoint < 4)
+		return;
+
+	int ignoreCount = 0;
+
+	const PtItSource endPoint = lastPoint-2;
+	PitchHelper dir;
+
+	PtItSource it = firstPoint;
+
+	for(; it != endPoint; ++it)
+	{
+		double value = derivative2(it);
+		if(dir.isPitchChangeAndUpdate(value))
+		{
+// 			std::cout << "-- ";
+			if(ignoreCount > 2)
+			{
+				if(value > 0)
+					destPoints.insert(insertPointBefore, *(it+1));
+				else
+					destPoints.insert(insertPointBefore, *(it-1));
+
+			}
+			ignoreCount = 0;
+		}
+		++ignoreCount;
+// 		std::cout << value << std::endl;
+	}
+}
+
+/*
+void FindSupportingPoints::divideOnDerivative(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint)
+{
+	if(lastPoint - firstPoint < 4)
+		return;
+
+	int ignoreCount = 0;
+
+	const PtItSource endPoint = lastPoint-2;
+	DirectionHelper dir(derivative2(firstPoint));
+
+	PtItSource it = firstPoint+1;
+
+	for(; it != endPoint; ++it)
+	{
+		double value = derivative2(it);
+		if(dir.isDirectionChangeAndUpdate(value))
+		{
+			std::cout << "-- ";
+			if(ignoreCount > 2)
+			{
+				if(value > 0)
+					destPoints.insert(insertPointBefore, *(it+1));
+				else
+					destPoints.insert(insertPointBefore, *(it-1));
+
+			}
+			ignoreCount = 0;
+		}
+		++ignoreCount;
+		std::cout << value << std::endl;
+	}
+}
+*/
+
+/*
 void FindSupportingPoints::divideOnDerivative(const std::vector<Point2D>& values)
 {
 	if(values.size() < 7)
@@ -199,8 +337,8 @@ void FindSupportingPoints::divideOnDerivative(const std::vector<Point2D>& values
 		ablValue = abl;
 		std::cout << abl << std::endl;
 	}
-
 }
+*/
 
 
 void FindSupportingPoints::updateInterpolated() // PtIt first, PtIt last)

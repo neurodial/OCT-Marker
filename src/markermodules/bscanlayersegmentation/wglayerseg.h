@@ -3,10 +3,12 @@
 
 
 #include <QWidget>
+#include<vector>
 
 
 class BScanLayerSegmentation;
 class QButtonGroup;
+class QPushButton;
 
 class WGLayerSeg : public QWidget
 {
@@ -15,6 +17,7 @@ class WGLayerSeg : public QWidget
 	BScanLayerSegmentation* parent;
 
 	QButtonGroup* layerButtons = nullptr;
+	std::vector<QPushButton*> seglineButtons;
 
 public:
 	WGLayerSeg(BScanLayerSegmentation* parent);

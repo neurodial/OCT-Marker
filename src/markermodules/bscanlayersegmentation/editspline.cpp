@@ -157,8 +157,16 @@ namespace
 	void updateRec4Paint(QRect& rect, double scaleFactor)
 	{
 		rect *= scaleFactor;
-		int adjustSize = 6;
+		int adjustSize = 12;
 		rect.adjust(-adjustSize, -adjustSize, adjustSize, adjustSize);
+	}
+
+	void paintPoint(QPainter& painter, const Point2D& p, double factor)
+	{
+		painter.drawEllipse(static_cast<int>(p.getX()*factor-4)
+		                  , static_cast<int>(p.getY()*factor-4)
+		                  , 8
+		                  , 8);
 	}
 }
 
@@ -168,12 +176,12 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 	painter.setPen(QPen(Qt::red));
 	painter.setBrush(QBrush(Qt::black));
 	for(const Point2D& p : supportingPoints)
-		painter.drawEllipse(p.getX()*factor-4, p.getY()*factor-4, 8, 8);
+		paintPoint(painter, p, factor);
 
 	if(actEditPoint != supportingPoints.end())
 	{
 		painter.setBrush(QBrush(Qt::green));
-		painter.drawEllipse(actEditPoint->getX()*factor-4, actEditPoint->getY()*factor-4, 8, 8);
+		paintPoint(painter, *actEditPoint, factor);
 	}
 }
 
@@ -182,8 +190,8 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, double scaleFactor) const
 {
 // 	paintPolygon(painter, supportingPoints, scaleFactor);
-	paintPoints(painter, scaleFactor);
 	BScanMarkerWidget::paintSegmentationLine(painter, getBScanHight(), interpolated, scaleFactor);
+	paintPoints(painter, scaleFactor);
 }
 
 BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BScanMarkerWidget* widget)
@@ -193,7 +201,7 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 	Point2D oldPoint = *actEditPoint;
 
 	double scaleFactor = widget->getImageScaleFactor();
-	actEditPoint->setX(event->x()/scaleFactor);
+	actEditPoint->setX(std::round(event->x()/scaleFactor));
 	actEditPoint->setY(event->y()/scaleFactor);
 	int pointMove = reorderPoint(actEditPoint, supportingPoints);
 	recalcInterpolation();

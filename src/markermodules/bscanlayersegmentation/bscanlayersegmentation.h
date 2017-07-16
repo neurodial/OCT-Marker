@@ -42,12 +42,15 @@ public:
 	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
 
+	virtual void setActBScan(std::size_t bscan) override;
+
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;
 
 	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGLayerSeg; }
 
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& ptree) override;
 
+	OctData::Segmentationlines::SegmentlineType getActEditSeglineType() const { return actEditType; }
 
 	void copySegLinesFromOctData();
 
