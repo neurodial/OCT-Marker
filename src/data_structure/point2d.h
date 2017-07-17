@@ -1,5 +1,6 @@
 #pragma once
 
+#include<ostream>
 
 class Point2D
 {
@@ -18,6 +19,11 @@ public:
 	void setY(double v) { y = v; }
 
 	double euklidDist(const Point2D& p) const;
+
+	void print(std::ostream& stream) const { stream << '(' << x << "; " << y << ')'; }
 };
+
+
+inline std::ostream& operator<<(std::ostream& stream, const Point2D& p) { p.print(stream); return stream; }
 
 

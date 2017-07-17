@@ -60,6 +60,8 @@ FindSupportingPoints::FindSupportingPoints(const std::vector<Point2D>& values)
 	}
 	*/
 
+	removePoints(values);
+
 }
 
 template<typename InsertPointsFunc>
@@ -115,6 +117,41 @@ namespace
 		double                           getDist() const               { return dist; }
 		FindSupportingPoints::PtItSource getIt  () const               { return it  ; }
 	};
+
+	struct ErrorSeglines
+	{
+		double maxError;
+		double quadError;
+
+		void calcError(FindSupportingPoints::PtIt it1, FindSupportingPoints::PtIt it2, const std::vector<Point2D>& values, std::vector<double> interpolated)
+		{
+			maxError  = 0;
+			quadError = 0;
+
+			FindSupportingPoints::PtItSource sourceIt1 = std::find_if(values.begin(), values.end(), [it1] (const Point2D& p) { return p.getX() >= it1->getX(); } );
+			FindSupportingPoints::PtItSource sourceIt2 = std::find_if(sourceIt1     , values.end(), [it2] (const Point2D& p) { return p.getX() >= it2->getX(); } );
+			if(sourceIt1 == values.end())
+				return;
+
+			double sumQuadError = 0;
+			std::size_t summants = 0;
+			while(sourceIt1 != sourceIt2)
+			{
+				std::size_t index = static_cast<std::size_t>(std::round(sourceIt1->getX()));
+				if(index > interpolated.size())
+					continue; // TODO: ungueltiger punkt
+
+				const double error = std::abs(sourceIt1->getY() - interpolated[index]);
+				if(error > maxError)
+					maxError = error;
+				sumQuadError += error * error;
+
+				++summants;
+				++sourceIt1;
+			}
+			quadError = sumQuadError/static_cast<double>(summants);
+		}
+	};
 }
 
 
@@ -126,7 +163,7 @@ void FindSupportingPoints::findSupportingPointsRecursiv(PtIt insertPointBefore, 
 	if(lastPoint == firstPoint+1)
 		return;
 
-	if(depth == 1)
+	if(depth == 3) // TODO
 		return;
 
 // 	const double point1X = firstPoint->getX();
@@ -155,6 +192,55 @@ void FindSupportingPoints::findSupportingPointsRecursiv(PtIt insertPointBefore, 
 	if(maxLineDist.getDist() > tol)
 		divideOnPoint(firstPoint, maxLineDist.getIt(), lastPoint, insertPointBefore, depth + 1);
 }
+
+void FindSupportingPoints::removePoints(const std::vector<Point2D>& values) // PtIt first, PtIt last)
+{
+	if(destPoints.size() < 5)
+		return;
+
+	PtIt first = destPoints.begin();
+	PtIt act   = first;
+	++act;
+	++act;
+	PtIt last  = act;
+	++last;
+	++last;
+
+	std::size_t removedPoints = 0;
+
+	ErrorSeglines oldError;
+	ErrorSeglines newError;
+	while(last != destPoints.end())
+	{
+		if(first == act || act == last)
+			return;
+// 		std::cout << *first << " - " << *act << " - " << *last << std::endl;
+		oldError.calcError(first, last, values, interpolated);
+		Point2D p = *act;
+		act = destPoints.erase(act);
+		updateInterpolated();
+		newError.calcError(first, last, values, interpolated);
+// 		std::cout << oldError.maxError << " < " << newError.maxError << " || " << oldError.quadError << " < " << newError.quadError << std::endl;
+
+		if((oldError.maxError < newError.maxError || oldError.quadError < newError.quadError)
+		&& (newError.maxError > 0.3 || newError.quadError > 0.1))
+		{
+			act = destPoints.insert(act, p);
+			updateInterpolated();
+			++first; // move only, when point not removed -> keep distance betwen first and last
+			++act;
+		}
+		else
+		{
+			++removedPoints;
+// 			std::cout << "entfernt" << std::endl;
+		}
+		++last;
+	}
+
+	std::cout << "Number of points: " << destPoints.size() << ", removed points: " << removedPoints << std::endl;
+}
+
 
 namespace
 {

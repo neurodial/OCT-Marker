@@ -16,7 +16,6 @@ public:
 
 	const std::list<Point2D>& getPoints() const                     { return destPoints; }
 
-	std::vector<double> interpolated;
 
 
 private:
@@ -36,8 +35,10 @@ private:
 	void divideOnDerivative(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint);
 
 	void updateInterpolated(); // PtIt first, PtIt last);
+	void removePoints(const std::vector<Point2D>& values);
 	std::list<Point2D> destPoints;
 
+	std::vector<double> interpolated;
 };
 
 #endif // FINDSUPPORTINGPOINTS_H
