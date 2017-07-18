@@ -15,13 +15,15 @@
 #include"editpen.h"
 #include"editspline.h"
 
+#include"bscanlayersegptree.h"
+
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , editMethodSpline(new EditSpline(this))
 , editMethodPen(new EditPen(this))
 {
 	name = tr("Layer Segmentation");
-	id   = "layerSegmentation";
+	id   = "LayerSegmentation";
 	icon = QIcon(":/icons/seglinelayer_edit.png");
 
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
@@ -96,7 +98,7 @@ BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mouseReleaseEvent(QMouseE
 void BScanLayerSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& ptree)
 {
 	resetMarkers(series);
-
+	loadState(ptree);
 }
 
 
@@ -211,3 +213,14 @@ void BScanLayerSegmentation::setActBScan(std::size_t bscan)
 	if(actEditMethod)
 		actEditMethod->segLineChanged(&lines[bscan].getSegmentLine(actEditType));
 }
+
+void BScanLayerSegmentation::loadState(boost::property_tree::ptree& markerTree)
+{
+	BScanLayerSegPTree::parsePTree(markerTree, this);
+}
+
+void BScanLayerSegmentation::saveState(boost::property_tree::ptree& markerTree)
+{
+	BScanLayerSegPTree::fillPTree(markerTree, this);
+}
+

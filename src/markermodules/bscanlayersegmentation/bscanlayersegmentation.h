@@ -18,6 +18,8 @@ class BScanLayerSegmentation : public BscanMarkerBase
 	Q_OBJECT
 
 	friend class EditBase;
+	friend class BScanLayerSegPTree;
+
 	std::vector<OctData::Segmentationlines> lines;
 	OctData::Segmentationlines::SegmentlineType actEditType = OctData::Segmentationlines::SegmentlineType::ILM;
 
@@ -41,6 +43,11 @@ public:
 	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
+
+
+	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
+	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
+
 
 	virtual void setActBScan(std::size_t bscan) override;
 

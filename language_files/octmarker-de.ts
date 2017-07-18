@@ -40,6 +40,14 @@
     </message>
 </context>
 <context>
+    <name>BScanLayerSegmentation</name>
+    <message>
+        <location filename="../src/markermodules/bscanlayersegmentation/bscanlayersegmentation.cpp" line="23"/>
+        <source>Layer Segmentation</source>
+        <translation>Schichtensegmentierung</translation>
+    </message>
+</context>
+<context>
     <name>BScanMarkerWidget</name>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="61"/>
@@ -48,24 +56,24 @@
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="68"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="453"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="456"/>
         <source>Save raw data as matrix</source>
         <translation>Rohdaten als openCV-Matrix speichern</translation>
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="77"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="467"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="470"/>
         <source>Save raw data as bin</source>
         <translation>Rohdaten im Bin-Format speichern</translation>
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="83"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="479"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="482"/>
         <source>Save image data as bin</source>
         <translation>Bild im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="491"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="494"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
@@ -394,13 +402,13 @@
         <location filename="../ui/marker_segmentation.ui" line="212"/>
         <location filename="../ui/marker_segmentation.ui" line="486"/>
         <source>Remove unconected areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichtverbundene Flächen entfernen</translation>
     </message>
     <message>
         <location filename="../ui/marker_segmentation.ui" line="223"/>
         <location filename="../ui/marker_segmentation.ui" line="497"/>
         <source>Extend segmentation left and right</source>
-        <translation type="unfinished"></translation>
+        <translation>Segmentierung rechts und links erweitern</translation>
     </message>
     <message>
         <location filename="../ui/marker_segmentation.ui" line="429"/>
@@ -652,75 +660,85 @@
         <translation>Schlechtes Signal</translation>
     </message>
     <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="15"/>
+        <source>segmentation quality</source>
+        <translation>Segmentierungsqualität</translation>
+    </message>
+    <message>
         <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="17"/>
+        <source>good</source>
+        <translation>Gut</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="25"/>
         <source>object zones</source>
         <translation>Objektbereiche</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="19"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="27"/>
         <source>macula</source>
         <translation>Makula</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="20"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="28"/>
         <source>edge</source>
         <translation>Rand</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="21"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="29"/>
         <source>blood vesel</source>
         <translation>Ader</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="28"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="36"/>
         <source>quality failures</source>
         <translation>Qualitätsfehler</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="30"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="38"/>
         <source>signal missing</source>
         <translation>Signal fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="31"/>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="42"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="39"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="50"/>
         <source>ILM upper</source>
         <translation>ILM schneidet oben</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="32"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="40"/>
         <source>ILM lower</source>
         <translation>ILM schneidet unten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="33"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="41"/>
         <source>BM upper</source>
         <translation>BM schneidet oben</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="34"/>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="43"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="42"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="51"/>
         <source>BM lower</source>
         <translation>BM schneidet unten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="40"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="48"/>
         <source>segmentation failures</source>
         <translation>Segmentierungsfehler</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="44"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="52"/>
         <source>missing ILM segmentation</source>
         <translation>ILM-Segmentierung fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="45"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="53"/>
         <source>missing BM segmentation</source>
         <translation>BM-Segmentierung fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="35"/>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="46"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="43"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="54"/>
         <source>multi error</source>
         <translation>Mehrere Fehler</translation>
     </message>
@@ -989,229 +1007,234 @@
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="244"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="245"/>
         <source>Fill empty pixels white</source>
         <translation>Leere Pixel weiß füllen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="245"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="246"/>
         <source>register BScans</source>
         <translation>B-Scans registrieren</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="246"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="247"/>
         <source>rotate SLO</source>
         <translation>SLO drehen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="247"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="248"/>
         <source>hold OCT raw data</source>
         <translation>OCT-Rohdaten im Speicher halten</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="254"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="249"/>
+        <source>read BScans from OCT data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="257"/>
         <source>E2E Gray</source>
         <translation>E2E-Grauwerte</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="259"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="262"/>
         <source>E2E nativ</source>
         <translation>nativ E2E</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="261"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="264"/>
         <source>Xml emulation</source>
         <translation>Xml emulieren</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="263"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="266"/>
         <source>Vol emulation</source>
         <translation>Vol emulieren</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="270"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="273"/>
         <source>Autosave markers</source>
         <translation>Marker automatisch speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="275"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="278"/>
         <source>Default filetype</source>
         <translation>Standarddateityp</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="280"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="283"/>
         <source>XML</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="282"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="285"/>
         <source>JSOM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="284"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="287"/>
         <source>INFO</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="291"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="294"/>
         <source>View</source>
         <translation>Ansicht</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="294"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="297"/>
         <source>change segmentation line color</source>
         <translation>Segmentierungslinenfarbe ändern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="305"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="308"/>
         <source>Extras</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="308"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="927"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="311"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="930"/>
         <source>Save Matlab Bin Code</source>
         <translation>Matlab-Code für Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="314"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="934"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="317"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="937"/>
         <source>Save Matlab Write Bin Code</source>
         <translation>Matlab-Schreibcode für Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="324"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="327"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="327"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="330"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="328"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="331"/>
         <source>Show the Qt library&apos;s About box</source>
         <translation>Zeigt das Informationsfenster der Qt-Bibliothek</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="334"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="598"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="337"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="601"/>
         <source>About</source>
         <translation>Über OCTMarker</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="353"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="356"/>
         <source>previous octScan</source>
         <translation>Vorheriger OCT-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="359"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="362"/>
         <source>next octScan</source>
         <translation>Nächster OCT-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="367"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="370"/>
         <source>next bscan</source>
         <translation>Nächster B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="382"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="385"/>
         <source>previous bscan</source>
         <translation>Vorheriger B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="388"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="391"/>
         <source>show segmentationslines</source>
         <translation>Segmentierungslinien anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="399"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="402"/>
         <source>B-Scan</source>
         <translation>B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="417"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="420"/>
         <source>Zoom +</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="423"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="426"/>
         <source>actual zoom</source>
         <translation>Aktueller Zoom</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="427"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="433"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="439"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="445"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="451"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="430"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="436"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="442"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="448"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="454"/>
         <source>Zoom %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="462"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="465"/>
         <source>Zoom -</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="469"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="472"/>
         <source>Adjust image in width</source>
         <translation>Bildgröße an Festerbreite anpassen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="475"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="478"/>
         <source>Adjust image in height</source>
         <translation>Bildgröße an Festerhöhe anpassen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="544"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="547"/>
         <source>Marker</source>
         <translation>Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="552"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="555"/>
         <source>no marker</source>
         <translation>Keine Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="607"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="610"/>
         <source>Choose a folder to load Files</source>
         <translation>Ordner für das Einlesen auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="831"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="834"/>
         <source>OCT Markers</source>
         <translation>OCT-Marker</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="832"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="835"/>
         <source>OCT Markers Json file</source>
         <translation>OCT-Marker-Json-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="833"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="836"/>
         <source>OCT Markers XML file</source>
         <translation>OCT-Marker-XML-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="834"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="837"/>
         <source>OCT Markers INFO file</source>
         <translation>OCT-Marker-Info-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="968"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="971"/>
         <source>Unknown error on autosave</source>
         <translation>Unbekannter Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="972"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="975"/>
         <source>Error on autosave</source>
         <translation>Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="972"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="975"/>
         <source>Autosave fail with message: %1 &lt;br /&gt;Quit program?</source>
         <translation>Automatisches Speichern mit Meldung:&lt;br /&gt;%1&lt;br /&gt;fehlgeschlagen.&lt;br /&gt;Programm beenden?</translation>
     </message>
@@ -1224,17 +1247,17 @@
         <translation type="vanished">Fülle Intervall</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="622"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="625"/>
         <source>Choose a filename to load a File</source>
         <translation>Dateinamen zum Laden wählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="655"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="658"/>
         <source>All readabel (%1)</source>
         <translation>Alle lesbaren (%1)</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="656"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="659"/>
         <source>All files (* *.*)</source>
         <translation>Alle Dateien</translation>
     </message>
@@ -1263,17 +1286,17 @@
         <translation type="vanished">OCT-Marierungsdatei (*.xml)</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="872"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="875"/>
         <source>Choose a file to load markers</source>
         <translation>Markierungsdatei zum Laden auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="888"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="891"/>
         <source>Choose a filename to save markers</source>
         <translation>Markierungsdatei zum Speichern auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="903"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="906"/>
         <source>OCT-Marker - %1</source>
         <translation>OCT-Marker - %1</translation>
     </message>
@@ -1281,12 +1304,12 @@
 <context>
     <name>OctDataManager</name>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="111"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="112"/>
         <source>Unsaved changes</source>
         <translation>Ungespeicherte Änderungen</translation>
     </message>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="111"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="112"/>
         <source>You have unsaved changes, what will you do?</source>
         <translation>Es gibt ungespeicherte Änderungen, was wollen Sie tun?</translation>
     </message>
