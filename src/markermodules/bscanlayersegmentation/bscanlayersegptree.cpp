@@ -21,6 +21,14 @@ namespace qi = boost::spirit::qi;
 
 namespace
 {
+	bool emptySegLine(const std::vector<double>& vec)
+	{
+		for(double val : vec)
+			if(val != 0 && val < 1e8)
+				return false;
+		return true;
+	}
+
 	template<typename T>
 	std::vector<T> fillToVector(const bpt::ptree& pt)
 	{
@@ -60,14 +68,18 @@ void BScanLayerSegPTree::fillPTree(boost::property_tree::ptree& ptree, const BSc
 		bpt::ptree& bscanNode = ptree.add(nodeName, "");
 		bscanNode.add("ID", boost::lexical_cast<std::string>(bscan));
 
+		bpt::ptree& linesNode = bscanNode.add("Lines", "");
+
 		for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 		{
 			const OctData::Segmentationlines::Segmentline& line = lines.getSegmentLine(type);
 			const char* name = lines.getSegmentlineName(type);
 
-			bpt::ptree& lineNode = PTreeHelper::get_put(bscanNode, name);
-
-			fillFromVector(lineNode, line);
+			if(!emptySegLine(line))
+			{
+				bpt::ptree& lineNode = PTreeHelper::get_put(linesNode, name);
+				fillFromVector(lineNode, line);
+			}
 		}
 
 		++bscan;
@@ -83,17 +95,23 @@ bool BScanLayerSegPTree::parsePTree(const boost::property_tree::ptree& ptree, BS
 			continue;
 
 		const bpt::ptree& bscanNode = bscanPair.second;
-		int bscanId = bscanNode.get_child("ID").get_value<int>(-1);
+		boost::optional<const bpt::ptree&> idNode = bscanNode.get_child_optional("ID");
+		if(!idNode)
+			continue;
+
+		int bscanId = idNode->get_value<int>(-1);
 		if(bscanId < 0)
 			continue;
 		if(bscanId >= markerManager->lines.size())
 			continue;
 
-		for(const std::pair<const std::string, const bpt::ptree>& segLinesNodePair : bscanNode)
+		boost::optional<const bpt::ptree&> linesNode = bscanNode.get_child_optional("Lines");
+		if(!linesNode)
+			continue;
+
+		for(const std::pair<const std::string, const bpt::ptree>& segLinesNodePair : *linesNode)
 		{
 			const std::string& name = segLinesNodePair.first;
-			if(name == "ID")
-				continue;
 
 			OctData::Segmentationlines::SegmentlineType actType;
 			bool found = false;
