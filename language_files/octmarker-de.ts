@@ -42,7 +42,7 @@
 <context>
     <name>BScanLayerSegmentation</name>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/bscanlayersegmentation.cpp" line="23"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/bscanlayersegmentation.cpp" line="25"/>
         <source>Layer Segmentation</source>
         <translation>Schichtensegmentierung</translation>
     </message>
@@ -747,8 +747,8 @@
     <name>DwOctInformations</name>
     <message>
         <location filename="../src/widgets/dwoctinformations.cpp" line="145"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="188"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="204"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="189"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="206"/>
         <source>internal Id</source>
         <translation>Interne ID</translation>
     </message>
@@ -773,177 +773,192 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="153"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="151"/>
+        <source>Ancestry</source>
+        <translation>Abstammung</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="154"/>
         <source>Birthdate</source>
         <translation>Geburtstag</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="159"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="160"/>
         <source>Female</source>
         <translation>Weiblich</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="162"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="163"/>
         <source>Male</source>
         <translation>Männlich</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="167"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="168"/>
         <source>Sex</source>
         <translation>Geschlecht</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="168"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="190"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="212"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="169"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="191"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="214"/>
         <source>UID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="189"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="190"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="192"/>
         <source>Operator</source>
         <translation>Bediener</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="192"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="194"/>
         <source>Study date</source>
         <translation>Studiendatum</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="207"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="209"/>
         <source>Scan date</source>
         <translation>Aufnahmedatum</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="213"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="215"/>
         <source>Ref. UID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="217"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="219"/>
         <source>Baseline scan</source>
         <translation>Basisaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="217"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="219"/>
         <source>true</source>
         <translation>Wahr</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="217"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="219"/>
         <source>false</source>
         <translation>Falsch</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="225"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="227"/>
         <source>OS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="228"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="230"/>
         <source>OD</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="233"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="235"/>
         <source>Laterality</source>
         <translation>Lateralität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="239"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="241"/>
         <source>Single line scan</source>
         <translation>einzelner Linienscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="242"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="244"/>
         <source>Circular scan</source>
         <translation>Ringscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="245"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="247"/>
         <source>Volume scan</source>
         <translation>Volumenaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="248"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="250"/>
         <source>Fast volume scan</source>
         <translation>Schnelle Volumenaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="251"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="253"/>
         <source>Radial scan</source>
         <translation>Sternscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="254"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="256"/>
         <source>Radial+Circles scan</source>
         <translation>Stern- und Radialscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="261"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="280"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="263"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="282"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="264"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="266"/>
         <source>Scan pattern</source>
         <translation>Scanmuster</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="270"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="272"/>
         <source>ONH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="273"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="275"/>
         <source>Retina</source>
         <translation>Netzhaut</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="283"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="285"/>
         <source>Examined Structure</source>
         <translation>Untersuchte Struktur</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="287"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="289"/>
         <source>Scan focus</source>
         <translation>Aufnahmefokus</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="289"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="291"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="314"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="322"/>
         <source>Acquisition time</source>
         <translation>Aufnahmezeit</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="315"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="323"/>
         <source>Image quality</source>
         <translation>Bildqualität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="316"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="324"/>
         <source>Images average</source>
         <translation>Gemittelte Bilder</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="319"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="326"/>
         <source>Scale X</source>
         <translation>X-Skalierung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="320"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="327"/>
         <source>Distance</source>
         <translation>Distanz</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="321"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="328"/>
         <source>Scale Z</source>
         <translation>Y-Skalierung</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="330"/>
+        <source>Angle</source>
+        <translation>Winkel</translation>
     </message>
 </context>
 <context>
@@ -1304,12 +1319,12 @@
 <context>
     <name>OctDataManager</name>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="112"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="113"/>
         <source>Unsaved changes</source>
         <translation>Ungespeicherte Änderungen</translation>
     </message>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="112"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="113"/>
         <source>You have unsaved changes, what will you do?</source>
         <translation>Es gibt ungespeicherte Änderungen, was wollen Sie tun?</translation>
     </message>

@@ -148,6 +148,7 @@ void DwOctInformations::setPatient(const OctData::Patient* patient)
 	addInformation(patientInformations, tr("Forename"   ), patient->getForename(), this);
 	addInformation(patientInformations, tr("Title"      ), patient->getTitle()   , this);
 	addInformation(patientInformations, tr("ID"         ), patient->getId()      , this);
+	addInformation(patientInformations, tr("Ancestry"   ), patient->getAncestry(), this);
 	
 	if(!patient->getBirthdate().isEmpty())
 		addInformation(patientInformations, tr("Birthdate"), patient->getBirthdate().str(), this);
@@ -186,8 +187,9 @@ void DwOctInformations::setStudy(const OctData::Study* study)
 		return;
 	
 	addInformation(studyInformations, tr("internal Id"), QString("%1").arg(study->getInternalId())   , this);
-	addInformation(studyInformations, tr("Operator"   ), study->getStudyOperator(), this);
+	addInformation(studyInformations, tr("Name"       ), study->getStudyName()    , this);
 	addInformation(studyInformations, tr("UID"        ), study->getStudyUID()     , this);
+	addInformation(studyInformations, tr("Operator"   ), study->getStudyOperator(), this);
 	if(!study->getStudyDate().isEmpty())
 		addInformation(studyInformations, tr("Study date"), study->getStudyDate().str(), this);
 	
@@ -310,15 +312,22 @@ void DwOctInformations::setBScan(const OctData::BScan* bscan)
 	if(!bscan->getAcquisitionTime().isEmpty())
 		imageAcquisitionTime = QString::fromStdString(bscan->getAcquisitionTime().timeDateStr('.', ':', true));
 
-
-	filler.setInformation(bscanInformations, tr("Acquisition time"), imageAcquisitionTime, bscanAcquisitionTime  );
-	filler.setInformation(bscanInformations, tr("Image quality"   ), imageQuality        , bscanImageQuality     );
-	filler.setInformation(bscanInformations, tr("Images average"  ), imageAverage        , bscanNumAverage       );
+	double bscanAngleValue = bscan->getScanAngle();
+	QString bscanAngleString;
+	if(bscanAngleValue > 0)
+		bscanAngleString = QString("%1").arg(bscanAngleValue);
 
 	OctData::ScaleFactor sf = bscan->getScaleFactor();
-	filler.setInformationConvert(bscanInformations, tr("Scale X"  ), sf.getX()           , scaleFactorX          );
-	filler.setInformationConvert(bscanInformations, tr("Distance" ), sf.getY()           , scaleFactorY          );
-	filler.setInformationConvert(bscanInformations, tr("Scale Z"  ), sf.getZ()           , scaleFactorZ          );
+
+	filler.setInformation       (bscanInformations, tr("Acquisition time"), imageAcquisitionTime, bscanAcquisitionTime  );
+	filler.setInformation       (bscanInformations, tr("Image quality"   ), imageQuality        , bscanImageQuality     );
+	filler.setInformation       (bscanInformations, tr("Images average"  ), imageAverage        , bscanNumAverage       );
+
+	filler.setInformationConvert(bscanInformations, tr("Scale X"         ), sf.getX()           , scaleFactorX          );
+	filler.setInformationConvert(bscanInformations, tr("Distance"        ), sf.getY()           , scaleFactorY          );
+	filler.setInformationConvert(bscanInformations, tr("Scale Z"         ), sf.getZ()           , scaleFactorZ          );
+
+	filler.setInformation       (bscanInformations, tr("Angle"           ), bscanAngleString    , bscanAngle            );
 
 }
 

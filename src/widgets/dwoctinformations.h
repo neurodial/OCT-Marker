@@ -53,6 +53,8 @@ private:
 	OctInfoField scaleFactorX;
 	OctInfoField scaleFactorY;
 	OctInfoField scaleFactorZ;
+
+	OctInfoField bscanAngle;
 };
 
 #endif // DWOCTINFORMATIONS_H

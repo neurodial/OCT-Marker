@@ -18,7 +18,11 @@ int BscanMarkerBase::getBScanWidth(std::size_t nr) const
 {
 	const OctData::Series* series = getSeries();
 	if(series)
-		return series->getBScan(nr)->getWidth();
+	{
+		const OctData::BScan* bscan = series->getBScan(nr);
+		if(bscan)
+			return bscan->getWidth();
+	}
 	return 0;
 }
 
@@ -31,7 +35,11 @@ int BscanMarkerBase::getBScanHight() const
 {
 	const OctData::Series* series = getSeries();
 	if(series)
-		return series->getBScan(getActBScanNr())->getHeight();
+	{
+		const OctData::BScan* bscan = series->getBScan(getActBScanNr());
+		if(bscan)
+			return bscan->getHeight();
+	}
 	return 0;
 }
 
