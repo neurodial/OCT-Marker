@@ -14,8 +14,7 @@ class EditSpline : public EditBase
 	OctData::Segmentationlines::Segmentline* segLine = nullptr;
 
 	std::vector<Point2D> supportingPoints;
-
-	std::vector<double> interpolated;
+// 	std::vector<double> interpolated;
 
 	void recalcInterpolation();
 

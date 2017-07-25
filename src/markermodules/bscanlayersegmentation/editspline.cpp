@@ -190,7 +190,7 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, double scaleFactor) const
 {
 // 	paintPolygon(painter, supportingPoints, scaleFactor);
-	BScanMarkerWidget::paintSegmentationLine(painter, getBScanHight(), interpolated, scaleFactor);
+// 	BScanMarkerWidget::paintSegmentationLine(painter, getBScanHight(), interpolated, scaleFactor);
 	paintPoints(painter, scaleFactor);
 }
 
@@ -230,11 +230,14 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 
 bool EditSpline::testInsertPoint(const Point2D& insertPoint, double scaleFactor)
 {
+	if(!segLine)
+		return false;
+
 	int pX = static_cast<int>(std::round(insertPoint.getX()));
-	if(pX >= 0 && pX < interpolated.size())
+	if(pX >= 0 && pX < segLine->size())
 	{
 		double pY = insertPoint.getY();
-		if(std::abs(interpolated.at(pX) - pY) < 10./scaleFactor)
+		if(std::abs(segLine->at(pX) - pY) < 10./scaleFactor)
 		{
 			for(std::vector<Point2D>::iterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
 			{
@@ -307,11 +310,11 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseReleaseEvent(QMouseEvent*, BScan
 
 void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine)
 {
-	if(this->segLine)
-	{
-		this->segLine->clear();
-		std::copy(interpolated.begin(), interpolated.end(), std::back_inserter(*this->segLine));
-	}
+// 	if(this->segLine)
+// 	{
+// 		this->segLine->clear();
+// 		std::copy(interpolated.begin(), interpolated.end(), std::back_inserter(*this->segLine));
+// 	}
 
 	this->segLine = segLine;
 
@@ -340,9 +343,14 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 
 void EditSpline::recalcInterpolation()
 {
-	PChip pchip(supportingPoints, segLine->size());
+	if(!segLine)
+		return;
 
-	interpolated = pchip.getValues();
+	PChip pchip(supportingPoints, segLine->size());
+	const std::vector<double>& pchipPoints = pchip.getValues();
+
+	if(pchipPoints.size() > 0)
+		*segLine = pchipPoints;
 
 }
 

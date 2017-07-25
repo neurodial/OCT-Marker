@@ -46,7 +46,7 @@ FindSupportingPoints::FindSupportingPoints(const std::vector<Point2D>& values)
 
 	fillPoints(values, CallFindSupportingPointsDerivatie(this));
 	updateInterpolated();
-// 	fillPoints(values, CallFindSupportingPointsRecursiv(this));
+	fillPoints(values, CallFindSupportingPointsRecursiv(this));
 
 	removePoints(values);
 
@@ -181,6 +181,12 @@ void FindSupportingPoints::findSupportingPointsRecursiv(PtIt insertPointBefore, 
 		divideOnPoint(firstPoint, maxLineDist.getIt(), lastPoint, insertPointBefore, depth + 1);
 }
 
+
+
+// -----------------
+// Remove points
+// -----------------
+
 void FindSupportingPoints::setDirtySurrounding(PtIt pt)
 {
 	constexpr const std::size_t surroundingArea = 2;
@@ -203,7 +209,7 @@ void FindSupportingPoints::setDirtySurrounding(PtIt pt)
 }
 
 
-void FindSupportingPoints::removePoints(const std::vector<Point2D>& values) // PtIt first, PtIt last)
+void FindSupportingPoints::removePoints(const std::vector<Point2D>& values)
 {
 	PtIt minIt = destPoints.end();
 	bool pointRemoved;
