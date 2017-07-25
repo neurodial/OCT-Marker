@@ -9,18 +9,27 @@
 class FindSupportingPoints
 {
 public:
-	typedef std::list<Point2D>::iterator PtIt;
+	struct DestPoint
+	{
+		DestPoint() = default;
+		DestPoint(const Point2D& p) : point(p) {}
+
+		double getX() const { return point.getX(); }
+		double getY() const { return point.getY(); }
+
+		Point2D point;
+		bool dirty = true;
+		double error = 0;
+	};
+	typedef std::list<DestPoint>::iterator PtIt;
 	typedef std::vector<Point2D>::const_iterator PtItSource;
 	FindSupportingPoints(const std::vector<Point2D>& values);
 
 
-	const std::list<Point2D>& getPoints() const                     { return destPoints; }
-
+	const std::vector<Point2D> getSupportingPoints() const;
 
 
 private:
-// 	typedef void (FindSupportingPoints::*insertPointsFunc)(PtIt, const PtItSource, const PtItSource);
-
 	constexpr static const double tol = 0.2;
 
 	template<typename InsertPointsFunc>
@@ -34,9 +43,16 @@ private:
 	void findSupportingPointsRecursiv(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint, std::size_t depth = 0);
 	void divideOnDerivative(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint);
 
+	void setDirtySurrounding(PtIt pt);
+
+	std::vector<double> calcInterpolatedWithout(PtIt it); // PtIt first, PtIt last);
 	void updateInterpolated(); // PtIt first, PtIt last);
 	void removePoints(const std::vector<Point2D>& values);
-	std::list<Point2D> destPoints;
+
+	void calcAndSetPointError(PtIt firstScope, PtIt point, PtIt lastScope, const std::vector<Point2D>& values);
+	void updatePointsError(const std::vector<Point2D>& values);
+
+	std::list<DestPoint> destPoints;
 
 	std::vector<double> interpolated;
 };

@@ -241,6 +241,7 @@ bool EditSpline::testInsertPoint(const Point2D& insertPoint, double scaleFactor)
 				if(p->getX() > pX)
 				{
 					actEditPoint = supportingPoints.insert(p, insertPoint);
+					recalcInterpolation();
 					return true;
 				}
 			}
@@ -330,7 +331,8 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 	FindSupportingPoints alg(vals);
 
 	supportingPoints.clear();
-	std::copy(alg.getPoints().begin(), alg.getPoints().end(),  std::back_inserter(supportingPoints));
+	supportingPoints = alg.getSupportingPoints();
+// 	std::copy(alg.getPoints().begin(), alg.getPoints().end(),  std::back_inserter(supportingPoints));
 	actEditPoint = supportingPoints.end();
 
 	recalcInterpolation();
