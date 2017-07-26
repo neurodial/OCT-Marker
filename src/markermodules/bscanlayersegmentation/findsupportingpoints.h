@@ -45,7 +45,7 @@ private:
 
 	void setDirtySurrounding(PtIt pt);
 
-	std::vector<double> calcInterpolatedWithout(PtIt it); // PtIt first, PtIt last);
+	std::vector<double> calcInterpolatedWithout(PtIt it, PtIt first, PtIt last);
 	void updateInterpolated(); // PtIt first, PtIt last);
 	void removePoints(const std::vector<Point2D>& values);
 
@@ -55,6 +55,8 @@ private:
 	std::list<DestPoint> destPoints;
 
 	std::vector<double> interpolated;
+
+	PtIt itPointsSave(PtIt it, int num = 1);
 };
 
 #endif // FINDSUPPORTINGPOINTS_H

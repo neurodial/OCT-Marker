@@ -12,6 +12,7 @@
 
 
 #include <octdata/datastruct/segmentationlines.h>
+#include <manager/octdatamanager.h>
 
 WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 : segmentation(parent)
@@ -579,9 +580,6 @@ void WGSegmentationThreshold::setupWidgets()
 
 	if(absoluteBox)
 	{
-
-
-
 		connect(absoluteBox, static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::absoluteSpinBoxChanged);
 		absoluteBox->setSingleStep(5);
 		absoluteBox->setMinimum(0);
@@ -701,6 +699,7 @@ void WGSegmentationThreshold::absoluteSpinBoxChanged()
 		buttonAbsolut->setChecked(true);
 }
 
+
 void WGSegmentationThreshold::relativeSpinBoxChanged()
 {
 	if(buttonRelativ)
@@ -713,14 +712,22 @@ void WGSegmentationThreshold::widgetActivated()
 	emit(blockAction());
 }
 
+
 void WGSegmentation::importSegmentationFromOctSlot()
 {
-	QString file = QFileDialog::getOpenFileName(this, tr("Import marker from oct file"), QString(), "*");
+// 		EYE00021_E_1776.vol_seg_bin.bin
+	const QString& filename = OctDataManager::getInstance().getLoadedFilename();
+	QString importfile = filename + "_seg_bin.bin";
+	QFileInfo fileinfo(importfile);
+
+	if(!fileinfo.exists())
+		importfile = QString();
+
+	QString file = QFileDialog::getOpenFileName(this, tr("Import marker from oct file"), importfile, ".bin");
 	if(!file.isEmpty())
 	{
 		segmentation->importSegmentationFromOct(file.toStdString());
 	}
-
 }
 
 

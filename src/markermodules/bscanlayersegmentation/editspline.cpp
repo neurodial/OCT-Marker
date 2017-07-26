@@ -11,6 +11,7 @@
 #include"findsupportingpoints.h"
 #include"pchip.h"
 
+#include<QTime> // TODO
 
 
 namespace
@@ -146,6 +147,7 @@ namespace
 		rect.setY     (y     );
 		rect.setWidth (width );
 		rect.setHeight(height);
+		return rect;
 	}
 
 	std::ostream& operator<<(std::ostream& stream, const QRect& rect)
@@ -189,8 +191,6 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 
 void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, double scaleFactor) const
 {
-// 	paintPolygon(painter, supportingPoints, scaleFactor);
-// 	BScanMarkerWidget::paintSegmentationLine(painter, getBScanHight(), interpolated, scaleFactor);
 	paintPoints(painter, scaleFactor);
 }
 
@@ -310,12 +310,6 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseReleaseEvent(QMouseEvent*, BScan
 
 void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine)
 {
-// 	if(this->segLine)
-// 	{
-// 		this->segLine->clear();
-// 		std::copy(interpolated.begin(), interpolated.end(), std::back_inserter(*this->segLine));
-// 	}
-
 	this->segLine = segLine;
 
 	if(!segLine)
@@ -330,13 +324,18 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 			vals.push_back(Point2D(x, val));
 		}
 	}
+
+	QTime t;
+	t.start();
 // 	DouglasPeuckerAlgorithm alg(vals);
 	FindSupportingPoints alg(vals);
 
+	qDebug("FindSupportingPoints: %d ms", t.elapsed());
+
 	supportingPoints.clear();
 	supportingPoints = alg.getSupportingPoints();
-// 	std::copy(alg.getPoints().begin(), alg.getPoints().end(),  std::back_inserter(supportingPoints));
 	actEditPoint = supportingPoints.end();
+
 
 	recalcInterpolation();
 }

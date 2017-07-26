@@ -182,6 +182,31 @@ void FindSupportingPoints::findSupportingPointsRecursiv(PtIt insertPointBefore, 
 }
 
 
+FindSupportingPoints::PtIt FindSupportingPoints::itPointsSave(PtIt it, int num)
+{
+	if(num>0)
+	{
+		for(int i = 0; i<num; ++i)
+		{
+			if(it != destPoints.end())
+				++it;
+			else
+				break;
+		}
+	}
+	else
+	{
+		for(int i = num; i<0; ++i)
+		{
+			--it;
+			if(it == destPoints.begin())
+				break;
+		}
+	}
+	return it;
+}
+
+
 
 // -----------------
 // Remove points
@@ -256,11 +281,10 @@ void FindSupportingPoints::calcAndSetPointError(PtIt firstScope, PtIt point, PtI
 	ErrorSeglines newError;
 
 	oldError.calcError(firstScope, lastScope, values, interpolated);
-	std::vector<double> newInterpolated = calcInterpolatedWithout(point);
+	std::vector<double> newInterpolated = calcInterpolatedWithout(point, itPointsSave(firstScope, -1), itPointsSave(lastScope, 1));
 	newError.calcError(firstScope, lastScope, values, newInterpolated);
 	point->dirty = false;
 	point->error = newError.quadError - oldError.quadError;
-// 	std::cout << "newError: " << newError.quadError << "\toldError: " << oldError.quadError << std::endl;
 }
 
 
@@ -374,8 +398,6 @@ namespace
 			v1 = v2;
 			v2 = val;
 
-// 			std::cout << val << " - " << expectVal << " - " << std::abs(expectVal - val) << std::endl;
-
 			return result;
 		}
 
@@ -383,8 +405,6 @@ namespace
 		double v1 = 0;
 		double v2 = 0;
 		constexpr static const double tol = 1e-5;
-// 		Direction lastDirection = Direction::None;
-
 	};
 }
 
@@ -418,18 +438,18 @@ void FindSupportingPoints::divideOnDerivative(PtIt insertPointBefore, const PtIt
 
 
 
-std::vector<double> FindSupportingPoints::calcInterpolatedWithout(PtIt it)
+std::vector<double> FindSupportingPoints::calcInterpolatedWithout(PtIt it, PtIt first, PtIt last)
 {
 	std::vector<double> interpolatedResult;
 
 	std::vector<Point2D> supportingPoints;
 	supportingPoints.reserve(destPoints.size());
 
-	std::transform(destPoints.begin(), it              , std::back_inserter(supportingPoints), [](const DestPoint& cls) { return cls.point; });
-	if(it != destPoints.end())
+	std::transform(first, it, std::back_inserter(supportingPoints), [](const DestPoint& cls) { return cls.point; });
+	if(it != last)
 	{
 		++it;
-		std::transform(it                , destPoints.end(), std::back_inserter(supportingPoints), [](const DestPoint& cls) { return cls.point; });
+		std::transform(it, last, std::back_inserter(supportingPoints), [](const DestPoint& cls) { return cls.point; });
 	}
 
 	PChip pchip(supportingPoints, interpolated.size());
@@ -448,7 +468,6 @@ void FindSupportingPoints::updateInterpolated() // PtIt first, PtIt last)
 const std::vector<Point2D> FindSupportingPoints::getSupportingPoints() const
 {
 	std::vector<Point2D> supportingPoints;
-// 	std::copy(alg.getPoints().begin(), alg.getPoints().end(),  std::back_inserter(supportingPoints));;
 
 	supportingPoints.reserve(destPoints.size());
 	std::transform(destPoints.begin(), destPoints.end(), std::back_inserter(supportingPoints), [](const DestPoint& cls) { return cls.point; });
