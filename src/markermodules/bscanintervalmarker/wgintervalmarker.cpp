@@ -92,6 +92,13 @@ QWidget* WGIntervalMarker::createMarkerToolButtons()
 
 	layout->addStretch();
 
+
+	QAction* exportMarkerToBin = new QAction(this);
+	exportMarkerToBin->setText(tr("Export marker to bin file"));
+	exportMarkerToBin->setIcon(QIcon(":/icons/folder_image.png"));
+	connect(exportMarkerToBin, &QAction::triggered, this, &WGIntervalMarker::exportMarkerToBinSlot);
+	layout->addWidget(createActionToolButton(this, exportMarkerToBin));
+
 	QAction* importMarkerFromBin = new QAction(this);
 	importMarkerFromBin->setText(tr("Import marker from bin file"));
 	importMarkerFromBin->setIcon(QIcon(":/icons/folder_image.png"));
@@ -204,6 +211,16 @@ void WGIntervalMarker::importMarkerFromBinSlot()
 	if(!file.isEmpty())
 	{
 		parent->importMarkerFromBin(file.toStdString());
+	}
+}
+
+
+void WGIntervalMarker::exportMarkerToBinSlot()
+{
+	QString file = QFileDialog::getSaveFileName(this, tr("Export marker to bin file"), QString(), "*.bin");
+	if(!file.isEmpty())
+	{
+		parent->exportMarkerToBin(file.toStdString());
 	}
 }
 

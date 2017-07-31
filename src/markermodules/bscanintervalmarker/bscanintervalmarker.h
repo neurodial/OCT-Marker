@@ -94,6 +94,7 @@ public:
 	MarkerCollectionWork getActMarkerCollection()                   { return MarkerCollectionWork(actCollection); }
 
 	bool importMarkerFromBin(const std::string& filename);
+	void exportMarkerToBin(const std::string& filename);
 
 	uint8_t getTransparency() const                                 { return transparency; }
 

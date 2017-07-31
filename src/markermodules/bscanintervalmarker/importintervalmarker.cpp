@@ -10,6 +10,7 @@
 #include "bscanintervalmarker.h"
 
 #include <opencv/cv.h>
+#include "definedintervalmarker.h"
 
 
 namespace
@@ -138,4 +139,60 @@ bool ImportIntervalMarker::importBin(BScanIntervalMarker* markerManager, const s
 
 	std::cerr << "Wrong import format\n";
 	return false;
+}
+
+
+
+
+bool ImportIntervalMarker::exportBin(BScanIntervalMarker* markerManager, const std::string& filename)
+{
+	CppFW::CVMatTree tree;
+
+	CppFW::CVMatTree& markerMaps = tree.getDirNode("marker_maps");
+
+	const DefinedIntervalMarker::IntervallMarkerMap& definedIntervalMarker = DefinedIntervalMarker::getInstance().getIntervallMarkerMap();
+	for(auto& obj : definedIntervalMarker)
+	{
+		const std::string& markerCollectionInternalName = obj.first;
+
+// 		CppFW::CVMatTree& collectionNode = markerMaps.newListNode();
+// 		collectionNode.getDirNode("marker_collection").getString() = markerCollectionInternalName;
+		CppFW::CVMatTree& collectionNode = markerMaps.getDirNode(markerCollectionInternalName);
+
+		CppFW::CVMatTree& fieldNode = collectionNode.getDirNode("field");
+		CppFW::CVMatTree& markerNode = collectionNode.getDirNode("marker");
+
+		const IntervalMarker& markers = obj.second;
+		const IntervalMarker::IntervalMarkerList& intervalMarkerList = markers.getIntervalMarkerList();
+		for(const IntervalMarker::Marker& marker : intervalMarkerList)
+			markerNode.newListNode().getString() = marker.getInternalName();
+
+		std::size_t numBscans = markerManager->getNumBScans();
+
+		cv::Mat& fieldMat = fieldNode.getMat();
+		fieldMat.create(static_cast<int>(numBscans), 900, cv::DataType<uint8_t>::type); // TODO: 900
+
+		for(std::size_t bscan = 0; bscan < numBscans; ++bscan)
+		{
+			const BScanIntervalMarker::MarkerMap& markerMap = markerManager->getMarkers(markerCollectionInternalName, bscan);
+			for(const BScanIntervalMarker::MarkerMap::interval_mapping_type pair : markerMap)
+			{
+
+				// std::cout << "paintEvent(QPaintEvent* event) " << pair.second << " - " << pair.first << std::endl;
+
+				IntervalMarker::Marker marker = pair.second;
+				if(marker.isDefined())
+				{
+					boost::icl::discrete_interval<int> itv  = pair.first;
+
+					int pos = std::find(intervalMarkerList.begin(), intervalMarkerList.end(), marker) - intervalMarkerList.begin();
+					fieldMat(cv::Range(bscan, bscan+1), cv::Range(itv.lower(), itv.upper()+1)) = static_cast<uint8_t>(pos);
+
+
+				}
+			}
+		}
+	}
+
+	CppFW::CVMatTreeStructBin::writeBin(filename, tree);
 }

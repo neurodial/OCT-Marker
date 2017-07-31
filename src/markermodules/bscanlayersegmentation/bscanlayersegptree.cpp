@@ -62,8 +62,9 @@ void BScanLayerSegPTree::fillPTree(boost::property_tree::ptree& ptree, const BSc
 	ptree.clear(); // TODO
 
 	std::size_t bscan = 0;
-	for(const OctData::Segmentationlines& lines : markerManager->lines)
+	for(const BScanLayerSegmentation::BScanSegData& bscanData : markerManager->lines)
 	{
+		const OctData::Segmentationlines& lines = bscanData.lines;
 		std::string nodeName = "BScan";
 		bpt::ptree& bscanNode = ptree.add(nodeName, "");
 		bscanNode.add("ID", boost::lexical_cast<std::string>(bscan));
@@ -109,6 +110,8 @@ bool BScanLayerSegPTree::parsePTree(const boost::property_tree::ptree& ptree, BS
 		if(!linesNode)
 			continue;
 
+		BScanLayerSegmentation::BScanSegData& bscanData = markerManager->lines[bscanId];
+
 		for(const std::pair<const std::string, const bpt::ptree>& segLinesNodePair : *linesNode)
 		{
 			const std::string& name = segLinesNodePair.first;
@@ -133,7 +136,8 @@ bool BScanLayerSegPTree::parsePTree(const boost::property_tree::ptree& ptree, BS
 				continue;
 			}
 
-			markerManager->lines[bscanId].getSegmentLine(actType) = fillToVector<double>(segLinesNodePair.second);
+			bscanData.lines.getSegmentLine(actType) = fillToVector<double>(segLinesNodePair.second);
+			bscanData.filled = true;
 		}
 	}
 

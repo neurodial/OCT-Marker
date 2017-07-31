@@ -19,6 +19,7 @@ class EditSpline : public EditBase
 	void recalcInterpolation();
 
 	bool movePoint = false;
+	std::vector<Point2D>::iterator firstEditPoint;
 	std::vector<Point2D>::iterator actEditPoint;
 
 	void paintPoints(QPainter& painter, double factor) const;

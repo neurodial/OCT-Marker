@@ -36,6 +36,7 @@ private slots:
 
 
 	void importMarkerFromBinSlot();
+	void exportMarkerToBinSlot();
 };
 
 #endif // WGINTERVALMARKER_H

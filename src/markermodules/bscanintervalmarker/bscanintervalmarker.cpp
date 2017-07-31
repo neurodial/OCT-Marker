@@ -601,3 +601,9 @@ bool BScanIntervalMarker::importMarkerFromBin(const std::string& filename)
 	return result;
 }
 
+void BScanIntervalMarker::exportMarkerToBin(const std::string& filename)
+{
+	ImportIntervalMarker::exportBin(this, filename);
+}
+
+

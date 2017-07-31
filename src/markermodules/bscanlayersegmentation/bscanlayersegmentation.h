@@ -20,7 +20,13 @@ class BScanLayerSegmentation : public BscanMarkerBase
 	friend class EditBase;
 	friend class BScanLayerSegPTree;
 
-	std::vector<OctData::Segmentationlines> lines;
+	struct BScanSegData
+	{
+		OctData::Segmentationlines lines;
+		bool filled = false;
+	};
+
+	std::vector<BScanSegData> lines;
 	OctData::Segmentationlines::SegmentlineType actEditType = OctData::Segmentationlines::SegmentlineType::ILM;
 
 	void resetMarkers(const OctData::Series* series);
@@ -32,6 +38,11 @@ class BScanLayerSegmentation : public BscanMarkerBase
 	EditSpline* editMethodSpline = nullptr;
 	EditPen   * editMethodPen    = nullptr;
 
+	void copySegLinesFromOctDataWhenNotFilled();
+	void copySegLinesFromOctDataWhenNotFilled(std::size_t bscan);
+
+	void copySegLinesFromOctData();
+	void copySegLinesFromOctData(std::size_t bscan);
 public:
 	enum class SegMethod { None, Pen, Spline };
 
@@ -59,7 +70,6 @@ public:
 
 	OctData::Segmentationlines::SegmentlineType getActEditSeglineType() const { return actEditType; }
 
-	void copySegLinesFromOctData();
 
 	void setActEditLinetype(OctData::Segmentationlines::SegmentlineType type);
 

@@ -7,7 +7,6 @@
 
 #include <widgets/bscanmarkerwidget.h>
 
-#include"douglaspeuckeralgorithm.h"
 #include"findsupportingpoints.h"
 #include"pchip.h"
 
@@ -177,6 +176,7 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 {
 	painter.setPen(QPen(Qt::red));
 	painter.setBrush(QBrush(Qt::black));
+
 	for(const Point2D& p : supportingPoints)
 		paintPoint(painter, p, factor);
 
@@ -275,6 +275,10 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 
 
 	std::vector<Point2D>::iterator lastEditPoint = actEditPoint;
+	if(event->modifiers() | Qt::Key::Key_Shift)
+		firstEditPoint = actEditPoint;
+	else
+		firstEditPoint = supportingPoints.end();
 
 	if(minDist < 10/scaleFactor)
 	{
@@ -284,7 +288,7 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 	else
 	{
 		actEditPoint = supportingPoints.end();
-		movePoint = testInsertPoint(clickPoint, scaleFactor);
+		movePoint = testInsertPoint(clickPoint, scaleFactor); // TODO: zeichenfenster anpassen (spline geändert!)
 	}
 
 	BscanMarkerBase::RedrawRequest redraw;
@@ -340,7 +344,7 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 	recalcInterpolation();
 }
 
-void EditSpline::recalcInterpolation()
+void EditSpline::recalcInterpolation() // TODO: lokale neuberechnung
 {
 	if(!segLine)
 		return;
