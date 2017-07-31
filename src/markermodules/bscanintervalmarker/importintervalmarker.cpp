@@ -110,7 +110,7 @@ bool ImportIntervalMarker::importBin(BScanIntervalMarker* markerManager, const s
 		{
 			bool result = true;
 
-			if(markerMapsNode->type() == CppFW::CVMatTree::Type::List)
+			if(markerMapsNode->type() == CppFW::CVMatTree::Type::List) // old format
 			{
 				for(const CppFW::CVMatTree* node : markerMapsNode->getNodeList())
 				{
@@ -129,6 +129,20 @@ bool ImportIntervalMarker::importBin(BScanIntervalMarker* markerManager, const s
 				}
 				return result;
 			}
+			else if(markerMapsNode->type() == CppFW::CVMatTree::Type::Dir) // new Format
+			{
+				for(const CppFW::CVMatTree::NodeDir::value_type& node : markerMapsNode->getNodeDir())
+				{
+					if(!node.second)
+						continue;
+					const std::string& collectionName = node.first;
+					std::cerr << "marker_collection: " << collectionName << "\n";
+					BScanIntervalMarker::MarkerCollectionWork collectionSetterHelper = markerManager->getMarkerCollection(collectionName);
+					result &= parseMarkerCollection(*node.second, markerManager, collectionSetterHelper);
+				}
+				return result;
+			}
+
 		}
 		else // import old data structure
 		{
@@ -147,8 +161,8 @@ bool ImportIntervalMarker::importBin(BScanIntervalMarker* markerManager, const s
 
 bool ImportIntervalMarker::exportBin(BScanIntervalMarker* markerManager, const std::string& filename)
 {
-	const std::size_t numBscans     = markerManager->getNumBScans();
-	const std::size_t maxBscanWidth = markerManager->getMaxBscanWidth();
+	const std::size_t numBscans     =                  markerManager->getNumBScans();
+	const int         maxBscanWidth = static_cast<int>(markerManager->getMaxBscanWidth());
 
 
 	CppFW::CVMatTree tree;
@@ -172,7 +186,7 @@ bool ImportIntervalMarker::exportBin(BScanIntervalMarker* markerManager, const s
 
 
 		cv::Mat& fieldMat = fieldNode.getMat();
-		fieldMat.create(static_cast<int>(numBscans), static_cast<int>(maxBscanWidth), cv::DataType<uint8_t>::type);
+		fieldMat.create(static_cast<int>(numBscans), maxBscanWidth, cv::DataType<uint8_t>::type);
 		fieldMat = cv::Scalar(0); // init mat
 
 		for(std::size_t bscan = 0; bscan < numBscans; ++bscan)
@@ -195,7 +209,7 @@ bool ImportIntervalMarker::exportBin(BScanIntervalMarker* markerManager, const s
 					if(minPos < 0)
 						minPos = 0;
 					if(maxPos > maxBscanWidth)
-						maxPos = static_cast<int>(maxBscanWidth);
+						maxPos = maxBscanWidth;
 
 					fieldMat(cv::Range(static_cast<int>(bscan), static_cast<int>(bscan+1)), cv::Range(minPos, maxPos)) = static_cast<uint8_t>(pos);
 				}

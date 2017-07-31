@@ -27,12 +27,12 @@ namespace
 		y2 = y/2;
 	}
 
-        typedef struct user_context_type
-        {
-            FANN::callback_type user_callback; // Pointer to user callback function
-            void *user_data; // Arbitrary data pointer passed to the callback
-            FANN::neural_net *net; // This pointer for the neural network
-        } user_context;
+	typedef struct user_context_type
+	{
+		FANN::callback_type user_callback; // Pointer to user callback function
+		void *user_data; // Arbitrary data pointer passed to the callback
+		FANN::neural_net *net; // This pointer for the neural network
+	} user_context;
 
 //         // Internal callback used to convert from pointers to class references
 //         static int FANN_API internal_callback(struct fann *ann, struct fann_train_data *train,
