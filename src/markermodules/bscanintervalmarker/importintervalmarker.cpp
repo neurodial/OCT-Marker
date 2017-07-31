@@ -11,6 +11,7 @@
 
 #include <opencv/cv.h>
 #include "definedintervalmarker.h"
+#include <octdata/datastruct/bscan.h>
 
 
 namespace
@@ -146,6 +147,10 @@ bool ImportIntervalMarker::importBin(BScanIntervalMarker* markerManager, const s
 
 bool ImportIntervalMarker::exportBin(BScanIntervalMarker* markerManager, const std::string& filename)
 {
+	const std::size_t numBscans     = markerManager->getNumBScans();
+	const std::size_t maxBscanWidth = markerManager->getMaxBscanWidth();
+
+
 	CppFW::CVMatTree tree;
 
 	CppFW::CVMatTree& markerMaps = tree.getDirNode("marker_maps");
@@ -155,8 +160,6 @@ bool ImportIntervalMarker::exportBin(BScanIntervalMarker* markerManager, const s
 	{
 		const std::string& markerCollectionInternalName = obj.first;
 
-// 		CppFW::CVMatTree& collectionNode = markerMaps.newListNode();
-// 		collectionNode.getDirNode("marker_collection").getString() = markerCollectionInternalName;
 		CppFW::CVMatTree& collectionNode = markerMaps.getDirNode(markerCollectionInternalName);
 
 		CppFW::CVMatTree& fieldNode = collectionNode.getDirNode("field");
@@ -167,10 +170,10 @@ bool ImportIntervalMarker::exportBin(BScanIntervalMarker* markerManager, const s
 		for(const IntervalMarker::Marker& marker : intervalMarkerList)
 			markerNode.newListNode().getString() = marker.getInternalName();
 
-		std::size_t numBscans = markerManager->getNumBScans();
 
 		cv::Mat& fieldMat = fieldNode.getMat();
-		fieldMat.create(static_cast<int>(numBscans), 900, cv::DataType<uint8_t>::type); // TODO: 900
+		fieldMat.create(static_cast<int>(numBscans), static_cast<int>(maxBscanWidth), cv::DataType<uint8_t>::type);
+		fieldMat = cv::Scalar(0); // init mat
 
 		for(std::size_t bscan = 0; bscan < numBscans; ++bscan)
 		{
@@ -185,14 +188,20 @@ bool ImportIntervalMarker::exportBin(BScanIntervalMarker* markerManager, const s
 				{
 					boost::icl::discrete_interval<int> itv  = pair.first;
 
-					int pos = std::find(intervalMarkerList.begin(), intervalMarkerList.end(), marker) - intervalMarkerList.begin();
-					fieldMat(cv::Range(bscan, bscan+1), cv::Range(itv.lower(), itv.upper()+1)) = static_cast<uint8_t>(pos);
+					auto pos = std::find(intervalMarkerList.begin(), intervalMarkerList.end(), marker) - intervalMarkerList.begin();
+					int minPos = itv.lower();
+					int maxPos = itv.upper()+1;
 
+					if(minPos < 0)
+						minPos = 0;
+					if(maxPos > maxBscanWidth)
+						maxPos = static_cast<int>(maxBscanWidth);
 
+					fieldMat(cv::Range(static_cast<int>(bscan), static_cast<int>(bscan+1)), cv::Range(minPos, maxPos)) = static_cast<uint8_t>(pos);
 				}
 			}
 		}
 	}
 
-	CppFW::CVMatTreeStructBin::writeBin(filename, tree);
+	return CppFW::CVMatTreeStructBin::writeBin(filename, tree);
 }

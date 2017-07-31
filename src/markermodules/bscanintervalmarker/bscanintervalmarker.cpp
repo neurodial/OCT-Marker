@@ -607,3 +607,20 @@ void BScanIntervalMarker::exportMarkerToBin(const std::string& filename)
 }
 
 
+
+std::size_t BScanIntervalMarker::getMaxBscanWidth() const
+{
+	const std::size_t numBscans = getNumBScans();
+	std::size_t maxBscanWidth = 0;
+
+	for(std::size_t bscanNum = 0; bscanNum < numBscans; ++bscanNum)
+	{
+		const OctData::BScan* bscan = getBScan(bscanNum);
+		if(bscan)
+		{
+			if(maxBscanWidth < bscan->getWidth())
+				maxBscanWidth = static_cast<std::size_t>(bscan->getWidth());
+		}
+	}
+	return maxBscanWidth;
+}

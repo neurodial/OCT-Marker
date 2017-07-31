@@ -98,6 +98,8 @@ public:
 
 	uint8_t getTransparency() const                                 { return transparency; }
 
+	std::size_t getMaxBscanWidth() const;
+
 public slots:
 	bool setMarkerCollection(const std::string& internalName);
 
@@ -112,7 +114,7 @@ signals:
 	void markerIdChanged(int id);
 	void markerMethodChanged(int id);
 	void markerCollectionChanged(const std::string& internalName);
-	
+
 private:
 	
 	QPoint clickPos;

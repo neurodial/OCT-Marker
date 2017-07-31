@@ -95,7 +95,7 @@ QWidget* WGIntervalMarker::createMarkerToolButtons()
 
 	QAction* exportMarkerToBin = new QAction(this);
 	exportMarkerToBin->setText(tr("Export marker to bin file"));
-	exportMarkerToBin->setIcon(QIcon(":/icons/folder_image.png"));
+	exportMarkerToBin->setIcon(QIcon(":/icons/disk.png"));
 	connect(exportMarkerToBin, &QAction::triggered, this, &WGIntervalMarker::exportMarkerToBinSlot);
 	layout->addWidget(createActionToolButton(this, exportMarkerToBin));
 

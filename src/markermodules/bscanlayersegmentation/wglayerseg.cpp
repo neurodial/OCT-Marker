@@ -1,21 +1,29 @@
 #include "wglayerseg.h"
 
+#include "bscanlayersegmentation.h"
+
 #include<QVBoxLayout>
 #include<QButtonGroup>
 #include<QPushButton>
 #include<QSignalMapper>
+#include<QActionGroup>
+#include<QAction>
+#include<QToolButton>
 
 #include<octdata/datastruct/segmentationlines.h>
 
-#include "bscanlayersegmentation.h"
 
 WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
 : parent(parent)
 {
+	connect(parent, &BScanLayerSegmentation::segMethodChanged, this, &WGLayerSeg::markerMethodChanged);
+
+	QVBoxLayout* layout = new QVBoxLayout();
+	layout->addWidget(createMarkerToolButtons());
+
 
 	layerButtons = new QButtonGroup(this);
 
-	QVBoxLayout* layout = new QVBoxLayout();
 	QSignalMapper* signalMapper = new QSignalMapper(this);
 
 	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
@@ -36,7 +44,7 @@ WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
 
 		layerButtons->addButton(button);
 		layout->addWidget(button);
-		seglineButtons[static_cast<int>(type)] = button;
+		seglineButtons[static_cast<std::size_t>(type)] = button;
 	}
 
     connect(signalMapper, static_cast<void (QSignalMapper::*)(int)>(&QSignalMapper::mapped), this, &WGLayerSeg::changeSeglineId);
@@ -54,10 +62,65 @@ WGLayerSeg::~WGLayerSeg()
 
 void WGLayerSeg::changeSeglineId(std::size_t index)
 {
-// 	qDebug("Segline: %d", static_cast<int>(index));
-
 	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
 	if(index < numSegLines)
 		parent->setActEditLinetype(OctData::Segmentationlines::getSegmentlineTypes().at(index));
 }
 
+
+
+namespace
+{
+	QToolButton* createActionToolButton(QWidget* parent, QAction* action)
+	{
+		QToolButton* button = new QToolButton(parent);
+		button->setDefaultAction(action);
+		return button;
+	}
+}
+
+
+
+QWidget* WGLayerSeg::createMarkerToolButtons()
+{
+	QWidget* widget = new QWidget(this);
+	QHBoxLayout* layout = new QHBoxLayout(this);
+
+	actionMarkerMethodPen = new QAction(this);
+	actionMarkerMethodPen->setText(tr("pen"));
+	actionMarkerMethodPen->setIcon(QIcon(":/icons/pen.png"));
+	actionMarkerMethodPen->setCheckable(true);
+	connect(actionMarkerMethodPen, &QAction::triggered, this, &WGLayerSeg::setMarkerMethodPen);
+	layout->addWidget(createActionToolButton(this, actionMarkerMethodPen));
+
+	actionMarkerMethodSpline = new QAction(this);
+	actionMarkerMethodSpline->setText(tr("Spline"));
+	actionMarkerMethodSpline->setIcon(QIcon(":/icons/vector.png"));
+	actionMarkerMethodSpline->setCheckable(true);
+	connect(actionMarkerMethodSpline, &QAction::triggered, this, &WGLayerSeg::setMarkerMethodSpline);
+	layout->addWidget(createActionToolButton(this, actionMarkerMethodSpline));
+
+
+	QActionGroup* alignmentGroup = new QActionGroup(this);
+	alignmentGroup->addAction(actionMarkerMethodPen);
+	alignmentGroup->addAction(actionMarkerMethodSpline);
+
+	markerMethodChanged();
+
+	layout->addStretch();
+
+	widget->setLayout(layout);
+	return widget;
+}
+
+void WGLayerSeg::setMarkerMethodPen   () { parent->setSegMethod(BScanLayerSegmentation::SegMethod::Pen   ); }
+void WGLayerSeg::setMarkerMethodSpline() { parent->setSegMethod(BScanLayerSegmentation::SegMethod::Spline); }
+
+void WGLayerSeg::markerMethodChanged()
+{
+	BScanLayerSegmentation::SegMethod method = parent->getSegMethod();
+
+	actionMarkerMethodPen   ->setChecked(method == BScanLayerSegmentation::SegMethod::Pen   );
+	actionMarkerMethodSpline->setChecked(method == BScanLayerSegmentation::SegMethod::Spline);
+
+}

@@ -190,6 +190,9 @@ void BScanLayerSegmentation::copySegLinesFromOctData(const std::size_t bScanNr)
 
 void BScanLayerSegmentation::setSegMethod(BScanLayerSegmentation::SegMethod method)
 {
+	if(getSegMethod() == method)
+		return;
+
 	if(actEditMethod)
 		actEditMethod->segLineChanged(nullptr);
 
@@ -208,7 +211,21 @@ void BScanLayerSegmentation::setSegMethod(BScanLayerSegmentation::SegMethod meth
 
 	if(actEditMethod)
 		actEditMethod->segLineChanged(&lines[getActBScanNr()].lines.getSegmentLine(actEditType));
+
+	emit(segMethodChanged());
+
+	requestFullUpdate();
 }
+
+
+BScanLayerSegmentation::SegMethod BScanLayerSegmentation::getSegMethod() const
+{
+	if(actEditMethod == editMethodPen   ) return BScanLayerSegmentation::SegMethod::Pen;
+	if(actEditMethod == editMethodSpline) return BScanLayerSegmentation::SegMethod::Spline;
+
+	return BScanLayerSegmentation::SegMethod::None;
+}
+
 
 void BScanLayerSegmentation::copySegLinesFromOctDataWhenNotFilled() { copySegLinesFromOctDataWhenNotFilled(getActBScanNr()); }
 

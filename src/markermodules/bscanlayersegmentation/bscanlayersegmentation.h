@@ -74,6 +74,10 @@ public:
 	void setActEditLinetype(OctData::Segmentationlines::SegmentlineType type);
 
 	void setSegMethod(SegMethod method);
+	SegMethod getSegMethod() const;
+
+signals:
+	void segMethodChanged();
 };
 
 #endif // BSCANLAYERSEGMENTATION_H
