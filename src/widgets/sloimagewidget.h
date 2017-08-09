@@ -20,6 +20,8 @@ class QPainter;
 class OctMarkerManager;
 class SloMarkerBase;
 
+class QWheelEvent;
+
 class SLOImageWidget : public CVImageWidget
 {
 	Q_OBJECT
@@ -40,13 +42,16 @@ class SLOImageWidget : public CVImageWidget
 
 	void updateGraphicsViewSize();
 public:
-	SLOImageWidget();
+	SLOImageWidget(QWidget* parent = 0);
 
     virtual ~SLOImageWidget();
 
 	bool getShowBScans() const                                   { return drawBScans; }
 
 	virtual void setImageSize(QSize size) override;
+
+protected:
+	virtual void wheelEvent       (QWheelEvent*);
 
 public slots:
 	void showBScans(bool show);

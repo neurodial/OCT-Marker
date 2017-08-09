@@ -44,8 +44,9 @@ namespace
 }
 
 
-SLOImageWidget::SLOImageWidget()
-: markerManger(OctMarkerManager::getInstance())
+SLOImageWidget::SLOImageWidget(QWidget* parent)
+: CVImageWidget(parent)
+, markerManger(OctMarkerManager::getInstance())
 , drawBScans(ProgramOptions::sloShowBscans())
 , drawOnylActBScan(ProgramOptions::sloShowOnylActBScan())
 {
@@ -367,3 +368,14 @@ void SLOImageWidget::mousePressEvent(QMouseEvent* e)
 	}
 }
 
+
+
+void SLOImageWidget::wheelEvent(QWheelEvent* wheelE)
+{
+	int deltaWheel = wheelE->delta();
+	if(deltaWheel < 0)
+		markerManger.previousBScan();
+	else
+		markerManger.nextBScan();
+	wheelE->accept();
+}

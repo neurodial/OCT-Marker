@@ -126,6 +126,17 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 	emit(newSeriesShowed(s));
 }
 
+void OctMarkerManager::setBscanMarkerTextID(QString id)
+{
+	int numId = 0;
+	for(BscanMarkerBase* marker : bscanMarkerObj)
+	{
+		if(marker && marker->getMarkerId() == id)
+			setBscanMarker(numId);
+		++numId;
+	}
+}
+
 
 void OctMarkerManager::setBscanMarker(int id)
 {

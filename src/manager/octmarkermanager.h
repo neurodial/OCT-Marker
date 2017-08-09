@@ -73,6 +73,7 @@ public slots:
 	virtual void showSeries(const OctData::Series* series);
 	
 	virtual void setBscanMarker(int id);
+	virtual void setBscanMarkerTextID(QString id);
 	virtual void setSloMarker  (int id);
 
 signals:

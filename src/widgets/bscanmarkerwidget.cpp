@@ -140,15 +140,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::ILM  ), scaleFactor);
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::BM   ), scaleFactor);
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::NFL  ), scaleFactor);
-
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I3T1 ), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I4T1 ), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I5T1 ), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I6T1 ), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I8T3 ), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I14T1), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I15T1), scaleFactor);
-		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::I16T1), scaleFactor);*/
+		*/
 	}
 	
 	
@@ -254,11 +246,15 @@ bool BScanMarkerWidget::event(QEvent* event)
 
 void BScanMarkerWidget::wheelEvent(QWheelEvent* wheelE)
 {
+	CVImageWidget::wheelEvent(wheelE);
 	int deltaWheel = wheelE->delta();
-	if(deltaWheel < 0)
-		emit(bscanChangeInkrement(-1));
-	else
-		emit(bscanChangeInkrement(+1));
+	if(!wheelE->isAccepted())
+	{
+		if(deltaWheel < 0)
+			emit(bscanChangeInkrement(-1));
+		else
+			emit(bscanChangeInkrement(+1));
+	}
 
 	wheelE->accept();
 }

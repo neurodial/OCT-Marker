@@ -5,6 +5,7 @@
 #include <QFile>
 
 #include <windows/octmarkermainwindow.h>
+#include <windows/stupidsplinewindow.h>
 #include "data_structure/programoptions.h"
 
 #include <buildconstants.h>
@@ -14,6 +15,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <qlibraryinfo.h>
+#include <QCommandLineParser>
 
 
 bool loadMarkerTranslatorFile(QTranslator& translator, const QString& dir)
@@ -45,6 +47,9 @@ void loadQtTranslator(QTranslator& translator, const QString& programDir)
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
+	QCoreApplication::setApplicationName("OCT-Marker");
+	QCoreApplication::setApplicationVersion(BuildConstants::gitSha1);
+
 
 	qDebug("Build Type      : %s", BuildConstants::buildTyp);
 	qDebug("Git Hash        : %s", BuildConstants::gitSha1);
@@ -66,13 +71,43 @@ int main(int argc, char **argv)
 	app.installTranslator(&translator);
 
 
+	QCommandLineParser parser;
+    parser.setApplicationDescription("Ein Programm um verschiedene Dinge in OCT-Daten zu markieren und zu segmentieren.");
+	parser.addOptions({
+		// A boolean option with a single name (-p)
+		{"i-want-stupid-spline-gui", QCoreApplication::translate("main", "Show stupid spline gui")},
+		// A boolean option with multiple names (-f, --force)
+		{{"f", "force"}, QCoreApplication::translate("main", "Overwrite existing files.")},
+		// An option with a value
+		{{"t", "target-directory"},
+		    QCoreApplication::translate("main", "Copy all source files into <directory>."),
+		    QCoreApplication::translate("main", "directory")},
+	});
+
+	parser.addHelpOption();
+	parser.addVersionOption();
+
+
+	// Process the actual command line arguments given by the user
+	parser.process(app);
+
 	ProgramOptions::readAllOptions();
 
 	const char* filename = nullptr;
 	if(argc > 1)
 		filename = argv[argc-1];
 
-	OCTMarkerMainWindow octMarkerProg(filename);
-	octMarkerProg.show();
-	return app.exec();
+	bool stupidSplineGui = parser.isSet("i-want-stupid-spline-gui");
+	if(stupidSplineGui)
+	{
+		StupidSplineWindow octMarkerProg(filename);
+		octMarkerProg.show();
+		return app.exec();
+	}
+	else
+	{
+		OCTMarkerMainWindow octMarkerProg(filename);
+		octMarkerProg.show();
+		return app.exec();
+	}
 }

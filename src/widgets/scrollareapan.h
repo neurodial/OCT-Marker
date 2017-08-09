@@ -7,6 +7,8 @@ class QInputEvent;
 
 class ScrollAreaPan : public QScrollArea
 {
+	Q_OBJECT
+
 	enum class PanStatus { None, PanReady, Paning };
 	enum class MausButton { Undef, Pressed, Unpressed };
 
@@ -25,7 +27,10 @@ private:
 	QPoint mousePos;
 	PanStatus panStatus = PanStatus::None;
 
-	bool upadtePanStatus(bool modifierPressed, MausButton mouseButtonPressed);
+	bool updatePanStatus(bool modifierPressed, MausButton mouseButtonPressed);
+
+public slots:
+	void scrollTo(int x, int y);
 };
 
 #endif // SCROLLAREAPAN_H

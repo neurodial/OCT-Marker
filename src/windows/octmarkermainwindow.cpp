@@ -74,6 +74,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	
 	bscanMarkerWidgetScrollArea = new ScrollAreaPan(this);
 	bscanMarkerWidgetScrollArea->setWidget(bscanMarkerWidget);
+	connect(bscanMarkerWidget, &CVImageWidget::needScrollTo, bscanMarkerWidgetScrollArea, &ScrollAreaPan::scrollTo);
 
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);

@@ -35,7 +35,7 @@ public:
 	virtual ~CVImageWidget();
 
 	QSize sizeHint()        const                               { return qtImage.size(); }
-	QSize minimumSizeHint() const                               { return qtImage.size(); }
+	QSize minimumSizeHint() const                               { return qtImage.size()/100; }
 
 	virtual void setImageSize(QSize size)                       { imageScale  = size  ; scaleMethod = ScaleMethod::Size  ; cvImage2qtImage(); }
 	virtual void setScaleFactor(double factor)                  { scaleFactor = factor; scaleMethod = ScaleMethod::Factor; cvImage2qtImage(); }
@@ -58,6 +58,7 @@ public:
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
+	virtual void wheelEvent       (QWheelEvent*) override;
 
 	QImage   qtImage;
 	cv::Mat  cvImage;
@@ -97,6 +98,7 @@ private slots:
 
 signals:
 	void zoomChanged(double);
+	void needScrollTo(int x, int y);
 
 private:
 	FloatGrayTransform floatGrayTransform = FloatGrayTransform::ZeroToOne;

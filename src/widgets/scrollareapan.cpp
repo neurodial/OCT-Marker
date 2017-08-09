@@ -37,11 +37,17 @@ void ScrollAreaPan::mousePressEvent(QMouseEvent* e)
 	if((e->buttons() & Qt::LeftButton) == 0)
 		return;
 
-	if(upadtePanStatus(modPressed(e), MausButton::Pressed))
+	if(updatePanStatus(modPressed(e), MausButton::Pressed))
 	{
 		mousePos = e->pos();
 		e->accept();
 	}
+}
+
+void ScrollAreaPan::scrollTo(int x, int y)
+{
+	verticalScrollBar  ()->setValue(y);
+	horizontalScrollBar()->setValue(x);
 }
 
 
@@ -59,7 +65,7 @@ void ScrollAreaPan::mouseMoveEvent(QMouseEvent* e)
 			e->accept();
 		}
 		else
-			upadtePanStatus(false, MausButton::Undef);
+			updatePanStatus(false, MausButton::Undef);
 	}
 }
 
@@ -69,7 +75,7 @@ void ScrollAreaPan::mouseReleaseEvent(QMouseEvent* e)
 		return;
 
 	QScrollArea::mouseReleaseEvent(e);
-	if(upadtePanStatus(modPressed(e), MausButton::Unpressed))
+	if(updatePanStatus(modPressed(e), MausButton::Unpressed))
 		e->accept();
 }
 
@@ -78,17 +84,17 @@ void ScrollAreaPan::mouseReleaseEvent(QMouseEvent* e)
 void ScrollAreaPan::keyPressEvent(QKeyEvent* e)
 {
 	QScrollArea::keyPressEvent(e);
-	upadtePanStatus(modPressed(e), MausButton::Undef);
+	updatePanStatus(modPressed(e), MausButton::Undef);
 }
 
 void ScrollAreaPan::keyReleaseEvent(QKeyEvent* e)
 {
 	QScrollArea::keyReleaseEvent(e);
-	upadtePanStatus(modPressed(e), MausButton::Undef);
+	updatePanStatus(modPressed(e), MausButton::Undef);
 }
 
 
-bool ScrollAreaPan::upadtePanStatus(bool modifierPressed, MausButton mouseButtonPressed)
+bool ScrollAreaPan::updatePanStatus(bool modifierPressed, MausButton mouseButtonPressed)
 {
 	if(!modifierPressed)
 	{

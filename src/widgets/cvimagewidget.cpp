@@ -240,6 +240,41 @@ void CVImageWidget::paintEvent(QPaintEvent* event)
 	painter.end();
 }
 
+void CVImageWidget::wheelEvent(QWheelEvent* wheelE)
+{
+	int deltaWheel = wheelE->delta();
+	if(wheelE->modifiers() == Qt::ControlModifier)
+	{
+		QPoint pos = mapToParent(wheelE->pos());
+
+		int x = wheelE->x();
+		int y = wheelE->y();
+
+		int px = pos.x();
+		int py = pos.y();
+
+		double oldScaleFactor = getImageScaleFactor();
+
+		if(deltaWheel < 0)
+			setZoom(oldScaleFactor/1.25);
+		else
+			setZoom(oldScaleFactor*1.25);
+
+		double newScaleFactor = getImageScaleFactor();
+
+		if(oldScaleFactor > 0)
+		{
+			double percentChanged = newScaleFactor/oldScaleFactor;
+			int dx = static_cast<int>(x*percentChanged) - (px);
+			int dy = static_cast<int>(y*percentChanged) - (py);
+			needScrollTo(dx, dy);
+		}
+
+		wheelE->accept();
+	}
+}
+
+
 
 int CVImageWidget::fileDialog(QString& filename)
 {

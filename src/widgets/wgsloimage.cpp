@@ -12,7 +12,7 @@
 
 WgSloImage::WgSloImage(QWidget* parent)
 : QMainWindow(parent)
-, imageWidget(new SLOImageWidget)
+, imageWidget(new SLOImageWidget(parent))
 , markerManager(OctMarkerManager::getInstance())
 {
 
