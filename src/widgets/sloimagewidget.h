@@ -6,8 +6,10 @@
 
 namespace OctData
 {
-	class CoordSLOpx;
+	class Series;
 	class BScan;
+
+	class CoordSLOpx;
 	class ScaleFactor;
 	class CoordTransform;
 }
@@ -25,6 +27,10 @@ class QWheelEvent;
 class SLOImageWidget : public CVImageWidget
 {
 	Q_OBJECT
+
+	struct Point {bool show = false; int x; int y; };
+
+	Point markPos;
 
 	OctMarkerManager& markerManger;
 	QGraphicsView*  gv    = nullptr;
@@ -57,6 +63,8 @@ public slots:
 	void showBScans(bool show);
 	void showOnylActBScan(bool show);
 
+	void showPosOnBScan(const OctData::BScan* bscan, double t);
+
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	virtual void mousePressEvent(QMouseEvent*) override;
@@ -64,6 +72,9 @@ protected:
 	void paintBScan      (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
 	void paintBScanLine  (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
 	void paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
+
+	void paintAnalyseGrid(QPainter& painter, const OctData::Series* series);
+	void paintBScans     (QPainter& painter, const OctData::Series* series);
 
 private slots:
 	void reladSLOImage();

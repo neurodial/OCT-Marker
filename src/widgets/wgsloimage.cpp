@@ -21,6 +21,13 @@ WgSloImage::WgSloImage(QWidget* parent)
 
 	QToolBar* bar = new QToolBar(this);
 
+	QAction* showGrid = ProgramOptions::sloShowGrid.getAction();
+	showGrid->setText(tr("show grid"));
+	showGrid->setIcon(QIcon(":/icons/grid.png"));
+	bar->addAction(showGrid);
+
+	bar->addSeparator();
+
 	QAction* showBScans = ProgramOptions::sloShowBscans.getAction();
 	showBScans->setText(tr("show BScans"));
 	showBScans->setIcon(QIcon(":/icons/layers.png"));

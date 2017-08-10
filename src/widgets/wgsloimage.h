@@ -19,6 +19,7 @@ class WgSloImage : public QMainWindow
 public:
 	explicit WgSloImage(QWidget* parent = nullptr);
 	
+	SLOImageWidget* getImageWidget() { return imageWidget; }
 	
 	virtual void resizeEvent(QResizeEvent* event);
 

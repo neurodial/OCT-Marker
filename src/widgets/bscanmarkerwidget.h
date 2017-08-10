@@ -88,6 +88,7 @@ signals:
 	void bscanChangeInkrement(int delta);
 	void mousePosInImage(int x, int y);
 	void mouseLeaveImage();
+	void mousePosOnBScan(const OctData::BScan* bscan, double t);
 
 };
 

@@ -56,6 +56,8 @@ SLOImageWidget::SLOImageWidget(QWidget* parent)
 	connect(&markerManger  , &OctMarkerManager::sloViewChanged  , this, &SLOImageWidget::sloViewChanged  );
 	connect(&markerManger  , &OctMarkerManager::sloMarkerChanged, this, &SLOImageWidget::sloMarkerChanged);
 
+	connect(&ProgramOptions::sloShowGrid, &OptionBool::valueChanged, this, static_cast<void (SLOImageWidget::*)(void)>(&SLOImageWidget::update));
+
 	setMinimumSize(150,150);
 	setFocusPolicy(Qt::StrongFocus);
 
@@ -84,11 +86,33 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 {
 	CVImageWidget::paintEvent(event);
 
-	if(!drawBScans)
+	const OctData::Series* series           = OctDataManager::getInstance().getSeries();
+	if(!series)
 		return;
 
 	QPainter painter(this);
+	if(drawBScans)
+		paintBScans(painter, series);
 
+	if(ProgramOptions::sloShowGrid())
+		paintAnalyseGrid(painter, series);
+
+	if(markPos.show)
+	{
+		QPen pen(QColor(128, 0, 0));
+		pen.setWidth(3);
+		painter.setPen(pen);
+		painter.drawLine(markPos.x-5, markPos.y-5, markPos.x+5, markPos.y+5);
+		painter.drawLine(markPos.x-5, markPos.y+5, markPos.x+5, markPos.y-5);
+	}
+
+	painter.end();
+
+}
+
+
+void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* series)
+{
 	QPen normalBscanPen;
 	QPen activBscanPen;
 
@@ -100,9 +124,6 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	activBscanPen.setColor(QColor(255,0,0));
 
 
-	const OctData::Series* series           = OctDataManager::getInstance().getSeries();
-	if(!series)
-		return;
 	
 	const OctData::Series::BScanList bscans = series->getBScans();
 
@@ -162,8 +183,6 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 			paintBScan(painter, *actBScan, factor, shift, transform, 0, paintMarker);
 		}
 	}
-
-	painter.end();
 }
 
 void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker)
@@ -206,6 +225,68 @@ void SLOImageWidget::paintBScanCircle(QPainter& painter, const OctData::BScan& b
 			actMarker->drawBScanSLOCircle(painter, bscanNr, start_px, center_px, bscan.getClockwiseRot(), this);
 	}
 }
+
+void SLOImageWidget::paintAnalyseGrid(QPainter& painter, const OctData::Series* series)
+{
+	if(!series)
+		return;
+
+	QPen pen;
+	pen.setWidth(2);
+	pen.setColor(QColor(125, 125, 255));
+
+	painter.setPen(pen);
+
+	const OctData::AnalyseGrid& grid = series->getAnalyseGrid();
+
+	const std::vector<double>& diameters = grid.getDiametersMM();
+	if(diameters.size() == 0)
+		return;
+
+
+	const OctData::SloImage&       sloImage  = series->getSloImage();
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::CoordTransform& transform = sloImage.getTransform();
+
+
+	const OctData::CoordSLOpx&  centerPx = (transform * grid.getCenter()) * factor + shift;
+
+	for(double d : diameters)
+	{
+		double r = d/2.;
+		OctData::CoordSLOpx radius = (transform * OctData::CoordSLOmm(r, r))*factor;
+		painter.drawEllipse(QPointF(centerPx.getXf(), centerPx.getYf()), radius.getXf(), radius.getYf());
+	}
+}
+
+void SLOImageWidget::showPosOnBScan(const OctData::BScan* bscan, double t)
+{
+	if(!bscan)
+	{
+		markPos.show = false;
+		update();
+		return;
+	}
+
+	OctData::CoordSLOmm point = bscan->getStart()*(1-t) + bscan->getEnd()*(t); // TODO falsche Richtung?
+
+	const OctData::Series* series            = OctDataManager::getInstance().getSeries();
+	const OctData::SloImage&       sloImage  = series->getSloImage();
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::CoordTransform& transform = sloImage.getTransform();
+
+
+	const OctData::CoordSLOpx& markPx = (transform * point) * factor + shift;
+
+
+	markPos.show = true;
+	markPos.x = markPx.getX();
+	markPos.y = markPx.getY();
+	update();
+}
+
 
 
 void SLOImageWidget::reladSLOImage()

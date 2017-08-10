@@ -55,6 +55,7 @@ namespace
 			imageWidget->setImageSize(size());
 			setCentralWidget(imageWidget);
 		}
+		SLOImageWidget* getImageWidget() { return imageWidget; }
 
 	protected:
 		virtual void resizeEvent(QResizeEvent* event) override
@@ -150,6 +151,7 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 	dwSloImage->setObjectName("StupidDWSloImage");
 	dwSloImage->setTitleBarWidget(new QWidget());
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
+	connect(bscanMarkerWidget, &BScanMarkerWidget::mousePosOnBScan, sloImageWidget->getImageWidget(), &SLOImageWidget::showPosOnBScan);
 
 
 	OctMarkerManager& marker = OctMarkerManager::getInstance();
@@ -232,6 +234,7 @@ bool StupidSplineWindow::copyLayerSegmentationFromOCTData()
 		return false;
 
 	layerSegmentationModul->copyAllSegLinesFromOctData();
+	return true;
 }
 
 
@@ -242,6 +245,7 @@ bool StupidSplineWindow::setIconsInMarkerWidget()
 		return false;
 
 	layerSegmentationModul->setIconsToSimple(40);
+	return true;
 }
 
 

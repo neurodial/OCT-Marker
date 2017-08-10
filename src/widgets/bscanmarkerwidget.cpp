@@ -208,6 +208,7 @@ void BScanMarkerWidget::leaveEvent(QEvent* event)
 	QWidget::leaveEvent(event);
 
 	mouseLeaveImage();
+	mousePosOnBScan(nullptr, 0);
 
 	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
@@ -267,6 +268,7 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 	int xImg, yImg;
 	transformCoordWidget2Img(event->x(), event->y(), xImg, yImg);
 	mousePosInImage(xImg, yImg);
+	mousePosOnBScan(actBscan, static_cast<double>(event->x())/scaledImageWidth());
 
 // 	if(checkControlUsed(event))
 // 		return;

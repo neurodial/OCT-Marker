@@ -23,6 +23,7 @@
 #include <widgets/scrollareapan.h>
 #include <widgets/mousecoordstatus.h>
 #include <widgets/dwdebugoutput.h>
+#include <widgets/sloimagewidget.h>
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
@@ -77,6 +78,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	bscanMarkerWidgetScrollArea->setWidget(bscanMarkerWidget);
 	connect(bscanMarkerWidget, &CVImageWidget::needScrollTo, bscanMarkerWidgetScrollArea, &ScrollAreaPan::scrollTo);
 
+
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);
 
@@ -84,10 +86,13 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 	setupStatusBar();
 	createMarkerToolbar();
 	// DockWidgets
+	WgSloImage* wgSloImage = new WgSloImage(this);
 	dwSloImage->setObjectName("DWSloImage");
-	dwSloImage->setWidget(new WgSloImage(this));
+	dwSloImage->setWidget(wgSloImage);
 	dwSloImage->setWindowTitle(tr("SLO image"));
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
+
+	connect(bscanMarkerWidget, &BScanMarkerWidget::mousePosOnBScan, wgSloImage->getImageWidget(), &SLOImageWidget::showPosOnBScan);
 
 	DWImageColorAdjustments* dwImageColorAdjustments = new DWImageColorAdjustments(this);
 	dwImageColorAdjustments->setObjectName("DWImageContrast");

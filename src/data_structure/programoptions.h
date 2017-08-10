@@ -32,6 +32,7 @@ public:
 	static OptionBool sloShowBscans;
 	static OptionBool sloShowOnylActBScan;
 	static OptionBool sloShowLabels;
+	static OptionBool sloShowGrid;
 	
 	static OptionString octDirectory;
 	static OptionString loadOctdataAtStart;

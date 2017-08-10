@@ -26,9 +26,10 @@ OptionBool ProgramOptions::readBScans         (true , "readBScans"         );
 OptionInt  ProgramOptions::e2eGrayTransform   (1    , "e2eGrayTransform"   );
 
 
-OptionBool ProgramOptions::sloShowBscans       (true , "sloShowBscans");
+OptionBool ProgramOptions::sloShowBscans      (true , "sloShowBscans");
 OptionBool ProgramOptions::sloShowOnylActBScan(false, "sloShowOnylActBScan");
 OptionBool ProgramOptions::sloShowLabels      (false, "sloShowLabels");
+OptionBool ProgramOptions::sloShowGrid        (true, "sloShowGrid");
 
 
 OptionString ProgramOptions::octDirectory      (".", "octDirectory");
