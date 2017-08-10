@@ -32,16 +32,10 @@ class StupidSplineWindow : public QMainWindow
 	static DWDebugOutput* dwDebugOutput;
 
 
-	QSpinBox*     bscanChooser     = nullptr;
-	QLabel*       labelMaxBscan    = nullptr;
 	QProgressBar* loadProgressBar  = nullptr;
 	QAction*      zoomInAction     = nullptr;
 	QAction*      zoomOutAction    = nullptr;
 
-	QMenu* zoomMenu = nullptr;
-
-
-	static void setMarkersFilters(QFileDialog& fd);
 
 
 	bool loadFile(const QString& filename);
@@ -63,11 +57,11 @@ signals:
 	void loadLastFile();
 
 private slots:
-	void newCscanLoaded();
 	void zoomChanged(double zoom);
+	void showAboutDialog();
+
 
 	void loadFileStatusSlot(bool loading);
 	void loadFileProgress(double frac);
-
 };
 

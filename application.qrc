@@ -29,6 +29,12 @@
 	<file>icons/arrow_out.png</file>
 	<file>icons/arrow_inout.png</file>
 
+	<file>icons/pen-15.svg</file>
+	<file>icons/vector-path-curve.svg</file>
+	<file>icons/question_mark_1.svg</file>
+	<file>icons/zoom_in_1.svg</file>
+	<file>icons/zoom_out_1.svg</file>
+
 	<file>icons/zoom.png</file>
 	<file>icons/zoom_in.png</file>
 	<file>icons/zoom_out.png</file>

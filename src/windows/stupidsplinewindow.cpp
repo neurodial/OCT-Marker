@@ -58,6 +58,8 @@
 #include <widgets/dwimagecoloradjustments.h>
 #include <QToolButton>
 
+#include<windows/infodialogs.h>
+
 
 DWDebugOutput* StupidSplineWindow::dwDebugOutput = nullptr;
 
@@ -99,33 +101,10 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 	bscanMarkerWidgetScrollArea->setWidget(bscanMarkerWidget);
 	connect(bscanMarkerWidget, &CVImageWidget::needScrollTo, bscanMarkerWidgetScrollArea, &ScrollAreaPan::scrollTo);
 
-// 	QWidget* window = new QWidget();
-//
-// 	// Set layout
-// 	QHBoxLayout* layout = new QHBoxLayout;
-//
-//
-// 	QWidget* left = new SLOImageWidget(window);
-// 	QSizePolicy spLeft(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-// 	spLeft.setHorizontalStretch(1);
-// 	left->setSizePolicy(spLeft);
-// 	layout->addWidget(left);
-//
-// 	QWidget* right = bscanMarkerWidgetScrollArea;
-// 	QSizePolicy spRight(QSizePolicy::Expanding, QSizePolicy::Expanding);
-// 	spRight.setHorizontalStretch(20);
-// 	right->setSizePolicy(spRight);
-// 	layout->addWidget(right);
-//
-//
-// 	// Set layout in QWidget
-// 	window->setLayout(layout);
-//
-// 	// Set QWidget as the central layout of the main window
-// 	setCentralWidget(window);
+
+	setWindowTitle(tr("OCT-Marker"));
 
 
-	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
 	QSettings& settings = ProgramOptions::getSettings();
 	restoreGeometry(settings.value("stupidMainWindowGeometry").toByteArray());
 
@@ -133,31 +112,34 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);
 
-/*
-	setupStatusBar();
-	// DockWidgets
-	dwSloImage->setObjectName("DWSloImage");
-	dwSloImage->setWidget(new WgSloImage(this));
-	dwSloImage->setWindowTitle(tr("SLO image"));
-	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
-	*/
 
 	QHBoxLayout* layoutZoomControl = new QHBoxLayout;
 
+	QSize buttonSize(50, 50);
+
+	QToolButton* infoButton = new QToolButton(this);
+	infoButton->setIcon(QIcon(":/icons/question_mark_1.svg"));
+	infoButton->setIconSize(buttonSize);
+	connect(infoButton, &QToolButton::clicked, this, &StupidSplineWindow::showAboutDialog);
+	layoutZoomControl->addWidget(infoButton);
+
+
 	zoomInAction = new QAction(this);
 	zoomInAction->setText(tr("Zoom +"));
-	zoomInAction->setIcon(QIcon(":/icons/zoom_in.png"));
+	zoomInAction->setIcon(QIcon(":/icons/zoom_in_1.svg"));
 	connect(zoomInAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
 	QToolButton* buttonZoomIn = new QToolButton(this);
 	buttonZoomIn->setDefaultAction(zoomInAction);
+	buttonZoomIn->setIconSize(buttonSize);
 	layoutZoomControl->addWidget(buttonZoomIn);
 
 	zoomOutAction = new QAction(this);
 	zoomOutAction->setText(tr("Zoom -"));
-	zoomOutAction->setIcon(QIcon(":/icons/zoom_out.png"));
+	zoomOutAction->setIcon(QIcon(":/icons/zoom_out_1.svg"));
 	connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
 	QToolButton* buttonZoomOut = new QToolButton(this);
 	buttonZoomOut->setDefaultAction(zoomOutAction);
+	buttonZoomOut->setIconSize(buttonSize);
 	layoutZoomControl->addWidget(buttonZoomOut);
 
 
@@ -185,14 +167,6 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
 
 
-/*
-
-	WGOctDataTree* tree = new WGOctDataTree();
-	QDockWidget* treeDock = new QDockWidget(tr("Oct Data"), this);
-	treeDock->setObjectName("DWOctDataTree");
-	treeDock->setWidget(tree);
-	addDockWidget(Qt::RightDockWidgetArea, treeDock);
-*/
 	OctMarkerManager& marker = OctMarkerManager::getInstance();
 	marker.setBscanMarkerTextID(QString("LayerSegmentation"));
 
@@ -220,18 +194,12 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 
 	// General Config
 	setWindowIcon(QIcon(":/icons/image_edit.png"));
-	// setActionToggel();
-	setAcceptDrops(true);
 
-	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged   , this, &StupidSplineWindow::newCscanLoaded);
 	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &StupidSplineWindow::zoomChanged);
 
 
 	if(filename)
 		loadFile(filename);
-
-
-// 	qInstallMessageHandler(StupidSplineWindow::messageOutput);
 }
 
 StupidSplineWindow::~StupidSplineWindow()
@@ -274,18 +242,6 @@ void StupidSplineWindow::zoomChanged(double zoom)
 {
 	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 5);
 	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 1);
-
-	if(zoomMenu)
-	{
-		QPixmap pixmap(24, 16);
-		pixmap.fill(Qt::transparent);
-		QPainter painter(&pixmap);
-		QString string = QString::number(zoom, 'f', 1 );
-		painter.drawText(0, 0, 24, 16, Qt::AlignHCenter | Qt::AlignVCenter, string);
-
-
-		zoomMenu->menuAction()->setIcon(QIcon(pixmap));
-	}
 }
 
 
@@ -315,11 +271,6 @@ void StupidSplineWindow::zoomChanged(double zoom)
 // 	fd.setNameFilters(filters);
 // }
 
-
-void StupidSplineWindow::newCscanLoaded()
-{
-	setWindowTitle(tr("OCT-Marker - %1").arg(OctDataManager::getInstance().getLoadedFilename()));
-}
 
 
 void StupidSplineWindow::closeEvent(QCloseEvent* e)
@@ -403,4 +354,9 @@ void StupidSplineWindow::loadFileProgress(double frac)
 bool StupidSplineWindow::loadFile(const QString& filename)
 {
 	return OctFilesModel::getInstance().loadFile(filename);
+}
+
+void StupidSplineWindow::showAboutDialog()
+{
+	InfoDialogs::showAboutDialog(this);
 }
