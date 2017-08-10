@@ -188,12 +188,13 @@ void OctDataManager::loadOctDataThreadFinish()
 			markerstree->clear();
 			markerIO->loadDefaultMarker(actFilename.toStdString());
 
-			loadFileSignal(false);
 
 			emit(octFileChanged(octData   ));
 			emit(patientChanged(actPatient));
 			emit(studyChanged  (actStudy  ));
 			emit(seriesChanged (actSeries ));
+
+			loadFileSignal(false);
 
 			OctMarkerManager::getInstance().resetChangedSinceLastSaveState();
 		}

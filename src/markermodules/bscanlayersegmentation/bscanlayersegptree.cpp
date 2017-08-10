@@ -38,7 +38,7 @@ namespace
 		if(s)
 		{
 			std::string::const_iterator f(s->begin()), l(s->end());
-			bool ok = qi::parse(f,l,qi::double_ % ' ',r);
+			/*bool ok = */qi::parse(f,l,qi::double_ % ' ',r);
 		}
 	    return r;
 	}

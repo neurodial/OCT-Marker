@@ -167,13 +167,13 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 	int startW = std::max(drawX, 0);
 	int endW   = std::min(drawX+drawWidth , mapWidth);
 
-	QPen pen2(Qt::green);
+	QPen pen2(Qt::red);
 	pen2.setWidth(seglinePaintSize);
 	painter.setPen(pen2);
 	drawSegmentLineRec<T>(painter, *actMat, 1 << 1, factor, startH, endH, startW, endW);
 
 
-	QPen pen(Qt::red);
+	QPen pen(Qt::green);
 	pen.setWidth(seglinePaintSize);
 	painter.setPen(pen);
 	drawSegmentLineRec<T>(painter, *actMat, 1 << 0, factor, startH, endH, startW, endW);

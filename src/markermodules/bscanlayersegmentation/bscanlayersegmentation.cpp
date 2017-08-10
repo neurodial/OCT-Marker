@@ -16,6 +16,12 @@
 #include"editspline.h"
 
 #include"bscanlayersegptree.h"
+#include <manager/octmarkermanager.h>
+
+#include <cpp_framework/cvmat/cvmattreestruct.h>
+#include <cpp_framework/cvmat/treestructbin.h>
+#include "layersegmentationio.h"
+
 
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
@@ -162,6 +168,14 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 	return false;
 }
 
+
+void BScanLayerSegmentation::copyAllSegLinesFromOctData()
+{
+	for(std::size_t i = 0; i<lines.size(); ++i)
+		copySegLinesFromOctData(i);
+}
+
+
 void BScanLayerSegmentation::copySegLinesFromOctData() { copySegLinesFromOctData(getActBScanNr()); }
 
 void BScanLayerSegmentation::copySegLinesFromOctData(const std::size_t bScanNr)
@@ -260,3 +274,27 @@ void BScanLayerSegmentation::saveState(boost::property_tree::ptree& markerTree)
 	BScanLayerSegPTree::fillPTree(markerTree, this);
 }
 
+bool BScanLayerSegmentation::saveSegmentation2Bin(const std::string& filename)
+{
+	return LayerSegmentationIO::saveSegmentation2Bin(*this, filename);
+}
+
+
+
+std::size_t BScanLayerSegmentation::getMaxBscanWidth() const // TODO: Codedopplung mit IntervalMarker
+{
+	const OctData::Series* series = getSeries();
+	if(!series)
+		return 0;
+
+	std::size_t maxBscanWidth = 0;
+	for(const OctData::BScan* bscan : series->getBScans())
+	{
+		if(bscan)
+		{
+			if(maxBscanWidth < bscan->getWidth())
+				maxBscanWidth = static_cast<std::size_t>(bscan->getWidth());
+		}
+	}
+	return maxBscanWidth;
+}

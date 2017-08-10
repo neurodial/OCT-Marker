@@ -2,40 +2,28 @@
 
 #include <QMainWindow>
 
-class QLabel;
-class QSpinBox;
 class QAction;
-class QFileDialog;
-class QProgressBar;
-class QUrl;
-class QMenu;
 
 class BScanMarkerWidget;
-class DWSloImage;
-class CScan;
 class ScrollAreaPan;
-class DWDebugOutput;
+class QProgressDialog;
 
+class BScanLayerSegmentation;
 
 class StupidSplineWindow : public QMainWindow
 {
 	Q_OBJECT
 
-	static void messageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg);
-
-	void setupStatusBar();
-
-
 	QDockWidget*          dwSloImage                  = nullptr;
 	ScrollAreaPan*        bscanMarkerWidgetScrollArea = nullptr;
 	BScanMarkerWidget*    bscanMarkerWidget           = nullptr;
-	static DWDebugOutput* dwDebugOutput;
 
 
-	QProgressBar* loadProgressBar  = nullptr;
+// 	QProgressBar* loadProgressBar  = nullptr;
 	QAction*      zoomInAction     = nullptr;
 	QAction*      zoomOutAction    = nullptr;
 
+	QProgressDialog* progressDialog = nullptr;
 
 
 	bool loadFile(const QString& filename);
@@ -46,6 +34,10 @@ class StupidSplineWindow : public QMainWindow
 
 // 	void handleOpenUrl(const QUrl& url, bool singleInput);
 
+	bool saveLayerSegmentation();
+	bool copyLayerSegmentationFromOCTData();
+
+	BScanLayerSegmentation* getLayerSegmentationModul();
 public:
 	StupidSplineWindow(const char* filename = nullptr);
 	~StupidSplineWindow();

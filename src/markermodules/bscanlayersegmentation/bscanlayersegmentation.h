@@ -19,6 +19,7 @@ class BScanLayerSegmentation : public BscanMarkerBase
 
 	friend class EditBase;
 	friend class BScanLayerSegPTree;
+	friend class LayerSegmentationIO;
 
 	struct BScanSegData
 	{
@@ -43,6 +44,8 @@ class BScanLayerSegmentation : public BscanMarkerBase
 
 	void copySegLinesFromOctData();
 	void copySegLinesFromOctData(std::size_t bscan);
+
+	std::size_t getMaxBscanWidth() const;
 public:
 	enum class SegMethod { None, Pen, Spline };
 
@@ -75,6 +78,9 @@ public:
 
 	void setSegMethod(SegMethod method);
 	SegMethod getSegMethod() const;
+
+	bool saveSegmentation2Bin(const std::string& filename);
+	void copyAllSegLinesFromOctData();
 
 signals:
 	void segMethodChanged();

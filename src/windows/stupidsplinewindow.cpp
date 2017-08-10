@@ -1,30 +1,18 @@
 #include "stupidsplinewindow.h"
 
 #include <QMenu>
-#include <QMenuBar>
+#include <QHBoxLayout>
 #include <QMessageBox>
-#include <QToolBar>
-#include <QFileDialog>
-#include <QStringList>
-#include <QSignalMapper>
 #include <QtGui>
 
-#include <QActionGroup>
-#include <QSpinBox>
-#include <QProgressBar>
+#include <QProgressDialog>
 #include <QLabel>
-#include <QStatusBar>
 
 #include <widgets/sloimagewidget.h>
 #include <widgets/bscanmarkerwidget.h>
-#include <widgets/wgoctdatatree.h>
-#include <widgets/dwoctinformations.h>
 #include <widgets/dwmarkerwidgets.h>
 #include <widgets/scrollareapan.h>
-#include <widgets/mousecoordstatus.h>
-#include <widgets/dwdebugoutput.h>
 
-#include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
 
 #include <manager/octmarkermanager.h>
@@ -45,23 +33,14 @@
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
-#include <boost/algorithm/string/join.hpp>
-
-#include <cpp_framework/cvmat/treestructbin.h>
-
 #include <globaldefinitions.h>
-#include <buildconstants.h>
-#include <QWidgetAction>
-
 
 #include <QPushButton>
 #include <widgets/dwimagecoloradjustments.h>
 #include <QToolButton>
 
 #include<windows/infodialogs.h>
-
-
-DWDebugOutput* StupidSplineWindow::dwDebugOutput = nullptr;
+#include <markermodules/bscanlayersegmentation/bscanlayersegmentation.h>
 
 
 namespace
@@ -102,7 +81,12 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 	connect(bscanMarkerWidget, &CVImageWidget::needScrollTo, bscanMarkerWidgetScrollArea, &ScrollAreaPan::scrollTo);
 
 
-	setWindowTitle(tr("OCT-Marker"));
+	OctDataManager& octDataManager = OctDataManager::getInstance();
+	connect(&octDataManager, &OctDataManager::loadFileSignal  , this, &StupidSplineWindow::loadFileStatusSlot);
+	connect(&octDataManager, &OctDataManager::loadFileProgress, this, &StupidSplineWindow::loadFileProgress  );
+
+
+	setWindowTitle(tr("OCT-Marker - simple spline gui"));
 
 
 	QSettings& settings = ProgramOptions::getSettings();
@@ -120,6 +104,7 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 	QToolButton* infoButton = new QToolButton(this);
 	infoButton->setIcon(QIcon(":/icons/question_mark_1.svg"));
 	infoButton->setIconSize(buttonSize);
+	infoButton->setToolTip(tr("About"));
 	connect(infoButton, &QToolButton::clicked, this, &StupidSplineWindow::showAboutDialog);
 	layoutZoomControl->addWidget(infoButton);
 
@@ -147,7 +132,7 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 	widgetZoomControl->setLayout(layoutZoomControl);
 
 	QDockWidget* dwZoomControl = new QDockWidget(this);
-	dwZoomControl->setWindowTitle("SLO");
+	dwZoomControl->setWindowTitle("Buttons");
 	dwZoomControl->setWidget(widgetZoomControl);
 	dwZoomControl->setFeatures(0);
 	dwZoomControl->setObjectName("dwZoomControl");
@@ -180,11 +165,12 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 
 	QDockWidget* dwSaveAndClose = new QDockWidget(this);
 	dwSaveAndClose->setFeatures(0);
-	dwSaveAndClose->setWindowTitle("Quit");
+	dwSaveAndClose->setWindowTitle(tr("Quit"));
 	dwSaveAndClose->setObjectName("dwSaveAndClose");
 	QPushButton* buttonSaveAndClose = new QPushButton(this);
-	buttonSaveAndClose->setText("Save and Close");
+	buttonSaveAndClose->setText(tr("Save and Close"));
 	buttonSaveAndClose->setFont(QFont("Times", 24, QFont::Bold));
+	connect(buttonSaveAndClose, &QAbstractButton::clicked, this, &StupidSplineWindow::close);
 
 	dwSaveAndClose->setWidget(buttonSaveAndClose);
 	dwSaveAndClose->setTitleBarWidget(new QWidget());
@@ -206,36 +192,6 @@ StupidSplineWindow::~StupidSplineWindow()
 {
 }
 
-void StupidSplineWindow::messageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
-{
-	if(dwDebugOutput)
-		dwDebugOutput->printMessages(type, context, msg);
-}
-
-
-
-
-void StupidSplineWindow::setupStatusBar()
-{
-
-	OctDataManager& octDataManager = OctDataManager::getInstance();
-	connect(&octDataManager, &OctDataManager::loadFileSignal  , this, &StupidSplineWindow::loadFileStatusSlot);
-	connect(&octDataManager, &OctDataManager::loadFileProgress, this, &StupidSplineWindow::loadFileProgress  );
-
-	loadProgressBar = new QProgressBar;
-	loadProgressBar->setFixedWidth(200);
-	loadProgressBar->setMinimum(0);
-	loadProgressBar->setMaximum(100);
-	loadProgressBar->setVisible(false);
-
-	statusBar()->addPermanentWidget(loadProgressBar);
-
-	MouseCoordStatus* mouseStatus = new MouseCoordStatus(bscanMarkerWidget);
-	statusBar()->addPermanentWidget(mouseStatus);
-
-}
-
-
 
 
 void StupidSplineWindow::zoomChanged(double zoom)
@@ -245,72 +201,44 @@ void StupidSplineWindow::zoomChanged(double zoom)
 }
 
 
-// void StupidSplineWindow::handleOpenUrl(const QUrl& url, bool singleInput)
-// {
-// 	QString filePath = url.toLocalFile();
-// 	QFileInfo fileInfo = QFileInfo(filePath);
-// 	if(fileInfo.isDir())
-// 	{
-// 		loadFolder(filePath);
-// 	}
-// 	if(OctData::OctFileRead::isLoadable(filePath.toStdString()))
-// 	{
-// 		if(singleInput)
-// 			loadFile(filePath);
-// 		else
-// 			addFile(filePath);
-// 	}
-// }
-//
+BScanLayerSegmentation* StupidSplineWindow::getLayerSegmentationModul()
+{
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
+	BscanMarkerBase* markerModul = markerManager.getActBscanMarker();
+
+	if(!markerModul)
+		return nullptr;
+
+	return dynamic_cast<BScanLayerSegmentation*>(markerModul);
+}
 
 
-// void StupidSplineWindow::setMarkersFilters(QFileDialog& fd)
-// {
-// 	QStringList filters;
-// 	setMarkersStringList(filters);
-// 	fd.setNameFilters(filters);
-// }
+bool StupidSplineWindow::saveLayerSegmentation()
+{
+	BScanLayerSegmentation* layerSegmentationModul = getLayerSegmentationModul();
+	if(!layerSegmentationModul)
+		return false;
+
+	QString filename = OctDataManager::getInstance().getLoadedFilename() + ".segmentation.bin";
+	return layerSegmentationModul->saveSegmentation2Bin(filename.toStdString());
+}
+
+bool StupidSplineWindow::copyLayerSegmentationFromOCTData()
+{
+	BScanLayerSegmentation* layerSegmentationModul = getLayerSegmentationModul();
+	if(!layerSegmentationModul)
+		return false;
+
+	layerSegmentationModul->copyAllSegLinesFromOctData();
+}
+
 
 
 
 void StupidSplineWindow::closeEvent(QCloseEvent* e)
 {
-	// save Markers
-	bool saveSuccessful = true;
-	std::string errorStr;
-	try
-	{
-		OctDataManager::getInstance().saveMarkersDefault();
-		if(!OctDataManager::getInstance().checkAndAskSaveBeforContinue())
-			return e->ignore();
-	}
-	catch(boost::exception& e)
-	{
-		saveSuccessful = false;
-		errorStr = boost::diagnostic_information(e);
-	}
-	catch(std::exception& e)
-	{
-		saveSuccessful = false;
-		errorStr = e.what();
-	}
-	catch(const char* str)
-	{
-		saveSuccessful = false;
-		errorStr = str;
-	}
-	catch(...)
-	{
-		saveSuccessful = false;
-		errorStr = tr("Unknown error on autosave").toStdString();
-	}
-	if(!saveSuccessful)
-	{
-		int ret = QMessageBox::critical(this, tr("Error on autosave"), tr("Autosave fail with message: %1 <br />Quit program?").arg(errorStr.c_str()), QMessageBox::Yes | QMessageBox::No);
-		if(ret == QMessageBox::No)
-			return e->ignore();
-	}
-
+	if(!saveLayerSegmentation())
+		QMessageBox::critical(this, tr("Error on save"), tr("Internal error in saveLayerSegmentation()"));
 
 
 	// save programoptions
@@ -328,25 +256,37 @@ void StupidSplineWindow::closeEvent(QCloseEvent* e)
 
 
 
+
 void StupidSplineWindow::loadFileStatusSlot(bool loading)
 {
 	if(loading)
 	{
-		loadProgressBar->setValue(0);
-		setDisabled(true);
-		loadProgressBar->setVisible(true);
+		if(!progressDialog)
+			progressDialog = new QProgressDialog("Opening file ...", "Abort", 0, 100, this);
+
+		progressDialog->setCancelButtonText(nullptr);
+		progressDialog->setWindowModality(Qt::WindowModal);
+		progressDialog->setValue(0);
+		progressDialog->setVisible(true);
 	}
 	else
 	{
-		setDisabled(false);
-		loadProgressBar->setVisible(false);
+		if(progressDialog)
+		{
+			progressDialog->setVisible(false);
+
+			progressDialog->deleteLater();
+			progressDialog = nullptr;
+		}
+		copyLayerSegmentationFromOCTData();
 	}
 }
 
 
 void StupidSplineWindow::loadFileProgress(double frac)
 {
-	loadProgressBar->setValue(static_cast<int>(frac*100));
+	if(progressDialog)
+		progressDialog->setValue(static_cast<int>(frac*100));
 }
 
 
