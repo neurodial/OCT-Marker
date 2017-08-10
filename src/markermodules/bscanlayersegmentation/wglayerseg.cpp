@@ -91,14 +91,16 @@ QWidget* WGLayerSeg::createMarkerToolButtons()
 	actionMarkerMethodPen->setIcon(QIcon(":/icons/pen.png"));
 	actionMarkerMethodPen->setCheckable(true);
 	connect(actionMarkerMethodPen, &QAction::triggered, this, &WGLayerSeg::setMarkerMethodPen);
-	layout->addWidget(createActionToolButton(this, actionMarkerMethodPen));
+	buttonMarkerMethodPen = createActionToolButton(this, actionMarkerMethodPen);
+	layout->addWidget(buttonMarkerMethodPen);
 
 	actionMarkerMethodSpline = new QAction(this);
 	actionMarkerMethodSpline->setText(tr("Spline"));
 	actionMarkerMethodSpline->setIcon(QIcon(":/icons/vector.png"));
 	actionMarkerMethodSpline->setCheckable(true);
 	connect(actionMarkerMethodSpline, &QAction::triggered, this, &WGLayerSeg::setMarkerMethodSpline);
-	layout->addWidget(createActionToolButton(this, actionMarkerMethodSpline));
+	buttonMarkerMethodSpline = createActionToolButton(this, actionMarkerMethodSpline);
+	layout->addWidget(buttonMarkerMethodSpline);
 
 
 	QActionGroup* alignmentGroup = new QActionGroup(this);
@@ -124,3 +126,14 @@ void WGLayerSeg::markerMethodChanged()
 	actionMarkerMethodSpline->setChecked(method == BScanLayerSegmentation::SegMethod::Spline);
 
 }
+
+void WGLayerSeg::setIconsToSimple(int size)
+{
+	QSize iconSize(size, size);
+	actionMarkerMethodPen->setIcon(QIcon(":/icons/pen-15.svg"));
+	buttonMarkerMethodPen->setIconSize(iconSize);
+
+	actionMarkerMethodSpline->setIcon(QIcon(":/icons/vector-path-curve.svg"));
+	buttonMarkerMethodSpline->setIconSize(iconSize);
+}
+

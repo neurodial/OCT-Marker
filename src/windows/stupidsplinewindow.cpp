@@ -186,6 +186,8 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 
 	if(filename)
 		loadFile(filename);
+
+	setIconsInMarkerWidget();
 }
 
 StupidSplineWindow::~StupidSplineWindow()
@@ -233,6 +235,14 @@ bool StupidSplineWindow::copyLayerSegmentationFromOCTData()
 }
 
 
+bool StupidSplineWindow::setIconsInMarkerWidget()
+{
+	BScanLayerSegmentation* layerSegmentationModul = getLayerSegmentationModul();
+	if(!layerSegmentationModul)
+		return false;
+
+	layerSegmentationModul->setIconsToSimple(40);
+}
 
 
 void StupidSplineWindow::closeEvent(QCloseEvent* e)

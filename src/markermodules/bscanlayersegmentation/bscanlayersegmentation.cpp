@@ -298,3 +298,11 @@ std::size_t BScanLayerSegmentation::getMaxBscanWidth() const // TODO: Codedopplu
 	}
 	return maxBscanWidth;
 }
+
+void BScanLayerSegmentation::setIconsToSimple(int size)
+{
+	WGLayerSeg* widget = dynamic_cast<WGLayerSeg*>(widgetPtr2WGLayerSeg);
+	if(widget)
+		widget->setIconsToSimple(size);
+}
+

@@ -10,6 +10,7 @@ class BScanLayerSegmentation;
 class QButtonGroup;
 class QPushButton;
 class QAction;
+class QToolButton;
 
 class WGLayerSeg : public QWidget
 {
@@ -25,9 +26,14 @@ class WGLayerSeg : public QWidget
 	QAction* actionMarkerMethodPen    = nullptr;
 	QAction* actionMarkerMethodSpline = nullptr;
 
+	QToolButton* buttonMarkerMethodPen    = nullptr;
+	QToolButton* buttonMarkerMethodSpline = nullptr;
+
 public:
 	WGLayerSeg(BScanLayerSegmentation* parent);
 	~WGLayerSeg();
+
+	void setIconsToSimple(int size);
 
 private slots:
 

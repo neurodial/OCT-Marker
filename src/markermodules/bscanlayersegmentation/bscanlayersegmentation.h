@@ -82,6 +82,7 @@ public:
 	bool saveSegmentation2Bin(const std::string& filename);
 	void copyAllSegLinesFromOctData();
 
+	void setIconsToSimple(int size);
 signals:
 	void segMethodChanged();
 };
