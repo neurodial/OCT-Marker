@@ -255,6 +255,8 @@ void BScanMarkerWidget::wheelEvent(QWheelEvent* wheelE)
 			emit(bscanChangeInkrement(-1));
 		else
 			emit(bscanChangeInkrement(+1));
+
+		mousePosOnBScan(actBscan, static_cast<double>(wheelE->x())/scaledImageWidth());
 	}
 
 	wheelE->accept();

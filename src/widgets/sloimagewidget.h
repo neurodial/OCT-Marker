@@ -37,8 +37,9 @@ class SLOImageWidget : public CVImageWidget
 	QGraphicsScene* scene = nullptr;
 	
 	// std::vector<QColor*> intervallColors;
-	bool drawBScans = true;
+	bool drawBScans       = true;
 	bool drawOnylActBScan = true;
+	bool drawConvexHull   = true;
 	bool singelBScanScan  = false;
 
 	void createIntervallColors();
@@ -75,6 +76,7 @@ protected:
 
 	void paintAnalyseGrid(QPainter& painter, const OctData::Series* series);
 	void paintBScans     (QPainter& painter, const OctData::Series* series);
+	void paintConvexHull (QPainter& painter, const OctData::Series* series);
 
 private slots:
 	void reladSLOImage();

@@ -91,6 +91,9 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 		return;
 
 	QPainter painter(this);
+	if(drawConvexHull)
+		paintConvexHull(painter, series);
+
 	if(drawBScans)
 		paintBScans(painter, series);
 
@@ -109,6 +112,36 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 	painter.end();
 
 }
+
+void SLOImageWidget::paintConvexHull(QPainter& painter, const OctData::Series* series)
+{
+	if(!series)
+		return;
+	const OctData::Series::BScanSLOCoordList& hull = series->getConvexHull();
+
+
+	if(hull.size() < 3)
+		return;
+
+	QPen pen(QColor(128, 255, 128));
+	pen.setWidth(2);
+	painter.setPen(pen);
+
+	const OctData::SloImage&       sloImage  = series->getSloImage();
+
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::CoordTransform& transform = sloImage.getTransform();
+
+	for(std::size_t i = 1; i < hull.size(); ++i)
+	{
+		const OctData::CoordSLOpx& start_px = (transform * hull[i-1])*factor + shift;
+		const OctData::CoordSLOpx&   end_px = (transform * hull[i  ])*factor + shift;
+
+		painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
+	}
+}
+
 
 
 void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* series)

@@ -254,13 +254,18 @@ void CVImageWidget::wheelEvent(QWheelEvent* wheelE)
 		int py = pos.y();
 
 		double oldScaleFactor = getImageScaleFactor();
+		double changeScaleFactor;
 
 		if(deltaWheel < 0)
-			setZoom(oldScaleFactor/1.25);
+			changeScaleFactor = 1/1.25;
 		else
-			setZoom(oldScaleFactor*1.25);
+			changeScaleFactor =   1.25;
 
-		double newScaleFactor = getImageScaleFactor();
+		double newScaleFactor = oldScaleFactor*changeScaleFactor;
+		if(newScaleFactor > 0.5 || changeScaleFactor > 1) // avoid zoom out lower then factor 0.5
+			setZoom(newScaleFactor);
+
+		newScaleFactor = getImageScaleFactor();
 
 		if(oldScaleFactor > 0)
 		{

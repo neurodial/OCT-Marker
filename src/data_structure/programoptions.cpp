@@ -16,7 +16,7 @@ OptionColor ProgramOptions::bscanSegmetationLineColor   (Qt::red, "bscanSegmetat
 OptionInt   ProgramOptions::bscanSegmetationLineThicknes(1      , "bscanSegmetationLineThicknes");
 
 
-OptionBool ProgramOptions::fillEmptyPixelWhite(true , "fillEmptyPixelWhite");
+OptionBool ProgramOptions::fillEmptyPixelWhite(false, "fillEmptyPixelWhite");
 OptionBool ProgramOptions::registerBScans     (true , "registerBScans"     );
 OptionBool ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      );
 
@@ -27,7 +27,7 @@ OptionInt  ProgramOptions::e2eGrayTransform   (1    , "e2eGrayTransform"   );
 
 
 OptionBool ProgramOptions::sloShowBscans      (true , "sloShowBscans");
-OptionBool ProgramOptions::sloShowOnylActBScan(false, "sloShowOnylActBScan");
+OptionBool ProgramOptions::sloShowOnylActBScan(true , "sloShowOnylActBScan");
 OptionBool ProgramOptions::sloShowLabels      (false, "sloShowLabels");
 OptionBool ProgramOptions::sloShowGrid        (true, "sloShowGrid");
 

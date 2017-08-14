@@ -91,7 +91,6 @@ int main(int argc, char **argv)
 	// Process the actual command line arguments given by the user
 	parser.process(app);
 
-	ProgramOptions::readAllOptions();
 
 	const char* filename = nullptr;
 	if(argc > 1)
@@ -106,6 +105,7 @@ int main(int argc, char **argv)
 	}
 	else
 	{
+		ProgramOptions::readAllOptions();
 		OCTMarkerMainWindow octMarkerProg(filename);
 		octMarkerProg.show();
 		return app.exec();
