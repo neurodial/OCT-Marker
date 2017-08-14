@@ -51,13 +51,6 @@ int main(int argc, char **argv)
 	QCoreApplication::setApplicationVersion(BuildConstants::gitSha1);
 
 
-	qDebug("Build Type      : %s", BuildConstants::buildTyp);
-	qDebug("Git Hash        : %s", BuildConstants::gitSha1);
-	qDebug("Build Date      : %s", BuildConstants::buildDate);
-	qDebug("Build Time      : %s", BuildConstants::buildTime);
-	qDebug("Compiler Id     : %s", BuildConstants::compilerId);
-	qDebug("Compiler Version: %s", BuildConstants::compilerVersion);
-
 	QTranslator translator;
 
 	QTranslator qtTranslator;
@@ -76,37 +69,52 @@ int main(int argc, char **argv)
 	parser.addOptions({
 		// A boolean option with a single name (-p)
 		{"i-want-stupid-spline-gui", QCoreApplication::translate("main", "Show stupid spline gui")},
-		// A boolean option with multiple names (-f, --force)
-		{{"f", "force"}, QCoreApplication::translate("main", "Overwrite existing files.")},
-		// An option with a value
-		{{"t", "target-directory"},
-		    QCoreApplication::translate("main", "Copy all source files into <directory>."),
-		    QCoreApplication::translate("main", "directory")},
+		{{"i", "ini-file"},
+		    QCoreApplication::translate("main", "use config from ini file"),
+		    QCoreApplication::translate("main", "ini file")},
 	});
 
 	parser.addHelpOption();
 	parser.addVersionOption();
 
+	parser.addPositionalArgument("file", QCoreApplication::translate("main", "load this oct file at start"), "[file]");
 
 	// Process the actual command line arguments given by the user
 	parser.process(app);
 
+	if(parser.isSet("ini-file"))
+	{
+		QString iniFile = parser.value("ini-file");
+		ProgramOptions::setIniFile(iniFile);
+	}
 
-	const char* filename = nullptr;
-	if(argc > 1)
-		filename = argv[argc-1];
+    const QStringList fileList = parser.positionalArguments();
+
+	qDebug("Build Type      : %s", BuildConstants::buildTyp);
+	qDebug("Git Hash        : %s", BuildConstants::gitSha1);
+	qDebug("Build Date      : %s", BuildConstants::buildDate);
+	qDebug("Build Time      : %s", BuildConstants::buildTime);
+	qDebug("Compiler Id     : %s", BuildConstants::compilerId);
+	qDebug("Compiler Version: %s", BuildConstants::compilerVersion);
+
+
 
 	bool stupidSplineGui = parser.isSet("i-want-stupid-spline-gui");
 	if(stupidSplineGui)
 	{
-		StupidSplineWindow octMarkerProg(filename);
+		StupidSplineWindow octMarkerProg;
+		if(fileList.size() > 0)
+			octMarkerProg.loadFile(fileList.at(0));
 		octMarkerProg.show();
 		return app.exec();
 	}
 	else
 	{
 		ProgramOptions::readAllOptions();
-		OCTMarkerMainWindow octMarkerProg(filename);
+		bool loadFile = fileList.size() > 0;
+		OCTMarkerMainWindow octMarkerProg(!loadFile);
+		if(loadFile)
+			octMarkerProg.loadFile(fileList.at(0));
 		octMarkerProg.show();
 		return app.exec();
 	}

@@ -49,9 +49,6 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	static void setMarkersFilters(QFileDialog& fd);
 
-	bool loadFile(const QString& filename);
-	bool addFile(const QString& filename);
-	std::size_t loadFolder(const QString& foldername, int numMaxRecursiv = 10);
 
 	virtual void closeEvent(QCloseEvent* e);
 
@@ -64,9 +61,12 @@ protected:
 	virtual void dragMoveEvent (QDragMoveEvent * event);
 
 public:
-	OCTMarkerMainWindow(const char* filename = nullptr);
+	OCTMarkerMainWindow(bool loadLastFile = true);
 	~OCTMarkerMainWindow();
 
+	bool loadFile(const QString& filename);
+	bool addFile(const QString& filename);
+	std::size_t loadFolder(const QString& foldername, int numMaxRecursiv = 10);
 	
 	static void setMarkersStringList(QStringList& filters);
 

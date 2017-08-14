@@ -2,28 +2,32 @@
 
 #include<ostream>
 
-class Point2D
+template<typename T>
+class Point2DBase
 {
-	double x = 0.;
-	double y = 0.;
+	T x = 0.;
+	T y = 0.;
 public:
-	Point2D(double x, double y) : x(x), y(y) {}
-	Point2D() = default;
-	Point2D(const Point2D& other) = default;
+	Point2DBase(T x, T y) : x(x), y(y) {}
+	Point2DBase() = default;
+	Point2DBase(const Point2DBase<T>& other) = default;
 
 
-	double getX() const { return x; }
-	double getY() const { return y; }
+	T getX() const { return x; }
+	T getY() const { return y; }
 
-	void setX(double v) { x = v; }
-	void setY(double v) { y = v; }
+	void setX(T v) { x = v; }
+	void setY(T v) { y = v; }
 
-	double euklidDist(const Point2D& p) const;
+	double euklidDist(const Point2DBase<T>& p) const;
 
 	void print(std::ostream& stream) const { stream << '(' << x << "; " << y << ')'; }
 };
 
 
-inline std::ostream& operator<<(std::ostream& stream, const Point2D& p) { p.print(stream); return stream; }
+template<typename T>
+inline std::ostream& operator<<(std::ostream& stream, const Point2DBase<T>& p) { p.print(stream); return stream; }
 
+typedef Point2DBase<double> Point2D;
+typedef Point2DBase<int> Point2DInt;
 

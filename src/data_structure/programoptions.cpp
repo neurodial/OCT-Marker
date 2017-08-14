@@ -42,6 +42,18 @@ OptionInt  ProgramOptions::bscanMarkerToolId(-1, "bscanMarkerToolId");
 OptionInt  ProgramOptions::  sloMarkerToolId(-1,   "sloMarkerToolId");
 
 
+ProgramOptions::ProgramOptions()
+: settings(new QSettings("becrf", "oct-marker"))
+{
+}
+
+ProgramOptions::~ProgramOptions()
+{
+	delete settings;
+	settings = nullptr; // singelton
+}
+
+
 
 void ProgramOptions::resetAllOptions()
 {
@@ -54,9 +66,7 @@ void ProgramOptions::resetAllOptions()
 
 QSettings& ProgramOptions::getSettings()
 {
-	static QSettings settings("becrf", "oct-marker");
-
-	return settings;
+	return *(getInstance().settings);
 }
 
 
@@ -99,3 +109,13 @@ void ProgramOptions::registerOption(Option* option)
 }
 
 
+void ProgramOptions::setIniFile(const QString& iniFilename)
+{
+	if(!iniFilename.isEmpty())
+	{
+		ProgramOptions& instance = getInstance();
+		QSettings* oldSettings = instance.settings;
+		instance.settings = new QSettings(iniFilename, QSettings::IniFormat);
+		delete oldSettings;
+	}
+}

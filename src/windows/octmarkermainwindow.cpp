@@ -64,7 +64,7 @@ DWDebugOutput* OCTMarkerMainWindow::dwDebugOutput = nullptr;
 
 
 
-OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
+OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 : QMainWindow()
 , dwSloImage         (new QDockWidget(this))
 , bscanMarkerWidget  (new BScanMarkerWidget)
@@ -138,9 +138,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(const char* filename)
 
 	restoreState(settings.value("mainWindowState").toByteArray());
 
-	if(filename)
-		loadFile(filename);
-	else if(!ProgramOptions::loadOctdataAtStart().isEmpty())
+	if(loadLastFile && !ProgramOptions::loadOctdataAtStart().isEmpty())
 		loadFile(ProgramOptions::loadOctdataAtStart());
 
 

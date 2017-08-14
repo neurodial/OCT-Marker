@@ -15,26 +15,6 @@
 
 namespace
 {
-	void paintPolygon(QPainter& painter, const std::vector<Point2D>& polygon, double factor)
-	{
-		if(polygon.size() < 2)
-			return;
-
-		painter.setPen(QPen(Qt::green));
-
-		      std::vector<Point2D>::const_iterator it    = polygon.begin();
-		const std::vector<Point2D>::const_iterator itEnd = polygon.end();
-		Point2D lastPoint = *it;
-		++it;
-		while(it != itEnd)
-		{
-			painter.drawLine(lastPoint.getX()*factor, lastPoint.getY()*factor, it->getX()*factor, it->getY()*factor);
-			lastPoint = *it;
-			++it;
-		}
-		painter.setPen(QPen(Qt::red));
-	}
-
 	class RecPointAdder
 	{
 		static void addPointPrivat(QRect& rec, std::vector<Point2D>::const_iterator p)

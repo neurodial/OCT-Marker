@@ -3,6 +3,7 @@
 
 #include "cvimagewidget.h"
 // #include <vector>
+#include<data_structure/point2d.h>
 
 namespace OctData
 {
@@ -28,7 +29,7 @@ class SLOImageWidget : public CVImageWidget
 {
 	Q_OBJECT
 
-	struct Point {bool show = false; int x; int y; };
+	struct Point {bool show = false; Point2DInt p; };
 
 	Point markPos;
 

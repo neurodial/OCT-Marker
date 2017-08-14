@@ -12,7 +12,12 @@ class QSettings;
 
 class ProgramOptions
 {
-	ProgramOptions() = delete;
+	ProgramOptions();
+	~ProgramOptions();
+
+	static ProgramOptions& getInstance() { static ProgramOptions instance; return instance; }
+
+	QSettings* settings = nullptr;
 public:
 	friend class Option;
 
@@ -54,11 +59,10 @@ public:
 	static QSettings& getSettings();
 	
 
+	static void setIniFile(const QString& iniFilename);
 private:
 	static void registerOption(Option* option);
 	static std::vector<Option*>& getAllOptionsPrivate();
-	
-	// static OptionString cacheDir;
 };
 
 

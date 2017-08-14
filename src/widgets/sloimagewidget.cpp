@@ -16,6 +16,7 @@
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
+#include<data_structure/rect2d.h>
 
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
@@ -105,8 +106,8 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 		QPen pen(QColor(128, 0, 0));
 		pen.setWidth(3);
 		painter.setPen(pen);
-		painter.drawLine(markPos.x-5, markPos.y-5, markPos.x+5, markPos.y+5);
-		painter.drawLine(markPos.x-5, markPos.y+5, markPos.x+5, markPos.y-5);
+		painter.drawLine(markPos.p.getX()-5, markPos.p.getY()-5, markPos.p.getX()+5, markPos.p.getY()+5);
+		painter.drawLine(markPos.p.getX()-5, markPos.p.getY()+5, markPos.p.getX()+5, markPos.p.getY()-5);
 	}
 
 	painter.end();
@@ -295,10 +296,12 @@ void SLOImageWidget::paintAnalyseGrid(QPainter& painter, const OctData::Series* 
 
 void SLOImageWidget::showPosOnBScan(const OctData::BScan* bscan, double t)
 {
+	Rect2DInt rect(markPos.p);
 	if(!bscan)
 	{
 		markPos.show = false;
-		update();
+		rect.addBroder(10);
+		update(rect.toQRect());
 		return;
 	}
 
@@ -314,10 +317,12 @@ void SLOImageWidget::showPosOnBScan(const OctData::BScan* bscan, double t)
 	const OctData::CoordSLOpx& markPx = (transform * point) * factor + shift;
 
 
+
 	markPos.show = true;
-	markPos.x = markPx.getX();
-	markPos.y = markPx.getY();
-	update();
+	markPos.p = Point2DInt(markPx.getX(), markPx.getY());
+	rect += markPos.p;
+	rect.addBroder(10);
+	update(rect.toQRect());
 }
 
 

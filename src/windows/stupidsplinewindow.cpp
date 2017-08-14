@@ -68,7 +68,7 @@ namespace
 }
 
 
-StupidSplineWindow::StupidSplineWindow(const char* filename)
+StupidSplineWindow::StupidSplineWindow()
 : QMainWindow()
 , dwSloImage         (new QDockWidget(this))
 , bscanMarkerWidget  (new BScanMarkerWidget)
@@ -184,10 +184,6 @@ StupidSplineWindow::StupidSplineWindow(const char* filename)
 	setWindowIcon(QIcon(":/icons/image_edit.png"));
 
 	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &StupidSplineWindow::zoomChanged);
-
-
-	if(filename)
-		loadFile(filename);
 
 	setIconsInMarkerWidget();
 }
