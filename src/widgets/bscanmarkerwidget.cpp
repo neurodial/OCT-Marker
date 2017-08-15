@@ -267,6 +267,7 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	QWidget::mouseMoveEvent(event);
 
+
 	int xImg, yImg;
 	transformCoordWidget2Img(event->x(), event->y(), xImg, yImg);
 	mousePosInImage(xImg, yImg);
@@ -288,7 +289,7 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 		}
 	}
 
-	if(!checkControlUsed(event) && actMarker)
+	if(actMarker && !checkControlUsed(event))
 		event->accept();
 }
 

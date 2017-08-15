@@ -10,6 +10,22 @@
 #include <QSignalMapper>
 #include <markermodules/slomarkerbase.h>
 
+#include<helper/actionclasses.h>
+
+namespace
+{
+	void addIntAction(QToolBar* toolbar, OptionInt& intOption, int value, const QIcon& icon, const QString& text, WgSloImage* parent)
+	{
+		IntValueAction* intAction = new IntValueAction(value, parent);
+		intAction->setText(text);
+		intAction->setIcon(icon);
+		intAction->setChecked(value == intOption());
+		parent->connect(intAction, &IntValueAction::triggered, &intOption    , &OptionInt::setValue         );
+		parent->connect(&intOption    , &OptionInt::valueChanged  , intAction, &IntValueAction::valueChanged);
+		toolbar->addAction(intAction);
+	}
+}
+
 WgSloImage::WgSloImage(QWidget* parent)
 : QMainWindow(parent)
 , imageWidget(new SLOImageWidget(parent))
@@ -19,6 +35,7 @@ WgSloImage::WgSloImage(QWidget* parent)
 	imageWidget->setImageSize(size());
 	setCentralWidget(imageWidget);
 
+
 	QToolBar* bar = new QToolBar(this);
 
 	QAction* showGrid = ProgramOptions::sloShowGrid.getAction();
@@ -26,19 +43,17 @@ WgSloImage::WgSloImage(QWidget* parent)
 	showGrid->setIcon(QIcon(":/icons/grid.png"));
 	bar->addAction(showGrid);
 
+	QAction* showBScanMousePos = ProgramOptions::sloShowBScanMousePos.getAction();
+	showBScanMousePos->setText(tr("show mouse pos"));
+	showBScanMousePos->setIcon(QIcon(":/icons/cross.png"));
+	bar->addAction(showBScanMousePos);
+
 	bar->addSeparator();
 
-	QAction* showBScans = ProgramOptions::sloShowBscans.getAction();
-	showBScans->setText(tr("show BScans"));
-	showBScans->setIcon(QIcon(":/icons/layers.png"));
-	connect(showBScans, &QAction::toggled, imageWidget, &SLOImageWidget::showBScans);
-	bar->addAction(showBScans);
+	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 0, QIcon(":/icons/image.png" ), tr("show no bscans"         ), this);
+	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 1, QIcon(":/icons/layer.png" ), tr("show only actual bscans"), this);
+	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 2, QIcon(":/icons/layers.png"), tr("show bscans"            ), this);
 
-	QAction* showOnylActBScan = ProgramOptions::sloShowOnylActBScan.getAction();
-	showOnylActBScan->setText(tr("show only actual BScans"));
-	showOnylActBScan->setIcon(QIcon(":/icons/layers.png"));
-	connect(showOnylActBScan, &QAction::toggled, imageWidget, &SLOImageWidget::showOnylActBScan);
-	bar->addAction(showOnylActBScan);
 
 	setContextMenuPolicy(Qt::NoContextMenu);
 	addToolBar(bar);

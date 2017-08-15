@@ -26,10 +26,11 @@ OptionBool ProgramOptions::readBScans         (true , "readBScans"         );
 OptionInt  ProgramOptions::e2eGrayTransform   (1    , "e2eGrayTransform"   );
 
 
-OptionBool ProgramOptions::sloShowBscans      (true , "sloShowBscans");
-OptionBool ProgramOptions::sloShowOnylActBScan(true , "sloShowOnylActBScan");
-OptionBool ProgramOptions::sloShowLabels      (false, "sloShowLabels");
-OptionBool ProgramOptions::sloShowGrid        (true, "sloShowGrid");
+OptionBool ProgramOptions::sloShowLabels       (false, "sloShowLabels");
+OptionBool ProgramOptions::sloShowGrid         (true , "sloShowGrid");
+OptionBool ProgramOptions::sloShowBScanMousePos(true , "sloShowBScanMousePos");
+
+OptionInt  ProgramOptions::sloShowsBScansPos   (1    , "sloShowsBScansPos"   ); // 0 nothing, 1 act BScan, 2 all BScans
 
 
 OptionString ProgramOptions::octDirectory      (".", "octDirectory");

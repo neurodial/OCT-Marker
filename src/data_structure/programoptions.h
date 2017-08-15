@@ -34,10 +34,10 @@ public:
 
 	static OptionInt  e2eGrayTransform;
 	
-	static OptionBool sloShowBscans;
-	static OptionBool sloShowOnylActBScan;
 	static OptionBool sloShowLabels;
 	static OptionBool sloShowGrid;
+	static OptionBool sloShowBScanMousePos;
+	static OptionInt  sloShowsBScansPos;
 	
 	static OptionString octDirectory;
 	static OptionString loadOctdataAtStart;

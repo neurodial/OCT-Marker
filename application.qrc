@@ -23,6 +23,8 @@
 	<file>icons/paintcan.png</file>
 
 	<file>icons/layers.png</file>
+	<file>icons/layer.png</file>
+	<file>icons/cross.png</file>
 	<file>icons/grid.png</file>
 	<file>icons/tag_blue_edit.png</file>
 

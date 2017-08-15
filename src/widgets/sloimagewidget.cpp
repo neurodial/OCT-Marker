@@ -48,8 +48,6 @@ namespace
 SLOImageWidget::SLOImageWidget(QWidget* parent)
 : CVImageWidget(parent)
 , markerManger(OctMarkerManager::getInstance())
-, drawBScans(ProgramOptions::sloShowBscans())
-, drawOnylActBScan(ProgramOptions::sloShowOnylActBScan())
 {
 	OctDataManager& octDataManager = OctDataManager::getInstance();
 	connect(&octDataManager, &OctDataManager::seriesChanged     , this, &SLOImageWidget::reladSLOImage   );
@@ -57,7 +55,11 @@ SLOImageWidget::SLOImageWidget(QWidget* parent)
 	connect(&markerManger  , &OctMarkerManager::sloViewChanged  , this, &SLOImageWidget::sloViewChanged  );
 	connect(&markerManger  , &OctMarkerManager::sloMarkerChanged, this, &SLOImageWidget::sloMarkerChanged);
 
+	connect(&ProgramOptions::sloShowsBScansPos, &OptionInt::valueChanged, this, &SLOImageWidget::setBScanVisibility);
+
 	connect(&ProgramOptions::sloShowGrid, &OptionBool::valueChanged, this, static_cast<void (SLOImageWidget::*)(void)>(&SLOImageWidget::update));
+
+	setBScanVisibility(ProgramOptions::sloShowsBScansPos());
 
 	setMinimumSize(150,150);
 	setFocusPolicy(Qt::StrongFocus);
@@ -296,6 +298,9 @@ void SLOImageWidget::paintAnalyseGrid(QPainter& painter, const OctData::Series* 
 
 void SLOImageWidget::showPosOnBScan(const OctData::BScan* bscan, double t)
 {
+	if(!ProgramOptions::sloShowBScanMousePos())
+		return;
+
 	Rect2DInt rect(markPos.p);
 	if(!bscan)
 	{
@@ -498,3 +503,28 @@ void SLOImageWidget::wheelEvent(QWheelEvent* wheelE)
 		markerManger.nextBScan();
 	wheelE->accept();
 }
+
+
+void SLOImageWidget::setBScanVisibility(int opt)
+{
+	switch(opt)
+	{
+		case 0:
+			drawBScans       = false;
+			drawOnylActBScan = false;
+			drawConvexHull   = false;
+			break;
+		case 1:
+			drawBScans       = true;
+			drawOnylActBScan = true;
+			drawConvexHull   = true;
+			break;
+		case 2:
+			drawBScans       = true;
+			drawOnylActBScan = false;
+			drawConvexHull   = false;
+			break;
+	}
+	update();
+}
+

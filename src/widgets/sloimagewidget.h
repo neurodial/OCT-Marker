@@ -59,7 +59,7 @@ public:
 	virtual void setImageSize(QSize size) override;
 
 protected:
-	virtual void wheelEvent       (QWheelEvent*);
+	virtual void wheelEvent       (QWheelEvent*) override;
 
 public slots:
 	void showBScans(bool show);
@@ -84,6 +84,8 @@ private slots:
 	void bscanChanged(int);
 	void sloMarkerChanged(SloMarkerBase* marker);
 	void sloViewChanged  ();
+
+	void setBScanVisibility(int opt);
 };
 
 #endif // SLOIMAGE_H

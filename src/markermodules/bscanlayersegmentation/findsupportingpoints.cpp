@@ -259,7 +259,7 @@ void FindSupportingPoints::removePoints(const std::vector<Point2D>& values)
 		}
 
 // 		std::cout << "minError: " << minError << std::endl;
-		if(minError < 0.0025)
+		if(minError < 0.025)
 		{
 			setDirtySurrounding(minIt);
 			destPoints.erase(minIt);

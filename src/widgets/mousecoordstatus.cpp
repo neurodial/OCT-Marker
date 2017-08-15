@@ -7,6 +7,8 @@ MouseCoordStatus::MouseCoordStatus(BScanMarkerWidget* bscanWidget)
 {
 	connect(bscanWidget, &BScanMarkerWidget::mouseLeaveImage, this, &MouseCoordStatus::mouseLeaveImage);
 	connect(bscanWidget, &BScanMarkerWidget::mousePosInImage, this, &MouseCoordStatus::mousePosInImage);
+
+	setTextFormat(Qt::PlainText);
 }
 
 MouseCoordStatus::~MouseCoordStatus()
@@ -21,6 +23,8 @@ void MouseCoordStatus::mouseLeaveImage()
 
 void MouseCoordStatus::mousePosInImage(int x, int y)
 {
-	setText(QString("X: %1 Y: %2").arg(x, 4).arg(y, 4));
+	QString text;
+	text.sprintf("X: %4d Y: %4d", x, y);
+	setText(text);
 }
 

@@ -506,8 +506,8 @@ void OCTMarkerMainWindow::setupStatusBar()
 
 	statusBar()->addPermanentWidget(loadProgressBar);
 
-	MouseCoordStatus* mouseStatus = new MouseCoordStatus(bscanMarkerWidget);
-	statusBar()->addPermanentWidget(mouseStatus);
+// 	MouseCoordStatus* mouseStatus = new MouseCoordStatus(bscanMarkerWidget);
+// 	statusBar()->addPermanentWidget(mouseStatus);
 
 }
 
