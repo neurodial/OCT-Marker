@@ -259,7 +259,7 @@ void FindSupportingPoints::removePoints(const std::vector<Point2D>& values)
 		}
 
 // 		std::cout << "minError: " << minError << std::endl;
-		if(minError < 0.025)
+		if(minError < 0.1)
 		{
 			setDirtySurrounding(minIt);
 			destPoints.erase(minIt);
@@ -277,14 +277,17 @@ void FindSupportingPoints::removePoints(const std::vector<Point2D>& values)
 
 void FindSupportingPoints::calcAndSetPointError(PtIt firstScope, PtIt point, PtIt lastScope, const std::vector<Point2D>& values)
 {
-	ErrorSeglines oldError;
+// 	ErrorSeglines oldError;
 	ErrorSeglines newError;
 
-	oldError.calcError(firstScope, lastScope, values, interpolated);
+// 	oldError.calcError(firstScope, lastScope, values, interpolated);
 	std::vector<double> newInterpolated = calcInterpolatedWithout(point, itPointsSave(firstScope, -1), itPointsSave(lastScope, 1));
 	newError.calcError(firstScope, lastScope, values, newInterpolated);
 	point->dirty = false;
-	point->error = newError.quadError - oldError.quadError;
+	if(newError.maxError > 0.25)
+		point->error = 1000;
+	else
+		point->error = newError.quadError; // - oldError.maxError;
 }
 
 
