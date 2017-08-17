@@ -8,18 +8,21 @@ class IntValueAction : public QAction
 	Q_OBJECT
 	int valTrue;
 public:
-	IntValueAction(const int t, QObject* parent) : QAction(parent), valTrue(t)
+	IntValueAction(const int t, QObject* parent, bool checkable = true) : QAction(parent), valTrue(t)
 	{
-		setCheckable(true);
-		connect(this, &QAction::toggled, this, &IntValueAction::onTriggered);
+		setCheckable(checkable);
+		if(checkable)
+			connect(this, &QAction::toggled, this, &IntValueAction::onTriggered);
+		else
+			connect(this, &QAction::triggered, this, &IntValueAction::onTriggered);
 	}
 signals:
 	void triggered(int v);
-	
+
 private slots:
 	void onTriggered(bool v)
 	{
-		if(v)
+		if(v || !isCheckable())
 			emit(triggered(valTrue));
 	}
 public slots:

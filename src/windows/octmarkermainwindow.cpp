@@ -59,6 +59,7 @@
 #include <widgets/dwimagecoloradjustments.h>
 
 #include<windows/infodialogs.h>
+#include <helper/actionclasses.h>
 
 DWDebugOutput* OCTMarkerMainWindow::dwDebugOutput = nullptr;
 
@@ -431,35 +432,14 @@ void OCTMarkerMainWindow::setupMenu()
 	zoomMenu = new QMenu(tr("actual zoom"));
 // 	zoomMenu->menuAction()->setIcon(QIcon(":/icons/zoom.png"));
 
-	QAction* actionZoom1 = new QAction(this);
-	actionZoom1->setText(tr("Zoom %1").arg(1));
-	actionZoom1->setIcon(QIcon(":/icons/zoom.png"));
-	zoomMenu->addAction(actionZoom1);
-	connect(actionZoom1, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom1);
-
-	QAction* actionZoom2 = new QAction(this);
-	actionZoom2->setText(tr("Zoom %1").arg(2));
-	actionZoom2->setIcon(QIcon(":/icons/zoom.png"));
-	zoomMenu->addAction(actionZoom2);
-	connect(actionZoom2, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom2);
-
-	QAction* actionZoom3 = new QAction(this);
-	actionZoom3->setText(tr("Zoom %1").arg(3));
-	actionZoom3->setIcon(QIcon(":/icons/zoom.png"));
-	zoomMenu->addAction(actionZoom3);
-	connect(actionZoom3, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom3);
-
-	QAction* actionZoom4 = new QAction(this);
-	actionZoom4->setText(tr("Zoom %1").arg(4));
-	actionZoom4->setIcon(QIcon(":/icons/zoom.png"));
-	zoomMenu->addAction(actionZoom4);
-	connect(actionZoom4, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom4);
-
-	QAction* actionZoom5 = new QAction(this);
-	actionZoom5->setText(tr("Zoom %1").arg(5));
-	actionZoom5->setIcon(QIcon(":/icons/zoom.png"));
-	zoomMenu->addAction(actionZoom5);
-	connect(actionZoom5, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::setZoom5);
+	addZoomAction(1, bscanMarkerWidget, *zoomMenu);
+	addZoomAction(2, bscanMarkerWidget, *zoomMenu);
+	addZoomAction(3, bscanMarkerWidget, *zoomMenu);
+	addZoomAction(4, bscanMarkerWidget, *zoomMenu);
+	addZoomAction(6, bscanMarkerWidget, *zoomMenu);
+	addZoomAction(8, bscanMarkerWidget, *zoomMenu);
+// 	addZoomAction(10, bscanMarkerWidget, *zoomMenu);
+// 	addZoomAction(12, bscanMarkerWidget, *zoomMenu);
 
 	toolBar->addAction(zoomMenu->menuAction());
 
@@ -489,6 +469,16 @@ void OCTMarkerMainWindow::setupMenu()
 
 
 	addToolBar(toolBar);
+}
+
+void OCTMarkerMainWindow::addZoomAction(int zoom, CVImageWidget* bscanMarkerWidget, QMenu& menue)
+{
+	IntValueAction* actionZoom = new IntValueAction(zoom, this, true);
+	actionZoom->setText(tr("Zoom %1").arg(zoom));
+	actionZoom->setIcon(QIcon(":/icons/zoom.png"));
+	menue.addAction(actionZoom);
+	connect(actionZoom       , &IntValueAction::triggered , bscanMarkerWidget, &CVImageWidget::setZoom      );
+	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, actionZoom       , &IntValueAction::valueChanged);
 }
 
 void OCTMarkerMainWindow::setupStatusBar()

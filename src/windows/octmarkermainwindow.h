@@ -10,6 +10,7 @@ class QFileDialog;
 class QProgressBar;
 class QUrl;
 class QMenu;
+class CVImageWidget;
 
 class BScanMarkerWidget;
 class DWSloImage;
@@ -28,6 +29,7 @@ class OCTMarkerMainWindow : public QMainWindow
 	void setupStatusBar();
 
 	void createMarkerToolbar();
+	void addZoomAction(int zoom, CVImageWidget* bscanMarkerWidget, QMenu& menue);
 
 
 	QDockWidget*          dwSloImage                  = nullptr;

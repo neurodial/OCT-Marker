@@ -18,7 +18,7 @@ class FilterImage;
 class CVImageWidget : public QWidget
 {
 	Q_OBJECT
-	virtual void contextMenuEvent(QContextMenuEvent* event);
+	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
 	enum class ScaleMethod { Factor, Size };
 	
@@ -28,14 +28,16 @@ class CVImageWidget : public QWidget
 
 	const FilterImage* imageFilter = nullptr;
 	
+	void addZoomAction(int zoom);
+
 public:
 	enum class FloatGrayTransform { Auto, Fix, ZeroToOne };
 
 	explicit CVImageWidget(QWidget *parent = 0);
 	virtual ~CVImageWidget();
 
-	QSize sizeHint()        const                               { return qtImage.size(); }
-	QSize minimumSizeHint() const                               { return qtImage.size()/100; }
+	QSize sizeHint()        const                      override { return qtImage.size(); }
+	QSize minimumSizeHint() const                      override { return qtImage.size()/100; }
 
 	virtual void setImageSize(QSize size)                       { imageScale  = size  ; scaleMethod = ScaleMethod::Size  ; cvImage2qtImage(); }
 	virtual void setScaleFactor(double factor)                  { scaleFactor = factor; scaleMethod = ScaleMethod::Factor; cvImage2qtImage(); }
@@ -83,12 +85,6 @@ public slots:
 
 	void fitImage2Width (int width );
 	void fitImage2Height(int heigth);
-
-	void setZoom1()                                              { setZoom(1); }
-	void setZoom2()                                              { setZoom(2); }
-	void setZoom3()                                              { setZoom(3); }
-	void setZoom4()                                              { setZoom(4); }
-	void setZoom5()                                              { setZoom(5); }
 
 	void zoom_in()                                               { setZoom(scaleFactor+0.5); }
 	void zoom_out()                                              { setZoom(scaleFactor-0.5); }
