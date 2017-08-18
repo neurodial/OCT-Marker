@@ -68,7 +68,7 @@ class BScanSegmentation : public BscanMarkerBase
 	void createSegments(const OctData::Series* series);
 
 	template<typename T>
-	void drawSegmentLine(QPainter&, double factor, const QRect&) const;
+	void drawSegmentLine(T& painter, double factor, const QRect& rect) const;
 
 	void transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat);
 	
@@ -89,6 +89,8 @@ class BScanSegmentation : public BscanMarkerBase
 	void rejectMatChanges();
 
 	bool hasActMatChanged() const;
+
+	QString generateTikzCode() const;
 
 public:
 
@@ -156,6 +158,8 @@ public slots:
 	void removeSeriesSegmentation()                                 { createSegments(); requestFullUpdate(); }
 
 	void importSegmentationFromOct(const std::string& filename);
+
+	void showTikzCode();
 
 signals:
 	void paintArea0Selected(bool = true);

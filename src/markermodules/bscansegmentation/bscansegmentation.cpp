@@ -25,6 +25,9 @@
 #include <data_structure/simplecvmatcompress.h>
 #include "importsegmentation.h"
 
+#include<QDialog>
+#include<QTextEdit>
+
 
 BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
@@ -84,9 +87,22 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 
 namespace
 {
-	struct PaintFactor1
+	class PaintFactor
 	{
-		inline static void paint(QPainter& painter, const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double /*factor*/)
+	protected:
+		QPainter& painter;
+	public:
+		PaintFactor(QPainter& painter) : painter(painter) {}
+
+		void setPen(QPen& p) { painter.setPen(p); }
+	};
+
+	class PaintFactor1 : public PaintFactor
+	{
+	public:
+		PaintFactor1(QPainter& painter) : PaintFactor(painter) {}
+
+		inline void paint(const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double /*factor*/)
 		{
 			if((*p00 & mask) != (*p10 & mask))
 			{
@@ -101,17 +117,49 @@ namespace
 		}
 	};
 
-	struct PaintFactorN
+	class PaintFactorN : public PaintFactor
 	{
-		inline static void paint(QPainter& painter, const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double factor)
+	public:
+		PaintFactorN(QPainter& painter) : PaintFactor(painter) {}
+
+		inline void paint(const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double factor)
 		{
 			if((*p00 & mask) != (*p10 & mask)) painter.drawLine(static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h  )*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
 			if((*p00 & mask) != (*p01 & mask)) painter.drawLine(static_cast<int>((w  )*factor + 0.5), static_cast<int>((h+1)*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
 		}
 	};
 
+	class PaintToTikz
+	{
+		QString tikzCode;
+		double tikzFactorX;
+		double tikzFactorY;
+
+		void drawLine(int x1, int y1, int x2, int y2)
+		{
+			tikzCode += QString("\\draw[manualSegColor] (%1,%2) -- (%3,%4);\n").arg(x1*tikzFactorX).arg(1.-y1*tikzFactorY).arg(x2*tikzFactorX).arg(1.-y2*tikzFactorY);
+// 			stream << "\\draw[colorA!" << (slope*100/8.) << "!colorB, line cap=round] (" << p1.getX()*factorX << ", " << (1.f-p1.getY()*factorY) << ") -- (" << p2.getX()*factorX << ", " << (1.f-p2.getY()*factorY) << ");\n";
+		}
+
+	public:
+		PaintToTikz(int width, int height) : tikzFactorX(1./static_cast<double>(width)), tikzFactorY(1./static_cast<double>(height))
+		{
+			tikzCode = "\\definecolor{manualSegColor}{rgb}{0.000000,1.000000,0.000000}\n\n";
+		}
+
+		void setPen(QPen&) {}
+
+		inline void paint(const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double /*factor*/)
+		{
+			if((*p00 & mask) != (*p10 & mask)) drawLine(w+1, h  , w+1, h+1);
+			if((*p00 & mask) != (*p01 & mask)) drawLine(w  , h+1, w+1, h+1);
+		}
+
+		const QString& getTikzCode() const { return tikzCode; }
+	};
+
 	template<typename T>
-	void drawSegmentLineRec(QPainter& painter, const cv::Mat& actMat, uint8_t mask, double factor, int startH, int endH, int startW, int endW)
+	void drawSegmentLineRec(T& painter, const cv::Mat& actMat, uint8_t mask, double factor, int startH, int endH, int startW, int endW)
 	{
 		for(int h = startH; h < endH; ++h)
 		{
@@ -125,13 +173,13 @@ namespace
 
 			for(int w = startW; w < endW; ++w)
 			{
-				T::paint(painter, p00, p10, p01, w, h, mask, factor); // for faster drawing, only int supported (and only int used at the moment)
+				painter.paint(p00, p10, p01, w, h, mask, factor);
 
 				++p00;
 				++p10;
 				++p01;
 			}
-			T::paint(painter, p00, p00, p01, endW, h, mask, factor); // last col p10 replaced by p00, because p10 is outside
+			painter.paint(p00, p00, p01, endW, h, mask, factor); // last col p10 replaced by p00, because p10 is outside
 		}
 	}
 	// TODO draw last row
@@ -140,7 +188,7 @@ namespace
 
 
 template<typename T>
-void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const QRect& rect) const
+void BScanSegmentation::drawSegmentLine(T& painter, double factor, const QRect& rect) const
 {
 	if(actMatNr != getActBScanNr())
 	{
@@ -167,40 +215,17 @@ void BScanSegmentation::drawSegmentLine(QPainter& painter, double factor, const 
 	int startW = std::max(drawX, 0);
 	int endW   = std::min(drawX+drawWidth , mapWidth);
 
-	QPen pen2(Qt::red);
+	QPen pen2(Qt::green);
 	pen2.setWidth(seglinePaintSize);
 	painter.setPen(pen2);
 	drawSegmentLineRec<T>(painter, *actMat, 1 << 1, factor, startH, endH, startW, endW);
 
 
-	QPen pen(Qt::green);
+	QPen pen(Qt::red);
 	pen.setWidth(seglinePaintSize);
 	painter.setPen(pen);
 	drawSegmentLineRec<T>(painter, *actMat, 1 << 0, factor, startH, endH, startW, endW);
 
-	/*
-	for(int h = startH; h < endH; ++h)
-	{
-		uint8_t* p00 = actMat->ptr<uint8_t>(h);
-		uint8_t* p10 = p00+1;
-		uint8_t* p01 = actMat->ptr<uint8_t>(h+1);
-
-		p00 += startW;
-		p10 += startW;
-		p01 += startW;
-
-		for(int w = startW; w < endW; ++w)
-		{
-			T::paint(painter, p00, p10, p01, w, h, factor); // for faster drawing, only int supported (and only int used at the moment)
-
-			++p00;
-			++p10;
-			++p01;
-		}
-		T::paint(painter, p00, p00, p01, endW, h, factor); // last col p10 replaced by p00, because p10 is outside
-	}
-	// TODO draw last row
-	*/
 }
 
 void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat)
@@ -209,6 +234,19 @@ void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, doubl
 	xMat = static_cast<int>(xWidget/factor + 0.5);
 }
 
+
+QString BScanSegmentation::generateTikzCode() const
+{
+	if(!actMat || actMat->empty())
+		return QString();
+	PaintToTikz ptt(actMat->cols, actMat->rows);
+
+	QRect fullRect(0,0,actMat->cols, actMat->rows);
+
+	drawSegmentLine(ptt, 1, fullRect);
+
+	return ptt.getTikzCode();
+}
 
 
 
@@ -219,9 +257,15 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 		return;
 	
 	if(factor == 1)
-		drawSegmentLine<PaintFactor1>(p, factor, rect);
+	{
+		PaintFactor1 pf(p);
+		drawSegmentLine(pf, factor, rect);
+	}
 	else
-		drawSegmentLine<PaintFactorN>(p, factor, rect);
+	{
+		PaintFactorN pf(p);
+		drawSegmentLine(pf, factor, rect);
+	}
 
 	QPoint paintPoint = mousePoint;
 	if(factor > 1)
@@ -424,6 +468,10 @@ bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 				rejectMatChanges();
 				return true;
 			}
+			break;
+		case Qt::Key_G:
+			showTikzCode();
+			return true;
 	}
 
 	return false;
@@ -792,4 +840,24 @@ void BScanSegmentation::importSegmentationFromOct(const std::string& filename)
 		requestFullUpdate();
 }
 
+void BScanSegmentation::showTikzCode()
+{
+	QString code = generateTikzCode();
+
+// 	QWindow dialog;
+//
+// 	Q
+// 	dialog.setLayout();
+	QDialog dialog;
+	dialog.setWindowModality(Qt::ApplicationModal);
+	QVBoxLayout* vbox = new QVBoxLayout(&dialog);
+	QTextEdit* te = new QTextEdit(&dialog);
+	te->setPlainText(code);
+
+	vbox->addWidget(te);
+
+	dialog.exec();
+
+// 	QLabel label = new QLabel( QDialog);
+}
 
