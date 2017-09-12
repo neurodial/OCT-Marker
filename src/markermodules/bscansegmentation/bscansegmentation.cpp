@@ -132,17 +132,20 @@ namespace
 	class PaintToTikz
 	{
 		QString tikzCode;
+		double aspectRatio;
 		double tikzFactorX;
 		double tikzFactorY;
 
 		void drawLine(int x1, int y1, int x2, int y2)
 		{
-			tikzCode += QString("\\draw[manualSegColor] (%1,%2) -- (%3,%4);\n").arg(x1*tikzFactorX).arg(1.-y1*tikzFactorY).arg(x2*tikzFactorX).arg(1.-y2*tikzFactorY);
-// 			stream << "\\draw[colorA!" << (slope*100/8.) << "!colorB, line cap=round] (" << p1.getX()*factorX << ", " << (1.f-p1.getY()*factorY) << ") -- (" << p2.getX()*factorX << ", " << (1.f-p2.getY()*factorY) << ");\n";
+			tikzCode += QString("\\draw[manualSegColor] (%1,%2) -- (%3,%4);\n").arg(x1*tikzFactorX).arg(aspectRatio-y1*tikzFactorY).arg(x2*tikzFactorX).arg(aspectRatio-y2*tikzFactorY);
 		}
 
 	public:
-		PaintToTikz(int width, int height) : tikzFactorX(1./static_cast<double>(width)), tikzFactorY(1./static_cast<double>(height))
+		PaintToTikz(int width, int height)
+		: aspectRatio(static_cast<double>(height)/static_cast<double>(width))
+		, tikzFactorX(1./static_cast<double>(width))
+		, tikzFactorY(1./static_cast<double>(height)*aspectRatio)
 		{
 			tikzCode = "\\definecolor{manualSegColor}{rgb}{0.000000,1.000000,0.000000}\n\n";
 		}

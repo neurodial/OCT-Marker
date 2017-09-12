@@ -1,7 +1,8 @@
 #ifndef SIMPLECVMATCOMPRESS_H
 #define SIMPLECVMATCOMPRESS_H
 
-#include "simplematcompress.h"
+// #include<cpp_framework/matcompress/simplematcompress.h> // TODO: opencv-abhängigkeiten stören bei mex-datei
+#include"simplematcompress.h"
 
 namespace cv { class Mat; }
 

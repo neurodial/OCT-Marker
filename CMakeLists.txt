@@ -5,9 +5,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_module/)
 set( CMAKE_CXX_STANDARD 11 )
 
 
-find_package(Qt5Core)
-find_package(Qt5Widgets)
-find_package(Qt5LinguistTools)
 find_package(Boost 1.40 COMPONENTS filesystem serialization system iostreams REQUIRED)
 # find_package (Threads REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -26,6 +23,12 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options a
 
 
 if(BUILD_QT_PROGRAMM)
+
+	find_package(Qt5Core)
+	find_package(Qt5Widgets)
+	find_package(Qt5LinguistTools)
+	find_package(Qt5Svg)
+
 
 	include(GetGitRevisionDescription)
 	get_git_head_revision(GIT_REFSPEC GIT_SHA1)
@@ -126,3 +129,4 @@ if(BUILD_OCTAVE_MEX_FUNCTIONS)
 	target_include_directories(oct_read_seg SYSTEM PRIVATE ${OCTAVE_INCLUDE_DIRS} PUBLIC ${CMAKE_SOURCE_DIR}/src/)
 
 endif()
+
