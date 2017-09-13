@@ -22,6 +22,8 @@
 #include "bscanseglocalop.h"
 #include "bscanseglocalopnn.h"
 
+#include "paintsegmentationtotikz.h"
+
 #include <data_structure/simplecvmatcompress.h>
 #include "importsegmentation.h"
 
@@ -129,6 +131,7 @@ namespace
 		}
 	};
 
+	/*
 	class PaintToTikz
 	{
 		QString tikzCode;
@@ -152,7 +155,7 @@ namespace
 
 		void setPen(QPen&) {}
 
-		inline void paint(const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double /*factor*/)
+		inline void paint(const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double / *factor* /)
 		{
 			if((*p00 & mask) != (*p10 & mask)) drawLine(w+1, h  , w+1, h+1);
 			if((*p00 & mask) != (*p01 & mask)) drawLine(w  , h+1, w+1, h+1);
@@ -160,6 +163,9 @@ namespace
 
 		const QString& getTikzCode() const { return tikzCode; }
 	};
+	*/
+
+
 
 	template<typename T>
 	void drawSegmentLineRec(T& painter, const cv::Mat& actMat, uint8_t mask, double factor, int startH, int endH, int startW, int endW)
@@ -218,10 +224,10 @@ void BScanSegmentation::drawSegmentLine(T& painter, double factor, const QRect& 
 	int startW = std::max(drawX, 0);
 	int endW   = std::min(drawX+drawWidth , mapWidth);
 
-	QPen pen2(Qt::green);
-	pen2.setWidth(seglinePaintSize);
-	painter.setPen(pen2);
-	drawSegmentLineRec<T>(painter, *actMat, 1 << 1, factor, startH, endH, startW, endW);
+// 	QPen pen2(Qt::green);
+// 	pen2.setWidth(seglinePaintSize);
+// 	painter.setPen(pen2);
+// 	drawSegmentLineRec<T>(painter, *actMat, 1 << 1, factor, startH, endH, startW, endW);
 
 
 	QPen pen(Qt::red);
@@ -242,7 +248,7 @@ QString BScanSegmentation::generateTikzCode() const
 {
 	if(!actMat || actMat->empty())
 		return QString();
-	PaintToTikz ptt(actMat->cols, actMat->rows);
+	PaintSegmentationToTikz ptt(actMat->cols, actMat->rows);
 
 	QRect fullRect(0,0,actMat->cols, actMat->rows);
 
@@ -847,10 +853,6 @@ void BScanSegmentation::showTikzCode()
 {
 	QString code = generateTikzCode();
 
-// 	QWindow dialog;
-//
-// 	Q
-// 	dialog.setLayout();
 	QDialog dialog;
 	dialog.setWindowModality(Qt::ApplicationModal);
 	QVBoxLayout* vbox = new QVBoxLayout(&dialog);
@@ -860,7 +862,5 @@ void BScanSegmentation::showTikzCode()
 	vbox->addWidget(te);
 
 	dialog.exec();
-
-// 	QLabel label = new QLabel( QDialog);
 }
 

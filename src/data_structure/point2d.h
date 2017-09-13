@@ -5,23 +5,39 @@
 template<typename T>
 class Point2DBase
 {
-	T x = 0.;
-	T y = 0.;
+	T x = T();
+	T y = T();
 public:
+	typedef T value_type;
+
 	Point2DBase(T x, T y) : x(x), y(y) {}
 	Point2DBase() = default;
 	Point2DBase(const Point2DBase<T>& other) = default;
 
 
-	T getX() const { return x; }
-	T getY() const { return y; }
+	const T& getX() const                                          { return x; }
+	const T& getY() const                                          { return y; }
 
-	void setX(T v) { x = v; }
-	void setY(T v) { y = v; }
+	void setX(const T& v) { x = v; }
+	void setY(const T& v) { y = v; }
 
 	double euklidDist(const Point2DBase<T>& p) const;
 
-	void print(std::ostream& stream) const { stream << '(' << x << "; " << y << ')'; }
+
+	Point2DBase operator-(const Point2DBase& o) const              { return Point2DBase(x-o.x, y-o.y); }
+	Point2DBase operator+(const Point2DBase& o) const              { return Point2DBase(x+o.x, y+o.y); }
+	Point2DBase operator*(T factor)             const              { return Point2DBase(x*factor, y*factor); }
+	Point2DBase& operator+=(const Point2DBase& o)                  { x += o.x; y += o.y; return *this; }
+
+	T length() const;
+	void normize()                                                 { T len = length(); if(len > 1e-8) *this /= len; }
+
+	Point2DBase& operator*=(T factor)                              { x *= factor; y *= factor; return *this; }
+	Point2DBase& operator/=(T factor)                              { return operator*=(1/factor); }
+
+	virtual void print(std::ostream& stream) const                 { stream << '(' << x << "; " << y << ')'; }
+
+	bool operator==(const Point2DBase& other) const                { return x == other.x && y == other.y; }
 };
 
 
