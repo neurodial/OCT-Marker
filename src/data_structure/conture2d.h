@@ -56,6 +56,9 @@ public:
 
 	void addLine(const std::size_t pIndex1, const std::size_t pIndex2, float slope = -1)
 	{
+		if(pIndex1 == pIndex2)
+			return;
+
 		const std::size_t numPoints = points.size();
 		if(pIndex1 < numPoints && pIndex2 < numPoints)
 		{

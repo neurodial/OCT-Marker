@@ -38,6 +38,7 @@ public:
 	virtual void print(std::ostream& stream) const                 { stream << '(' << x << "; " << y << ')'; }
 
 	bool operator==(const Point2DBase& other) const                { return x == other.x && y == other.y; }
+	bool operator!=(const Point2DBase& other) const                { return !operator==(other); }
 };
 
 

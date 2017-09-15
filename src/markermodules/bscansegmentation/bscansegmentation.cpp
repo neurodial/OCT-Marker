@@ -29,6 +29,7 @@
 
 #include<QDialog>
 #include<QTextEdit>
+#include "simplemarchingsquare.h"
 
 
 BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
@@ -89,106 +90,34 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 
 namespace
 {
-	class PaintFactor
-	{
-	protected:
-		QPainter& painter;
-	public:
-		PaintFactor(QPainter& painter) : painter(painter) {}
-
-		void setPen(QPen& p) { painter.setPen(p); }
-	};
-
-	class PaintFactor1 : public PaintFactor
-	{
-	public:
-		PaintFactor1(QPainter& painter) : PaintFactor(painter) {}
-
-		inline void paint(const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double /*factor*/)
-		{
-			if((*p00 & mask) != (*p10 & mask))
-			{
-				painter.drawPoint(w  , h);
-				painter.drawPoint(w+1, h);
-			}
-			if((*p00 & mask) != (*p01 & mask))
-			{
-				painter.drawPoint(w, h  );
-				painter.drawPoint(w, h+1);
-			}
-		}
-	};
-
-	class PaintFactorN : public PaintFactor
-	{
-	public:
-		PaintFactorN(QPainter& painter) : PaintFactor(painter) {}
-
-		inline void paint(const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double factor)
-		{
-			if((*p00 & mask) != (*p10 & mask)) painter.drawLine(static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h  )*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
-			if((*p00 & mask) != (*p01 & mask)) painter.drawLine(static_cast<int>((w  )*factor + 0.5), static_cast<int>((h+1)*factor + 0.5), static_cast<int>((w+1)*factor + 0.5), static_cast<int>((h+1)*factor + 0.5));
-		}
-	};
-
-	/*
-	class PaintToTikz
-	{
-		QString tikzCode;
-		double aspectRatio;
-		double tikzFactorX;
-		double tikzFactorY;
-
-		void drawLine(int x1, int y1, int x2, int y2)
-		{
-			tikzCode += QString("\\draw[manualSegColor] (%1,%2) -- (%3,%4);\n").arg(x1*tikzFactorX).arg(aspectRatio-y1*tikzFactorY).arg(x2*tikzFactorX).arg(aspectRatio-y2*tikzFactorY);
-		}
-
-	public:
-		PaintToTikz(int width, int height)
-		: aspectRatio(static_cast<double>(height)/static_cast<double>(width))
-		, tikzFactorX(1./static_cast<double>(width))
-		, tikzFactorY(1./static_cast<double>(height)*aspectRatio)
-		{
-			tikzCode = "\\definecolor{manualSegColor}{rgb}{0.000000,1.000000,0.000000}\n\n";
-		}
-
-		void setPen(QPen&) {}
-
-		inline void paint(const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, double / *factor* /)
-		{
-			if((*p00 & mask) != (*p10 & mask)) drawLine(w+1, h  , w+1, h+1);
-			if((*p00 & mask) != (*p01 & mask)) drawLine(w  , h+1, w+1, h+1);
-		}
-
-		const QString& getTikzCode() const { return tikzCode; }
-	};
-	*/
-
-
-
 	template<typename T>
 	void drawSegmentLineRec(T& painter, const cv::Mat& actMat, uint8_t mask, double factor, int startH, int endH, int startW, int endW)
 	{
+		SimpleMarchingSquare sms;
+
 		for(int h = startH; h < endH; ++h)
 		{
 			const uint8_t* p00 = actMat.ptr<uint8_t>(h);
 			const uint8_t* p10 = p00+1;
 			const uint8_t* p01 = actMat.ptr<uint8_t>(h+1);
+			const uint8_t* p11 = p01+1;
 
 			p00 += startW;
 			p10 += startW;
 			p01 += startW;
+			p11 += startW;
 
 			for(int w = startW; w < endW; ++w)
 			{
-				painter.paint(p00, p10, p01, w, h, mask, factor);
+				sms.handleSquare(*p01, *p11, *p10, *p00, h+1, w+1, painter);
+// 				painter.paint(p00, p10, p01, w, h, mask, factor);
 
 				++p00;
 				++p10;
 				++p01;
+				++p11;
 			}
-			painter.paint(p00, p00, p01, endW, h, mask, factor); // last col p10 replaced by p00, because p10 is outside
+// 			painter.paint(p00, p00, p01, endW, h, mask, factor); // last col p10 replaced by p00, because p10 is outside
 		}
 	}
 	// TODO draw last row
@@ -272,7 +201,7 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 	}
 	else
 	{
-		PaintFactorN pf(p);
+		PaintFactorN pf(p, factor);
 		drawSegmentLine(pf, factor, rect);
 	}
 

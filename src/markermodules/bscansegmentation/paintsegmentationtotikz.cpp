@@ -1,6 +1,7 @@
 #include "paintsegmentationtotikz.h"
 
 #include<algos/orderdcontures2d.h>
+#include<algos/douglaspeuckeralgorithm.h>
 
 
 const QString PaintSegmentationToTikz::getTikzCode() const
@@ -18,7 +19,10 @@ const QString PaintSegmentationToTikz::getTikzCode() const
 		tikzCode += "\\draw[manualSegColor] ";
 		bool firstVal = true;
 		std::size_t pos = 0;
-		for(const Point2D& p : segment.points)
+
+		DouglasPeuckerAlgorithm dpa(segment.points, 1e-5);
+
+		for(const Point2D& p : dpa.getPoints())
 		{
 			if(pos % 5 == 0)
 				tikzCode += "\n";

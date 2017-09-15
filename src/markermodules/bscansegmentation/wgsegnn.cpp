@@ -69,7 +69,7 @@ void WgSegNN::getNNData(BScanSegmentationMarker::NNTrainData& data)
 {
 	data.maxIterations = sbMaxIterations->value();
 	data.epsilon       = sbEpsilon      ->value();
-
+/*
 	data.learnRate     = sbLearnRate    ->value();
 	data.momentScale   = sbMomentScale  ->value();
 
@@ -82,7 +82,7 @@ void WgSegNN::getNNData(BScanSegmentationMarker::NNTrainData& data)
 	if(rbBackPropagation->isChecked())
 		data.trainMethod = BScanSegmentationMarker::NNTrainData::TrainMethod::Backpropergation;
 	else
-		data.trainMethod = BScanSegmentationMarker::NNTrainData::TrainMethod::RPROP           ;
+		data.trainMethod = BScanSegmentationMarker::NNTrainData::TrainMethod::RPROP           ;*/
 }
 
 
@@ -91,7 +91,7 @@ void WgSegNN::setNNData(const BScanSegmentationMarker::NNTrainData& data)
 
 	sbMaxIterations->setValue(static_cast<int>(data.maxIterations));
 	sbEpsilon      ->setValue(data.epsilon      );
-
+/*
 	sbLearnRate    ->setValue(data.learnRate    );
 	sbMomentScale  ->setValue(data.momentScale  );
 
@@ -102,7 +102,7 @@ void WgSegNN::setNNData(const BScanSegmentationMarker::NNTrainData& data)
 	sbNuePlus      ->setValue(data.nuePlus      );
 
 	rbBackPropagation->setChecked(data.trainMethod == BScanSegmentationMarker::NNTrainData::TrainMethod::Backpropergation);
-	rbRPROP          ->setChecked(data.trainMethod == BScanSegmentationMarker::NNTrainData::TrainMethod::RPROP           );
+	rbRPROP          ->setChecked(data.trainMethod == BScanSegmentationMarker::NNTrainData::TrainMethod::RPROP           );*/
 }
 
 
