@@ -6,6 +6,8 @@
 
 #include<data_structure/conture2d.h>
 
+#include<limits>
+
 #include"paintsegline.h"
 
 class QPen;
@@ -15,20 +17,20 @@ class PaintSegmentationToTikz : public PaintSegLine
 	int width;
 	int height;
 
-	std::vector<int> pointIndexMap;
+	std::vector<std::size_t> pointIndexMap;
 	Conture2D conture;
 
 	std::size_t getPointIndex(const Point2D& p)
 	{
-		int x = static_cast<int>(p.getX());
-		int y = static_cast<int>(p.getY());
+		Point2D::value_type x = p.getX();
+		Point2D::value_type y = p.getY();
 
 		if(x<0 || x>width || y<0 || y>height)
 			throw("invalid index");
 
-		std::size_t index = x + y*width;
+		std::size_t index = static_cast<std::size_t>(x*2 + y*width*4);
 
-		if(pointIndexMap[index] == -1)
+		if(pointIndexMap[index] == std::numeric_limits<std::size_t>::max())
 			pointIndexMap[index] = conture.addPoint(p);
 
 		return pointIndexMap[index];
@@ -40,7 +42,7 @@ public:
 	:width (width )
 	,height(height)
 	{
-		pointIndexMap.assign(static_cast<std::size_t>(height*height), -1);
+		pointIndexMap.assign(static_cast<std::size_t>(width*height*4), std::numeric_limits<std::size_t>::max());
 	}
 
 

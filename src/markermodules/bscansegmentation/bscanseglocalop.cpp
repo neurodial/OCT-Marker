@@ -114,8 +114,8 @@ bool BScanSegLocalOpPaint::drawOnCoord(int x, int y)
 			cv::rectangle(*map, cv::Point(x-paintSize, y-paintSize), cv::Point(x+paintSize-1, y+paintSize-1), paintValue, CV_FILLED, 8, 0);
 			break;
 		case BScanSegmentationMarker::PaintData::PaintMethod::Pen:
-			if(x>=0 && y>=0 && x<map->cols && y<map->rows)
-				map->at<BScanSegmentationMarker::internalMatType>(y, x) = paintValue;
+			if(x>0 && y>0 && x<map->cols && y<map->rows)
+				map->at<BScanSegmentationMarker::internalMatType>(y-1, x-1) = paintValue;
 			break;
 	}
 	return true;

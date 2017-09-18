@@ -36,6 +36,7 @@ class BScanSegmentation : public BscanMarkerBase
 	friend class ImportSegmentation;
 	
 	typedef std::vector<SimpleCvMatCompress*> SegMats;
+	enum class ViewMethod { Rect, MarchingSquare };
 
 	bool stateChangedSinceLastSave = false;
 
@@ -54,6 +55,7 @@ class BScanSegmentation : public BscanMarkerBase
 
 
 	bool paint = false;
+	ViewMethod viewMethod = ViewMethod::Rect;
 
 
 	WGSegmentation* widget = nullptr;
@@ -67,8 +69,10 @@ class BScanSegmentation : public BscanMarkerBase
 	void createSegments();
 	void createSegments(const OctData::Series* series);
 
-	template<typename T>
-	void drawSegmentLine(T& painter, double factor, const QRect& rect) const;
+	template<typename Painter, typename Transformer>
+	void drawSegmentLine(Painter& painter, Transformer& transform, double factor, const QRect& rect) const;
+	template<typename Painter>
+	void drawSegmentLine(Painter& painter, double factor, const QRect& rect) const;
 
 	void transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat);
 	

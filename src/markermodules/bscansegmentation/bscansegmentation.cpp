@@ -90,11 +90,9 @@ QToolBar* BScanSegmentation::createToolbar(QObject* parent)
 
 namespace
 {
-	template<typename T>
-	void drawSegmentLineRec(T& painter, const cv::Mat& actMat, uint8_t mask, double factor, int startH, int endH, int startW, int endW)
+	template<typename Painter, typename Transformer>
+	void drawSegmentLineRec(Painter& painter, Transformer& transform, const cv::Mat& actMat, int startH, int endH, int startW, int endW)
 	{
-		SimpleMarchingSquare sms;
-
 		for(int h = startH; h < endH; ++h)
 		{
 			const uint8_t* p00 = actMat.ptr<uint8_t>(h);
@@ -109,7 +107,7 @@ namespace
 
 			for(int w = startW; w < endW; ++w)
 			{
-				sms.handleSquare(*p01, *p11, *p10, *p00, h+1, w+1, painter);
+				transform.handleSquare(*p01, *p11, *p10, *p00, h+1, w+1, painter);
 // 				painter.paint(p00, p10, p01, w, h, mask, factor);
 
 				++p00;
@@ -122,11 +120,29 @@ namespace
 	}
 	// TODO draw last row
 
+
+	class SimplePaintTransform
+	{
+/*
+    (3) ---- (2)
+     |        |
+     |        |
+    (0) ---- (1)
+*/
+	public:
+		void handleSquare(uint8_t gridVal0, uint8_t gridVal1, uint8_t gridVal2, uint8_t gridVal3, int i, int j, PaintSegLine& painter)
+		{
+			if(gridVal0 != gridVal3)
+				painter.paintLine(Point2D(j, i), Point2D(j-1, i));
+			if(gridVal2 != gridVal3)
+				painter.paintLine(Point2D(j, i), Point2D(j, i-1));
+		}
+	};
 }
 
 
-template<typename T>
-void BScanSegmentation::drawSegmentLine(T& painter, double factor, const QRect& rect) const
+template<typename Painter, typename Transformer>
+void BScanSegmentation::drawSegmentLine(Painter& painter, Transformer& transform, double factor, const QRect& rect) const
 {
 	if(actMatNr != getActBScanNr())
 	{
@@ -153,17 +169,31 @@ void BScanSegmentation::drawSegmentLine(T& painter, double factor, const QRect& 
 	int startW = std::max(drawX, 0);
 	int endW   = std::min(drawX+drawWidth , mapWidth);
 
-// 	QPen pen2(Qt::green);
-// 	pen2.setWidth(seglinePaintSize);
-// 	painter.setPen(pen2);
-// 	drawSegmentLineRec<T>(painter, *actMat, 1 << 1, factor, startH, endH, startW, endW);
-
-
 	QPen pen(Qt::red);
 	pen.setWidth(seglinePaintSize);
 	painter.setPen(pen);
-	drawSegmentLineRec<T>(painter, *actMat, 1 << 0, factor, startH, endH, startW, endW);
+	drawSegmentLineRec(painter, transform, *actMat, startH, endH, startW, endW);
+}
 
+
+template<typename Painter>
+void BScanSegmentation::drawSegmentLine(Painter& painter, double factor, const QRect& rect) const
+{
+	switch(viewMethod)
+	{
+		case ViewMethod::MarchingSquare:
+		{
+			SimpleMarchingSquare sms;
+			drawSegmentLine(painter, sms, factor, rect);
+			break;
+		}
+		case ViewMethod::Rect:
+		{
+			SimplePaintTransform spt;
+			drawSegmentLine(painter, spt, factor, rect);
+			break;
+		}
+	}
 }
 
 void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat)
@@ -181,7 +211,9 @@ QString BScanSegmentation::generateTikzCode() const
 
 	QRect fullRect(0,0,actMat->cols, actMat->rows);
 
-	drawSegmentLine(ptt, 1, fullRect);
+
+	SimpleMarchingSquare sms;
+	drawSegmentLine(ptt, sms, 1, fullRect);
 
 	return ptt.getTikzCode();
 }
@@ -193,7 +225,7 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 	double factor = widget->getImageScaleFactor();
 	if(factor <= 0)
 		return;
-	
+
 	if(factor == 1)
 	{
 		PaintFactor1 pf(p);
@@ -409,6 +441,12 @@ bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 			break;
 		case Qt::Key_G:
 			showTikzCode();
+			return true;
+		case Qt::Key_K:
+			if(viewMethod == ViewMethod::MarchingSquare)
+				viewMethod = ViewMethod::Rect;
+			else
+				viewMethod = ViewMethod::MarchingSquare;
 			return true;
 	}
 
