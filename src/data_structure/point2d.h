@@ -39,6 +39,10 @@ public:
 
 	bool operator==(const Point2DBase& other) const                { return x == other.x && y == other.y; }
 	bool operator!=(const Point2DBase& other) const                { return !operator==(other); }
+
+
+	double normquadrat()                      const                { return x*x + y*y; }
+	double operator*(const Point2DBase& v)    const                { return x*v.x + y*v.y; }
 };
 
 

@@ -25,26 +25,34 @@ void DouglasPeuckerAlgorithm::divideOnPoint(const PtItSource firstPoint, const P
 	douglasPeuckerAlgorithmRecursiv(insertPointBefore, dividePoint, lastPoint);
 }
 
+namespace
+{
+	inline double calcDistance(const Point2D& p1, const Point2D& p2, const Point2D& geradenvektor, const Point2D& clickPos)
+	{
+		const Point2D kraftvektor = clickPos-p1;
+		double alpha = (kraftvektor*geradenvektor) / geradenvektor.normquadrat();
+		if(alpha>0 && alpha<1)
+		{
+			return (geradenvektor*alpha).euklidDist(kraftvektor);
+		}
+		return std::min(p1.euklidDist(clickPos), p2.euklidDist(clickPos));
+	}
+}
+
 
 void DouglasPeuckerAlgorithm::douglasPeuckerAlgorithmRecursiv(PtIt insertPointBefore, const PtItSource firstPoint, const PtItSource lastPoint)
 {
 	if(lastPoint == firstPoint)
 		return;
 
-	const double point1X = firstPoint->getX();
-	const double point1Y = firstPoint->getY();
-	const double point2Y = lastPoint->getY();
-	double length = lastPoint->getX() - point1X;
-
+	const Point2D geradenvektor = *lastPoint - *firstPoint;
 	double maxDist = 0;
 	std::vector<Point2D>::const_iterator maxDistIt = firstPoint;
 
-	for(std::vector<Point2D>::const_iterator it = firstPoint; it != lastPoint; ++it)
+	for(std::vector<Point2D>::const_iterator it = firstPoint+1; it != lastPoint; ++it)
 	{
-		const double linePos   = (it->getX() - point1X)/length;
-		const double lineValue = (point1Y)*(1. - linePos) + (point2Y)*linePos;
+		const double dist = calcDistance(*firstPoint, *lastPoint, geradenvektor, *it);
 
-		const double dist = std::abs(lineValue - it->getY());
 		if(dist > maxDist)
 		{
 			maxDist = dist;
