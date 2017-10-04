@@ -13,21 +13,32 @@ class EditSpline : public EditBase
 {
 	OctData::Segmentationlines::Segmentline* segLine = nullptr;
 
-	std::vector<Point2D> supportingPoints;
+	typedef std::vector<Point2D> PointList;
+	typedef PointList::iterator  PointIterator;
+
+	PointList supportingPoints;
 // 	std::vector<double> interpolated;
 
 	void recalcInterpolation();
 
 	bool movePoint = false;
-	std::vector<Point2D>::iterator firstEditPoint;
-	std::vector<Point2D>::iterator actEditPoint;
+	PointIterator  baseEditPoint;
+	PointIterator firstEditPoint;
+	PointIterator  lastEditPoint;
+// 	PointIterator   actEditPoint;
 
 	void paintPoints(QPainter& painter, double factor) const;
 
 	bool testInsertPoint(const Point2D& p, double scaleFactor);
 
+	bool deleteSelectedPoints();
+
+	void resetEditPoints();
+
+	std::tuple<PointIterator, double> findNextPoint(const Point2D& clickPoint);
+
 public:
-	EditSpline(BScanLayerSegmentation* base) : EditBase(base) {}
+	EditSpline(BScanLayerSegmentation* base);
 	virtual ~EditSpline() {}
 
 	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/, double scaleFactor) const override;

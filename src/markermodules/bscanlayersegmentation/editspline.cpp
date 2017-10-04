@@ -152,6 +152,17 @@ namespace
 }
 
 
+EditSpline::EditSpline(BScanLayerSegmentation* base)
+: EditBase(base)
+,  baseEditPoint(supportingPoints.end())
+, firstEditPoint(supportingPoints.end())
+,  lastEditPoint(supportingPoints.end())
+{
+
+}
+
+
+
 void EditSpline::paintPoints(QPainter& painter, double factor) const
 {
 	painter.setPen(QPen(Qt::red));
@@ -159,11 +170,19 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 
 	for(const Point2D& p : supportingPoints)
 		paintPoint(painter, p, factor);
-
+/*
 	if(actEditPoint != supportingPoints.end())
 	{
 		painter.setBrush(QBrush(Qt::green));
 		paintPoint(painter, *actEditPoint, factor);
+	}*/
+
+	if(firstEditPoint != supportingPoints.end() && lastEditPoint != supportingPoints.end())
+	{
+		painter.setBrush(QBrush(Qt::green));
+		PointIterator endIt = lastEditPoint + 1;
+		for(PointIterator pIt = firstEditPoint; pIt != endIt; ++pIt)
+			paintPoint(painter, *pIt, factor);
 	}
 }
 
@@ -176,14 +195,17 @@ void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const 
 
 BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
-	if(!movePoint || !event || !widget || actEditPoint == supportingPoints.end())
+	if(lastEditPoint != firstEditPoint)
 		return BscanMarkerBase::RedrawRequest();
-	Point2D oldPoint = *actEditPoint;
+
+	if(!movePoint || !event || !widget || lastEditPoint == supportingPoints.end())
+		return BscanMarkerBase::RedrawRequest();
+	Point2D oldPoint = *lastEditPoint;
 
 	double scaleFactor = widget->getImageScaleFactor();
-	actEditPoint->setX(std::round(event->x()/scaleFactor));
-	actEditPoint->setY(event->y()/scaleFactor);
-	int pointMove = reorderPoint(actEditPoint, supportingPoints);
+	lastEditPoint->setX(std::round(event->x()/scaleFactor));
+	lastEditPoint->setY(event->y()/scaleFactor);
+	int pointMove = reorderPoint(lastEditPoint, supportingPoints);
 	recalcInterpolation();
 
 
@@ -196,9 +218,9 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 	else
 		pointDrawPos -= pointMove;
 
-	QRect repaintRect = createRec(oldPoint, *actEditPoint);
-	RecPointAdder::addPoints2Rec(repaintRect, actEditPoint, supportingPoints, pointDrawPos);
-	RecPointAdder::addPoints2Rec(repaintRect, actEditPoint, supportingPoints, pointDrawNeg);
+	QRect repaintRect = createRec(oldPoint, *lastEditPoint);
+	RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawPos);
+	RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawNeg);
 
 	updateRec4Paint(repaintRect, scaleFactor);
 	BscanMarkerBase::RedrawRequest request;
@@ -223,7 +245,8 @@ bool EditSpline::testInsertPoint(const Point2D& insertPoint, double scaleFactor)
 			{
 				if(p->getX() > pX)
 				{
-					actEditPoint = supportingPoints.insert(p, insertPoint);
+					firstEditPoint = supportingPoints.insert(p, insertPoint);
+					 lastEditPoint = firstEditPoint;
 					recalcInterpolation();
 					return true;
 				}
@@ -235,12 +258,8 @@ bool EditSpline::testInsertPoint(const Point2D& insertPoint, double scaleFactor)
 }
 
 
-BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, BScanMarkerWidget* widget)
+std::tuple<std::vector<Point2D>::iterator, double> EditSpline::findNextPoint(const Point2D& clickPoint)
 {
-	double scaleFactor = widget->getImageScaleFactor();
-
-	Point2D clickPoint(event->x()/scaleFactor, event->y()/scaleFactor);
-
 	double minDist = std::numeric_limits<double>::infinity();
 	std::vector<Point2D>::iterator minDistPoint = supportingPoints.end();
 	for(std::vector<Point2D>::iterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
@@ -252,37 +271,70 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 			minDistPoint = p;
 		}
 	}
+	return std::make_pair(minDistPoint, minDist);
+}
 
 
-	std::vector<Point2D>::iterator lastEditPoint = actEditPoint;
-	if(event->modifiers() | Qt::Key::Key_Shift)
-		firstEditPoint = actEditPoint;
-	else
-		firstEditPoint = supportingPoints.end();
 
-	if(minDist < 10/scaleFactor)
-	{
-		movePoint = true;
-		actEditPoint = minDistPoint;
-	}
-	else
-	{
-		actEditPoint = supportingPoints.end();
-		movePoint = testInsertPoint(clickPoint, scaleFactor); // TODO: zeichenfenster anpassen (spline geändert!)
-	}
-
+BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, BScanMarkerWidget* widget)
+{
 	BscanMarkerBase::RedrawRequest redraw;
-	if(lastEditPoint != supportingPoints.end() || actEditPoint != supportingPoints.end())
-	{
-		QRect repaintRect;
-		if(lastEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, lastEditPoint);
-		if(actEditPoint  != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, actEditPoint );
+	QRect repaintRect;
+	if(firstEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, firstEditPoint);
+	if( lastEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, lastEditPoint );
 
+	double scaleFactor = widget->getImageScaleFactor();
+	Point2D clickPoint(event->x()/scaleFactor, event->y()/scaleFactor);
+
+	double minDist = 0;
+	PointIterator minDistPoint;
+	std::tie(minDistPoint, minDist) = findNextPoint(clickPoint);
+	bool clickOnPoint = minDist < 10/scaleFactor;
+
+// 	qDebug("%d", event->modifiers());
+
+	if(event->modifiers() & Qt::KeyboardModifier::ShiftModifier)
+	{
+		if(clickOnPoint)
+		{
+			if(baseEditPoint == supportingPoints.end())
+				baseEditPoint = minDistPoint;
+			firstEditPoint = baseEditPoint;
+			lastEditPoint  = minDistPoint ;
+
+			if(firstEditPoint > lastEditPoint)
+				std::swap(firstEditPoint, lastEditPoint);
+
+			redraw.redraw = true;
+		}
+	}
+	else
+	{
+		if(clickOnPoint)
+		{
+			movePoint = true;
+			firstEditPoint = minDistPoint;
+			lastEditPoint  = minDistPoint;
+		}
+		else
+		{
+			firstEditPoint = supportingPoints.end();
+			lastEditPoint  = supportingPoints.end();
+			movePoint = testInsertPoint(clickPoint, scaleFactor); // TODO: zeichenfenster anpassen (spline geändert!)
+		}
+
+		baseEditPoint = firstEditPoint;
+		redraw.redraw = true; // TODO
+	}
+
+
+	if(redraw.redraw)
+	{
+		if(firstEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, firstEditPoint);
+		if( lastEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, lastEditPoint );
 		updateRec4Paint(repaintRect, scaleFactor);
-		redraw.redraw = true;
 		redraw.rect   = repaintRect;
 	}
-
 	return redraw;
 }
 
@@ -318,11 +370,18 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 
 	supportingPoints.clear();
 	supportingPoints = alg.getSupportingPoints();
-	actEditPoint = supportingPoints.end();
-
+	resetEditPoints();
 
 	recalcInterpolation();
 }
+
+void EditSpline::resetEditPoints()
+{
+	firstEditPoint = supportingPoints.end();
+	 lastEditPoint = supportingPoints.end();
+	 baseEditPoint = supportingPoints.end();
+}
+
 
 void EditSpline::recalcInterpolation() // TODO: lokale neuberechnung
 {
@@ -337,20 +396,27 @@ void EditSpline::recalcInterpolation() // TODO: lokale neuberechnung
 
 }
 
+bool EditSpline::deleteSelectedPoints()
+{
+	if(firstEditPoint != supportingPoints.end() && lastEditPoint != supportingPoints.end())
+	{
+		++lastEditPoint;
+		supportingPoints.erase(firstEditPoint, lastEditPoint);
+		recalcInterpolation();
+		resetEditPoints();
+		requestFullUpdate();
+		return true;
+	}
+	return false;
+}
+
 
 bool EditSpline::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 {
 	switch(event->key())
 	{
 		case Qt::Key_Delete:
-			if(actEditPoint != supportingPoints.end())
-			{
-				supportingPoints.erase(actEditPoint);
-				actEditPoint = supportingPoints.end();
-				recalcInterpolation();
-				requestFullUpdate();
-				return true;
-			}
+			return deleteSelectedPoints();
 	}
 
 	return false;
