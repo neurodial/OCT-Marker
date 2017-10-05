@@ -34,6 +34,7 @@ class EditSpline : public EditBase
 	bool deleteSelectedPoints();
 
 	void resetEditPoints();
+	void reduceMarkedPoints();
 
 	std::tuple<PointIterator, double> findNextPoint(const Point2D& clickPoint);
 

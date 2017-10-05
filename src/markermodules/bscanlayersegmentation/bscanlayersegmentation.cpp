@@ -26,7 +26,7 @@
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , editMethodSpline(new EditSpline(this))
-, editMethodPen(new EditPen(this))
+, editMethodPen   (new EditPen   (this))
 {
 	name = tr("Layer Segmentation");
 	id   = "LayerSegmentation";
@@ -40,7 +40,7 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 BScanLayerSegmentation::~BScanLayerSegmentation()
 {
 	delete editMethodSpline;
-	delete editMethodPen;
+	delete editMethodPen   ;
 }
 
 

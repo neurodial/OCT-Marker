@@ -10,22 +10,22 @@
 #include"findsupportingpoints.h"
 #include"pchip.h"
 
-#include<QTime> // TODO
+// #include<QTime> // TODO
 
 
 namespace
 {
 	class RecPointAdder
 	{
-		static void addPointPrivat(QRect& rec, std::vector<Point2D>::const_iterator p)
+		static void addPointPrivat(QRect& rec, const Point2D& p)
 		{
 			const int x1 = rec.x();
 			const int x2 = x1 + rec.width();
 			const int y1 = rec.y();
 			const int y2 = y1 + rec.height();
 
-			const int x = static_cast<int>(p->getX());
-			const int y = static_cast<int>(p->getY());
+			const int x = static_cast<int>(p.getX());
+			const int y = static_cast<int>(p.getY());
 
 			if(x < x1)
 			{
@@ -44,17 +44,26 @@ namespace
 				rec.setHeight(y-y1+1);
 		}
 	public:
-		static void addPoint(QRect& rec, std::vector<Point2D>::const_iterator p)
+		static void addPoint(QRect& rec, const Point2D& p)
 		{
 			if(!rec.isValid())
 			{
-				rec.setX(static_cast<int>(p->getX()));
-				rec.setY(static_cast<int>(p->getY()));
+				rec.setX(static_cast<int>(p.getX()));
+				rec.setY(static_cast<int>(p.getY()));
 				rec.setWidth(1);
 				rec.setHeight(1);
 			}
 			else
 				addPointPrivat(rec, p);
+		}
+
+		static void addPoints(QRect& rec, std::vector<Point2D>::const_iterator begin, const std::vector<Point2D>::const_iterator end)
+		{
+			while(begin != end)
+			{
+				addPoint(rec, *begin);
+				++begin;
+			}
 		}
 
 		static void addPoints2Rec(QRect& rec, std::vector<Point2D>::const_iterator p, const std::vector<Point2D>& vec, const ssize_t addPos = 0)
@@ -66,7 +75,7 @@ namespace
 					if(p+1 == vec.end())
 						break;
 					++p;
-					addPointPrivat(rec, p);
+					addPointPrivat(rec, *p);
 				}
 			}
 			else if(addPos < 0)
@@ -76,7 +85,7 @@ namespace
 					if(p == vec.begin())
 						break;
 					--p;
-					addPointPrivat(rec, p);
+					addPointPrivat(rec, *p);
 				}
 			}
 		}
@@ -280,8 +289,10 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 {
 	BscanMarkerBase::RedrawRequest redraw;
 	QRect repaintRect;
-	if(firstEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, firstEditPoint);
-	if( lastEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, lastEditPoint );
+	if(firstEditPoint != supportingPoints.end())
+		RecPointAdder::addPoints(repaintRect, firstEditPoint, lastEditPoint);
+	if(lastEditPoint  != supportingPoints.end())
+		RecPointAdder::addPoint(repaintRect, *lastEditPoint);
 
 	double scaleFactor = widget->getImageScaleFactor();
 	Point2D clickPoint(event->x()/scaleFactor, event->y()/scaleFactor);
@@ -330,8 +341,10 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 
 	if(redraw.redraw)
 	{
-		if(firstEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, firstEditPoint);
-		if( lastEditPoint != supportingPoints.end()) RecPointAdder::addPoint(repaintRect, lastEditPoint );
+		if(firstEditPoint != supportingPoints.end())
+			RecPointAdder::addPoints(repaintRect, firstEditPoint, lastEditPoint);
+		if(lastEditPoint  != supportingPoints.end())
+			RecPointAdder::addPoint(repaintRect, *lastEditPoint);
 		updateRec4Paint(repaintRect, scaleFactor);
 		redraw.rect   = repaintRect;
 	}
@@ -351,22 +364,13 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 	if(!segLine)
 		return;
 
-	std::vector<Point2D> vals;
-	for(std::size_t x = 0; x < segLine->size(); ++x)
-	{
-		double val = (*segLine)[x];
-		if(val < 1000 && val > 0)
-		{
-			vals.push_back(Point2D(x, val));
-		}
-	}
 
-	QTime t;
-	t.start();
-// 	DouglasPeuckerAlgorithm alg(vals);
-	FindSupportingPoints alg(vals);
+// 	QTime t;
+// 	t.start();
+	FindSupportingPoints alg(*segLine);
+	alg.calculateSupportingPoints();
 
-	qDebug("FindSupportingPoints: %d ms", t.elapsed());
+// 	qDebug("FindSupportingPoints: %d ms", t.elapsed());
 
 	supportingPoints.clear();
 	supportingPoints = alg.getSupportingPoints();
@@ -417,8 +421,42 @@ bool EditSpline::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 	{
 		case Qt::Key_Delete:
 			return deleteSelectedPoints();
+		case Qt::Key_R:
+			reduceMarkedPoints();
+			return true;
 	}
 
 	return false;
 }
 
+void EditSpline::reduceMarkedPoints()
+{
+	if(firstEditPoint != supportingPoints.end() && lastEditPoint != supportingPoints.end())
+	{
+// 		QTime t;
+// 		t.start();
+
+		FindSupportingPoints alg(*segLine, firstEditPoint, lastEditPoint);
+
+		FindSupportingPoints::Config conf;
+		conf.removeTol   *= 2;
+		conf.maxAbsError *= 2;
+		alg.setConfig(conf);
+
+		alg.removePoints();
+		PointList p = alg.getSupportingPoints();
+
+		lastEditPoint = supportingPoints.erase(firstEditPoint+1, lastEditPoint);
+		lastEditPoint = supportingPoints.insert(lastEditPoint, p.begin()+1, p.end());
+
+		if(p.size() > 0)
+			lastEditPoint += p.size() - 1;
+		else
+			--lastEditPoint;
+
+// 		qDebug("FindSupportingPoints: %d ms", t.elapsed());
+
+		recalcInterpolation();
+		requestFullUpdate();
+	}
+}

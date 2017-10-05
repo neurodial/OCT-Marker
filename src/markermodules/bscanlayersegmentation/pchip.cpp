@@ -93,7 +93,10 @@ namespace
 
 PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 {
-	if(points.size() < 2)
+// 	values.clear();
+	values.assign(length, std::numeric_limits<double>::quiet_NaN());
+
+	if(points.size() < 2 || length == 0)
 		return;
 
 	// First derivatives
@@ -108,10 +111,6 @@ PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 
 	const std::size_t len = points.size();
 	assert(len - 1 == delta.size());
-
-	values.clear();
-	values.assign(length, std::numeric_limits<double>::quiet_NaN());
-
 
 	std::size_t nextPointIndex = 0;
 	std::size_t actPointIndex = 0;

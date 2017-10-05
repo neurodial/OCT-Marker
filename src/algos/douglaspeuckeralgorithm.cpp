@@ -2,6 +2,7 @@
 
 #include<iostream>
 #include<cmath>
+#include<algorithm>
 
 DouglasPeuckerAlgorithm::DouglasPeuckerAlgorithm(const std::vector<Point2D>& values, double tol)
 : tol(tol)
