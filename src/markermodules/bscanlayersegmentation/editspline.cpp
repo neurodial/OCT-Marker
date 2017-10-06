@@ -91,27 +91,6 @@ namespace
 		}
 	};
 
-	int reorderPoint(std::vector<Point2D>::iterator& p, const std::vector<Point2D>& vec)
-	{
-		int direction = 0;
-		double x = p->getX();
-		while(p != vec.begin() && (p-1)->getX() > x)
-		{
-			std::iter_swap(p, p-1);
-			--p;
-			--direction;
-		}
-
-		while((p+1) != vec.end() && (p+1)->getX() < x)
-		{
-			std::iter_swap(p, p+1);
-			++p;
-			++direction;
-		}
-		return direction;
-	}
-
-
 	QRect createRec(const Point2D& p1, const Point2D& p2)
 	{
 		double x1 = std::min(p1.getX(), p2.getX());
@@ -179,12 +158,6 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 
 	for(const Point2D& p : supportingPoints)
 		paintPoint(painter, p, factor);
-/*
-	if(actEditPoint != supportingPoints.end())
-	{
-		painter.setBrush(QBrush(Qt::green));
-		paintPoint(painter, *actEditPoint, factor);
-	}*/
 
 	if(firstEditPoint != supportingPoints.end() && lastEditPoint != supportingPoints.end())
 	{
@@ -211,21 +184,20 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 		return BscanMarkerBase::RedrawRequest();
 	Point2D oldPoint = *lastEditPoint;
 
+	const double minPos = (lastEditPoint == supportingPoints.begin())?              0:(lastEditPoint-1)->getX()+1;
+	const double maxPos = (lastEditPoint == supportingPoints.end()-1)?getBScanWidth():(lastEditPoint+1)->getX()-1;
+
 	double scaleFactor = widget->getImageScaleFactor();
-	lastEditPoint->setX(std::round(event->x()/scaleFactor));
-	lastEditPoint->setY(event->y()/scaleFactor);
-	int pointMove = reorderPoint(lastEditPoint, supportingPoints);
+	double newXVal = std::min(maxPos, std::max(minPos, std::round(event->x()/scaleFactor)));
+	double newYVal = std::min(static_cast<double>(getBScanHight()), std::max(0., std::round(event->y()/scaleFactor)));
+
+	lastEditPoint->setX(newXVal);
+	lastEditPoint->setY(newYVal);
 	recalcInterpolation();
 
-
 	// calc paint rect
-	int pointDrawPos =  2;
-	int pointDrawNeg = -2;
-
-	if(pointMove > 0)
-		pointDrawNeg -= pointMove;
-	else
-		pointDrawPos -= pointMove;
+	const int pointDrawPos =  2;
+	const int pointDrawNeg = -2;
 
 	QRect repaintRect = createRec(oldPoint, *lastEditPoint);
 	RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawPos);
