@@ -181,7 +181,7 @@ StupidSplineWindow::StupidSplineWindow()
 
 
 	// General Config
-	setWindowIcon(QIcon(":/icons/image_edit.png"));
+	setWindowIcon(QIcon(":/icons/typeicons/oct_marker_logo.svg"));
 
 	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &StupidSplineWindow::zoomChanged);
 

@@ -11,6 +11,7 @@ void InfoDialogs::showAboutDialog(QWidget* parent)
 	// text += "<br />Dieses Programm entstand im Rahmen der Masterarbeit &#8222;Aktive-Konturen-Methoden zur Segmentierung von OCT-Aufnahmen&#8220;";
 	text += "<br /><br />Author: Kay Gawlik";
 	text += "<br /><br />Icons von <a href=\"http://www.famfamfam.com/lab/icons/silk/\">FamFamFam</a>";
+	text += " und <a href=\"http://s-ings.com/typicons/\">Typicons</a>";
 
 	text += "<br/><br/><b>Build-Informationen</b><table>";
 	text += QString("<tr><td>&#220;bersetzungszeit </td><td> %1 %2</td></tr>").arg(BuildConstants::buildDate).arg(BuildConstants::buildTime);
