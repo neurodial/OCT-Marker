@@ -15,6 +15,12 @@
 
 namespace
 {
+
+	// calc paint rect
+	constexpr const int pointDrawPos =  2;
+	constexpr const int pointDrawNeg = -2;
+
+
 	class RecPointAdder
 	{
 		static void addPointPrivat(QRect& rec, const Point2D& p)
@@ -195,10 +201,6 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 	lastEditPoint->setY(newYVal);
 	recalcInterpolation();
 
-	// calc paint rect
-	const int pointDrawPos =  2;
-	const int pointDrawNeg = -2;
-
 	QRect repaintRect = createRec(oldPoint, *lastEditPoint);
 	RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawPos);
 	RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawNeg);
@@ -303,7 +305,13 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 		{
 			firstEditPoint = supportingPoints.end();
 			lastEditPoint  = supportingPoints.end();
-			movePoint = testInsertPoint(clickPoint, scaleFactor); // TODO: zeichenfenster anpassen (spline geändert!)
+			movePoint = testInsertPoint(clickPoint, scaleFactor);
+
+			if(movePoint)
+			{
+				RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawPos);
+				RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawNeg);
+			}
 		}
 
 		baseEditPoint = firstEditPoint;
