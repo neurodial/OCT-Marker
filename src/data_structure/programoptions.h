@@ -18,6 +18,13 @@ class ProgramOptions
 	static ProgramOptions& getInstance() { static ProgramOptions instance; return instance; }
 
 	QSettings* settings = nullptr;
+
+	struct ConfigList
+	{
+		std::map<QString, std::vector<Option*>> sortedConfig;
+		std::vector<Option*>                    allConfig;
+	};
+
 public:
 	friend class Option;
 
@@ -49,8 +56,13 @@ public:
 	static OptionInt    sloMarkerToolId;
 
 	
+	static OptionDouble layerSegFindPointInsertTol  ;
+	static OptionDouble layerSegFindPointRemoveTol  ;
+	static OptionDouble layerSegFindPointMaxAbsError;
+
+
 	
-	static std::vector<Option*>& getAllOptions()                    { return getAllOptionsPrivate(); }
+	static std::vector<Option*>& getAllOptions()                    { return getAllOptionsPrivate().allConfig; }
 	
 	static void readAllOptions();
 	static void writeAllOptions();
@@ -62,7 +74,7 @@ public:
 	static void setIniFile(const QString& iniFilename);
 private:
 	static void registerOption(Option* option);
-	static std::vector<Option*>& getAllOptionsPrivate();
+	static ConfigList& getAllOptionsPrivate();
 };
 
 

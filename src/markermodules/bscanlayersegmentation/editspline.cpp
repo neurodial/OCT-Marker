@@ -7,6 +7,8 @@
 
 #include <widgets/bscanmarkerwidget.h>
 
+#include <data_structure/programoptions.h>
+
 #include"findsupportingpoints.h"
 #include"pchip.h"
 
@@ -142,6 +144,16 @@ namespace
 		                  , static_cast<int>(p.getY()*factor-4)
 		                  , 8
 		                  , 8);
+	}
+
+	FindSupportingPoints::Config getFindSupportingPointsConfig()
+	{
+		FindSupportingPoints::Config conf;
+		conf.insertTol   = ProgramOptions::layerSegFindPointInsertTol  ();
+		conf.maxAbsError = ProgramOptions::layerSegFindPointMaxAbsError();
+		conf.removeTol   = ProgramOptions::layerSegFindPointRemoveTol  ();
+
+		return conf;
 	}
 }
 
@@ -347,7 +359,9 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 
 // 	QTime t;
 // 	t.start();
+	FindSupportingPoints::Config conf = getFindSupportingPointsConfig();
 	FindSupportingPoints alg(*segLine);
+	alg.setConfig(conf);
 	alg.calculateSupportingPoints();
 
 // 	qDebug("FindSupportingPoints: %d ms", t.elapsed());
@@ -418,7 +432,7 @@ void EditSpline::reduceMarkedPoints()
 
 		FindSupportingPoints alg(*segLine, firstEditPoint, lastEditPoint);
 
-		FindSupportingPoints::Config conf;
+		FindSupportingPoints::Config conf = getFindSupportingPointsConfig();
 		conf.removeTol   *= 2;
 		conf.maxAbsError *= 2;
 		alg.setConfig(conf);

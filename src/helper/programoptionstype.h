@@ -14,11 +14,13 @@ class Option : public QObject
 	Q_OBJECT
 	
 	QString name;
+	QString optClass;
 public:
-	Option(const QString& name);
+	Option(const QString& name, const QString& optClass);
 	virtual ~Option() {}
 	virtual void resetValue() = 0;
-	const QString& getName() const { return name; }
+	const QString& getName()                                  const { return name; }
+	const QString& getClass()                                 const { return optClass; }
 	
 	virtual QVariant getVariant() = 0;
 	virtual void setVariant(const QVariant& variant) = 0;
@@ -37,7 +39,7 @@ class OptionBool : public Option
 
 	QAction action;
 
-	OptionBool(const bool v, const QString& name) : Option(name), value(v), defaultValue(v), action(this)
+	OptionBool(const bool v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v), action(this)
 	{
 		action.setText(QObject::tr(name.toStdString().c_str()));
 		action.setCheckable(true);
@@ -92,7 +94,7 @@ class OptionInt : public Option
 	int value;
 	int defaultValue;
 
-	OptionInt(const int v, const QString& name) : Option(name), value(v), defaultValue(v) {}
+	OptionInt(const int v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v) {}
 	OptionInt(const OptionInt&) = delete;
 	OptionInt& operator=(const OptionInt&) = delete;
 public:
@@ -121,7 +123,7 @@ class OptionDouble : public Option
 	double value;
 	double defaultValue;
 
-	OptionDouble(const double v, const QString& name) : Option(name), value(v), defaultValue(v) {}
+	OptionDouble(const double v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v) {}
 	OptionDouble(const OptionDouble&) = delete;
 	OptionDouble& operator=(const OptionDouble&) = delete;
 public:
@@ -149,7 +151,7 @@ class OptionString : public Option
 	QString value;
 	QString defaultValue;
 
-	OptionString(const QString& v, const QString& name) : Option(name), value(v), defaultValue(v) {}
+	OptionString(const QString& v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v) {}
 	OptionString(const OptionString&) = delete;
 	OptionString& operator=(const OptionString&) = delete;
 public:
@@ -178,7 +180,7 @@ class OptionColor : public Option
 	QColor value;
 	QColor defaultValue;
 
-	OptionColor(const QColor& v, const QString& name) : Option(name), value(v), defaultValue(v) {}
+	OptionColor(const QColor& v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v) {}
 	OptionColor(const OptionColor&) = delete;
 	OptionColor& operator=(const OptionColor&) = delete;
 public:

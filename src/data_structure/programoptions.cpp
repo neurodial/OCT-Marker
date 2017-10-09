@@ -6,41 +6,47 @@
 #include <QColorDialog>
 #include <QSettings>
 
+#include <map>
+
 
 #include <globaldefinitions.h>
 
 
 
-OptionBool  ProgramOptions::bscansShowSegmentationslines(true   , "bscansShowSegmentationslines");
-OptionColor ProgramOptions::bscanSegmetationLineColor   (Qt::red, "bscanSegmetationLineColor"   );
-OptionInt   ProgramOptions::bscanSegmetationLineThicknes(1      , "bscanSegmetationLineThicknes");
+OptionBool  ProgramOptions::bscansShowSegmentationslines(true   , "bscansShowSegmentationslines", "ProgramOptions");
+OptionColor ProgramOptions::bscanSegmetationLineColor   (Qt::red, "bscanSegmetationLineColor"   , "ProgramOptions");
+OptionInt   ProgramOptions::bscanSegmetationLineThicknes(1      , "bscanSegmetationLineThicknes", "ProgramOptions");
 
 
-OptionBool ProgramOptions::fillEmptyPixelWhite(false, "fillEmptyPixelWhite");
-OptionBool ProgramOptions::registerBScans     (true , "registerBScans"     );
-OptionBool ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      );
+OptionBool ProgramOptions::fillEmptyPixelWhite(false, "fillEmptyPixelWhite", "ProgramOptions");
+OptionBool ProgramOptions::registerBScans     (true , "registerBScans"     , "ProgramOptions");
+OptionBool ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      , "ProgramOptions");
 
-OptionBool ProgramOptions::holdOCTRawData     (false, "holdOCTRawData"     );
-OptionBool ProgramOptions::readBScans         (true , "readBScans"         );
+OptionBool ProgramOptions::holdOCTRawData     (false, "holdOCTRawData"     , "ProgramOptions");
+OptionBool ProgramOptions::readBScans         (true , "readBScans"         , "ProgramOptions");
 
-OptionInt  ProgramOptions::e2eGrayTransform   (1    , "e2eGrayTransform"   );
-
-
-OptionBool ProgramOptions::sloShowLabels       (false, "sloShowLabels");
-OptionBool ProgramOptions::sloShowGrid         (true , "sloShowGrid");
-OptionBool ProgramOptions::sloShowBScanMousePos(true , "sloShowBScanMousePos");
-
-OptionInt  ProgramOptions::sloShowsBScansPos   (1    , "sloShowsBScansPos"   ); // 0 nothing, 1 act BScan, 2 all BScans
+OptionInt  ProgramOptions::e2eGrayTransform   (1    , "e2eGrayTransform"   , "ProgramOptions");
 
 
-OptionString ProgramOptions::octDirectory      (".", "octDirectory");
-OptionString ProgramOptions::loadOctdataAtStart("" , "loadOctDataAtStart");
+OptionBool ProgramOptions::sloShowLabels       (false, "sloShowLabels"       , "ProgramOptions");
+OptionBool ProgramOptions::sloShowGrid         (true , "sloShowGrid"         , "ProgramOptions");
+OptionBool ProgramOptions::sloShowBScanMousePos(true , "sloShowBScanMousePos", "ProgramOptions");
 
-OptionBool ProgramOptions::autoSaveOctMarkers         (true, "autoSaveOctMarkers");
-OptionInt  ProgramOptions::defaultFileformatOctMarkers(static_cast<int>(OctMarkerFileformat::INFO)  , "defaultFileformatOctMarkers");
+OptionInt  ProgramOptions::sloShowsBScansPos   (1    , "sloShowsBScansPos"   , "ProgramOptions"); // 0 nothing, 1 act BScan, 2 all BScans
 
-OptionInt  ProgramOptions::bscanMarkerToolId(-1, "bscanMarkerToolId");
-OptionInt  ProgramOptions::  sloMarkerToolId(-1,   "sloMarkerToolId");
+
+OptionString ProgramOptions::octDirectory      (".", "octDirectory"      , "ProgramOptions");
+OptionString ProgramOptions::loadOctdataAtStart("" , "loadOctDataAtStart", "ProgramOptions");
+
+OptionBool ProgramOptions::autoSaveOctMarkers         (true, "autoSaveOctMarkers", "ProgramOptions");
+OptionInt  ProgramOptions::defaultFileformatOctMarkers(static_cast<int>(OctMarkerFileformat::INFO)  , "defaultFileformatOctMarkers", "ProgramOptions");
+
+OptionInt  ProgramOptions::bscanMarkerToolId(-1, "bscanMarkerToolId", "ProgramOptions");
+OptionInt  ProgramOptions::  sloMarkerToolId(-1,   "sloMarkerToolId", "ProgramOptions");
+
+OptionDouble ProgramOptions::layerSegFindPointInsertTol  (0.2 , "PointInsertTol"  , "LayerSeg");
+OptionDouble ProgramOptions::layerSegFindPointRemoveTol  (0.1 , "PointRemoveTol"  , "LayerSeg");
+OptionDouble ProgramOptions::layerSegFindPointMaxAbsError(0.25, "PointMaxAbsError", "LayerSeg");
 
 
 ProgramOptions::ProgramOptions()
@@ -74,30 +80,41 @@ QSettings& ProgramOptions::getSettings()
 void ProgramOptions::readAllOptions()
 {
 	QSettings& settings = getSettings();
-	std::vector<Option*> options = ProgramOptions::getAllOptions();
-	
-	settings.beginGroup("ProgramOptions");
-	for(Option* opt : options)
-		opt->setVariant(settings.value(opt->getName(), opt->getVariant()));
-	settings.endGroup();
+
+	ConfigList& list = getAllOptionsPrivate();
+	for(auto optClass : list.sortedConfig)
+	{
+		std::vector<Option*> options = optClass.second;
+
+		settings.beginGroup(optClass.first);
+		for(Option* opt : options)
+			opt->setVariant(settings.value(opt->getName(), opt->getVariant()));
+		settings.endGroup();
+	}
 }
 
 
 void ProgramOptions::writeAllOptions()
 {
 	QSettings& settings = getSettings();
-	std::vector<Option*> options = ProgramOptions::getAllOptions();
-	
-	settings.beginGroup("ProgramOptions");
-	for(Option* opt : options)
-		settings.setValue(opt->getName(), opt->getVariant());
-	settings.endGroup();
+
+
+	ConfigList& list = getAllOptionsPrivate();
+	for(auto optClass : list.sortedConfig)
+	{
+		std::vector<Option*> options = optClass.second;
+
+		settings.beginGroup(optClass.first);
+		for(Option* opt : options)
+			settings.setValue(opt->getName(), opt->getVariant());
+		settings.endGroup();
+	}
 }
 
 
-std::vector<Option*>& ProgramOptions::getAllOptionsPrivate()
+ProgramOptions::ConfigList& ProgramOptions::getAllOptionsPrivate()
 {
-	static std::vector<Option*> options;
+	static ConfigList options;
 
 	return options;
 }
@@ -106,7 +123,9 @@ std::vector<Option*>& ProgramOptions::getAllOptionsPrivate()
 
 void ProgramOptions::registerOption(Option* option)
 {
-	getAllOptionsPrivate().push_back(option);
+	ConfigList& list = getAllOptionsPrivate();
+	list.allConfig.push_back(option);
+	list.sortedConfig[option->getClass()].push_back(option);
 }
 
 

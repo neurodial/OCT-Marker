@@ -87,6 +87,7 @@ int main(int argc, char **argv)
 		QString iniFile = parser.value("ini-file");
 		ProgramOptions::setIniFile(iniFile);
 	}
+	ProgramOptions::readAllOptions();
 
     const QStringList fileList = parser.positionalArguments();
 
@@ -110,7 +111,6 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		ProgramOptions::readAllOptions();
 		bool loadFile = fileList.size() > 0;
 		OCTMarkerMainWindow octMarkerProg(!loadFile);
 		if(loadFile)

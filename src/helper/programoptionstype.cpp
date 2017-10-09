@@ -4,8 +4,9 @@
 #include <data_structure/programoptions.h>
 
 
-Option::Option(const QString& name)
-: name(name)
+Option::Option(const QString& name, const QString& optClass)
+: name    (name    )
+, optClass(optClass)
 {
 	ProgramOptions::registerOption(this);
 }
