@@ -130,10 +130,10 @@ void WGLayerSeg::markerMethodChanged()
 void WGLayerSeg::setIconsToSimple(int size)
 {
 	QSize iconSize(size, size);
-	actionMarkerMethodPen->setIcon(QIcon(":/icons/pen-15.svg"));
+	actionMarkerMethodPen->setIcon(QIcon(":/icons/typeicons/pencil.svg"));
 	buttonMarkerMethodPen->setIconSize(iconSize);
 
-	actionMarkerMethodSpline->setIcon(QIcon(":/icons/vector-path-curve.svg"));
+	actionMarkerMethodSpline->setIcon(QIcon(":/icons/typeicons/spline.svg"));
 	buttonMarkerMethodSpline->setIconSize(iconSize);
 }
 

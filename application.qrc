@@ -63,5 +63,7 @@
 	<file>icons/arrow_undo.png</file>
 
 	<file>icons/typeicons/oct_marker_logo.svg</file>
+	<file>icons/typeicons/spline.svg</file>
+	<file>icons/typeicons/pencil.svg</file>
 </qresource>
 </RCC>
