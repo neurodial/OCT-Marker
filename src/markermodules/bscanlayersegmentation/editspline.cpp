@@ -74,11 +74,11 @@ namespace
 			}
 		}
 
-		static void addPoints2Rec(QRect& rec, std::vector<Point2D>::const_iterator p, const std::vector<Point2D>& vec, const ssize_t addPos = 0)
+		static void addPoints2Rec(QRect& rec, std::vector<Point2D>::const_iterator p, const std::vector<Point2D>& vec, const int addPos = 0)
 		{
 			if(addPos > 0)
 			{
-				for(ssize_t pos = 0; pos < addPos; ++pos)
+				for(int pos = 0; pos < addPos; ++pos)
 				{
 					if(p+1 == vec.end())
 						break;
@@ -88,7 +88,7 @@ namespace
 			}
 			else if(addPos < 0)
 			{
-				for(ssize_t pos = 0; pos > addPos; --pos)
+				for(int pos = 0; pos > addPos; --pos)
 				{
 					if(p == vec.begin())
 						break;

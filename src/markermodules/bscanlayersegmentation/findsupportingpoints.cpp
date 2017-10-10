@@ -2,6 +2,7 @@
 
 #include<iostream>
 #include<algorithm>
+#include<iterator>
 #include<cmath>
 #include "pchip.h"
 
