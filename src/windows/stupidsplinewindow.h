@@ -22,6 +22,7 @@ class StupidSplineWindow : public QMainWindow
 // 	QProgressBar* loadProgressBar  = nullptr;
 	QAction*      zoomInAction     = nullptr;
 	QAction*      zoomOutAction    = nullptr;
+	QAction*      zoomFitAction    = nullptr;
 
 	QProgressDialog* progressDialog = nullptr;
 
@@ -56,5 +57,7 @@ private slots:
 
 	void loadFileStatusSlot(bool loading);
 	void loadFileProgress(double frac);
+
+	void fitBScanImage2Widget();
 };
 

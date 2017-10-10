@@ -55,10 +55,7 @@ void FindSupportingPoints::calculateSupportingPoints()
 	if(lastPoint->getX() < 0)
 		return;
 
-// 	interpolated.resize(static_cast<std::size_t>(lastPoint->getX()+1));
-
 	destPoints.push_back(*firstPoint);
-// 	divideOnDerivative(values);
 	divideLocalMinMax(firstPoint, lastPoint);
 	destPoints.push_back(*lastPoint);
 
@@ -318,7 +315,11 @@ void FindSupportingPoints::calcAndSetPointError(PtIt firstScope, PtIt point, PtI
 void FindSupportingPoints::updatePointsError()
 {
 	if(destPoints.size() <= 3)
+	{
+		for(DestPoint& point : destPoints)
+			point.error = std::numeric_limits<double>::infinity();
 		return;
+	}
 
 	updateInterpolated();
 
@@ -434,7 +435,7 @@ namespace
 	private:
 		double v1 = 0;
 		double v2 = 0;
-		constexpr static const double tol = 1e-5;
+		constexpr static const double tol = 1e-3;
 	};
 }
 
@@ -452,10 +453,11 @@ void FindSupportingPoints::divideOnDerivative(PtIt insertPointBefore, const PtIt
 
 	for(; it != endPoint; ++it)
 	{
-// 		std::cout << it->getX() << '\t';
 		double value = derivative2(it);
+// 		std::cout << '\n' << it->getX() << " - " << value;
 		if(dir.isPitchChangeAndUpdate(value))
 		{
+// 			std::cout << "\t*";
 			if(ignoreCount > 2)
 			{
 				destPoints.insert(insertPointBefore, *(it+1));
@@ -464,6 +466,8 @@ void FindSupportingPoints::divideOnDerivative(PtIt insertPointBefore, const PtIt
 		}
 		++ignoreCount;
 	}
+
+// 	std::cout << std::endl;
 }
 
 

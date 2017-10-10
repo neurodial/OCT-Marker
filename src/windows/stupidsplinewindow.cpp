@@ -112,7 +112,7 @@ StupidSplineWindow::StupidSplineWindow()
 
 	zoomInAction = new QAction(this);
 	zoomInAction->setText(tr("Zoom +"));
-	zoomInAction->setIcon(QIcon(":/icons/zoom_in_1.svg"));
+	zoomInAction->setIcon(QIcon(":/icons/typicons/zoom-in-outline.svg"));
 	connect(zoomInAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
 	QToolButton* buttonZoomIn = new QToolButton(this);
 	buttonZoomIn->setDefaultAction(zoomInAction);
@@ -121,12 +121,21 @@ StupidSplineWindow::StupidSplineWindow()
 
 	zoomOutAction = new QAction(this);
 	zoomOutAction->setText(tr("Zoom -"));
-	zoomOutAction->setIcon(QIcon(":/icons/zoom_out_1.svg"));
+	zoomOutAction->setIcon(QIcon(":/icons/typicons/zoom-out-outline.svg"));
 	connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
 	QToolButton* buttonZoomOut = new QToolButton(this);
 	buttonZoomOut->setDefaultAction(zoomOutAction);
 	buttonZoomOut->setIconSize(buttonSize);
 	layoutZoomControl->addWidget(buttonZoomOut);
+
+	zoomFitAction = new QAction(this);
+	zoomFitAction->setText(tr("fit image"));
+	zoomFitAction->setIcon(QIcon(":/icons/typicons/arrow-maximise-outline.svg"));
+	connect(zoomFitAction, &QAction::triggered, this, &StupidSplineWindow::fitBScanImage2Widget);
+	QToolButton* buttonZoomFit = new QToolButton(this);
+	buttonZoomFit->setDefaultAction(zoomFitAction);
+	buttonZoomFit->setIconSize(buttonSize);
+	layoutZoomControl->addWidget(buttonZoomFit);
 
 
 	QWidget* widgetZoomControl = new QWidget();
@@ -181,9 +190,10 @@ StupidSplineWindow::StupidSplineWindow()
 
 
 	// General Config
-	setWindowIcon(QIcon(":/icons/typeicons/oct_marker_logo.svg"));
+	setWindowIcon(QIcon(":/icons/typicons/oct_marker_logo.svg"));
 
 	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &StupidSplineWindow::zoomChanged);
+	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged, this, &StupidSplineWindow::fitBScanImage2Widget);
 
 	setIconsInMarkerWidget();
 }
@@ -310,3 +320,10 @@ void StupidSplineWindow::showAboutDialog()
 {
 	InfoDialogs::showAboutDialog(this);
 }
+
+void StupidSplineWindow::fitBScanImage2Widget()
+{
+	bscanMarkerWidget->fitImage(bscanMarkerWidgetScrollArea->width () - 1
+	                          , bscanMarkerWidgetScrollArea->height() - 1);
+}
+

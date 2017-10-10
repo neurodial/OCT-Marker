@@ -32,11 +32,7 @@
 	<file>icons/arrow_out.png</file>
 	<file>icons/arrow_inout.png</file>
 
-	<file>icons/pen-15.svg</file>
-	<file>icons/vector-path-curve.svg</file>
 	<file>icons/question_mark_1.svg</file>
-	<file>icons/zoom_in_1.svg</file>
-	<file>icons/zoom_out_1.svg</file>
 
 	<file>icons/zoom.png</file>
 	<file>icons/zoom_in.png</file>
@@ -62,8 +58,11 @@
 	<file>icons/arrow_redo.png</file>
 	<file>icons/arrow_undo.png</file>
 
-	<file>icons/typeicons/oct_marker_logo.svg</file>
-	<file>icons/typeicons/spline.svg</file>
-	<file>icons/typeicons/pencil.svg</file>
+	<file>icons/typicons/oct_marker_logo.svg</file>
+	<file>icons/typicons/spline.svg</file>
+	<file>icons/typicons/pencil.svg</file>
+	<file>icons/typicons/zoom-in-outline.svg</file>
+	<file>icons/typicons/zoom-out-outline.svg</file>
+	<file>icons/typicons/arrow-maximise-outline.svg</file>
 </qresource>
 </RCC>

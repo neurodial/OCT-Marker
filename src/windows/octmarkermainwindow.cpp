@@ -122,7 +122,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 
 
 	// General Config
-	setWindowIcon(QIcon(":/icons/typeicons/oct_marker_logo.svg"));
+	setWindowIcon(QIcon(":/icons/typicons/oct_marker_logo.svg"));
 	// setActionToggel();
 	setAcceptDrops(true);
 
@@ -341,7 +341,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* actionAboutDialog = new QAction(this);
 	actionAboutDialog->setText(tr("About"));
-	actionAboutDialog->setIcon(QIcon(":/icons/typeicons/oct_marker_logo.svg"));
+	actionAboutDialog->setIcon(QIcon(":/icons/typicons/oct_marker_logo.svg"));
 	connect(actionAboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 	helpMenu->addAction(actionAboutDialog);
 

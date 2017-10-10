@@ -85,6 +85,7 @@ public slots:
 
 	void fitImage2Width (int width );
 	void fitImage2Height(int heigth);
+	void fitImage(int width, int height);
 
 	void zoom_in()                                               { setZoom(scaleFactor+0.5); }
 	void zoom_out()                                              { setZoom(scaleFactor-0.5); }

@@ -149,6 +149,18 @@ void CVImageWidget::fitImage2Height(int heigth)
 		setZoom(static_cast<double>(heigth)/cvImage.rows);
 }
 
+void CVImageWidget::fitImage(int width, int heigth)
+{
+	if(cvImage.cols > 0 && cvImage.rows > 0)
+	{
+		double scale1 = static_cast<double>(width )/cvImage.cols;
+		double scale2 = static_cast<double>(heigth)/cvImage.rows;
+
+		setZoom(std::min(scale1, scale2));
+	}
+}
+
+
 
 
 
