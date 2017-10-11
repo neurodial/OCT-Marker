@@ -207,7 +207,7 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 
 	double scaleFactor = widget->getImageScaleFactor();
 	double newXVal = std::min(maxPos, std::max(minPos, std::round(event->x()/scaleFactor)));
-	double newYVal = std::min(static_cast<double>(getBScanHight()), std::max(0., std::round(event->y()/scaleFactor)));
+	double newYVal = std::min(static_cast<double>(getBScanHight()), std::max(0., event->y()/scaleFactor));
 
 	lastEditPoint->setX(newXVal);
 	lastEditPoint->setY(newYVal);
