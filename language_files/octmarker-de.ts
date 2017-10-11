@@ -124,101 +124,64 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="291"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="191"/>
         <source>ε</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="352"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="232"/>
         <source>add bscan</source>
         <translation>B-Scan hinzufügen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="521"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="368"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="207"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="134"/>
         <source>1234</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="298"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="198"/>
         <source>Max iterations</source>
         <translation>Max. Iterationen</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="153"/>
-        <source>back-propagation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="160"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="47"/>
         <source>Train</source>
         <translation>Trainieren</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="200"/>
         <source>moment scale</source>
-        <translation>Moment</translation>
+        <translation type="vanished">Moment</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="180"/>
-        <source>RPROP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="261"/>
         <source>learn rate</source>
-        <translation>Lernrate</translation>
+        <translation type="vanished">Lernrate</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="214"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="141"/>
         <source>Exampels</source>
         <translation>Beispiele</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="251"/>
-        <source>Δ&lt;sub&gt;0&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="512"/>
-        <source>Δ&lt;sub&gt;min&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="43"/>
-        <source>η&lt;sup&gt;-&lt;/sup&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="78"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="338"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="120"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="218"/>
         <source>Output size</source>
         <translation>Ausgabegröße</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="23"/>
-        <source>η&lt;sup&gt;+&lt;/sup&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="190"/>
-        <source>Δ&lt;sub&gt;max&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="102"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="112"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="54"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="64"/>
         <source>Hidden layers</source>
         <translation>verdeckte Schichten</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="133"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="228"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="238"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="30"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="148"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="158"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -227,19 +190,19 @@
         <translation type="vanished">Ausgabegröße</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="88"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="23"/>
         <source>change</source>
         <translation>Ändern</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="143"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="345"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="40"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="225"/>
         <source>Input size</source>
         <translation>Eingabegröße</translation>
     </message>
     <message>
-        <location filename="../ui/marker_segmentation_nn.ui" line="387"/>
-        <location filename="../ui/marker_segmentation_nn.ui" line="460"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="257"/>
+        <location filename="../ui/marker_segmentation_nn.ui" line="324"/>
         <source>x</source>
         <translation type="unfinished"></translation>
     </message>
@@ -247,7 +210,7 @@
 <context>
     <name>BScanSegmentation</name>
     <message>
-        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="36"/>
+        <location filename="../src/markermodules/bscansegmentation/bscansegmentation.cpp" line="39"/>
         <source>Segmentation marker</source>
         <translation>Manuelle Segmentierung</translation>
     </message>
@@ -537,47 +500,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="279"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="291"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="309"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="321"/>
         <source>BMP - Windows Bitmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="311"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="323"/>
         <source>JPG - Joint Photographic Experts Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="313"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="325"/>
         <source>PNG - Portable Network Graphics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="315"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="327"/>
         <source>PPM - Portable Pixmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="317"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="329"/>
         <source>TIFF - Tagged Image File Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="319"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="331"/>
         <source>XBM - X11 Bitmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="321"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="333"/>
         <source>XPM - X11 Pixmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="323"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="335"/>
         <source>%1 File</source>
         <translation>%1-Datei</translation>
     </message>
@@ -960,7 +923,7 @@
 <context>
     <name>InfoDialogs</name>
     <message>
-        <location filename="../src/windows/infodialogs.cpp" line="23"/>
+        <location filename="../src/windows/infodialogs.cpp" line="24"/>
         <source>About</source>
         <translation>Über OCTMarker</translation>
     </message>
@@ -1382,22 +1345,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="170"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="132"/>
+        <source>fit image</source>
+        <translation>Bild einpassen</translation>
+    </message>
+    <message>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="179"/>
         <source>Quit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="173"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="182"/>
         <source>Save and Close</source>
         <translation>Speichern und Beenden</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="251"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="261"/>
         <source>Error on save</source>
         <translation>Fehler beim speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="251"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="261"/>
         <source>Internal error in saveLayerSegmentation()</source>
         <translation>Interner Fehler in saveLayerSegmentation()</translation>
     </message>
