@@ -51,7 +51,7 @@ BScanIntervalMarker::BScanIntervalMarker(OctMarkerManager* markerManager)
 {
 	name = tr("Interval marker");
 	id   = "IntervalMarker";
-	icon = QIcon(":/icons/intervall_edit.png");
+	icon = QIcon(":/icons/typicons_mod/intervall_mark.svg");
 
 
 	createMarkerMethodActions();

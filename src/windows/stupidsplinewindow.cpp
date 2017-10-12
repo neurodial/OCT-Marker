@@ -291,6 +291,8 @@ void StupidSplineWindow::loadFileStatusSlot(bool loading)
 	}
 	else
 	{
+		QTime t;
+		t.start();
 		if(progressDialog)
 		{
 			progressDialog->setVisible(false);

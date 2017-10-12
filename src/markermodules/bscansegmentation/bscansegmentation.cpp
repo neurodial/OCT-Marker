@@ -39,7 +39,7 @@ BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
 	name = tr("Segmentation marker");
 	id   = "SegmentationMarker";
 	
-	icon = QIcon(":/icons/segline_edit.png");
+	icon = QIcon(":/icons/typicons_mod/manual_seg.svg");
 
 	localOpPaint              = new BScanSegLocalOpPaint    (*this);
 	localOpThresholdDirection = new BScanSegLocalOpThresholdDirection(*this);

@@ -544,11 +544,12 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	QSignalMapper* signalMapperMarker = new QSignalMapper(this);
 	
 	toolBar->setObjectName("ToolBarMarkerChoose");
+// 	toolBar->setIconSize(QSize(60,60));
 
 	QAction* markerAction = new QAction(this);
 	markerAction->setCheckable(true);
 	markerAction->setText(tr("no marker"));
-	markerAction->setIcon(QIcon(":/icons/image.png"));
+	markerAction->setIcon(QIcon(":/icons/own/plain_retina.svg"));
 	markerAction->setChecked(markerManager.getActBscanMarkerId() == -1);
 	connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
 	signalMapperMarker->setMapping(markerAction, -1);

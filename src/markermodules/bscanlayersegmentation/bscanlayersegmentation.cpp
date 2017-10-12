@@ -30,7 +30,7 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 {
 	name = tr("Layer Segmentation");
 	id   = "LayerSegmentation";
-	icon = QIcon(":/icons/seglinelayer_edit.png");
+	icon = QIcon(":/icons/typicons_mod/layer_seg.svg");
 
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
 
@@ -199,7 +199,8 @@ void BScanLayerSegmentation::copySegLinesFromOctData(const std::size_t bScanNr)
 	if(actEditMethod)
 		actEditMethod->segLineChanged(&segData.lines.getSegmentLine(actEditType));
 
-	requestFullUpdate();
+	if(bScanNr == getActBScanNr())
+		requestFullUpdate();
 }
 
 void BScanLayerSegmentation::setSegMethod(BScanLayerSegmentation::SegMethod method)
