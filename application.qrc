@@ -32,8 +32,6 @@
 	<file>icons/arrow_out.png</file>
 	<file>icons/arrow_inout.png</file>
 
-	<file>icons/question_mark_1.svg</file>
-
 	<file>icons/zoom.png</file>
 	<file>icons/zoom_in.png</file>
 	<file>icons/zoom_out.png</file>
@@ -64,5 +62,6 @@
 	<file>icons/typicons/zoom-in-outline.svg</file>
 	<file>icons/typicons/zoom-out-outline.svg</file>
 	<file>icons/typicons/arrow-maximise-outline.svg</file>
+	<file>icons/typicons/info-large-outline.svg</file>
 </qresource>
 </RCC>

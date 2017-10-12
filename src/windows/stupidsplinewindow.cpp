@@ -103,7 +103,7 @@ StupidSplineWindow::StupidSplineWindow()
 	QSize buttonSize(50, 50);
 
 	QToolButton* infoButton = new QToolButton(this);
-	infoButton->setIcon(QIcon(":/icons/question_mark_1.svg"));
+	infoButton->setIcon(QIcon(":/icons/typicons/info-large-outline.svg"));
 	infoButton->setIconSize(buttonSize);
 	infoButton->setToolTip(tr("About"));
 	connect(infoButton, &QToolButton::clicked, this, &StupidSplineWindow::showAboutDialog);
