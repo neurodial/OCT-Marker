@@ -506,8 +506,8 @@ void OCTMarkerMainWindow::setupStatusBar()
 
 void OCTMarkerMainWindow::zoomChanged(double zoom)
 {
-	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 5);
-	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 1);
+	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 8);
+	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 0.5);
 
 	if(zoomMenu)
 	{
