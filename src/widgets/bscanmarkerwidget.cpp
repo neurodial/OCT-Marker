@@ -7,6 +7,8 @@
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
+#include<data_structure/extraseriesdata.h>
+#include<data_structure/conturesegment.h>
 
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
@@ -31,6 +33,7 @@ namespace
 	{
 		return e->modifiers() & Qt::ControlModifier;
 	}
+
 }
 
 BScanMarkerWidget::BScanMarkerWidget()
@@ -43,7 +46,7 @@ BScanMarkerWidget::BScanMarkerWidget()
 	addZoomItems();
 
 	connect(&octdataManager, &OctDataManager::seriesChanged , this, &BScanMarkerWidget::cscanLoaded         );
-	connect(&markerManger  , &OctMarkerManager::bscanChanged, this, &BScanMarkerWidget::bscanChanged        );
+	connect(&markerManger  , &OctMarkerManager::bscanChanged, this, &BScanMarkerWidget::imageChanged        );
 	//connect(&markerManger, &BScanMarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
 
 	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &OctMarkerManager::inkrementBScan);
@@ -115,12 +118,10 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 	
 	OctDataManager& octdataManager = OctDataManager::getInstance();
-	const OctData::Series* series = octdataManager.getSeries();
+	const OctData::Series* series   = octdataManager.getSeries();
+	const OctData::BScan * actBScan = markerManger  .getActBScan();
 	
-	if(!series)
-		return;
-
-	if(!actBscan)
+	if(!series || !actBScan)
 		return;
 
 	QPainter segPainter(this);
@@ -128,21 +129,27 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	pen.setColor(ProgramOptions::bscanSegmetationLineColor());
 	pen.setWidth(ProgramOptions::bscanSegmetationLineThicknes());
 	segPainter.setPen(pen);
-	int bScanHeight = actBscan->getHeight();
+	int bScanHeight = actBScan->getHeight();
 	double scaleFactor = getImageScaleFactor();
 
 	if(ProgramOptions::bscansShowSegmentationslines())
 	{
 
 		for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
-			BScanMarkerWidget::paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(type), scaleFactor);
+			BScanMarkerWidget::paintSegmentationLine(segPainter, bScanHeight, actBScan->getSegmentLine(type), scaleFactor);
 		/*
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::ILM  ), scaleFactor);
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::BM   ), scaleFactor);
 		paintSegmentationLine(segPainter, bScanHeight, actBscan->getSegmentLine(OctData::Segmentationlines::SegmentlineType::NFL  ), scaleFactor);
 		*/
 	}
-	
+
+
+	const ExtraImageData* extraData = markerManger.getExtraImageData();
+	if(extraData)
+	{
+		paintConture(segPainter, extraData->getContourSegments());
+	}
 	
 	QPainter painter(this);
 	
@@ -153,19 +160,47 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	painter.end();
 }
 
-bool BScanMarkerWidget::existsRaw() const
+void BScanMarkerWidget::paintConture(QPainter& painter, const std::vector<ContureSegment>& contours)
 {
-	if(!actBscan)
+	double scaleFactor = getImageScaleFactor();
+
+	for(const ContureSegment& segment : contours)
+	{
+		if(segment.points.size() < 2)
+			continue;
+
+		Point2D lastPoint;
+		if(segment.cirled)
+			lastPoint = segment.points[segment.points.size() - 1];
+		else
+			lastPoint = segment.points[0];
+
+		for(Point2D p : segment.points)
+		{
+			painter.drawLine((p        .getX()+0.5)*scaleFactor
+			               , (p        .getY()+0.5)*scaleFactor
+			               , (lastPoint.getX()+0.5)*scaleFactor
+			               , (lastPoint.getY()+0.5)*scaleFactor);
+			lastPoint = p;
+		}
+	}
+}
+
+
+bool BScanMarkerWidget::existsRaw(const OctData::BScan* bscan) const
+{
+	if(!bscan)
 		return false;
-	return !(actBscan->getRawImage().empty());
+	return !(bscan->getRawImage().empty());
 }
 
 bool BScanMarkerWidget::rawSaveableAsImage() const
 {
-	if(!actBscan)
+	const OctData::BScan* actBScan = markerManger.getActBScan();
+	if(!actBScan)
 		return false;
-	cv::Mat rawImage = actBscan->getRawImage();
-	if(existsRaw())
+	cv::Mat rawImage = actBScan->getRawImage();
+	if(existsRaw(actBScan))
 	{
 		int chanels = rawImage.channels();
 		if(rawImage.depth() == CV_8U || rawImage.depth() == CV_16U)
@@ -178,7 +213,9 @@ bool BScanMarkerWidget::rawSaveableAsImage() const
 
 void BScanMarkerWidget::updateRawExport()
 {
-	bool rawExists       = existsRaw();
+	const OctData::BScan* actBScan = markerManger.getActBScan();
+
+	bool rawExists       = existsRaw(actBScan);
 	bool saveableAsImage = rawSaveableAsImage();
 
 	
@@ -188,17 +225,13 @@ void BScanMarkerWidget::updateRawExport()
 }
 
 
-void BScanMarkerWidget::bscanChanged(int bscanNR)
+void BScanMarkerWidget::imageChanged()
 {
-	const OctData::Series* series = OctDataManager::getInstance().getSeries();
-	if(!series)
-		return;
-	
-	actBscan = series->getBScan(bscanNR);
-	
+	const OctData::BScan* actBScan = markerManger.getActBScan();
+
 	updateRawExport();
-	if(actBscan)
-		showImage(actBscan->getImage());
+	if(actBScan)
+		showImage(actBScan->getImage());
 	else
 		update();
 }
@@ -208,7 +241,7 @@ void BScanMarkerWidget::leaveEvent(QEvent* event)
 	QWidget::leaveEvent(event);
 
 	mouseLeaveImage();
-	mousePosOnBScan(nullptr, 0);
+	mousePosOnBScan(-1);
 
 	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
@@ -219,7 +252,7 @@ void BScanMarkerWidget::leaveEvent(QEvent* event)
 
 void BScanMarkerWidget::cscanLoaded()
 {
-	bscanChanged(markerManger.getActBScan());
+	imageChanged();
 }
 
 void BScanMarkerWidget::viewOptionsChangedSlot()
@@ -256,7 +289,7 @@ void BScanMarkerWidget::wheelEvent(QWheelEvent* wheelE)
 		else
 			emit(bscanChangeInkrement(+1));
 
-		mousePosOnBScan(actBscan, static_cast<double>(wheelE->x())/scaledImageWidth());
+		mousePosOnBScan(static_cast<double>(wheelE->x())/scaledImageWidth());
 	}
 
 	wheelE->accept();
@@ -271,7 +304,7 @@ void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 	int xImg, yImg;
 	transformCoordWidget2Img(event->x(), event->y(), xImg, yImg);
 	mousePosInImage(xImg, yImg);
-	mousePosOnBScan(actBscan, static_cast<double>(event->x())/scaledImageWidth());
+	mousePosOnBScan(static_cast<double>(event->x())/scaledImageWidth());
 
 // 	if(checkControlUsed(event))
 // 		return;
@@ -433,12 +466,13 @@ void BScanMarkerWidget::markersMethodChanged()
 
 void BScanMarkerWidget::saveRawImage()
 {
-	if(actBscan && rawSaveableAsImage())
+	const OctData::BScan* actBScan = markerManger.getActBScan();
+	if(actBScan && rawSaveableAsImage())
 	{
 		QString filename;
 		if(fdSaveRaw(filename))
 		{
-			if(!cv::imwrite(filename.toStdString(), actBscan->getRawImage()))
+			if(!cv::imwrite(filename.toStdString(), actBScan->getRawImage()))
 			{
 				QMessageBox msgBox;
 				msgBox.setText("image not saved");
@@ -451,14 +485,14 @@ void BScanMarkerWidget::saveRawImage()
 
 void BScanMarkerWidget::saveRawMat()
 {
-	
-	if(actBscan && existsRaw())
+	const OctData::BScan* actBScan = markerManger.getActBScan();
+	if(actBScan && existsRaw(actBScan))
 	{
 		QString filename = QFileDialog::getSaveFileName(this, tr("Save raw data as matrix"), "", "CV (*.xml *.jml)");
 		if(!filename.isEmpty())
 		{
 			cv::FileStorage fs(filename.toStdString(), cv::FileStorage::WRITE);
-			fs << "BScan" << actBscan->getRawImage();
+			fs << "BScan" << actBScan->getRawImage();
 		}
 	}
 }
@@ -466,24 +500,26 @@ void BScanMarkerWidget::saveRawMat()
 
 void BScanMarkerWidget::saveRawBin()
 {
-	if(actBscan && existsRaw())
+	const OctData::BScan* actBScan = markerManger.getActBScan();
+	if(actBScan && existsRaw(actBScan))
 	{
 		QString filename = QFileDialog::getSaveFileName(this, tr("Save raw data as bin"), "", "Binary (*.bin)");
 		if(!filename.isEmpty())
 		{
-			CppFW::CVMatTreeStructBin::writeBin(filename.toStdString(), actBscan->getRawImage());
+			CppFW::CVMatTreeStructBin::writeBin(filename.toStdString(), actBScan->getRawImage());
 		}
 	}
 }
 
 void BScanMarkerWidget::saveImageBin()
 {
-	if(actBscan)
+	const OctData::BScan* actBScan = markerManger.getActBScan();
+	if(actBScan)
 	{
 		QString filename = QFileDialog::getSaveFileName(this, tr("Save image data as bin"), "", "Binary (*.bin)");
 		if(!filename.isEmpty())
 		{
-			CppFW::CVMatTreeStructBin::writeBin(filename.toStdString(), actBscan->getImage());
+			CppFW::CVMatTreeStructBin::writeBin(filename.toStdString(), actBScan->getImage());
 		}
 	}
 }

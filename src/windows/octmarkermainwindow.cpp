@@ -902,7 +902,7 @@ void OCTMarkerMainWindow::configBscanChooser()
 	}
 	
 	bscanChooser->setMaximum(static_cast<int>(maxBscan));
-	bscanChooser->setValue(OctMarkerManager::getInstance().getActBScan());
+	bscanChooser->setValue(OctMarkerManager::getInstance().getActBScanNum());
 
 	labelMaxBscan->setText(QString("/%1").arg(maxBscan));
 }

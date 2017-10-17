@@ -3,13 +3,9 @@
 #include<vector>
 #include<data_structure/point2d.h>
 #include<data_structure/conture2d.h>
+#include<data_structure/conturesegment.h>
 
 
-struct ContureSegment
-{
-	std::vector<Point2D> points;
-	bool cirled = false;
-};
 
 class OrderdContures2D
 {

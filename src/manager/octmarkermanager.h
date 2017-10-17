@@ -14,14 +14,17 @@ namespace OctData
 
 class BscanMarkerBase;
 class SloMarkerBase;
+class ExtraSeriesData;
+class ExtraImageData;
 
 class OctMarkerManager : public QObject
 {
 public:
 	static OctMarkerManager& getInstance()                          { static OctMarkerManager instance; return instance; }
 
-	int getActBScan() const                                         { return actBScan; }
+	int getActBScanNum() const                                      { return actBScan; }
 	const OctData::Series* getSeries() const                        { return series;   }
+	const OctData::BScan * getActBScan () const;
 
 
 	BscanMarkerBase* getActBscanMarker()                            { return actBscanMarker; }
@@ -34,6 +37,8 @@ public:
 
 	bool hasChangedSinceLastSave() const                            { if(stateChangedSinceLastSave) return true; return hasActMarkerChanged(); }
 	void resetChangedSinceLastSaveState()                           { stateChangedSinceLastSave = false; }
+
+	const ExtraImageData* getExtraImageData() const;
 
 private:
 	OctMarkerManager();
@@ -52,6 +57,8 @@ private:
 	bool stateChangedSinceLastSave = false;
 
 	bool hasActMarkerChanged() const;
+
+	ExtraSeriesData* extraSeriesData = nullptr;
 
 
 private slots:

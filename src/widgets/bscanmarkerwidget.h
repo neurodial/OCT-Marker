@@ -11,6 +11,8 @@ class QWheelEvent;
 class QMouseEvent;
 class OctMarkerManager;
 
+class ContureSegment;
+
 class BScanMarkerWidget : public CVImageWidget
 {
 	Q_OBJECT
@@ -27,18 +29,20 @@ class BScanMarkerWidget : public CVImageWidget
 	QAction*                                saveRawMatAction   = nullptr;
 	QAction*                                saveRawBinAction   = nullptr;
 	QAction*                                saveImageBinAction = nullptr;
-	const OctData::BScan*                   actBscan           = nullptr;
+// 	const OctData::BScan*                   actBscan           = nullptr;
 
 	bool controlUsed = false;
 	
 	int fdSaveRaw(QString& filename);
 	void updateRawExport();
-	bool existsRaw() const;
+	bool existsRaw(const OctData::BScan* bscan) const;
 	bool rawSaveableAsImage() const;
 
 	bool checkControlUsed(QMouseEvent* event);
 	bool checkControlUsed(QKeyEvent  * event);
 	bool checkControlUsed(bool modPressed);
+
+	void paintConture(QPainter& painter, const std::vector<ContureSegment>& contours);
 
 	void transformCoordWidget2Img(int xWidget, int yWidget, int& xImg, int& yImg)
 	{
@@ -70,7 +74,7 @@ protected:
 	virtual void wheelEvent       (QWheelEvent*) override;
 
 private slots:
-	void bscanChanged(int);
+	void imageChanged();
 	void cscanLoaded();
 
 	void viewOptionsChangedSlot();
@@ -88,7 +92,7 @@ signals:
 	void bscanChangeInkrement(int delta);
 	void mousePosInImage(int x, int y);
 	void mouseLeaveImage();
-	void mousePosOnBScan(const OctData::BScan* bscan, double t);
+	void mousePosOnBScan(double t);
 
 };
 

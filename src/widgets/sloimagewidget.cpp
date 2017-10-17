@@ -89,7 +89,7 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 {
 	CVImageWidget::paintEvent(event);
 
-	const OctData::Series* series           = OctDataManager::getInstance().getSeries();
+	const OctData::Series* series = OctDataManager::getInstance().getSeries();
 	if(!series)
 		return;
 
@@ -168,7 +168,7 @@ void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* serie
 	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
 	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
 	const OctData::CoordTransform& transform = sloImage.getTransform();
-	std::size_t activBScan                   = static_cast<std::size_t>(markerManger.getActBScan());
+	std::size_t activBScan                   = static_cast<std::size_t>(markerManger.getActBScanNum());
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
 	bool paintMarker = false;
@@ -296,13 +296,15 @@ void SLOImageWidget::paintAnalyseGrid(QPainter& painter, const OctData::Series* 
 	}
 }
 
-void SLOImageWidget::showPosOnBScan(const OctData::BScan* bscan, double t)
+void SLOImageWidget::showPosOnBScan(double t)
 {
 	if(!ProgramOptions::sloShowBScanMousePos())
 		return;
 
+	const OctData::BScan* actBScan = markerManger.getActBScan();
+
 	Rect2DInt rect(markPos.p);
-	if(!bscan)
+	if(t<0 || t>1 || !actBScan)
 	{
 		markPos.show = false;
 		rect.addBroder(10);
@@ -310,7 +312,8 @@ void SLOImageWidget::showPosOnBScan(const OctData::BScan* bscan, double t)
 		return;
 	}
 
-	OctData::CoordSLOmm point = bscan->getStart()*(1-t) + bscan->getEnd()*(t); // TODO falsche Richtung?
+
+	OctData::CoordSLOmm point = actBScan->getStart()*(1-t) + actBScan->getEnd()*(t); // TODO falsche Richtung?
 
 	const OctData::Series* series            = OctDataManager::getInstance().getSeries();
 	const OctData::SloImage&       sloImage  = series->getSloImage();

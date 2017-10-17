@@ -65,7 +65,7 @@ public slots:
 	void showBScans(bool show);
 	void showOnylActBScan(bool show);
 
-	void showPosOnBScan(const OctData::BScan* bscan, double t);
+	void showPosOnBScan(double t);
 
 protected:
 	void paintEvent(QPaintEvent* event) override;

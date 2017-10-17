@@ -11,7 +11,7 @@
 
 std::size_t BscanMarkerBase::getActBScanNr() const
 {
-	return static_cast<std::size_t>(markerManager->getActBScan());
+	return static_cast<std::size_t>(markerManager->getActBScanNum());
 }
 
 int BscanMarkerBase::getBScanWidth(std::size_t nr) const

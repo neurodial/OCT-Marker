@@ -2,6 +2,7 @@
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
+#include <data_structure/extraseriesdata.h>
 
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
@@ -36,8 +37,8 @@ namespace bpt = boost::property_tree;
 
 OctMarkerManager::OctMarkerManager()
 : QObject()
+, extraSeriesData(new ExtraSeriesData)
 {
-	
 	OctDataManager& dataManager = OctDataManager::getInstance();
 	connect(&dataManager, &OctDataManager::seriesChanged     , this, &OctMarkerManager::showSeries         );
 	connect(&dataManager, &OctDataManager::saveMarkerState   , this, &OctMarkerManager::saveMarkerStateSlot);
@@ -67,6 +68,8 @@ OctMarkerManager::~OctMarkerManager()
 {
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 		delete obj;
+
+	delete extraSeriesData;
 }
 
 
@@ -121,6 +124,10 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->newSeriesLoaded(s, subtree);
 	}
+
+	if(s)
+		extraSeriesData->loadExtraData(*s, *markerTree);
+
 
 	emit(newBScanShowed(series->getBScan(actBScan)));
 	emit(newSeriesShowed(s));
@@ -272,3 +279,14 @@ void OctMarkerManager::handleSloRedrawAfterMarkerChange()
 	emit(sloViewChanged());
 }
 
+const OctData::BScan* OctMarkerManager::getActBScan() const
+{
+	if(series)
+		return series->getBScan(actBScan);
+	return nullptr;
+}
+
+const ExtraImageData* OctMarkerManager::getExtraImageData() const
+{
+	return extraSeriesData->getBScanExtraData(actBScan);
+}
