@@ -60,6 +60,7 @@ public:
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
+	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
 
     bool event(QEvent *event) override;

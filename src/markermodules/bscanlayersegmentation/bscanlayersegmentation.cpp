@@ -101,6 +101,13 @@ BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mouseReleaseEvent(QMouseE
 	return BscanMarkerBase::RedrawRequest();
 }
 
+void BScanLayerSegmentation::contextMenuEvent(QContextMenuEvent* event)
+{
+	if(actEditMethod)
+		actEditMethod->contextMenuEvent(event);
+}
+
+
 void BScanLayerSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& ptree)
 {
 	resetMarkers(series);

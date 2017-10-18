@@ -47,6 +47,7 @@ public:
 	virtual BscanMarkerBase::RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual BscanMarkerBase::RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual BscanMarkerBase::RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
+	virtual void contextMenuEvent(QContextMenuEvent* event);
 
 
 	virtual bool keyPressEvent(QKeyEvent*, BScanMarkerWidget*) override;

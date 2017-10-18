@@ -12,6 +12,7 @@ class BScanMarkerWidget;
 class QKeyEvent;
 class QEvent;
 class QToolBar;
+class QContextMenuEvent;
 
 class OctMarkerManager;
 class SLOImageWidget;
@@ -51,6 +52,7 @@ public:
 	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) { return RedrawRequest(); }
 	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) { return RedrawRequest(); }
 	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) { return RedrawRequest(); }
+	virtual void contextMenuEvent (QContextMenuEvent* /*event*/) {}
 	
 	virtual bool toolTipEvent     (QEvent*     , BScanMarkerWidget*) { return false; }
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) { return false; }

@@ -54,9 +54,12 @@ void CVImageWidget::addZoomItems()
 
 void CVImageWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-	QWidget::contextMenuEvent(event);
-	contextMenu->setVisible(true);
-	contextMenu->exec(event->globalPos());
+	if(!event->isAccepted())
+	{
+		QWidget::contextMenuEvent(event);
+		contextMenu->setVisible(true);
+		contextMenu->exec(event->globalPos());
+	}
 }
 
 void CVImageWidget::showImage(const cv::Mat& image)

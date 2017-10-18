@@ -296,6 +296,16 @@ void BScanMarkerWidget::wheelEvent(QWheelEvent* wheelE)
 }
 
 
+void BScanMarkerWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+	event->ignore();
+	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
+	if(actMarker)
+		actMarker->contextMenuEvent(event);
+	CVImageWidget::contextMenuEvent(event);
+}
+
+
 void BScanMarkerWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	QWidget::mouseMoveEvent(event);

@@ -57,7 +57,7 @@ public:
 	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
-
+	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
 	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
 	virtual void loadState(boost::property_tree::ptree& markerTree)  override;

@@ -11,6 +11,7 @@ class QRect;
 class BScanMarkerWidget;
 
 class BScanLayerSegmentation;
+class QContextMenuEvent;
 
 
 class EditBase
@@ -24,6 +25,7 @@ public:
 	virtual BscanMarkerBase::RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };
 	virtual BscanMarkerBase::RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };
 	virtual BscanMarkerBase::RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };
+	virtual void contextMenuEvent(QContextMenuEvent* /*event*/) {}
 
 	virtual bool keyPressEvent(QKeyEvent*, BScanMarkerWidget*)      { return false;}
 

@@ -45,6 +45,8 @@ BscanMarkerBase::RedrawRequest EditPen::mouseReleaseEvent(QMouseEvent* event, BS
 	return BscanMarkerBase::RedrawRequest();
 }
 
+
+
 void EditPen::segLineChanged(OctData::Segmentationlines::Segmentline* segLine)
 {
 	this->segLine = segLine;

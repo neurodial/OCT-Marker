@@ -18,7 +18,6 @@ class FilterImage;
 class CVImageWidget : public QWidget
 {
 	Q_OBJECT
-	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
 	enum class ScaleMethod { Factor, Size };
 	
@@ -61,6 +60,7 @@ public:
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
 	virtual void wheelEvent       (QWheelEvent*) override;
+	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
 	QImage   qtImage;
 	cv::Mat  cvImage;
