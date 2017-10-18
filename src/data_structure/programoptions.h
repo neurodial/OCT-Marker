@@ -32,6 +32,8 @@ public:
 	static OptionColor bscanSegmetationLineColor;
 	static OptionInt   bscanSegmetationLineThicknes;
 	
+	static OptionBool  bscanShowExtraSegmentationslines;
+
 	static OptionBool fillEmptyPixelWhite;
 	static OptionBool registerBScans;
 	static OptionBool loadRotateSlo;

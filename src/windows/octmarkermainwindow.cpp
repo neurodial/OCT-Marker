@@ -299,15 +299,12 @@ void OCTMarkerMainWindow::setupMenu()
 	QMenu* viewMenu = new QMenu(this);
 	viewMenu->setTitle(tr("View"));
 
-	QAction* actionChangeSegmetationLineColor = new QAction(this);
-	actionChangeSegmetationLineColor->setText(tr("change segmentation line color"));
-	actionChangeSegmetationLineColor->setIcon(QIcon(":/icons/color_wheel.png"));
-	connect(actionChangeSegmetationLineColor, &QAction::triggered, &ProgramOptions::bscanSegmetationLineColor, &OptionColor::showColorDialog);
-	viewMenu->addAction(actionChangeSegmetationLineColor);
-
+	viewMenu->addAction(createColorOptionAction(ProgramOptions::bscanSegmetationLineColor, tr("change segmentation line color")));
 	viewMenu->addSeparator();
 	viewMenu->addAction(createColorOptionAction(ProgramOptions::layerSegActiveLineColor, tr("Active line color")));
 	viewMenu->addAction(createColorOptionAction(ProgramOptions::layerSegPassivLineColor, tr("Passiv line color")));
+	viewMenu->addSeparator();
+	viewMenu->addAction(ProgramOptions::bscanShowExtraSegmentationslines.getAction());
 
 
 	// ----------

@@ -51,9 +51,10 @@ BScanMarkerWidget::BScanMarkerWidget()
 
 	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &OctMarkerManager::inkrementBScan);
 
-	connect(&ProgramOptions::bscansShowSegmentationslines, &OptionBool ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
-	connect(&ProgramOptions::bscanSegmetationLineColor   , &OptionColor::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
-	connect(&ProgramOptions::bscanSegmetationLineThicknes, &OptionInt  ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+	connect(&ProgramOptions::bscansShowSegmentationslines    , &OptionBool ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+	connect(&ProgramOptions::bscanSegmetationLineColor       , &OptionColor::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+	connect(&ProgramOptions::bscanSegmetationLineThicknes    , &OptionInt  ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+	connect(&ProgramOptions::bscanShowExtraSegmentationslines, &OptionBool ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 	
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);
@@ -148,7 +149,8 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	const ExtraImageData* extraData = markerManger.getExtraImageData();
 	if(extraData)
 	{
-		paintConture(segPainter, extraData->getContourSegments());
+		if(ProgramOptions::bscanShowExtraSegmentationslines())
+			paintConture(segPainter, extraData->getContourSegments());
 	}
 	
 	QPainter painter(this);

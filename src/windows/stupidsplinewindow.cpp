@@ -271,7 +271,7 @@ void StupidSplineWindow::closeEvent(QCloseEvent* e)
 {
 	if(!saved)
 	{
-		int ret = QMessageBox::critical(this, tr("Data not saved"), tr("Data not saved!<br />Quit program?"), QMessageBox::Yes | QMessageBox::No);
+		int ret = QMessageBox::warning(this, tr("Data not saved"), tr("Data not saved!<br />Quit program?"), QMessageBox::Yes | QMessageBox::No);
 		if(ret == QMessageBox::No)
 			return e->ignore();
 	}

@@ -17,6 +17,8 @@ OptionBool  ProgramOptions::bscansShowSegmentationslines(true   , "bscansShowSeg
 OptionColor ProgramOptions::bscanSegmetationLineColor   (Qt::red, "bscanSegmetationLineColor"   , "ProgramOptions");
 OptionInt   ProgramOptions::bscanSegmetationLineThicknes(1      , "bscanSegmetationLineThicknes", "ProgramOptions");
 
+OptionBool  ProgramOptions::bscanShowExtraSegmentationslines(true, "bscanShowExtraSegmentationslines", "ExtraData");
+
 
 OptionBool ProgramOptions::fillEmptyPixelWhite(false, "fillEmptyPixelWhite", "ProgramOptions");
 OptionBool ProgramOptions::registerBScans     (true , "registerBScans"     , "ProgramOptions");
