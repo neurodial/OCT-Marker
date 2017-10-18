@@ -134,16 +134,16 @@ namespace
 	void updateRec4Paint(QRect& rect, double scaleFactor)
 	{
 		rect *= scaleFactor;
-		int adjustSize = 12;
+		int adjustSize = ProgramOptions::layerSegSplinePointSize() + 4;
 		rect.adjust(-adjustSize, -adjustSize, adjustSize, adjustSize);
 	}
 
-	void paintPoint(QPainter& painter, const Point2D& p, double factor)
+	void paintPoint(QPainter& painter, const Point2D& p, double factor, int size)
 	{
-		painter.drawEllipse(static_cast<int>(p.getX()*factor-4)
-		                  , static_cast<int>(p.getY()*factor-4)
-		                  , 8
-		                  , 8);
+		painter.drawEllipse(static_cast<int>(p.getX()*factor-size/2)
+		                  , static_cast<int>(p.getY()*factor-size/2)
+		                  , size
+		                  , size);
 	}
 
 	FindSupportingPoints::Config getFindSupportingPointsConfig()
@@ -174,15 +174,17 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 	painter.setPen(QPen(Qt::red));
 	painter.setBrush(QBrush(Qt::black));
 
+	const int pointSize = ProgramOptions::layerSegSplinePointSize();
+
 	for(const Point2D& p : supportingPoints)
-		paintPoint(painter, p, factor);
+		paintPoint(painter, p, factor, pointSize);
 
 	if(firstEditPoint != supportingPoints.end() && lastEditPoint != supportingPoints.end())
 	{
 		painter.setBrush(QBrush(Qt::green));
 		PointIterator endIt = lastEditPoint + 1;
 		for(PointIterator pIt = firstEditPoint; pIt != endIt; ++pIt)
-			paintPoint(painter, *pIt, factor);
+			paintPoint(painter, *pIt, factor, pointSize);
 	}
 }
 

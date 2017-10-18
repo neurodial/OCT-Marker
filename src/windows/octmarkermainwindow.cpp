@@ -305,6 +305,10 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(actionChangeSegmetationLineColor, &QAction::triggered, &ProgramOptions::bscanSegmetationLineColor, &OptionColor::showColorDialog);
 	viewMenu->addAction(actionChangeSegmetationLineColor);
 
+	viewMenu->addSeparator();
+	viewMenu->addAction(createColorOptionAction(ProgramOptions::layerSegActiveLineColor, tr("Active line color")));
+	viewMenu->addAction(createColorOptionAction(ProgramOptions::layerSegPassivLineColor, tr("Passiv line color")));
+
 
 	// ----------
 	// Extras
@@ -470,6 +474,16 @@ void OCTMarkerMainWindow::setupMenu()
 
 	addToolBar(toolBar);
 }
+
+QAction * OCTMarkerMainWindow::createColorOptionAction(OptionColor& opt, const QString& text)
+{
+	QAction* colorAction = new QAction(this);
+	colorAction->setText(text);
+	colorAction->setIcon(QIcon(":/icons/color_wheel.png"));
+	connect(colorAction, &QAction::triggered, &opt, &OptionColor::showColorDialog);
+	return colorAction;
+}
+
 
 void OCTMarkerMainWindow::addZoomAction(int zoom, CVImageWidget* bscanMarkerWidget, QMenu& menue)
 {

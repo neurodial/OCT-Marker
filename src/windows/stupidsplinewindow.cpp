@@ -86,8 +86,7 @@ StupidSplineWindow::StupidSplineWindow()
 	connect(&octDataManager, &OctDataManager::loadFileSignal  , this, &StupidSplineWindow::loadFileStatusSlot);
 	connect(&octDataManager, &OctDataManager::loadFileProgress, this, &StupidSplineWindow::loadFileProgress  );
 
-
-	setWindowTitle(tr("OCT-Marker - simple spline gui"));
+	updateWindowTitle();
 
 
 	QSettings& settings = ProgramOptions::getSettings();
@@ -175,15 +174,26 @@ StupidSplineWindow::StupidSplineWindow()
 
 
 	QDockWidget* dwSaveAndClose = new QDockWidget(this);
+	QWidget* widgetSaveAndClose = new QWidget(dwSaveAndClose);
 	dwSaveAndClose->setFeatures(0);
 	dwSaveAndClose->setWindowTitle(tr("Quit"));
 	dwSaveAndClose->setObjectName("dwSaveAndClose");
+	QVBoxLayout* dcSaveAndCloseLayout = new QVBoxLayout(widgetSaveAndClose);
+
 	QPushButton* buttonSaveAndClose = new QPushButton(this);
 	buttonSaveAndClose->setText(tr("Save and Close"));
 	buttonSaveAndClose->setFont(QFont("Times", 24, QFont::Bold));
-	connect(buttonSaveAndClose, &QAbstractButton::clicked, this, &StupidSplineWindow::close);
+	connect(buttonSaveAndClose, &QAbstractButton::clicked, this, &StupidSplineWindow::saveAndClose);
+	dcSaveAndCloseLayout->addWidget(buttonSaveAndClose);
 
-	dwSaveAndClose->setWidget(buttonSaveAndClose);
+	QPushButton* buttonClose = new QPushButton(this);
+	buttonClose->setText(tr("Quit"));
+	 buttonClose->setFont(QFont("Times", 24, QFont::Bold));
+	connect(buttonClose, &QAbstractButton::clicked, this, &StupidSplineWindow::close);
+	dcSaveAndCloseLayout->addWidget(buttonClose);
+
+	widgetSaveAndClose->setLayout(dcSaveAndCloseLayout);
+	dwSaveAndClose->setWidget(widgetSaveAndClose);
 	dwSaveAndClose->setTitleBarWidget(new QWidget());
 	addDockWidget(Qt::LeftDockWidgetArea, dwSaveAndClose);
 
@@ -206,8 +216,8 @@ StupidSplineWindow::~StupidSplineWindow()
 
 void StupidSplineWindow::zoomChanged(double zoom)
 {
-	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 5);
-	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 1);
+	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 8);
+	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 0.5);
 }
 
 
@@ -230,7 +240,9 @@ bool StupidSplineWindow::saveLayerSegmentation()
 		return false;
 
 	QString filename = OctDataManager::getInstance().getLoadedFilename() + ".segmentation.bin";
-	return layerSegmentationModul->saveSegmentation2Bin(filename.toStdString());
+	bool saveResult = layerSegmentationModul->saveSegmentation2Bin(filename.toStdString());
+	saved = saveResult;
+	return saveResult;
 }
 
 bool StupidSplineWindow::copyLayerSegmentationFromOCTData()
@@ -257,8 +269,12 @@ bool StupidSplineWindow::setIconsInMarkerWidget()
 
 void StupidSplineWindow::closeEvent(QCloseEvent* e)
 {
-	if(!saveLayerSegmentation())
-		QMessageBox::critical(this, tr("Error on save"), tr("Internal error in saveLayerSegmentation()"));
+	if(!saved)
+	{
+		int ret = QMessageBox::critical(this, tr("Data not saved"), tr("Data not saved!<br />Quit program?"), QMessageBox::Yes | QMessageBox::No);
+		if(ret == QMessageBox::No)
+			return e->ignore();
+	}
 
 
 	// save programoptions
@@ -291,8 +307,6 @@ void StupidSplineWindow::loadFileStatusSlot(bool loading)
 	}
 	else
 	{
-		QTime t;
-		t.start();
 		if(progressDialog)
 		{
 			progressDialog->setVisible(false);
@@ -300,6 +314,7 @@ void StupidSplineWindow::loadFileStatusSlot(bool loading)
 			progressDialog->deleteLater();
 			progressDialog = nullptr;
 		}
+		updateWindowTitle();
 		copyLayerSegmentationFromOCTData();
 	}
 }
@@ -325,7 +340,24 @@ void StupidSplineWindow::showAboutDialog()
 
 void StupidSplineWindow::fitBScanImage2Widget()
 {
-	bscanMarkerWidget->fitImage(bscanMarkerWidgetScrollArea->width () - 1
-	                          , bscanMarkerWidgetScrollArea->height() - 1);
+	bscanMarkerWidget->fitImage(bscanMarkerWidgetScrollArea->width () - 2
+	                          , bscanMarkerWidgetScrollArea->height() - 2);
 }
 
+void StupidSplineWindow::updateWindowTitle()
+{
+	const QString& filename = OctDataManager::getInstance().getLoadedFilename();
+
+	if(filename.isEmpty())
+		setWindowTitle(tr("OCT-Marker - simple spline gui"));
+	else
+		setWindowTitle(tr("OCT-Marker - simple spline gui") + " - " + filename);
+}
+
+void StupidSplineWindow::saveAndClose()
+{
+	if(!saveLayerSegmentation())
+		QMessageBox::critical(this, tr("Error on save"), tr("Internal error in saveLayerSegmentation()"));
+	else
+		close();
+}

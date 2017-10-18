@@ -11,6 +11,7 @@ class QProgressBar;
 class QUrl;
 class QMenu;
 class CVImageWidget;
+class OptionColor;
 
 class BScanMarkerWidget;
 class DWSloImage;
@@ -30,6 +31,7 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	void createMarkerToolbar();
 	void addZoomAction(int zoom, CVImageWidget* bscanMarkerWidget, QMenu& menue);
+	QAction* createColorOptionAction(OptionColor& opt, const QString& text);
 
 
 	QDockWidget*          dwSloImage                  = nullptr;

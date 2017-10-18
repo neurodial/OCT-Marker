@@ -26,6 +26,7 @@ class StupidSplineWindow : public QMainWindow
 
 	QProgressDialog* progressDialog = nullptr;
 
+	bool saved = false;
 
 // 	bool addFile(const QString& filename);
 // 	std::size_t loadFolder(const QString& foldername, int numMaxRecursiv = 10);
@@ -37,6 +38,8 @@ class StupidSplineWindow : public QMainWindow
 	bool saveLayerSegmentation();
 	bool copyLayerSegmentationFromOCTData();
 	bool setIconsInMarkerWidget();
+
+	void updateWindowTitle();
 
 	BScanLayerSegmentation* getLayerSegmentationModul();
 public:
@@ -54,6 +57,7 @@ private slots:
 	void zoomChanged(double zoom);
 	void showAboutDialog();
 
+	void saveAndClose();
 
 	void loadFileStatusSlot(bool loading);
 	void loadFileProgress(double frac);

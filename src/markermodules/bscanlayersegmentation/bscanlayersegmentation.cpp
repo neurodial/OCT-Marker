@@ -52,12 +52,12 @@ void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* wi
 
 
 	QPen penEdit;
-	penEdit.setColor(Qt::red);
-	penEdit.setWidth(2);
+	penEdit.setColor(ProgramOptions::layerSegActiveLineColor());
+	penEdit.setWidth(ProgramOptions::layerSegActiveLineSize ());
 
 	QPen penNormal;
-	penNormal.setColor(Qt::blue);
-	penNormal.setWidth(1);
+	penNormal.setColor(ProgramOptions::layerSegPassivLineColor());
+	penNormal.setWidth(ProgramOptions::layerSegPassivLineSize ());
 
 
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())

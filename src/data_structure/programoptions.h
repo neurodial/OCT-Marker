@@ -60,6 +60,11 @@ public:
 	static OptionDouble layerSegFindPointRemoveTol  ;
 	static OptionDouble layerSegFindPointMaxAbsError;
 
+	static OptionColor  layerSegActiveLineColor;
+	static OptionColor  layerSegPassivLineColor;
+	static OptionInt    layerSegActiveLineSize;
+	static OptionInt    layerSegPassivLineSize;
+	static OptionInt    layerSegSplinePointSize;
 
 	
 	static std::vector<Option*>& getAllOptions()                    { return getAllOptionsPrivate().allConfig; }

@@ -49,6 +49,14 @@ OptionDouble ProgramOptions::layerSegFindPointRemoveTol  (0.1 , "PointRemoveTol"
 OptionDouble ProgramOptions::layerSegFindPointMaxAbsError(0.25, "PointMaxAbsError", "LayerSeg");
 
 
+OptionColor  ProgramOptions::layerSegActiveLineColor     (Qt::red , "ActiveLineColor", "LayerSeg");
+OptionColor  ProgramOptions::layerSegPassivLineColor     (Qt::blue, "PassivLineColor", "LayerSeg");
+OptionInt    ProgramOptions::layerSegActiveLineSize      (       2, "ActiveLineSize" , "LayerSeg");
+OptionInt    ProgramOptions::layerSegPassivLineSize      (       1, "PassivLineSize" , "LayerSeg");
+
+OptionInt    ProgramOptions::layerSegSplinePointSize     (       8, "SplinePointSize", "LayerSeg");
+
+
 ProgramOptions::ProgramOptions()
 : settings(new QSettings("becrf", "oct-marker"))
 {

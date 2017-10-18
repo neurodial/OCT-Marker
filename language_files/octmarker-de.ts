@@ -56,24 +56,24 @@
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="71"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="491"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="501"/>
         <source>Save raw data as matrix</source>
         <translation>Rohdaten als openCV-Matrix speichern</translation>
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="80"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="506"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="516"/>
         <source>Save raw data as bin</source>
         <translation>Rohdaten im Bin-Format speichern</translation>
     </message>
     <message>
         <location filename="../src/widgets/bscanmarkerwidget.cpp" line="86"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="519"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="529"/>
         <source>Save image data as bin</source>
         <translation>Bild im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="531"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="541"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
@@ -500,47 +500,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="291"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="294"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="321"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="324"/>
         <source>BMP - Windows Bitmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="323"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="326"/>
         <source>JPG - Joint Photographic Experts Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="325"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="328"/>
         <source>PNG - Portable Network Graphics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="327"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="330"/>
         <source>PPM - Portable Pixmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="329"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="332"/>
         <source>TIFF - Tagged Image File Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="331"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="334"/>
         <source>XBM - X11 Bitmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="333"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="336"/>
         <source>XPM - X11 Pixmap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="335"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="338"/>
         <source>%1 File</source>
         <translation>%1-Datei</translation>
     </message>
@@ -1325,47 +1325,59 @@
 <context>
     <name>StupidSplineWindow</name>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="90"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="352"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="354"/>
         <source>OCT-Marker - simple spline gui</source>
         <translation>OCT-Marker - vereinfachte Spline-Oberfläche</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="108"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="107"/>
         <source>About</source>
         <translation>Über OCT-Marker</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="114"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="113"/>
         <source>Zoom +</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="123"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="122"/>
         <source>Zoom -</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="132"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="131"/>
         <source>fit image</source>
         <translation>Bild einpassen</translation>
     </message>
     <message>
         <location filename="../src/windows/stupidsplinewindow.cpp" line="179"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="190"/>
         <source>Quit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="182"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="184"/>
         <source>Save and Close</source>
         <translation>Speichern und Beenden</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="261"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="274"/>
+        <source>Data not saved</source>
+        <translation>Daten nicht gespeichert</translation>
+    </message>
+    <message>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="274"/>
+        <source>Data not saved!&lt;br /&gt;Quit program?</source>
+        <translation>Daten nicht gespeichert&lt;br /&gt;Programm beenden?</translation>
+    </message>
+    <message>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="360"/>
         <source>Error on save</source>
         <translation>Fehler beim speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="261"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="360"/>
         <source>Internal error in saveLayerSegmentation()</source>
         <translation>Interner Fehler in saveLayerSegmentation()</translation>
     </message>
