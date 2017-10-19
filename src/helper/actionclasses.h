@@ -28,10 +28,12 @@ private slots:
 public slots:
 	void valueChanged(int v)
 	{
+		blockSignals(true);
 		if(v == valTrue)
 			setChecked(true);
 		else
 			setChecked(false);
+		blockSignals(false);
 	}
 };
 
