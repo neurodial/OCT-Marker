@@ -356,14 +356,10 @@ void WGSegmentation::slotLocalOperation(bool checked)
 	if(!checked)
 		return;
 
-	if(buttonLocalOperationErode->isChecked())
-		localOpOperation->setOperationData(BScanSegmentationMarker::Operation::Erode);
-	else if(buttonLocalOperationDilate->isChecked())
-		localOpOperation->setOperationData(BScanSegmentationMarker::Operation::Dilate);
-	else if(buttonLocalOperationOpenClose->isChecked())
-		localOpOperation->setOperationData(BScanSegmentationMarker::Operation::OpenClose);
-	else
-		localOpOperation->setOperationData(BScanSegmentationMarker::Operation::Median);
+	     if(buttonLocalOperationErode    ->isChecked()) localOpOperation->setOperationData(BScanSegmentationMarker::Operation::Erode    );
+	else if(buttonLocalOperationDilate   ->isChecked()) localOpOperation->setOperationData(BScanSegmentationMarker::Operation::Dilate   );
+	else if(buttonLocalOperationOpenClose->isChecked()) localOpOperation->setOperationData(BScanSegmentationMarker::Operation::OpenClose);
+	else                                                localOpOperation->setOperationData(BScanSegmentationMarker::Operation::Median   );
 
 	localOpOperation->setOperatorSizeWidth (localSizeOperationWidthSpinBox ->value());
 	localOpOperation->setOperatorSizeHeight(localSizeOperationHeightSpinBox->value());
@@ -487,7 +483,10 @@ void WGSegmentation::setCreateNewSeriesStartValueEnable(bool b)
 	buttonSeriesExtendLeftRightSpace ->setEnabled(b);
 	buttonSeriesRemoveUnconectedAreas->setEnabled(b);
 
+	buttonImportOCT                  ->setEnabled(b);
+
 	checkBoxCreateNewSeriesStartValue->setChecked(b);
+
 
 	allowInitSeries = b;
 }
@@ -599,28 +598,18 @@ void WGSegmentationThreshold::setupWidgets()
 		strFailFacBox->setMaximum(1);
 	}
 
-	if(absoluteBox)
-		connect(absoluteBox  , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
-	if(relativeBox)
-		connect(relativeBox  , static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::widgetActivated);
-	if(strikesBox)
-		connect(strikesBox   , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
-	if(strFailFacBox)
-		connect(strFailFacBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::widgetActivated);
+	if(absoluteBox  ) connect(absoluteBox  , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
+	if(relativeBox  ) connect(relativeBox  , static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::widgetActivated);
+	if(strikesBox   ) connect(strikesBox   , static_cast<void(QSpinBox::*      )(int   )>(&QSpinBox::valueChanged)      , this, &WGSegmentationThreshold::widgetActivated);
+	if(strFailFacBox) connect(strFailFacBox, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &WGSegmentationThreshold::widgetActivated);
 
-	if(buttonUp)
-		connect(buttonUp     , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
-	if(buttonDown)
-		connect(buttonDown   , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
-	if(buttonLeft)
-		connect(buttonLeft   , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
-	if(buttonRight)
-		connect(buttonRight  , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonUp     ) connect(buttonUp     , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonDown   ) connect(buttonDown   , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonLeft   ) connect(buttonLeft   , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonRight  ) connect(buttonRight  , &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
 
-	if(buttonAbsolut)
-		connect(buttonAbsolut, &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
-	if(buttonRelativ)
-		connect(buttonRelativ, &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonAbsolut) connect(buttonAbsolut, &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
+	if(buttonRelativ) connect(buttonRelativ, &QAbstractButton::clicked, this, &WGSegmentationThreshold::widgetActivated);
 
 }
 
