@@ -184,9 +184,35 @@ void OctDataManager::loadOctDataThreadFinish()
 
 			actFilename = loadThread->getFilename();
 
-
-			markerstree->clear();
-			markerIO->loadDefaultMarker(actFilename.toStdString());
+			QString error;
+			try
+			{
+				markerstree->clear();
+				markerIO->loadDefaultMarker(actFilename.toStdString());
+			}
+			catch(boost::exception& e)
+			{
+				error = QString::fromStdString(boost::diagnostic_information(e));
+			}
+			catch(std::exception& e)
+			{
+				error = QString::fromStdString(e.what());
+			}
+			catch(const char* str)
+			{
+				error = str;
+			}
+			catch(...)
+			{
+				error = QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__);
+			}
+			if(!error.isEmpty())
+			{
+				QMessageBox msgBox;
+				msgBox.setText("OctDataManager::openFile: markerload failed: " + error);
+				msgBox.setIcon(QMessageBox::Critical);
+				msgBox.exec();
+			}
 
 
 			emit(octFileChanged(octData   ));
