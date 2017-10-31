@@ -67,6 +67,7 @@
 	<file>icons/typicons_mod/intervall_mark.svg</file>
 	<file>icons/typicons_mod/manual_seg.svg</file>
 	<file>icons/typicons_mod/layer_seg.svg</file>
+	<file>icons/typicons_mod/object_marker.svg</file>
 
 	<file>icons/own/plain_retina.svg</file>
 </qresource>
