@@ -82,7 +82,7 @@ void BScanIntervalMarker::createMarkerMethodActions()
 	paintMarkerAction->setText(tr("paint marker"));
 	paintMarkerAction->setIcon(QIcon(":/icons/paintbrush.png"));
 	paintMarkerAction->setChecked(markerMethod == Method::Paint);
-	connect(paintMarkerAction, &IntValueAction::triggered                , this             , static_cast<void(BScanIntervalMarker::*)(int)>(&BScanIntervalMarker::chooseMethodID));
+	connect(paintMarkerAction, &IntValueAction::triggered               , this             , static_cast<void(BScanIntervalMarker::*)(int)>(&BScanIntervalMarker::chooseMethodID));
 	connect(this             , &BScanIntervalMarker::markerMethodChanged, paintMarkerAction, &IntValueAction::valueChanged        );
 	actionGroupMethod->addAction(paintMarkerAction);
 	markerMethodActions.push_back(paintMarkerAction);
@@ -92,7 +92,7 @@ void BScanIntervalMarker::createMarkerMethodActions()
 	fillMarkerAction->setText(tr("fill marker"));
 	fillMarkerAction->setIcon(QIcon(":/icons/paintcan.png"));
 	fillMarkerAction->setChecked(markerMethod == Method::Fill);
-	connect(fillMarkerAction, &IntValueAction::triggered                , this            , static_cast<void(BScanIntervalMarker::*)(int)>(&BScanIntervalMarker::chooseMethodID));
+	connect(fillMarkerAction, &IntValueAction::triggered               , this            , static_cast<void(BScanIntervalMarker::*)(int)>(&BScanIntervalMarker::chooseMethodID));
 	connect(this            , &BScanIntervalMarker::markerMethodChanged, fillMarkerAction, &IntValueAction::valueChanged        );
 	actionGroupMethod->addAction(fillMarkerAction);
 	markerMethodActions.push_back(fillMarkerAction);

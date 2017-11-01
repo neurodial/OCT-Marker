@@ -39,6 +39,8 @@ public:
 
 private:
 	QGraphicsScene* graphicsScene = nullptr;
+
+	RectItems rectItems;
 };
 
 #endif // OBJECTSMARKER_H

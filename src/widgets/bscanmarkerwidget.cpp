@@ -40,7 +40,7 @@ namespace
 
 	class GraphicsView : public QGraphicsView
 	{
-		double scaleFactor = 100;
+		double scaleFactor = 1000;
 	public:
 		explicit GraphicsView(QWidget* parent) : QGraphicsView(parent) {}
 
@@ -66,9 +66,9 @@ BScanMarkerWidget::BScanMarkerWidget()
 
 	addZoomItems();
 
-	connect(&octdataManager, &OctDataManager::seriesChanged , this, &BScanMarkerWidget::cscanLoaded         );
-	connect(&markerManger  , &OctMarkerManager::bscanChanged, this, &BScanMarkerWidget::imageChanged        );
-	//connect(&markerManger, &BScanMarkerManager::markerMethodChanged, this, &BScanMarkerWidget::markersMethodChanged);
+	connect(&octdataManager, &OctDataManager::seriesChanged       , this, &BScanMarkerWidget::cscanLoaded         );
+	connect(&markerManger  , &OctMarkerManager::bscanChanged      , this, &BScanMarkerWidget::imageChanged        );
+	connect(&markerManger  , &OctMarkerManager::bscanMarkerChanged, this, &BScanMarkerWidget::markersMethodChanged);
 
 	connect(this, &BScanMarkerWidget::bscanChangeInkrement, &markerManger, &OctMarkerManager::inkrementBScan);
 
@@ -122,6 +122,7 @@ BScanMarkerWidget::BScanMarkerWidget()
 
 	connect(this, &CVImageWidget::sizeChanged, this, &BScanMarkerWidget::updateGraphicsViewSize);
 	updateGraphicsViewSize();
+	markersMethodChanged(markerManger.getActBscanMarker());
 }
 
 
@@ -494,21 +495,25 @@ inline bool BScanMarkerWidget::checkControlUsed(bool modPressed)
 }
 
 
-/*
-void BScanMarkerWidget::markersMethodChanged()
+
+void BScanMarkerWidget::markersMethodChanged(BscanMarkerBase* marker)
 {
-	switch(markerManger.getMarkerMethod())
+	if(marker)
 	{
-		case BScanMarkerManager::Method::Paint:
-			setMouseTracking(true);
-			break;
-		default:
-			setMouseTracking(false);
-			break;
+		scene = marker->getGraphicsScene();
+// 		GraphicsView* gvConvert = dynamic_cast<GraphicsView*>(gv);
+// 		if(gvConvert)
+// 			gvConvert->setScaleFactor(marker->getScaleFactor());
 	}
-	update();
+	else
+	{
+		scene = nullptr;
+	}
+	gv->setScene(scene);
+	gv->setVisible(scene != nullptr);
+	updateGraphicsViewSize();
 }
-*/
+
 
 void BScanMarkerWidget::saveRawImage()
 {

@@ -13,6 +13,8 @@ bool ExtraSeriesData::loadExtraData(const OctData::Series& series, const bpt::pt
 {
 	try
 	{
+		extraBScanData.clear();
+
 		// TODO: unschöne Übergangslösung
 		const QString& filename = OctDataManager::getInstance().getLoadedFilename();
 		QString contur2dFilename = filename + "_2d_cont.bin";

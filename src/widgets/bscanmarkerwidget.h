@@ -13,6 +13,7 @@ class QGraphicsScene;
 class QGraphicsView;
 
 class OctMarkerManager;
+class BscanMarkerBase;
 
 class ContureSegment;
 
@@ -89,7 +90,7 @@ private slots:
 	void viewOptionsChangedSlot();
 	void updateGraphicsViewSize();
 
-	// void markersMethodChanged();
+	void markersMethodChanged(BscanMarkerBase* marker);
 	
 
 public slots:
