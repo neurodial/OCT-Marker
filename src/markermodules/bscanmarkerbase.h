@@ -14,6 +14,8 @@ class QEvent;
 class QToolBar;
 class QContextMenuEvent;
 
+class QGraphicsScene;
+
 class OctMarkerManager;
 class SLOImageWidget;
 
@@ -64,6 +66,9 @@ public:
 	
 	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
 	virtual QWidget*  getWidget ()                                  { return nullptr; }
+
+	virtual QGraphicsScene* getGraphicsScene()                      { return nullptr; }
+	virtual const QGraphicsScene* getGraphicsScene() const          { return nullptr; }
 	
 	virtual const QString& getName()                                { return name; }
 	virtual const QString& getMarkerId()                            { return id;   }

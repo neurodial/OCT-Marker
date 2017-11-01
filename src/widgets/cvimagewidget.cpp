@@ -209,6 +209,7 @@ void CVImageWidget::cvImage2qtImage()
 		                       , Qt::FastTransformation);
 
 	update();
+	sizeChanged();
 }
 
 int CVImageWidget::imageHight() const

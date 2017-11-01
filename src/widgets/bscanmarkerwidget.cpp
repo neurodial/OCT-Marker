@@ -23,6 +23,10 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+
+#include <QGraphicsView>
+
+
 namespace
 {
 	inline bool modPressed(QKeyEvent* e)
@@ -33,6 +37,23 @@ namespace
 	{
 		return e->modifiers() & Qt::ControlModifier;
 	}
+
+	class GraphicsView : public QGraphicsView
+	{
+		double scaleFactor = 100;
+	public:
+		explicit GraphicsView(QWidget* parent) : QGraphicsView(parent) {}
+
+		void setScaleFactor(double factor) { scaleFactor = factor; }
+	protected:
+		virtual void resizeEvent(QResizeEvent *event) override
+		{
+			QGraphicsView::resizeEvent(event);
+
+			setSceneRect    (0, 0, scaleFactor, scaleFactor);
+			fitInView(QRectF(0, 0, scaleFactor, scaleFactor));
+		}
+	};
 
 }
 
@@ -55,39 +76,52 @@ BScanMarkerWidget::BScanMarkerWidget()
 	connect(&ProgramOptions::bscanSegmetationLineColor       , &OptionColor::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 	connect(&ProgramOptions::bscanSegmetationLineThicknes    , &OptionInt  ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 	connect(&ProgramOptions::bscanShowExtraSegmentationslines, &OptionBool ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
-	
+
+
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);
-	
+
 	contextMenu->addSeparator();
-	
+
 	saveRawImageAction = new QAction(this);
 	saveRawImageAction->setText(tr("Save Raw Image"));
 	saveRawImageAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveRawImageAction);
 	connect(saveRawImageAction, SIGNAL(triggered(bool)), this, SLOT(saveRawImage()));
-	
-	
+
+
 	saveRawMatAction = new QAction(this);
 	saveRawMatAction->setText(tr("Save raw data as matrix"));
 	saveRawMatAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveRawMatAction);
 	connect(saveRawMatAction, SIGNAL(triggered(bool)), this, SLOT(saveRawMat()));
-	
+
 
 	contextMenu->addSeparator();
-	
+
 	saveRawBinAction = new QAction(this);
 	saveRawBinAction->setText(tr("Save raw data as bin"));
 	saveRawBinAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveRawBinAction);
 	connect(saveRawBinAction, SIGNAL(triggered(bool)), this, SLOT(saveRawBin()));
-	
+
 	saveImageBinAction = new QAction(this);
 	saveImageBinAction->setText(tr("Save image data as bin"));
 	saveImageBinAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveImageBinAction);
 	connect(saveImageBinAction, SIGNAL(triggered(bool)), this, SLOT(saveImageBin()));
+
+	gv = new GraphicsView(this);
+	gv->setStyleSheet("QGraphicsView { border-style: none; background: transparent;}" );
+	gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	gv->setWindowFlags (Qt::FramelessWindowHint);
+	gv->setCacheMode(QGraphicsView::CacheBackground);
+	gv->setFocusPolicy(Qt::NoFocus);
+	gv->setDragMode(QGraphicsView::NoDrag);
+
+	connect(this, &CVImageWidget::sizeChanged, this, &BScanMarkerWidget::updateGraphicsViewSize);
+	updateGraphicsViewSize();
 }
 
 
@@ -389,7 +423,7 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 {
 	QWidget::keyPressEvent(e);
 
-	checkControlUsed(e);
+// 	checkControlUsed(e);
 
 	switch(e->key())
 	{
@@ -413,7 +447,7 @@ void BScanMarkerWidget::keyPressEvent(QKeyEvent* e)
 void BScanMarkerWidget::keyReleaseEvent(QKeyEvent* e)
 {
 	QWidget::keyReleaseEvent(e);
-	checkControlUsed(e);
+// 	checkControlUsed(e);
 }
 
 
@@ -556,4 +590,11 @@ int BScanMarkerWidget::fdSaveRaw(QString& filename)
 	}
 	return result;
 }
+
+
+void BScanMarkerWidget::updateGraphicsViewSize()
+{
+	gv->setGeometry(0, 0, scaledImageWidth(), scaledImageHeight());
+}
+
 

@@ -9,6 +9,9 @@ namespace OctData { class BScan; }
 
 class QWheelEvent;
 class QMouseEvent;
+class QGraphicsScene;
+class QGraphicsView;
+
 class OctMarkerManager;
 
 class ContureSegment;
@@ -23,7 +26,11 @@ class BScanMarkerWidget : public CVImageWidget
 	bool markerActiv = false;
 	bool mouseInWidget = false;*/
 
+
 	OctMarkerManager& markerManger;
+	QGraphicsView*  gv    = nullptr;
+	QGraphicsScene* scene = nullptr;
+
 	
 	QAction*                                saveRawImageAction = nullptr;
 	QAction*                                saveRawMatAction   = nullptr;
@@ -43,6 +50,7 @@ class BScanMarkerWidget : public CVImageWidget
 	bool checkControlUsed(bool modPressed);
 
 	void paintConture(QPainter& painter, const std::vector<ContureSegment>& contours);
+
 
 	void transformCoordWidget2Img(int xWidget, int yWidget, int& xImg, int& yImg)
 	{
@@ -68,7 +76,7 @@ protected:
 	virtual void mouseMoveEvent   (QMouseEvent*) override;
 	virtual void mousePressEvent  (QMouseEvent*) override;
 	virtual void mouseReleaseEvent(QMouseEvent*) override;
-	
+
 	virtual void keyPressEvent    (QKeyEvent*  ) override;
 	virtual void keyReleaseEvent  (QKeyEvent*  ) override;
 	virtual void leaveEvent       (QEvent*     ) override;
@@ -79,6 +87,7 @@ private slots:
 	void cscanLoaded();
 
 	void viewOptionsChangedSlot();
+	void updateGraphicsViewSize();
 
 	// void markersMethodChanged();
 	

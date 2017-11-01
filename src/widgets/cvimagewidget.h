@@ -59,7 +59,7 @@ public:
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
-	virtual void wheelEvent       (QWheelEvent*) override;
+	virtual void wheelEvent(QWheelEvent* event) override;
 	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
 	QImage   qtImage;
@@ -96,6 +96,7 @@ private slots:
 signals:
 	void zoomChanged(double);
 	void needScrollTo(int x, int y);
+	void sizeChanged();
 
 private:
 	FloatGrayTransform floatGrayTransform = FloatGrayTransform::ZeroToOne;
