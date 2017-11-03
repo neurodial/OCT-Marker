@@ -47,7 +47,7 @@ public:
 	int  scaledImageHeight() const                              { return qtImage.height(); }
 	int  scaledImageWidth() const                               { return qtImage.width() ; }
 
-	double getImageScaleFactor()                                { return scaleFactor; }
+	double getImageScaleFactor()                          const { return scaleFactor; }
 
 	void addZoomItems();
 
@@ -79,7 +79,7 @@ protected:
 	
 public slots:
 	virtual void saveImage();
-	void showImage(const cv::Mat& image);
+	virtual void showImage(const cv::Mat& image);
 
 	void setZoom(double factor)                                  { if(scaleFactor != factor && factor <= 8 && factor > 0) { scaleFactor = factor; cvImage2qtImage(); zoomChanged(factor); } }
 

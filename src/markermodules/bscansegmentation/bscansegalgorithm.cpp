@@ -1,6 +1,7 @@
 #include "bscansegalgorithm.h"
 
 #include <opencv/cv.h>
+#include <opencv2/imgproc.hpp>
 #include <cassert>
 #include <limits>
 #include <cmath>

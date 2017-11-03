@@ -40,18 +40,23 @@ namespace
 
 	class GraphicsView : public QGraphicsView
 	{
-		double scaleFactor = 1000;
+		double imageSizeX = 1000;
+		double imageSizeY = 1000;
+
+		void updateSize()
+		{
+			setSceneRect    (0, 0, imageSizeX, imageSizeY);
+			fitInView(QRectF(0, 0, imageSizeX, imageSizeY));
+		}
 	public:
 		explicit GraphicsView(QWidget* parent) : QGraphicsView(parent) {}
 
-		void setScaleFactor(double factor) { scaleFactor = factor; }
+		void setImageSize(double x, double y) { imageSizeX = x; imageSizeY = y; updateSize(); }
 	protected:
 		virtual void resizeEvent(QResizeEvent *event) override
 		{
 			QGraphicsView::resizeEvent(event);
-
-			setSceneRect    (0, 0, scaleFactor, scaleFactor);
-			fitInView(QRectF(0, 0, scaleFactor, scaleFactor));
+			updateSize();
 		}
 	};
 
@@ -603,3 +608,12 @@ void BScanMarkerWidget::updateGraphicsViewSize()
 }
 
 
+void BScanMarkerWidget::showImage(const cv::Mat& image)
+{
+	CVImageWidget::showImage(image);
+
+	GraphicsView* gvConvert = dynamic_cast<GraphicsView*>(gv);
+	if(gvConvert)
+		gvConvert->setImageSize(image.cols, image.rows);
+	updateGraphicsViewSize();
+}

@@ -98,6 +98,8 @@ public slots:
 	virtual void saveRawMat  ();
 	virtual void saveRawBin  ();
 	virtual void saveImageBin();
+
+	virtual void showImage(const cv::Mat& image) override;
 	
 signals:
 	void bscanChangeInkrement(int delta);
