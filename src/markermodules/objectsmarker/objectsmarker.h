@@ -5,22 +5,24 @@
 
 #include <vector>
 #include <QPoint>
+#include<QList>
 
 class QAction;
 class QToolBar;
 class QActionGroup;
 class QWidget;
 
-class QGraphicsScene;
-class RectItem;
+class ObjectsmarkerScene;
+// class RectItem;
+class QGraphicsItem;
 
 
 class Objectsmarker : public BscanMarkerBase
 {
 	Q_OBJECT
 public:
-	typedef std::map<std::string, RectItem*> RectItems;
-	typedef RectItems::value_type RectItemsTypes;
+// 	typedef std::map<std::string, RectItem*> RectItems;
+// 	typedef RectItems::value_type RectItemsTypes;
 
 
 	Objectsmarker(OctMarkerManager* markerManager);
@@ -34,8 +36,8 @@ public:
 
 
 
-	virtual       QGraphicsScene* getGraphicsScene()       override { return graphicsScene; }
-	virtual const QGraphicsScene* getGraphicsScene() const override { return graphicsScene; }
+	virtual       QGraphicsScene* getGraphicsScene()       override;
+	virtual const QGraphicsScene* getGraphicsScene() const override;
 
 // 	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect& drawrect) const override;
 
@@ -46,9 +48,11 @@ public:
 // 	virtual void contextMenuEvent (QContextMenuEvent* /*event*/) {}
 
 private:
-	QGraphicsScene* graphicsScene = nullptr;
+	ObjectsmarkerScene* graphicsScene = nullptr;
 
-	RectItems rectItems;
+
+	void removeItems(const QList<QGraphicsItem*>& items);
+// 	RectItems rectItems;
 
 
 

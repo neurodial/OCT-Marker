@@ -1,7 +1,7 @@
 #include "objectsmarker.h"
 
 
-#include <QGraphicsScene>
+#include "objectsmarkerscene.h"
 #include <QMouseEvent>
 
 #include <markerobjects/rectitem.h>
@@ -26,16 +26,19 @@ namespace
 
 Objectsmarker::Objectsmarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
-, graphicsScene(new QGraphicsScene(this))
+, graphicsScene(new ObjectsmarkerScene(this))
 {
 	name = tr("Objects marker");
 	id   = "ObjectsMarker";
 	icon = QIcon(":/icons/typicons_mod/object_marker.svg");
 
 	RectItem* onhMarker = new RectItem();
+	RectItem* onhMarker2 = new RectItem();
 	// sloMarker->setSelected(true);
 	graphicsScene->addItem(onhMarker);
-	rectItems["ONH"] = onhMarker;
+	graphicsScene->addItem(onhMarker2);
+
+// 	rectItems["ONH"] = onhMarker;
 
 
 	QPen pen1;
@@ -47,11 +50,26 @@ Objectsmarker::Objectsmarker(OctMarkerManager* markerManager)
 
 // 	RectItem* onhMarker = rectItems["ONH"];
 	onhMarker->setRect(QRectF(0.25*scaleFactor, 0.25*scaleFactor, 0.50*scaleFactor, 0.50*scaleFactor));
+	onhMarker2->setRect(QRectF(0.55*scaleFactor, 0.25*scaleFactor, 0.50*scaleFactor, 0.50*scaleFactor));
 }
 
 
-bool Objectsmarker::keyPressEvent(QKeyEvent*, BScanMarkerWidget*)
+bool Objectsmarker::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 {
+	switch(event->key())
+	{
+		case Qt::Key_Delete:
+			removeItems(graphicsScene->selectedItems());
+			break;
+
+		case Qt::Key_A:
+			graphicsScene->setAddObjectMode(true);
+			break;
+
+// 		case Qt::Key_ESC:
+// 			graphicsScene->setAddObjectMode(false);
+// 			break;
+	}
 }
 
 void Objectsmarker::loadState(boost::property_tree::ptree& markerTree)
@@ -62,6 +80,21 @@ void Objectsmarker::loadState(boost::property_tree::ptree& markerTree)
 void Objectsmarker::saveState(boost::property_tree::ptree& markerTree)
 {
 }
+
+
+void Objectsmarker::removeItems(const QList<QGraphicsItem*>& items)
+{
+	for(QGraphicsItem* item : items)
+	{
+		graphicsScene->removeItem(item);
+		delete item;
+	}
+}
+
+      QGraphicsScene* Objectsmarker::getGraphicsScene()       { return graphicsScene; }
+const QGraphicsScene* Objectsmarker::getGraphicsScene() const { return graphicsScene; }
+
+
 
 /*
 void Objectsmarker::drawMarker(QPainter& p, BScanMarkerWidget* markerWidget, const QRect& drawrect) const
