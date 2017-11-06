@@ -137,7 +137,20 @@ void CVImageWidget::updateScaleFactor()
 		setFixedSize(cvImage.cols, cvImage.rows);
 		scaleFactor = 1.;
 	}
+	updateScaleFactorXY();
 }
+
+void CVImageWidget::updateScaleFactorXY()
+{
+	scaleFactorX = scaleFactor;
+	scaleFactorY = scaleFactor;
+
+	if(aspectRatio < 1)
+		scaleFactorX /= aspectRatio;
+	if(aspectRatio > 1)
+		scaleFactorY *= aspectRatio;
+}
+
 
 
 void CVImageWidget::fitImage2Width(int width)
@@ -193,8 +206,8 @@ void CVImageWidget::cvImage2qtImage()
 	switch(scaleMethod)
 	{
 		case ScaleMethod::Factor:
-			imageScale.setHeight(static_cast<int>(outputImage.rows * scaleFactor + 0.5));
-			imageScale.setWidth (static_cast<int>(outputImage.cols * scaleFactor + 0.5));
+			imageScale.setWidth (static_cast<int>(outputImage.cols * scaleFactorX + 0.5));
+			imageScale.setHeight(static_cast<int>(outputImage.rows * scaleFactorY + 0.5));
 			setFixedSize(imageScale);
 			break;
 		case ScaleMethod::Size:
@@ -202,10 +215,12 @@ void CVImageWidget::cvImage2qtImage()
 			break;
 	}
 
-	if(scaleFactor != 1)
-		qtImage = qtImage.scaled(static_cast<int>(outputImage.cols*scaleFactor + 0.5)
-		                       , static_cast<int>(outputImage.rows*scaleFactor + 0.5)
-		                       , Qt::KeepAspectRatio
+	const Qt::AspectRatioMode aspectRadioMode = (aspectRatio == 1.0) ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
+
+	if(scaleFactorX != 1 || scaleFactorY != 1)
+		qtImage = qtImage.scaled(static_cast<int>(outputImage.cols*scaleFactorX + 0.5)
+		                       , static_cast<int>(outputImage.rows*scaleFactorY + 0.5)
+		                       , aspectRadioMode
 		                       , Qt::FastTransformation);
 
 	update();

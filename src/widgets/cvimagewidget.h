@@ -22,12 +22,18 @@ class CVImageWidget : public QWidget
 	enum class ScaleMethod { Factor, Size };
 	
 	double scaleFactor = 1.;
+	double scaleFactorX = 1;
+	double scaleFactorY = 1;
+	double aspectRatio = 0.34;
+
 	bool grayCvImage;
 	ScaleMethod scaleMethod = ScaleMethod::Factor;
 
 	const FilterImage* imageFilter = nullptr;
 	
 	void addZoomAction(int zoom);
+
+	void updateScaleFactorXY();
 
 public:
 	enum class FloatGrayTransform { Auto, Fix, ZeroToOne };
@@ -81,7 +87,7 @@ public slots:
 	virtual void saveImage();
 	virtual void showImage(const cv::Mat& image);
 
-	void setZoom(double factor)                                  { if(scaleFactor != factor && factor <= 8 && factor > 0) { scaleFactor = factor; cvImage2qtImage(); zoomChanged(factor); } }
+	void setZoom(double factor)                                  { if(scaleFactor != factor && factor <= 8 && factor > 0) { scaleFactor = factor; updateScaleFactorXY(); cvImage2qtImage(); zoomChanged(factor); } }
 
 	void fitImage2Width (int width );
 	void fitImage2Height(int heigth);

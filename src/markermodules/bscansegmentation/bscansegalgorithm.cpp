@@ -1,8 +1,9 @@
 #include "bscansegalgorithm.h"
 
 #include <opencv/cv.h>
-// #include <opencv2/imgproc.hpp>
-// #include<opencv2/imgproc/imgproc.hpp>
+#if CV_MAJOR_VERSION >= 3
+	#include <opencv2/imgproc.hpp>
+#endif
 #include <cassert>
 #include <limits>
 #include <cmath>
