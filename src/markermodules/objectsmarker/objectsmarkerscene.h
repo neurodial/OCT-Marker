@@ -1,7 +1,8 @@
 #ifndef OBJECTSMARKERSCENE_H
 #define OBJECTSMARKERSCENE_H
 
-#include <QGraphicsScene>
+#include<QGraphicsScene>
+#include<vector>
 
 class RectItem;
 
@@ -11,13 +12,17 @@ class ObjectsmarkerScene : public QGraphicsScene
 
 	bool addObjectMode = false;
 	RectItem* newaddedItem = nullptr;
+
+	void endInsertItem();
 public:
 	ObjectsmarkerScene(QObject* parent = nullptr) : QGraphicsScene(parent) {};
 	~ObjectsmarkerScene();
 
+	void markersToList  (std::vector<RectItem*>& itemslist);
+	void markersFromList(std::vector<RectItem*>& itemslist);
 
 public slots:
-	void setAddObjectMode(bool v) { addObjectMode = v; }
+	void setAddObjectMode(bool v);
 
 protected:
 	virtual void keyPressEvent    (QKeyEvent               * event) override;

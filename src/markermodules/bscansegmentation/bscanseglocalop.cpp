@@ -5,7 +5,7 @@
 
 #include <QPainter>
 #include <opencv/cv.h>
-#include <opencv2/imgproc.hpp>
+// #include <opencv2/imgproc.hpp>
 #include <octdata/datastruct/bscan.h>
 
 

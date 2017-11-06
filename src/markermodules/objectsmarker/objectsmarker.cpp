@@ -1,12 +1,16 @@
 #include "objectsmarker.h"
 
-
-#include "objectsmarkerscene.h"
 #include <QMouseEvent>
 
-#include <markerobjects/rectitem.h>
+#include <octdata/datastruct/series.h>
+#include <octdata/datastruct/bscan.h>
 
+#include <markerobjects/rectitem.h>
 #include <widgets/bscanmarkerwidget.h>
+
+#include "objectsmarkerscene.h"
+
+
 
 
 namespace
@@ -66,9 +70,9 @@ bool Objectsmarker::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 			graphicsScene->setAddObjectMode(true);
 			break;
 
-// 		case Qt::Key_ESC:
-// 			graphicsScene->setAddObjectMode(false);
-// 			break;
+		case Qt::Key_Escape:
+			graphicsScene->setAddObjectMode(false);
+			break;
 	}
 }
 
@@ -94,6 +98,53 @@ void Objectsmarker::removeItems(const QList<QGraphicsItem*>& items)
       QGraphicsScene* Objectsmarker::getGraphicsScene()       { return graphicsScene; }
 const QGraphicsScene* Objectsmarker::getGraphicsScene() const { return graphicsScene; }
 
+
+void Objectsmarker::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
+{
+	resetMarkerObjects(series);
+}
+
+
+void Objectsmarker::removeAllItems()
+{
+	std::size_t actBScan = getActBScanNr();
+	if(actBScan > itemsList.size())
+		graphicsScene->markersToList(itemsList.at(actBScan));
+
+	for(std::vector<RectItem*>& items : itemsList)
+	{
+		for(RectItem* item : items)
+			delete item;
+		items.clear();
+	}
+}
+
+
+void Objectsmarker::resetMarkerObjects(const OctData::Series* series)
+{
+	if(!series)
+		return;
+
+	const std::size_t numBscans = series->bscanCount();
+
+	removeAllItems();
+	if(numBscans > 0)
+		itemsList.resize(numBscans);
+	else
+		itemsList.clear();
+}
+
+
+
+void Objectsmarker::setActBScan(std::size_t bscan)
+{
+	if(bscan == actBScanSceneNr)
+		return;
+
+	graphicsScene->markersToList(itemsList.at(actBScanSceneNr));
+	graphicsScene->markersFromList(itemsList.at(bscan));
+	actBScanSceneNr = bscan;
+}
 
 
 /*

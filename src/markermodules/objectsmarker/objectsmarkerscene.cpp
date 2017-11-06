@@ -23,6 +23,7 @@ void ObjectsmarkerScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	if(addObjectMode)
 	{
+		endInsertItem();
 		newaddedItem = new RectItem();
 		newaddedItem->setRect(QRectF(event->scenePos(), QSizeF(0,0)));
 		newaddedItem->setSelected(true);
@@ -38,9 +39,10 @@ void ObjectsmarkerScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 		QGraphicsScene::mousePressEvent(event);
 }
 
+
 void ObjectsmarkerScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-	if(addObjectMode && newaddedItem)
+	if(newaddedItem)
 	{
 		QRectF r = newaddedItem->rect();
 		r.setTopLeft(event->scenePos());
@@ -48,22 +50,67 @@ void ObjectsmarkerScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 	}
 	else
 		QGraphicsScene::mouseMoveEvent(event);
-
 }
+
 
 void ObjectsmarkerScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-	if(addObjectMode)
+	if(newaddedItem)
+	{
+		endInsertItem();
+		addObjectMode = false;
+	}
+	else
+		QGraphicsScene::mouseReleaseEvent(event);
+}
+
+
+void ObjectsmarkerScene::endInsertItem()
+{
+	if(newaddedItem)
 	{
 		if(newaddedItem->rect().size().isNull())
 		{
 			removeItem(newaddedItem);
 			delete newaddedItem;
 		}
+		else
+			newaddedItem->makeValid();
 		newaddedItem = nullptr;
-		addObjectMode = false;
 	}
-	else
-		QGraphicsScene::mouseReleaseEvent(event);
-
 }
+
+
+void ObjectsmarkerScene::setAddObjectMode(bool v)
+{
+	addObjectMode = v;
+	if(!v && newaddedItem)
+	{
+		removeItem(newaddedItem);
+		delete newaddedItem;
+	}
+}
+
+
+void ObjectsmarkerScene::markersFromList(std::vector<RectItem*>& itemslist)
+{
+	for(RectItem* item : itemslist)
+		addItem(item);
+	itemslist.clear();
+}
+
+
+void ObjectsmarkerScene::markersToList(std::vector<RectItem*>& itemslist)
+{
+	endInsertItem();
+	for(QGraphicsItem* item : items())
+	{
+		RectItem* rectItem = dynamic_cast<RectItem*>(item);
+		if(rectItem)
+		{
+			itemslist.push_back(rectItem);
+			removeItem(rectItem);
+		}
+	}
+}
+
