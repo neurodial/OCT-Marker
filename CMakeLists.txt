@@ -123,9 +123,9 @@ if(BUILD_OCTAVE_MEX_FUNCTIONS)
 
 	octave_add_oct(oct_read_seg SOURCES src_matlab/read_seg.cpp src/manager/octmarkerio.cpp src/data_structure/simplematcompress.cpp LINK_LIBRARIES ${Boost_LIBRARIES} EXTENSION mex)
 	set_target_properties(oct_read_seg PROPERTIES COMPILE_DEFINITIONS "MEX_COMPILE")
-	if(BUILD_MEX_WITH_STATIC_CPP_LIB)
-		set_target_properties(oct_read_seg PROPERTIES LINK_FLAGS "-static-libstdc++")
-	endif()
+# 	if(BUILD_MEX_WITH_STATIC_CPP_LIB)
+# 		set_target_properties(oct_read_seg PROPERTIES LINK_FLAGS "-static-libstdc++")
+# 	endif()
 	target_include_directories(oct_read_seg SYSTEM PRIVATE ${OCTAVE_INCLUDE_DIRS} PUBLIC ${CMAKE_SOURCE_DIR}/src/)
 
 endif()

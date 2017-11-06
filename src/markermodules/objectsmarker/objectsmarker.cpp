@@ -73,7 +73,10 @@ bool Objectsmarker::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 		case Qt::Key_Escape:
 			graphicsScene->setAddObjectMode(false);
 			break;
+		default:
+			return false;
 	}
+	return true;
 }
 
 void Objectsmarker::loadState(boost::property_tree::ptree& markerTree)
