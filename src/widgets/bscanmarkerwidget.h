@@ -55,9 +55,9 @@ class BScanMarkerWidget : public CVImageWidget
 
 	void transformCoordWidget2Img(int xWidget, int yWidget, int& xImg, int& yImg)
 	{
-		double factor = getImageScaleFactor();
-		yImg = static_cast<int>(yWidget/factor + 0.5);
-		xImg = static_cast<int>(xWidget/factor + 0.5);
+		const ScaleFactor& factor = getImageScaleFactor();
+		yImg = static_cast<int>(yWidget/factor.getFactorX() + 0.5);
+		xImg = static_cast<int>(xWidget/factor.getFactorY() + 0.5);
 	}
 
 public:
@@ -65,7 +65,7 @@ public:
 
 	virtual ~BScanMarkerWidget();
 
-	static void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const std::vector<double>& segLine, double factor);
+	static void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const std::vector<double>& segLine, const ScaleFactor& factor);
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;

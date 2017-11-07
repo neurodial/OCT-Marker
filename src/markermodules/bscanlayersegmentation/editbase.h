@@ -8,11 +8,11 @@
 class QMouseEvent;
 class QPainter;
 class QRect;
-class BScanMarkerWidget;
-
-class BScanLayerSegmentation;
 class QContextMenuEvent;
 
+class BScanLayerSegmentation;
+class BScanMarkerWidget;
+class ScaleFactor;
 
 class EditBase
 {
@@ -20,7 +20,7 @@ class EditBase
 public:
 	EditBase(BScanLayerSegmentation* parent) : parent(parent) {}
 
-	virtual void drawMarker(QPainter& /*painter*/, BScanMarkerWidget* /*widget*/, const QRect& /*drawrect*/, double /*scaleFactor*/) const {};
+	virtual void drawMarker(QPainter& /*painter*/, BScanMarkerWidget* /*widget*/, const QRect& /*drawrect*/, const ScaleFactor& /*scaleFactor*/) const {};
 
 	virtual BscanMarkerBase::RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };
 	virtual BscanMarkerBase::RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) { return BscanMarkerBase::RedrawRequest(); };

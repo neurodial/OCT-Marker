@@ -61,7 +61,7 @@ public:
 	~BScanSegLocalOpNN();
 
 
-	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const override;
+	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const override;
 
 	bool endOnCoord(int /*x*/, int /*y*/)   override                { return false; }
 	bool drawOnCoord(int x, int y)          override                { return applyNN(x, y); }

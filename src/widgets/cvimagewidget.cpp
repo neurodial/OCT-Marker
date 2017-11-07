@@ -130,25 +130,28 @@ void CVImageWidget::updateScaleFactor()
 {
 	if(imageScale.width() > 0 && imageScale.height() > 0)
 	{
-		scaleFactor = std::min(static_cast<double>(height())/cvImage.rows, static_cast<double>(width())/cvImage.cols);
+		scaleFactorConfig = std::min(static_cast<double>(height())/cvImage.rows, static_cast<double>(width())/cvImage.cols);
 	}
 	else
 	{
 		setFixedSize(cvImage.cols, cvImage.rows);
-		scaleFactor = 1.;
+		scaleFactorConfig = 1.;
 	}
 	updateScaleFactorXY();
 }
 
 void CVImageWidget::updateScaleFactorXY()
 {
-	scaleFactorX = scaleFactor;
-	scaleFactorY = scaleFactor;
+	double scaleFactorX = scaleFactorConfig;
+	double scaleFactorY = scaleFactorConfig;
 
 	if(aspectRatio < 1)
 		scaleFactorX /= aspectRatio;
 	if(aspectRatio > 1)
 		scaleFactorY *= aspectRatio;
+
+	scaleFactor.setFactorX(scaleFactorX);
+	scaleFactor.setFactorY(scaleFactorY);
 }
 
 
@@ -206,8 +209,8 @@ void CVImageWidget::cvImage2qtImage()
 	switch(scaleMethod)
 	{
 		case ScaleMethod::Factor:
-			imageScale.setWidth (static_cast<int>(outputImage.cols * scaleFactorX + 0.5));
-			imageScale.setHeight(static_cast<int>(outputImage.rows * scaleFactorY + 0.5));
+			imageScale.setWidth (static_cast<int>(outputImage.cols * scaleFactor.getFactorX() + 0.5));
+			imageScale.setHeight(static_cast<int>(outputImage.rows * scaleFactor.getFactorY() + 0.5));
 			setFixedSize(imageScale);
 			break;
 		case ScaleMethod::Size:
@@ -217,9 +220,9 @@ void CVImageWidget::cvImage2qtImage()
 
 	const Qt::AspectRatioMode aspectRadioMode = (aspectRatio == 1.0) ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
 
-	if(scaleFactorX != 1 || scaleFactorY != 1)
-		qtImage = qtImage.scaled(static_cast<int>(outputImage.cols*scaleFactorX + 0.5)
-		                       , static_cast<int>(outputImage.rows*scaleFactorY + 0.5)
+	if(!scaleFactor.isIdentical())
+		qtImage = qtImage.scaled(static_cast<int>(outputImage.cols*scaleFactor.getFactorX() + 0.5)
+		                       , static_cast<int>(outputImage.rows*scaleFactor.getFactorY() + 0.5)
 		                       , aspectRadioMode
 		                       , Qt::FastTransformation);
 
@@ -275,7 +278,7 @@ void CVImageWidget::wheelEvent(QWheelEvent* wheelE)
 		int px = pos.x();
 		int py = pos.y();
 
-		double oldScaleFactor = getImageScaleFactor();
+		double oldScaleFactor = getScaleFactor();
 		double changeScaleFactor;
 
 		if(deltaWheel < 0)
@@ -287,7 +290,7 @@ void CVImageWidget::wheelEvent(QWheelEvent* wheelE)
 		if(newScaleFactor > 0.5 || changeScaleFactor > 1) // avoid zoom out lower then factor 0.5
 			setZoom(newScaleFactor);
 
-		newScaleFactor = getImageScaleFactor();
+		newScaleFactor = getScaleFactor();
 
 		if(oldScaleFactor > 0)
 		{

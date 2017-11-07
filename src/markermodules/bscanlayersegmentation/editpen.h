@@ -23,16 +23,16 @@ class EditPen : public EditBase
 	OctData::Segmentationlines::Segmentline* segLine = nullptr;
 
 	void setLinePoint2Point(const SegPoint& p1, const SegPoint& p2, OctData::Segmentationlines::Segmentline& segLine);
-	QRect getWidgetPaintSize(const SegPoint& p1, const SegPoint& p2, double scaleFactor);
+	QRect getWidgetPaintSize(const SegPoint& p1, const SegPoint& p2, const ScaleFactor& scaleFactor);
 
-	SegPoint calcPoint(int x, int y, double scaleFactor, int bscanWidth);
+	SegPoint calcPoint(int x, int y, const ScaleFactor& scaleFactor, int bscanWidth);
 
 public:
 	EditPen(BScanLayerSegmentation* base) : EditBase(base) {}
 	virtual ~EditPen() {}
 
 
-	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/, double scaleFactor) const override;
+	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/, const ScaleFactor& scaleFactor) const override;
 
 	virtual BscanMarkerBase::RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual BscanMarkerBase::RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;

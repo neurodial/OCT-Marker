@@ -27,9 +27,9 @@ class EditSpline : public EditBase
 	PointIterator  lastEditPoint;
 // 	PointIterator   actEditPoint;
 
-	void paintPoints(QPainter& painter, double factor) const;
+	void paintPoints(QPainter& painter, const ScaleFactor& factor) const;
 
-	bool testInsertPoint(const Point2D& p, double scaleFactor);
+	bool testInsertPoint(const Point2D& p, const ScaleFactor& scaleFactor);
 
 	bool deleteSelectedPoints();
 
@@ -42,12 +42,12 @@ public:
 	EditSpline(BScanLayerSegmentation* base);
 	virtual ~EditSpline() {}
 
-	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/, double scaleFactor) const override;
+	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/, const ScaleFactor& scaleFactor) const override;
 
 	virtual BscanMarkerBase::RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual BscanMarkerBase::RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual BscanMarkerBase::RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
-	virtual void contextMenuEvent(QContextMenuEvent* event);
+	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
 
 	virtual bool keyPressEvent(QKeyEvent*, BScanMarkerWidget*) override;

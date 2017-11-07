@@ -9,6 +9,7 @@
 class QPainter;
 class QPoint;
 class BScanSegmentation;
+class ScaleFactor;
 
 namespace cv { class Mat; }
 namespace OctData { class BScan; }
@@ -19,7 +20,7 @@ public:
 	BScanSegLocalOp(BScanSegmentation& parent) : segmentation(parent) {}
 	virtual ~BScanSegLocalOp() {}
 
-	virtual void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const = 0;
+	virtual void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const = 0;
 	virtual bool drawMarker() const                                 { return true; }
 
 	virtual bool endOnCoord(int x, int y)   = 0;
@@ -65,7 +66,7 @@ public:
 	BScanSegLocalOpPaint(BScanSegmentation& parent) : BScanSegLocalOp(parent) {}
 
 
-	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const override;
+	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const override;
 	bool drawMarker() const                 override                { return localPaintData.paintMethod != BScanSegmentationMarker::PaintData::PaintMethod::Pen; }
 
 	bool endOnCoord(int /*x*/, int /*y*/)   override                { return false; }
@@ -99,7 +100,7 @@ public:
 	BScanSegLocalOpThresholdDirection(BScanSegmentation& parent) : BScanSegLocalOp(parent) {}
 
 
-	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const override;
+	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const override;
 
 	bool endOnCoord(int x, int y)           override                { return applyThreshold(x, y); }
 	bool drawOnCoord(int x, int y)          override                { if(applyOnMouseMove) return applyThreshold(x, y); return false; }
@@ -130,7 +131,7 @@ public:
 	BScanSegLocalOpThreshold(BScanSegmentation& parent) : BScanSegLocalOp(parent) {}
 
 
-	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const override;
+	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const override;
 
 	bool endOnCoord(int x, int y)           override                { return applyThreshold(x, y); }
 	bool drawOnCoord(int x, int y)          override                { if(applyOnMouseMove) return applyThreshold(x, y); return false; }
@@ -162,7 +163,7 @@ public:
 	BScanSegLocalOpOperation(BScanSegmentation& parent) : BScanSegLocalOp(parent) {}
 
 
-	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const override;
+	void drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const override;
 
 	bool endOnCoord(int x, int y)            override;
 	bool drawOnCoord(int /*x*/, int /*y*/)   override               { return false; }

@@ -8,6 +8,7 @@
 #include <widgets/bscanmarkerwidget.h>
 
 #include <data_structure/programoptions.h>
+#include <data_structure/scalefactor.h>
 
 #include"findsupportingpoints.h"
 #include"pchip.h"
@@ -112,12 +113,12 @@ namespace
 		           , static_cast<int>(y2-y1+1));
 	}
 
-	QRect& operator*=(QRect& rect, double factor)
+	QRect& operator*=(QRect& rect, const ScaleFactor& factor)
 	{
-		int x     (static_cast<int>(rect.x     ()*factor));
-		int y     (static_cast<int>(rect.y     ()*factor));
-		int width (static_cast<int>(rect.width ()*factor));
-		int height(static_cast<int>(rect.height()*factor));
+		int x     (static_cast<int>(rect.x     ()*factor.getFactorX()));
+		int y     (static_cast<int>(rect.y     ()*factor.getFactorY()));
+		int width (static_cast<int>(rect.width ()*factor.getFactorX()));
+		int height(static_cast<int>(rect.height()*factor.getFactorY()));
 		rect.setX     (x     );
 		rect.setY     (y     );
 		rect.setWidth (width );
@@ -131,17 +132,17 @@ namespace
 		return stream;
 	}
 
-	void updateRec4Paint(QRect& rect, double scaleFactor)
+	void updateRec4Paint(QRect& rect, const ScaleFactor& scaleFactor)
 	{
 		rect *= scaleFactor;
 		int adjustSize = ProgramOptions::layerSegSplinePointSize() + 4;
 		rect.adjust(-adjustSize, -adjustSize, adjustSize, adjustSize);
 	}
 
-	void paintPoint(QPainter& painter, const Point2D& p, double factor, int size)
+	void paintPoint(QPainter& painter, const Point2D& p, const ScaleFactor& factor, int size)
 	{
-		painter.drawEllipse(static_cast<int>(p.getX()*factor-size/2)
-		                  , static_cast<int>(p.getY()*factor-size/2)
+		painter.drawEllipse(static_cast<int>(p.getX()*factor.getFactorX()-size/2)
+		                  , static_cast<int>(p.getY()*factor.getFactorY()-size/2)
 		                  , size
 		                  , size);
 	}
@@ -169,7 +170,7 @@ EditSpline::EditSpline(BScanLayerSegmentation* base)
 
 
 
-void EditSpline::paintPoints(QPainter& painter, double factor) const
+void EditSpline::paintPoints(QPainter& painter, const ScaleFactor& factor) const
 {
 	painter.setPen(QPen(Qt::red));
 	painter.setBrush(QBrush(Qt::black));
@@ -190,7 +191,7 @@ void EditSpline::paintPoints(QPainter& painter, double factor) const
 
 
 
-void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, double scaleFactor) const
+void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, const ScaleFactor& scaleFactor) const
 {
 	paintPoints(painter, scaleFactor);
 }
@@ -207,9 +208,9 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 	const double minPos = (lastEditPoint == supportingPoints.begin())?              0:(lastEditPoint-1)->getX()+1;
 	const double maxPos = (lastEditPoint == supportingPoints.end()-1)?getBScanWidth():(lastEditPoint+1)->getX()-1;
 
-	double scaleFactor = widget->getImageScaleFactor();
-	double newXVal = std::min(maxPos, std::max(minPos, std::round(event->x()/scaleFactor)));
-	double newYVal = std::min(static_cast<double>(getBScanHight()), std::max(0., event->y()/scaleFactor));
+	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
+	double newXVal = std::min(maxPos, std::max(minPos, std::round(event->x()/scaleFactor.getFactorX())));
+	double newYVal = std::min(static_cast<double>(getBScanHight()), std::max(0., event->y()/scaleFactor.getFactorY()));
 
 	lastEditPoint->setX(newXVal);
 	lastEditPoint->setY(newYVal);
@@ -227,7 +228,7 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 	return request;
 }
 
-bool EditSpline::testInsertPoint(const Point2D& insertPoint, double scaleFactor)
+bool EditSpline::testInsertPoint(const Point2D& insertPoint, const ScaleFactor& scaleFactor)
 {
 	if(!segLine)
 		return false;
@@ -236,7 +237,7 @@ bool EditSpline::testInsertPoint(const Point2D& insertPoint, double scaleFactor)
 	if(pX >= 0 && pX < segLine->size())
 	{
 		double pY = insertPoint.getY();
-		if(std::abs(segLine->at(pX) - pY) < 10./scaleFactor)
+		if(std::abs(segLine->at(pX) - pY) < 10./scaleFactor.getFactorY())
 		{
 			for(std::vector<Point2D>::iterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
 			{
@@ -282,13 +283,13 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 	if(lastEditPoint  != supportingPoints.end())
 		RecPointAdder::addPoint(repaintRect, *lastEditPoint);
 
-	double scaleFactor = widget->getImageScaleFactor();
-	Point2D clickPoint(event->x()/scaleFactor, event->y()/scaleFactor);
+	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
+	Point2D clickPoint(event->x()/scaleFactor.getFactorX(), event->y()/scaleFactor.getFactorY());
 
 	double minDist = 0;
 	PointIterator minDistPoint;
 	std::tie(minDistPoint, minDist) = findNextPoint(clickPoint);
-	bool clickOnPoint = minDist < 10/scaleFactor;
+	bool clickOnPoint = minDist < 10/scaleFactor.getFactorView();
 
 	if(event->button() == Qt::RightButton)
 	{

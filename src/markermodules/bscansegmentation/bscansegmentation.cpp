@@ -3,6 +3,8 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QWidget>
+#include<QDialog>
+#include<QTextEdit>
 
 #include <manager/octmarkermanager.h>
 
@@ -25,11 +27,10 @@
 #include "paintsegmentationtotikz.h"
 
 #include <data_structure/simplecvmatcompress.h>
+#include <data_structure/scalefactor.h>
 #include "importsegmentation.h"
-
-#include<QDialog>
-#include<QTextEdit>
 #include "simplemarchingsquare.h"
+
 
 
 BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
@@ -142,7 +143,7 @@ namespace
 
 
 template<typename Painter, typename Transformer>
-void BScanSegmentation::drawSegmentLine(Painter& painter, Transformer& transform, double factor, const QRect& rect) const
+void BScanSegmentation::drawSegmentLine(Painter& painter, Transformer& transform, const ScaleFactor& factor, const QRect& rect) const
 {
 	if(actMatNr != getActBScanNr())
 	{
@@ -152,13 +153,16 @@ void BScanSegmentation::drawSegmentLine(Painter& painter, Transformer& transform
 	if(!actMat || actMat->empty())
 		return;
 
-	if(factor <= 0)
+	if(!factor.isValid())
 		return;
 
-	int drawX      = static_cast<int>((rect.x()     )/factor + 0.5)-2;
-	int drawY      = static_cast<int>((rect.y()     )/factor + 0.5)-2;
-	int drawWidth  = static_cast<int>((rect.width() )/factor + 0.5)+4;
-	int drawHeight = static_cast<int>((rect.height())/factor + 0.5)+4;
+	const double factorX = factor.getFactorX();
+	const double factorY = factor.getFactorY();
+
+	int drawX      = static_cast<int>((rect.x()     )/factorX + 0.5)-2;
+	int drawY      = static_cast<int>((rect.y()     )/factorY + 0.5)-2;
+	int drawWidth  = static_cast<int>((rect.width() )/factorX + 0.5)+4;
+	int drawHeight = static_cast<int>((rect.height())/factorY + 0.5)+4;
 
 
 	int mapHeight = actMat->rows-1; // -1 for p01
@@ -177,7 +181,7 @@ void BScanSegmentation::drawSegmentLine(Painter& painter, Transformer& transform
 
 
 template<typename Painter>
-void BScanSegmentation::drawSegmentLine(Painter& painter, double factor, const QRect& rect) const
+void BScanSegmentation::drawSegmentLine(Painter& painter, const ScaleFactor& factor, const QRect& rect) const
 {
 	switch(viewMethod)
 	{
@@ -196,10 +200,10 @@ void BScanSegmentation::drawSegmentLine(Painter& painter, double factor, const Q
 	}
 }
 
-void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat)
+void BScanSegmentation::transformCoordWidget2Mat(int xWidget, int yWidget, const ScaleFactor& factor, int& xMat, int& yMat)
 {
-	yMat = static_cast<int>(yWidget/factor + 0.5);
-	xMat = static_cast<int>(xWidget/factor + 0.5);
+	xMat = static_cast<int>(xWidget/factor.getFactorX() + 0.5);
+	yMat = static_cast<int>(yWidget/factor.getFactorY() + 0.5);
 }
 
 
@@ -213,7 +217,7 @@ QString BScanSegmentation::generateTikzCode() const
 
 
 	SimpleMarchingSquare sms;
-	drawSegmentLine(ptt, sms, 1, fullRect);
+	drawSegmentLine(ptt, sms, ScaleFactor(), fullRect);
 
 	return ptt.getTikzCode();
 }
@@ -222,11 +226,11 @@ QString BScanSegmentation::generateTikzCode() const
 
 void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const QRect& rect) const
 {
-	double factor = widget->getImageScaleFactor();
-	if(factor <= 0)
+	const ScaleFactor& factor = widget->getImageScaleFactor();
+	if(factor.getFactorX() <= 0 || factor.getFactorY() <= 0)
 		return;
 
-	if(factor == 1)
+	if(factor.isIdentical())
 	{
 		PaintFactor1 pf(p);
 		drawSegmentLine(pf, factor, rect);
@@ -238,10 +242,10 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 	}
 
 	QPoint paintPoint = mousePoint;
-	if(factor > 1)
+	if(!factor.isIdentical())
 	{
-		int x = static_cast<int>(std::round(static_cast<double>(mousePoint.x())/factor)*factor + 0.5);
-		int y = static_cast<int>(std::round(static_cast<double>(mousePoint.y())/factor)*factor + 0.5);
+		int x = static_cast<int>(std::round(static_cast<double>(mousePoint.x())/factor.getFactorX())*factor.getFactorX() + 0.5);
+		int y = static_cast<int>(std::round(static_cast<double>(mousePoint.y())/factor.getFactorY())*factor.getFactorY() + 0.5);
 		paintPoint = QPoint(x, y);
 	}
 
@@ -254,9 +258,9 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 }
 
 
-bool BScanSegmentation::setOnCoord(int x, int y, double factor)
+bool BScanSegmentation::setOnCoord(int x, int y, const ScaleFactor& factor)
 {
-	if(factor == 0)
+	if(!factor.isValid())
 		return false;
 
 	int xD, yD;
@@ -270,9 +274,9 @@ bool BScanSegmentation::setOnCoord(int x, int y, double factor)
 
 
 
-bool BScanSegmentation::startOnCoord(int x, int y, double factor)
+bool BScanSegmentation::startOnCoord(int x, int y, const ScaleFactor& factor)
 {
-	if(factor == 0)
+	if(!factor.isValid())
 		return false;
 
 	int xD, yD;
@@ -297,7 +301,7 @@ uint8_t BScanSegmentation::valueOnCoord(int x, int y)
 }
 
 
-QRect BScanSegmentation::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor)
+QRect BScanSegmentation::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, const ScaleFactor& factor)
 {
 	int height = 2;
 	int width  = 2;
@@ -307,8 +311,8 @@ QRect BScanSegmentation::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, 
 		width  += actLocalOperator->getOperatorWidth ();
 	}
 
-	height = static_cast<int>(height*factor + 0.5);
-	width  = static_cast<int>(width *factor + 0.5);
+	height = static_cast<int>(height*factor.getFactorY() + 0.5);
+	width  = static_cast<int>(width *factor.getFactorX() + 0.5);
 
 	QRect rect = QRect(p1, p2).normalized(); // old and new pos
 	rect.adjust(-width, -height, width, height);
@@ -328,7 +332,7 @@ BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e,
 		if(!(e->buttons() & Qt::LeftButton))
 			paint = false;
 
-		double factor = widget->getImageScaleFactor();
+		const ScaleFactor& factor = widget->getImageScaleFactor();
 
 		result.redraw = false; // cursor need redraw
 		result.rect   = getWidgetPaintSize(mousePoint, e->pos(), factor);
@@ -351,7 +355,7 @@ BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e,
 
 BscanMarkerBase::RedrawRequest  BScanSegmentation::mousePressEvent(QMouseEvent* e, BScanMarkerWidget* widget)
 {
-	double factor = widget->getImageScaleFactor();
+	const ScaleFactor& factor = widget->getImageScaleFactor();
 
 	RedrawRequest result;
 	result.redraw = false;
@@ -368,14 +372,14 @@ BscanMarkerBase::RedrawRequest  BScanSegmentation::mousePressEvent(QMouseEvent* 
 
 BscanMarkerBase::RedrawRequest  BScanSegmentation::mouseReleaseEvent(QMouseEvent* e, BScanMarkerWidget* widget)
 {
-	double factor = widget->getImageScaleFactor();
+	const ScaleFactor& factor = widget->getImageScaleFactor();
 
 	RedrawRequest result;
 	result.redraw = false;
 	result.rect   = getWidgetPaintSize(mousePoint, e->pos(), factor);
 
 	paint = false;
-	if(factor == 0)
+	if(!factor.isValid())
 		return result;
 
 	if(actLocalOperator)

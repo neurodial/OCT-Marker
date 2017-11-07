@@ -116,6 +116,21 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 
 }
 
+namespace
+{
+	OctData::ScaleFactor operator/(const OctData::ScaleFactor& osf, const ScaleFactor& isf)
+	{
+		return OctData::ScaleFactor(osf.getX()/isf.getFactorX(), osf.getY()/isf.getFactorY(), 1);
+	}
+
+	OctData::CoordSLOpx operator*(const OctData::CoordSLOpx& osf, const ScaleFactor& isf)
+	{
+		return OctData::CoordSLOpx(osf.getXf()*isf.getFactorX(), osf.getYf()*isf.getFactorY());
+	}
+
+}
+
+
 void SLOImageWidget::paintConvexHull(QPainter& painter, const OctData::Series* series)
 {
 	if(!series)
@@ -132,8 +147,8 @@ void SLOImageWidget::paintConvexHull(QPainter& painter, const OctData::Series* s
 
 	const OctData::SloImage&       sloImage  = series->getSloImage();
 
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
 	const OctData::CoordTransform& transform = sloImage.getTransform();
 
 	for(std::size_t i = 1; i < hull.size(); ++i)
@@ -144,7 +159,6 @@ void SLOImageWidget::paintConvexHull(QPainter& painter, const OctData::Series* s
 		painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
 	}
 }
-
 
 
 void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* series)
@@ -165,8 +179,8 @@ void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* serie
 
 	const OctData::SloImage&       sloImage  = series->getSloImage();
 
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
 	const OctData::CoordTransform& transform = sloImage.getTransform();
 	std::size_t activBScan                   = static_cast<std::size_t>(markerManger.getActBScanNum());
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
@@ -281,8 +295,8 @@ void SLOImageWidget::paintAnalyseGrid(QPainter& painter, const OctData::Series* 
 
 
 	const OctData::SloImage&       sloImage  = series->getSloImage();
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
 	const OctData::CoordTransform& transform = sloImage.getTransform();
 
 
@@ -317,8 +331,8 @@ void SLOImageWidget::showPosOnBScan(double t)
 
 	const OctData::Series* series            = OctDataManager::getInstance().getSeries();
 	const OctData::SloImage&       sloImage  = series->getSloImage();
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
 	const OctData::CoordTransform& transform = sloImage.getTransform();
 
 
@@ -456,8 +470,8 @@ int SLOImageWidget::getBScanNearPos(int x, int y, double tol)
 	const OctData::Series::BScanList bscans  = series->getBScans();
 
 	const OctData::SloImage&       sloImage  = series->getSloImage();
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() * (1./getImageScaleFactor());
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * (getImageScaleFactor());
+	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
+	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
 	const OctData::CoordTransform& transform = sloImage.getTransform();
 
 	const OctData::CoordSLOpx      clickPos(x,y);

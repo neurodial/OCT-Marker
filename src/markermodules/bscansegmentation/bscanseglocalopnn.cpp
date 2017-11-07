@@ -8,6 +8,7 @@
 #include <opencv/ml.h>
 
 #include <octdata/datastruct/bscan.h>
+#include<data_structure/scalefactor.h>
 
 #include <helper/callback.h>
 
@@ -174,7 +175,7 @@ int BScanSegLocalOpNN::getSubMapSize(const cv::Mat& mat, int x, int y)
 }
 
 
-void BScanSegLocalOpNN::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
+void BScanSegLocalOpNN::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const
 {
 
 	int dx0i, dx1i, dy0i, dy1i;
@@ -182,15 +183,17 @@ void BScanSegLocalOpNN::drawMarkerPaint(QPainter& painter, const QPoint& centerD
 	int dx0o, dx1o, dy0o, dy1o;
 	getRelOpSize(dx0o, dx1o, dy0o, dy1o, paintSizeWidthOutput, paintSizeHeightOutput);
 
+	const double factorX = factor.getFactorX();
+	const double factorY = factor.getFactorY();
 
-	int sizeW      = static_cast<int>(paintSizeWidthInput  *factor + 0.5);
-	int sizeWerg   = static_cast<int>(paintSizeWidthOutput *factor + 0.5);
-	int sizeH      = static_cast<int>(paintSizeHeightInput *factor + 0.5);
-	int sizeHerg   = static_cast<int>(paintSizeHeightOutput*factor + 0.5);
-	int startX0In  = static_cast<int>(centerDrawPoint.x()-dx0i*factor + 0.5);
-	int startY0In  = static_cast<int>(centerDrawPoint.y()-dy0i*factor + 0.5);
-	int startX0Out = static_cast<int>(centerDrawPoint.x()-dx0o*factor + 0.5);
-	int startY0Out = static_cast<int>(centerDrawPoint.y()-dy0o*factor + 0.5);
+	int sizeW      = static_cast<int>(paintSizeWidthInput  *factorX + 0.5);
+	int sizeWerg   = static_cast<int>(paintSizeWidthOutput *factorX + 0.5);
+	int sizeH      = static_cast<int>(paintSizeHeightInput *factorY + 0.5);
+	int sizeHerg   = static_cast<int>(paintSizeHeightOutput*factorY + 0.5);
+	int startX0In  = static_cast<int>(centerDrawPoint.x()-dx0i*factorX + 0.5);
+	int startY0In  = static_cast<int>(centerDrawPoint.y()-dy0i*factorY + 0.5);
+	int startX0Out = static_cast<int>(centerDrawPoint.x()-dx0o*factorX + 0.5);
+	int startY0Out = static_cast<int>(centerDrawPoint.y()-dy0o*factorY + 0.5);
 	painter.drawRect(startX0In, startY0In, sizeW, sizeH);
 
 	QPen pen(Qt::blue);

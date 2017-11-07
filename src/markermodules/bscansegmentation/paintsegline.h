@@ -2,6 +2,7 @@
 
 
 #include<data_structure/point2d.h>
+#include<data_structure/scalefactor.h>
 
 #include<QPainter>
 
@@ -37,17 +38,20 @@ public:
 
 class PaintFactorN : public PaintFactor
 {
-	double factor = 1;
+	ScaleFactor factor;
+	const double factorX;
+	const double factorY;
+
 public:
-	PaintFactorN(QPainter& painter, double factor) : PaintFactor(painter), factor(factor) {}
+	PaintFactorN(QPainter& painter, const ScaleFactor& factor) : PaintFactor(painter), factor(factor), factorX(factor.getFactorX()), factorY(factor.getFactorY()) {}
 
 
 	void paintLine(const Point2D& p1, const Point2D& p2)
 	{
-		painter.drawLine(static_cast<int>((p1.getX())*factor + 0.5)
-		               , static_cast<int>((p1.getY())*factor + 0.5)
-		               , static_cast<int>((p2.getX())*factor + 0.5)
-		               , static_cast<int>((p2.getY())*factor + 0.5));
+		painter.drawLine(static_cast<int>((p1.getX())*factorX + 0.5)
+		               , static_cast<int>((p1.getY())*factorY + 0.5)
+		               , static_cast<int>((p2.getX())*factorX + 0.5)
+		               , static_cast<int>((p2.getY())*factorY + 0.5));
 	}
 
 // 	inline void paint(const uint8_t* p00, const uint8_t* p10, const uint8_t* p01, int w, int h, uint8_t mask, )

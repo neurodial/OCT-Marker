@@ -13,6 +13,7 @@ class QAction;
 class QToolBar;
 class QActionGroup;
 class QWidget;
+class ScaleFactor;
 
 
 class BScanIntervalMarker : public BscanMarkerBase
@@ -152,7 +153,7 @@ private:
 	std::size_t getMarkerMapSize()                            const { if(actCollectionValid()) return getMarkerMapSize(actCollection->second); return 0; }
 
 	void createMarkerMethodActions();
-	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor, const QPoint* p3 = nullptr);
+	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, const ScaleFactor& factor, const QPoint* p3 = nullptr);
 // 	void addMarkerCollection2Toolbar(const IntervalMarker& markers, QToolBar& markerToolbar, QActionGroup& actionGroupMarker, std::vector<QAction*>& actionList, QObject* parent);
 	void resetMarkers(const OctData::Series* series);
 };

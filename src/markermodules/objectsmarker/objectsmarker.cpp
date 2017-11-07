@@ -11,14 +11,15 @@
 #include "objectsmarkerscene.h"
 #include "objectsmarkerptree.h"
 
+#include <data_structure/scalefactor.h>
 
 
 
 namespace
 {
-	QPointF toScene(const QPoint& p, double factor)
+	QPointF toScene(const QPoint& p, const ScaleFactor& factor)
 	{
-		return QPointF(p.x()/factor, p.y()/factor);
+		return QPointF(p.x()/factor.getFactorX(), p.y()/factor.getFactorY());
 	}
 
 	QPointF toScene(const QPoint& p, const BScanMarkerWidget& markerWidget)

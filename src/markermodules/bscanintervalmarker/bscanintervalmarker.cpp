@@ -151,9 +151,11 @@ BscanMarkerBase::RedrawRequest BScanIntervalMarker::mousePressEvent(QMouseEvent*
 
 BscanMarkerBase::RedrawRequest BScanIntervalMarker::mouseReleaseEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
-	double scaleFactor = widget->getImageScaleFactor();
+	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
 	RedrawRequest result;
 	result.redraw = true;
+
+	const double scaleFactorX = scaleFactor.getFactorX();
 
 	if(markerActiv)
 	{
@@ -163,12 +165,12 @@ BscanMarkerBase::RedrawRequest BScanIntervalMarker::mouseReleaseEvent(QMouseEven
 				if(clickPos.x() != event->x() && markerActiv)
 				{
 					// std::cout << __FUNCTION__ << ": " << clickPos << " - " << event->x() << std::endl;
-					setMarker(static_cast<int>(clickPos.x()/scaleFactor + 0.5), static_cast<int>(event->x()/scaleFactor + 0.5));
+					setMarker(static_cast<int>(clickPos.x()/scaleFactorX + 0.5), static_cast<int>(event->x()/scaleFactorX + 0.5));
 				}
 				break;
 			case Method::Fill:
 				if(markerActiv)
-					fillMarker(static_cast<int>(clickPos.x()/scaleFactor + 0.5));
+					fillMarker(static_cast<int>(clickPos.x()/scaleFactorX + 0.5));
 				break;
 		}
 		result.rect = getWidgetPaintSize(event->pos(), mousePos, scaleFactor, &clickPos);
@@ -263,12 +265,12 @@ bool BScanIntervalMarker::toolTipEvent(QEvent* event, BScanMarkerWidget* widget)
 
 	if(event->type() == QEvent::ToolTip)
 	{
-		double scaleFactor = widget->getImageScaleFactor();
+		const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
 		QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
 		helpEvent->pos();
 
 		const MarkerMap& markerMap = getMarkers();
-		MarkerMap::const_iterator it = markerMap.find(static_cast<int>(helpEvent->pos().x()/scaleFactor));
+		MarkerMap::const_iterator it = markerMap.find(static_cast<int>(helpEvent->pos().x()/scaleFactor.getFactorX()));
 		const Marker& marker = it->second;
 
 		if(marker.isDefined())
@@ -315,7 +317,7 @@ bool BScanIntervalMarker::leaveWidgetEvent(QEvent* ,BScanMarkerWidget*)
 
 void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&) const
 {
-	double scaleFactor = widget->getImageScaleFactor();
+	const double scaleFactorX = widget->getImageScaleFactor().getFactorX();
 	
 	const MarkerMap& markerMap = getMarkers();
 	for(const MarkerMap::interval_mapping_type pair : markerMap)
@@ -324,9 +326,9 @@ void BScanIntervalMarker::drawMarker(QPainter& painter, BScanMarkerWidget* widge
 		if(marker.isDefined())
 		{
 			boost::icl::discrete_interval<int> itv  = pair.first;
-			painter.fillRect(static_cast<int>(itv.lower()*scaleFactor + 0.5)
+			painter.fillRect(static_cast<int>(itv.lower()*scaleFactorX + 0.5)
 			               , 0
-			               , static_cast<int>((itv.upper()-itv.lower())*scaleFactor + 0.5)
+			               , static_cast<int>((itv.upper()-itv.lower())*scaleFactorX + 0.5)
 			               , widget->height()
 			               , QColor(marker.getRed()
 			                      , marker.getGreen()
@@ -492,7 +494,7 @@ void BScanIntervalMarker::loadState(boost::property_tree::ptree& markerTree)
 }
 
 
-QRect BScanIntervalMarker::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor, const QPoint* p3)
+QRect BScanIntervalMarker::getWidgetPaintSize(const QPoint& p1, const QPoint& p2, const ScaleFactor& factor, const QPoint* p3)
 {
 	const int broder = 5;
 	int x1 = p1.x();
@@ -511,7 +513,7 @@ QRect BScanIntervalMarker::getWidgetPaintSize(const QPoint& p1, const QPoint& p2
 	}
 
 	// QRect rect = QRect(p1.x(), 0, p2.x(), getBScanHight()*factor).normalized(); // old and new pos
-	QRect rect = QRect(minX-broder, 0, maxX-minX+2*broder, static_cast<int>(getBScanHight()*factor+0.5)); // old and new pos
+	QRect rect = QRect(minX-broder, 0, maxX-minX+2*broder, static_cast<int>(getBScanHight()*factor.getFactorY()+0.5)); // old and new pos
 
 	return rect;
 }

@@ -135,16 +135,20 @@ BScanMarkerWidget::~BScanMarkerWidget()
 {
 }
 
-void BScanMarkerWidget::paintSegmentationLine(QPainter& segPainter, int bScanHeight, const std::vector<double>& segLine, double factor)
+void BScanMarkerWidget::paintSegmentationLine(QPainter& segPainter, int bScanHeight, const std::vector<double>& segLine, const ScaleFactor& factor)
 {
 	double lastEnt = std::numeric_limits<OctData::Segmentationlines::SegmentlineDataType>::quiet_NaN();
 	int xCoord = 0;
+
+	const double factorX = factor.getFactorX();
+	const double factorY = factor.getFactorY();
+
 	for(OctData::Segmentationlines::SegmentlineDataType value : segLine)
 	{
 		// std::cout << value << '\n';
 		if(!std::isnan(lastEnt) && lastEnt < bScanHeight && lastEnt > 0 && value < bScanHeight && value > 0)
 		{
-			segPainter.drawLine(QLineF((xCoord-1)*factor, lastEnt*factor, xCoord*factor, value*factor));
+			segPainter.drawLine(QLineF((xCoord-1)*factorX, lastEnt*factorY, xCoord*factorX, value*factorY));
 		}
 		lastEnt = value;
 		++xCoord;
@@ -171,7 +175,7 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 	pen.setWidth(ProgramOptions::bscanSegmetationLineThicknes());
 	segPainter.setPen(pen);
 	int bScanHeight = actBScan->getHeight();
-	double scaleFactor = getImageScaleFactor();
+	const ScaleFactor& scaleFactor = getImageScaleFactor();
 
 	if(ProgramOptions::bscansShowSegmentationslines())
 	{
@@ -204,7 +208,10 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 
 void BScanMarkerWidget::paintConture(QPainter& painter, const std::vector<ContureSegment>& contours)
 {
-	double scaleFactor = getImageScaleFactor();
+	const ScaleFactor& scaleFactor = getImageScaleFactor();
+
+	double scaleFactorX = scaleFactor.getFactorX();
+	double scaleFactorY = scaleFactor.getFactorY();
 
 	for(const ContureSegment& segment : contours)
 	{
@@ -219,10 +226,10 @@ void BScanMarkerWidget::paintConture(QPainter& painter, const std::vector<Contur
 
 		for(Point2D p : segment.points)
 		{
-			painter.drawLine((p        .getX()+0.5)*scaleFactor
-			               , (p        .getY()+0.5)*scaleFactor
-			               , (lastPoint.getX()+0.5)*scaleFactor
-			               , (lastPoint.getY()+0.5)*scaleFactor);
+			painter.drawLine(static_cast<int>((p        .getX()+0.5)*scaleFactorX)
+			               , static_cast<int>((p        .getY()+0.5)*scaleFactorY)
+			               , static_cast<int>((lastPoint.getX()+0.5)*scaleFactorX)
+			               , static_cast<int>((lastPoint.getY()+0.5)*scaleFactorY));
 			lastPoint = p;
 		}
 	}

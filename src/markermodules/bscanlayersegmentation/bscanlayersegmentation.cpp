@@ -48,8 +48,7 @@ BScanLayerSegmentation::~BScanLayerSegmentation()
 void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& rec) const
 {
 	int bScanHeight = getBScanHight();
-	double scaleFactor = widget->getImageScaleFactor();
-
+	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
 
 	QPen penEdit;
 	penEdit.setColor(ProgramOptions::layerSegActiveLineColor());

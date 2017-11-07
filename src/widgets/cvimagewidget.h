@@ -7,6 +7,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include<data_structure/scalefactor.h>
+
 
 // http://develnoter.blogspot.de/2012/05/integrating-opencv-in-qt-gui.html
 
@@ -21,10 +23,12 @@ class CVImageWidget : public QWidget
 
 	enum class ScaleMethod { Factor, Size };
 	
-	double scaleFactor = 1.;
-	double scaleFactorX = 1;
-	double scaleFactorY = 1;
+	double scaleFactorConfig = 1.;
+// 	double scaleFactorX = 1;
+// 	double scaleFactorY = 1;
 	double aspectRatio = 0.34;
+
+	ScaleFactor scaleFactor;
 
 	bool grayCvImage;
 	ScaleMethod scaleMethod = ScaleMethod::Factor;
@@ -44,8 +48,8 @@ public:
 	QSize sizeHint()        const                      override { return qtImage.size(); }
 	QSize minimumSizeHint() const                      override { return qtImage.size()/100; }
 
-	virtual void setImageSize(QSize size)                       { imageScale  = size  ; scaleMethod = ScaleMethod::Size  ; cvImage2qtImage(); }
-	virtual void setScaleFactor(double factor)                  { scaleFactor = factor; scaleMethod = ScaleMethod::Factor; cvImage2qtImage(); }
+	virtual void setImageSize(QSize size)                       { imageScale        = size  ; scaleMethod = ScaleMethod::Size  ; updateScaleFactorXY(); cvImage2qtImage(); }
+	virtual void setScaleFactor(double factor)                  { scaleFactorConfig = factor; scaleMethod = ScaleMethod::Factor; updateScaleFactorXY(); cvImage2qtImage(); }
 
 	int  imageHight() const;
 	int  imageWidth() const;
@@ -53,7 +57,10 @@ public:
 	int  scaledImageHeight() const                              { return qtImage.height(); }
 	int  scaledImageWidth() const                               { return qtImage.width() ; }
 
-	double getImageScaleFactor()                          const { return scaleFactor; }
+// 	double getImageScaleFactor()                          const { return scaleFactor ; }
+	const ScaleFactor& getImageScaleFactor()              const { return scaleFactor; }
+	double getScaleFactor()                               const { return scaleFactorConfig; }
+// 	double getImageScaleFactorY()                         const { return scaleFactorY; }
 
 	void addZoomItems();
 
@@ -87,14 +94,14 @@ public slots:
 	virtual void saveImage();
 	virtual void showImage(const cv::Mat& image);
 
-	void setZoom(double factor)                                  { if(scaleFactor != factor && factor <= 8 && factor > 0) { scaleFactor = factor; updateScaleFactorXY(); cvImage2qtImage(); zoomChanged(factor); } }
+	void setZoom(double factor)                                  { if(scaleFactorConfig != factor && factor <= 8 && factor > 0) { scaleFactorConfig = factor; updateScaleFactorXY(); cvImage2qtImage(); zoomChanged(factor); } }
 
 	void fitImage2Width (int width );
 	void fitImage2Height(int heigth);
 	void fitImage(int width, int height);
 
-	void zoom_in()                                               { setZoom(scaleFactor+0.5); }
-	void zoom_out()                                              { setZoom(scaleFactor-0.5); }
+	void zoom_in()                                               { setZoom(scaleFactorConfig+0.5); }
+	void zoom_out()                                              { setZoom(scaleFactorConfig-0.5); }
 
 private slots:
 	void imageParameterChanged();

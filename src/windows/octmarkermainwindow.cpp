@@ -466,7 +466,7 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(actionStrechBScanImage2MaxHeight, &QAction::triggered, this, &OCTMarkerMainWindow::strechBScanImage2MaxHeight);
 	toolBar->addAction(actionStrechBScanImage2MaxHeight);
 
-	zoomChanged(bscanMarkerWidget->getImageScaleFactor());
+	zoomChanged(bscanMarkerWidget->getScaleFactor());
 
 
 	addToolBar(toolBar);

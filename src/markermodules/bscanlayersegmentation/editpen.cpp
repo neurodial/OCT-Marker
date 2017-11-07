@@ -7,7 +7,7 @@
 #include <widgets/bscanmarkerwidget.h>
 
 
-void EditPen::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, double scaleFactor) const
+void EditPen::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, const ScaleFactor& scaleFactor) const
 {
 }
 
@@ -16,7 +16,7 @@ BscanMarkerBase::RedrawRequest EditPen::mouseMoveEvent(QMouseEvent* event, BScan
 	if(!paintSegLine || !segLine)
 		return BscanMarkerBase::RedrawRequest();
 
-	double scaleFactor = widget->getImageScaleFactor();
+	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
 	SegPoint segPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
 
 // 	OctData::Segmentationlines::Segmentline& segLine = lines[getActBScanNr()].getSegmentLine(actEditType);
@@ -34,7 +34,7 @@ BscanMarkerBase::RedrawRequest EditPen::mouseMoveEvent(QMouseEvent* event, BScan
 BscanMarkerBase::RedrawRequest EditPen::mousePressEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
 	paintSegLine = true;
-	double scaleFactor = widget->getImageScaleFactor();
+	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
 	lastPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
 	return BscanMarkerBase::RedrawRequest();
 }
@@ -93,29 +93,29 @@ void EditPen::setLinePoint2Point(const EditPen::SegPoint& p1, const EditPen::Seg
 }
 
 
-QRect EditPen::getWidgetPaintSize(const EditPen::SegPoint& p1, const EditPen::SegPoint& p2, double scaleFactor)
+QRect EditPen::getWidgetPaintSize(const EditPen::SegPoint& p1, const EditPen::SegPoint& p2, const ScaleFactor& scaleFactor)
 {
 	const int broder = 2;
 
-	int minX = static_cast<int>((static_cast<double>(std::min(p1.x, p2.x) - broder))*scaleFactor);
-	int maxX = static_cast<int>((static_cast<double>(std::max(p1.x, p2.x) + broder))*scaleFactor);
+	int minX = static_cast<int>((static_cast<double>(std::min(p1.x, p2.x) - broder))*scaleFactor.getFactorX());
+	int maxX = static_cast<int>((static_cast<double>(std::max(p1.x, p2.x) + broder))*scaleFactor.getFactorY());
 
 // 	int minY = static_cast<int>(std::min(p1.y, p2.y)*scaleFactor) - broder;
 // 	int maxY = static_cast<int>(std::max(p1.y, p2.y)*scaleFactor) + broder;
 
 // 	QRect rect = QRect(minX, minY, maxX-minX, maxY-minY);
-	QRect rect = QRect(minX, 0, maxX-minX, static_cast<int>(getBScanHight()*scaleFactor+0.5)); // old and new pos
+	QRect rect = QRect(minX, 0, maxX-minX, static_cast<int>(getBScanHight()*scaleFactor.getFactorY()+0.5)); // old and new pos
 
 	return rect;
 }
 
-EditPen::SegPoint EditPen::calcPoint(int x, int y, double scaleFactor, int bscanWidth)
+EditPen::SegPoint EditPen::calcPoint(int x, int y, const ScaleFactor& scaleFactor, int bscanWidth)
 {
 	if(x<0)
 		x = 0;
 
-	std::size_t xTransformed = static_cast<std::size_t>(x/scaleFactor);
-	double      yTransformed =                          y/scaleFactor ;
+	std::size_t xTransformed = static_cast<std::size_t>(x/scaleFactor.getFactorX());
+	double      yTransformed =                          y/scaleFactor.getFactorY() ;
 
 	if(xTransformed > static_cast<std::size_t>(bscanWidth-1))
 		xTransformed = static_cast<std::size_t>(bscanWidth-1);

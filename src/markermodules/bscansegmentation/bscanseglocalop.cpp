@@ -74,17 +74,20 @@ namespace
 
 
 
-void BScanSegLocalOpPaint::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
+void BScanSegLocalOpPaint::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const
 {
+	const double factorX = factor.getFactorX();
+	const double factorY = factor.getFactorY();
+
 	switch(localPaintData.paintMethod)
 	{
 		case BScanSegmentationMarker::PaintData::PaintMethod::Circle:
 		{
 			QPointF point = centerDrawPoint;
-			point += QPointF(factor/2, factor/2);
+			point += QPointF(factorX/2, factorY/2);
 			painter.drawEllipse(point
-			                  , (paintSize+0.5)*factor
-			                  , (paintSize+0.5)*factor);
+			                  , (paintSize+0.5)*factorX
+			                  , (paintSize+0.5)*factorY);
 			/*
 			painter.drawEllipse(centerDrawPoint + QPoint(static_cast<int>(factor/2), static_cast<int>(factor/2))
 			                  , (paintSize+0.5)*factor
@@ -93,8 +96,9 @@ void BScanSegLocalOpPaint::drawMarkerPaint(QPainter& painter, const QPoint& cent
 		}
 		case BScanSegmentationMarker::PaintData::PaintMethod::Rect:
 		{
-			int size = static_cast<int>(paintSize*factor + 0.5);
-			painter.drawRect(centerDrawPoint.x()-size, centerDrawPoint.y()-size, size*2, size*2);
+			int sizeX = static_cast<int>(paintSize*factorX + 0.5);
+			int sizeY = static_cast<int>(paintSize*factorY + 0.5);
+			painter.drawRect(centerDrawPoint.x()-sizeX, centerDrawPoint.y()-sizeY, sizeX*2, sizeY*2);
 			break;
 		}
 		case BScanSegmentationMarker::PaintData::PaintMethod::Pen:
@@ -173,10 +177,10 @@ QIcon BScanSegLocalOpPaint::getPaintColorIcon(BScanSegmentationMarker::PaintData
 // ---------
 // Operation
 // ---------
-void BScanSegLocalOpOperation::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
+void BScanSegLocalOpOperation::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const
 {
-	int sizeW = static_cast<int>(paintSizeWidth *factor + 0.5);
-	int sizeH = static_cast<int>(paintSizeHeight*factor + 0.5);
+	int sizeW = static_cast<int>(paintSizeWidth *factor.getFactorX() + 0.5);
+	int sizeH = static_cast<int>(paintSizeHeight*factor.getFactorY() + 0.5);
 	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
 }
 
@@ -245,10 +249,10 @@ void BScanSegLocalOpOperation::setOperatorSizeWidth(int size)
 // -------------------
 // Threshold Direction
 // -------------------
-void BScanSegLocalOpThresholdDirection::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
+void BScanSegLocalOpThresholdDirection::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const
 {
-	int sizeW = static_cast<int>(paintSizeWidth *factor + 0.5);
-	int sizeH = static_cast<int>(paintSizeHeight*factor + 0.5);
+	int sizeW = static_cast<int>(paintSizeWidth *factor.getFactorX() + 0.5);
+	int sizeH = static_cast<int>(paintSizeHeight*factor.getFactorY() + 0.5);
 	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
 }
 
@@ -307,10 +311,10 @@ void BScanSegLocalOpThresholdDirection::setThresholdData(const BScanSegmentation
 // Threshold
 // ---------
 
-void BScanSegLocalOpThreshold::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, double factor) const
+void BScanSegLocalOpThreshold::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const
 {
-	int sizeW = static_cast<int>(paintSizeWidth *factor + 0.5);
-	int sizeH = static_cast<int>(paintSizeHeight*factor + 0.5);
+	int sizeW = static_cast<int>(paintSizeWidth *factor.getFactorX() + 0.5);
+	int sizeH = static_cast<int>(paintSizeHeight*factor.getFactorY() + 0.5);
 	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
 }
 

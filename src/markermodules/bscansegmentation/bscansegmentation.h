@@ -5,12 +5,15 @@
 #include "../bscanmarkerbase.h"
 #include "configdata.h"
 
-#include <boost/icl/interval_map.hpp>
-#include <data_structure/intervalmarker.h>
-#include <octdata/datastruct/segmentationlines.h>
 #include <vector>
+#include <boost/icl/interval_map.hpp>
 
 #include <QPoint>
+
+#include <octdata/datastruct/segmentationlines.h>
+
+#include <data_structure/intervalmarker.h>
+#include <data_structure/scalefactor.h>
 
 class QAction;
 class WGSegmentation;
@@ -70,20 +73,20 @@ class BScanSegmentation : public BscanMarkerBase
 	void createSegments(const OctData::Series* series);
 
 	template<typename Painter, typename Transformer>
-	void drawSegmentLine(Painter& painter, Transformer& transform, double factor, const QRect& rect) const;
+	void drawSegmentLine(Painter& painter, Transformer& transform, const ScaleFactor& factor, const QRect& rect) const;
 	template<typename Painter>
-	void drawSegmentLine(Painter& painter, double factor, const QRect& rect) const;
+	void drawSegmentLine(Painter& painter, const ScaleFactor& factor, const QRect& rect) const;
 
-	void transformCoordWidget2Mat(int xWidget, int yWidget, double factor, int& xMat, int& yMat);
+	void transformCoordWidget2Mat(int xWidget, int yWidget, const ScaleFactor& factor, int& xMat, int& yMat);
 	
 
-	bool startOnCoord(int x, int y, double factor);
+	bool startOnCoord(int x, int y, const ScaleFactor& factor);
 
-	bool setOnCoord(int x, int y, double factor);
+	bool setOnCoord(int x, int y, const ScaleFactor& factor);
 	bool paintOnCoord(cv::Mat* map, int xD, int yD);
 	BScanSegmentationMarker::internalMatType valueOnCoord(int x, int y);
 
-	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, double factor);
+	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, const ScaleFactor& factor);
 
 	int seglinePaintSize = 1;
 
