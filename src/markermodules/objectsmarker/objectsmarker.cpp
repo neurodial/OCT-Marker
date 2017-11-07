@@ -9,6 +9,7 @@
 #include <widgets/bscanmarkerwidget.h>
 
 #include "objectsmarkerscene.h"
+#include "objectsmarkerptree.h"
 
 
 
@@ -35,26 +36,6 @@ Objectsmarker::Objectsmarker(OctMarkerManager* markerManager)
 	name = tr("Objects marker");
 	id   = "ObjectsMarker";
 	icon = QIcon(":/icons/typicons_mod/object_marker.svg");
-
-	RectItem* onhMarker = new RectItem();
-	RectItem* onhMarker2 = new RectItem();
-	// sloMarker->setSelected(true);
-	graphicsScene->addItem(onhMarker);
-	graphicsScene->addItem(onhMarker2);
-
-// 	rectItems["ONH"] = onhMarker;
-
-
-	QPen pen1;
-	pen1.setWidth(1);
-	pen1.setCosmetic(true);
-	onhMarker->setPen(pen1);
-
-	double scaleFactor = 100;
-
-// 	RectItem* onhMarker = rectItems["ONH"];
-	onhMarker->setRect(QRectF(0.25*scaleFactor, 0.25*scaleFactor, 0.50*scaleFactor, 0.50*scaleFactor));
-	onhMarker2->setRect(QRectF(0.55*scaleFactor, 0.25*scaleFactor, 0.50*scaleFactor, 0.50*scaleFactor));
 }
 
 
@@ -81,11 +62,17 @@ bool Objectsmarker::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 
 void Objectsmarker::loadState(boost::property_tree::ptree& markerTree)
 {
+	removeAllItems();
+	ObjectsMarkerPTree::parsePTree(markerTree, this);
+	graphicsScene->markersFromList(itemsList.at(actBScanSceneNr));
 }
 
 
 void Objectsmarker::saveState(boost::property_tree::ptree& markerTree)
 {
+	graphicsScene->markersToList(itemsList.at(actBScanSceneNr));
+	ObjectsMarkerPTree::fillPTree(markerTree, this);
+	graphicsScene->markersFromList(itemsList.at(actBScanSceneNr));
 }
 
 
@@ -105,6 +92,7 @@ const QGraphicsScene* Objectsmarker::getGraphicsScene() const { return graphicsS
 void Objectsmarker::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
 {
 	resetMarkerObjects(series);
+	loadState(markerTree);
 }
 
 
@@ -113,6 +101,8 @@ void Objectsmarker::removeAllItems()
 	std::size_t actBScan = getActBScanNr();
 	if(actBScan > itemsList.size())
 		graphicsScene->markersToList(itemsList.at(actBScan));
+	else
+		graphicsScene->clear();
 
 	for(std::vector<RectItem*>& items : itemsList)
 	{

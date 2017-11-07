@@ -20,6 +20,7 @@ class QGraphicsItem;
 class Objectsmarker : public BscanMarkerBase
 {
 	Q_OBJECT
+	friend class ObjectsMarkerPTree;
 public:
 // 	typedef std::map<std::string, RectItem*> RectItems;
 // 	typedef RectItems::value_type RectItemsTypes;
@@ -62,7 +63,7 @@ private:
 // 	RectItems rectItems;
 
 	std::vector<std::vector<RectItem*>> itemsList;
-	mutable std::size_t actBScanSceneNr = 0;
+	std::size_t actBScanSceneNr = 0;
 
 };
 

@@ -28,6 +28,7 @@ void ObjectsmarkerScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 		newaddedItem->setRect(QRectF(event->scenePos(), QSizeF(0,0)));
 		newaddedItem->setSelected(true);
 
+
 		QPen pen1;
 		pen1.setWidth(1);
 		pen1.setCosmetic(true);
