@@ -24,7 +24,7 @@ class OrderdContures2D
 	void handleOpenEnds();
 	void handleOthers();
 public:
-	OrderdContures2D(const Conture2D& conture);
+	explicit OrderdContures2D(const Conture2D& conture);
 
 
 	const std::vector<ContureSegment>& getSegments()          const { return segments; }

@@ -398,6 +398,9 @@ void OCTMarkerMainWindow::setupMenu()
 	showSeglines->setText(tr("show segmentationslines"));
 	showSeglines->setIcon(QIcon(":/icons/chart_curve.png"));
 
+	QAction* showWithAspectRatio = ProgramOptions::bscanRespectAspectRatio.getAction();
+	showWithAspectRatio->setText(tr("Aspect ratio"));
+	showWithAspectRatio->setIcon(QIcon(":/icons/typicons/equals-outline.svg"));
 
 	QSpinBox* paintsizeSegLines = new QSpinBox(this);
 	paintsizeSegLines->setMinimum(1);
@@ -417,6 +420,7 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addWidget(bscanChooser);
 	toolBar->addWidget(labelMaxBscan);
 	toolBar->addSeparator();
+	toolBar->addAction(showWithAspectRatio);
 	toolBar->addAction(showSeglines);
 	toolBar->addWidget(paintsizeSegLines);
 

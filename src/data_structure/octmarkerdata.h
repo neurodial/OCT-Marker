@@ -11,7 +11,7 @@ class OctMarkerBScanData
 	boost::property_tree::ptree& ptree;
 	
 public:
-	OctMarkerBScanData(boost::property_tree::ptree& ptree) : ptree(ptree) {}
+	explicit OctMarkerBScanData(boost::property_tree::ptree& ptree) : ptree(ptree) {}
 };
 
 
@@ -22,6 +22,9 @@ class OctMarkerData
 public:
 	OctMarkerData();
 	~OctMarkerData();
+
+	OctMarkerData(const OctMarkerData& other) = delete;
+	OctMarkerData& operator=(const OctMarkerData& other) = delete;
 	
 	OctMarkerBScanData getOctMarkerBScanData(int patient, int study, int series);
 	

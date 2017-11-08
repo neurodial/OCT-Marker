@@ -82,6 +82,10 @@ BScanMarkerWidget::BScanMarkerWidget()
 	connect(&ProgramOptions::bscanSegmetationLineThicknes    , &OptionInt  ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 	connect(&ProgramOptions::bscanShowExtraSegmentationslines, &OptionBool ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 
+	connect(&ProgramOptions::bscanRespectAspectRatio         , &OptionBool ::valueChanged, this, &CVImageWidget    ::setUseAspectRatio     );
+
+	setUseAspectRatio(ProgramOptions::bscanRespectAspectRatio());
+
 
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);
@@ -280,7 +284,19 @@ void BScanMarkerWidget::imageChanged()
 
 	updateRawExport();
 	if(actBScan)
+	{
+		const OctData::ScaleFactor& sf = actBScan->getScaleFactor();
+
+		if(sf.getX() > 0 && sf.getZ() > 0)
+		{
+			const double aspectRatio = sf.getZ()/sf.getX();
+			setAspectRatio(aspectRatio);
+		}
+		else
+			setAspectRatio(1.0);
+
 		showImage(actBScan->getImage());
+	}
 	else
 		update();
 }

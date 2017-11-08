@@ -145,10 +145,13 @@ void CVImageWidget::updateScaleFactorXY()
 	double scaleFactorX = scaleFactorConfig;
 	double scaleFactorY = scaleFactorConfig;
 
-	if(aspectRatio < 1)
-		scaleFactorX /= aspectRatio;
-	if(aspectRatio > 1)
-		scaleFactorY *= aspectRatio;
+	if(useAspectRatio)
+	{
+		if(aspectRatio < 1)
+			scaleFactorX /= aspectRatio;
+		if(aspectRatio > 1)
+			scaleFactorY *= aspectRatio;
+	}
 
 	scaleFactor.setFactorX(scaleFactorX);
 	scaleFactor.setFactorY(scaleFactorY);

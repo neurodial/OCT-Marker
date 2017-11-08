@@ -24,9 +24,9 @@ class CVImageWidget : public QWidget
 	enum class ScaleMethod { Factor, Size };
 	
 	double scaleFactorConfig = 1.;
-// 	double scaleFactorX = 1;
-// 	double scaleFactorY = 1;
-	double aspectRatio = 0.34;
+	double aspectRatio       = 1;
+
+	bool useAspectRatio = false;
 
 	ScaleFactor scaleFactor;
 
@@ -102,6 +102,9 @@ public slots:
 
 	void zoom_in()                                               { setZoom(scaleFactorConfig+0.5); }
 	void zoom_out()                                              { setZoom(scaleFactorConfig-0.5); }
+
+	void setUseAspectRatio(bool v)                               { if(useAspectRatio != v) { useAspectRatio = v; updateScaleFactorXY(); cvImage2qtImage(); } }
+	void setAspectRatio(double v)                                { aspectRatio = v; updateScaleFactorXY(); if(useAspectRatio) cvImage2qtImage(); }
 
 private slots:
 	void imageParameterChanged();
