@@ -5,17 +5,20 @@
 #include<vector>
 
 class RectItem;
+class ObjectsmarkerFactory;
 
 class ObjectsmarkerScene : public QGraphicsScene
 {
 	Q_OBJECT
+
+	const ObjectsmarkerFactory& factory;
 
 	bool addObjectMode = false;
 	RectItem* newaddedItem = nullptr;
 
 	void endInsertItem();
 public:
-	ObjectsmarkerScene(QObject* parent = nullptr) : QGraphicsScene(parent) {};
+	ObjectsmarkerScene(const ObjectsmarkerFactory& factory, QObject* parent = nullptr) : QGraphicsScene(parent), factory(factory) {};
 	~ObjectsmarkerScene();
 
 	void markersToList  (std::vector<RectItem*>& itemslist);

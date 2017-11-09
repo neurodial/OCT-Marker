@@ -6,6 +6,7 @@
 #include <markerobjects/rectitem.h>
 #include <QGraphicsSceneMouseEvent>
 
+#include"objectsmarkerfactory.h"
 
 ObjectsmarkerScene::~ObjectsmarkerScene()
 {
@@ -24,15 +25,9 @@ void ObjectsmarkerScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	if(addObjectMode)
 	{
 		endInsertItem();
-		newaddedItem = new RectItem();
+		newaddedItem = factory.createObject();
 		newaddedItem->setRect(QRectF(event->scenePos(), QSizeF(0,0)));
 		newaddedItem->setSelected(true);
-
-
-		QPen pen1;
-		pen1.setWidth(1);
-		pen1.setCosmetic(true);
-		newaddedItem->setPen(pen1);
 
 		addItem(newaddedItem);
 	}

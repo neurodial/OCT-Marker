@@ -7,6 +7,7 @@ namespace bpt = boost::property_tree;
 
 
 #include"objectsmarker.h"
+#include"objectsmarkerfactory.h"
 
 #include <markerobjects/rectitem.h>
 
@@ -75,7 +76,7 @@ void ObjectsMarkerPTree::fillPTree(boost::property_tree::ptree& ptree, const Obj
 	}
 }
 
-bool ObjectsMarkerPTree::parsePTree(const boost::property_tree::ptree& ptree, Objectsmarker* markerManager)
+bool ObjectsMarkerPTree::parsePTree(const boost::property_tree::ptree& ptree, Objectsmarker* markerManager, const ObjectsmarkerFactory& factory)
 {
 	markerManager->removeAllItems();
 
@@ -105,12 +106,12 @@ bool ObjectsMarkerPTree::parsePTree(const boost::property_tree::ptree& ptree, Ob
 
 			for(const std::pair<const std::string, bpt::ptree>& child : *ptreeObjects)
 			{
-				const std::string& itemName = child.first;
+// 				const std::string& itemName = child.first;
 				      std::string  itemType = readOptinalNode(child.second, "ItemType", std::string());
 
 				if(itemType == "Rect")
 				{
-					RectItem* item = new RectItem;
+					RectItem* item = factory.createObject();
 					loadItemState(child.second, *item);
 					items.push_back(item);
 				}

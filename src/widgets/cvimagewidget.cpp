@@ -142,19 +142,20 @@ void CVImageWidget::updateScaleFactor()
 
 void CVImageWidget::updateScaleFactorXY()
 {
-	double scaleFactorX = scaleFactorConfig;
-	double scaleFactorY = scaleFactorConfig;
+	double scaleFactorX = 1;
+	double scaleFactorY = 1;
 
-	if(useAspectRatio)
+	if(useAspectRatio && aspectRatio > 1e-4)
 	{
 		if(aspectRatio < 1)
-			scaleFactorX /= aspectRatio;
+			scaleFactorX = 1/aspectRatio;
 		if(aspectRatio > 1)
-			scaleFactorY *= aspectRatio;
+			scaleFactorY = aspectRatio;
 	}
 
 	scaleFactor.setFactorX(scaleFactorX);
 	scaleFactor.setFactorY(scaleFactorY);
+	scaleFactor.setFactor(scaleFactorConfig);
 }
 
 
@@ -162,21 +163,21 @@ void CVImageWidget::updateScaleFactorXY()
 void CVImageWidget::fitImage2Width(int width)
 {
 	if(cvImage.cols > 0)
-		setZoom(static_cast<double>(width)/cvImage.cols);
+		setZoom(static_cast<double>(width)/cvImage.cols/scaleFactor.getPureFactorX());
 }
 
 void CVImageWidget::fitImage2Height(int heigth)
 {
 	if(cvImage.rows > 0)
-		setZoom(static_cast<double>(heigth)/cvImage.rows);
+		setZoom(static_cast<double>(heigth)/cvImage.rows/scaleFactor.getPureFactorY());
 }
 
 void CVImageWidget::fitImage(int width, int heigth)
 {
 	if(cvImage.cols > 0 && cvImage.rows > 0)
 	{
-		double scale1 = static_cast<double>(width )/cvImage.cols;
-		double scale2 = static_cast<double>(heigth)/cvImage.rows;
+		double scale1 = static_cast<double>(width )/cvImage.cols/scaleFactor.getPureFactorX();
+		double scale2 = static_cast<double>(heigth)/cvImage.rows/scaleFactor.getPureFactorY();
 
 		setZoom(std::min(scale1, scale2));
 	}

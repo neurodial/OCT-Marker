@@ -7,6 +7,8 @@
 #include<QPoint>
 #include<QList>
 
+#include"objectsmarkerfactory.h"
+
 class QAction;
 class QToolBar;
 class QActionGroup;
@@ -57,6 +59,7 @@ private:
 
 
 	ObjectsmarkerScene* graphicsScene = nullptr;
+	ObjectsmarkerFactory objectsfactory;
 
 
 	void removeItems(const QList<QGraphicsItem*>& items);

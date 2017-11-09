@@ -32,7 +32,7 @@ namespace
 
 Objectsmarker::Objectsmarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
-, graphicsScene(new ObjectsmarkerScene(this))
+, graphicsScene(new ObjectsmarkerScene(objectsfactory, this))
 {
 	name = tr("Objects marker");
 	id   = "ObjectsMarker";
@@ -64,7 +64,7 @@ bool Objectsmarker::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 void Objectsmarker::loadState(boost::property_tree::ptree& markerTree)
 {
 	removeAllItems();
-	ObjectsMarkerPTree::parsePTree(markerTree, this);
+	ObjectsMarkerPTree::parsePTree(markerTree, this, objectsfactory);
 	graphicsScene->markersFromList(itemsList.at(actBScanSceneNr));
 }
 
