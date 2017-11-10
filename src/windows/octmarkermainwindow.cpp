@@ -394,6 +394,10 @@ void OCTMarkerMainWindow::setupMenu()
 	previousBScan->setShortcut(Qt::LeftArrow);
 	connect(previousBScan, SIGNAL(triggered(bool)), &markerManager, SLOT(previousBScan()));
 
+	QAction* extraSegLine = ProgramOptions::bscanShowExtraSegmentationslines.getAction();
+	extraSegLine->setText(tr("show extra segmentationslines"));
+	extraSegLine->setIcon(QIcon(":/icons/chart_curve.png"));
+
 	QAction* showSeglines = ProgramOptions::bscansShowSegmentationslines.getAction();
 	showSeglines->setText(tr("show segmentationslines"));
 	showSeglines->setIcon(QIcon(":/icons/chart_curve.png"));
@@ -421,6 +425,7 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addWidget(labelMaxBscan);
 	toolBar->addSeparator();
 	toolBar->addAction(showWithAspectRatio);
+	toolBar->addAction(extraSegLine);
 	toolBar->addAction(showSeglines);
 	toolBar->addWidget(paintsizeSegLines);
 

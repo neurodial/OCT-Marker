@@ -17,6 +17,7 @@ class QWidget;
 class ObjectsmarkerScene;
 class RectItem;
 class QGraphicsItem;
+class WidgetObjectMarker;
 
 
 class Objectsmarker : public BscanMarkerBase
@@ -29,6 +30,7 @@ public:
 
 
 	Objectsmarker(OctMarkerManager* markerManager);
+	~Objectsmarker();
 
 	virtual bool drawBScan() const                         override { return true;  }
 
@@ -40,6 +42,8 @@ public:
 
 	virtual       QGraphicsScene* getGraphicsScene()       override;
 	virtual const QGraphicsScene* getGraphicsScene() const override;
+
+	QWidget* getWidget() override;
 
 // 	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect& drawrect) const override;
 
@@ -68,6 +72,7 @@ private:
 	std::vector<std::vector<RectItem*>> itemsList;
 	std::size_t actBScanSceneNr = 0;
 
+	WidgetObjectMarker* widget = nullptr;
 };
 
 #endif // OBJECTSMARKER_H

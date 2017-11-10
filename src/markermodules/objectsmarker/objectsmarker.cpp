@@ -13,6 +13,7 @@
 
 #include <data_structure/scalefactor.h>
 
+#include"widgetobjectmarker.h"
 
 
 namespace
@@ -33,10 +34,15 @@ namespace
 Objectsmarker::Objectsmarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , graphicsScene(new ObjectsmarkerScene(objectsfactory, this))
+, widget(new WidgetObjectMarker)
 {
 	name = tr("Objects marker");
 	id   = "ObjectsMarker";
 	icon = QIcon(":/icons/typicons_mod/object_marker.svg");
+}
+
+Objectsmarker::~Objectsmarker()
+{
 }
 
 
@@ -138,6 +144,11 @@ void Objectsmarker::setActBScan(std::size_t bscan)
 	graphicsScene->markersToList(itemsList.at(actBScanSceneNr));
 	graphicsScene->markersFromList(itemsList.at(bscan));
 	actBScanSceneNr = bscan;
+}
+
+QWidget* Objectsmarker::getWidget()
+{
+	return widget;
 }
 
 

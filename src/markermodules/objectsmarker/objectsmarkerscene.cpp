@@ -55,6 +55,7 @@ void ObjectsmarkerScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 	{
 		endInsertItem();
 		addObjectMode = false;
+		addObjectModeChanged(addObjectMode);
 	}
 	else
 		QGraphicsScene::mouseReleaseEvent(event);
@@ -85,6 +86,7 @@ void ObjectsmarkerScene::setAddObjectMode(bool v)
 		removeItem(newaddedItem);
 		delete newaddedItem;
 	}
+	addObjectModeChanged(addObjectMode);
 }
 
 

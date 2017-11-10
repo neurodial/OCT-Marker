@@ -27,6 +27,9 @@ public:
 public slots:
 	void setAddObjectMode(bool v);
 
+signals:
+	void addObjectModeChanged(bool v);
+
 protected:
 	virtual void keyPressEvent    (QKeyEvent               * event) override;
 	virtual void mousePressEvent  (QGraphicsSceneMouseEvent* event) override;
