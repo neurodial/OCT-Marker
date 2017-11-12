@@ -39,6 +39,9 @@ Objectsmarker::Objectsmarker(OctMarkerManager* markerManager)
 	name = tr("Objects marker");
 	id   = "ObjectsMarker";
 	icon = QIcon(":/icons/typicons_mod/object_marker.svg");
+
+	connect(graphicsScene, &ObjectsmarkerScene::addObjectModeChanged        , widget       , &WidgetObjectMarker::addObjectStatusChangedSlot);
+	connect(widget       , &WidgetObjectMarker::addObjectStatusChangedSignal, graphicsScene, &ObjectsmarkerScene::setAddObjectMode          );
 }
 
 Objectsmarker::~Objectsmarker()

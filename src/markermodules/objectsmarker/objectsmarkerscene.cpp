@@ -80,11 +80,15 @@ void ObjectsmarkerScene::endInsertItem()
 
 void ObjectsmarkerScene::setAddObjectMode(bool v)
 {
+	if(v == addObjectMode)
+		return;
+
 	addObjectMode = v;
 	if(!v && newaddedItem)
 	{
 		removeItem(newaddedItem);
 		delete newaddedItem;
+		newaddedItem = nullptr;
 	}
 	addObjectModeChanged(addObjectMode);
 }

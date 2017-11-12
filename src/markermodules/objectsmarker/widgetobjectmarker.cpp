@@ -9,12 +9,27 @@ WidgetObjectMarker::WidgetObjectMarker(QWidget* parent)
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 
-	QPushButton* button = new QPushButton(this);
-	button->setText(tr("add rect"));
+	addObjectButton = new QPushButton(this);
 
-	layout->addWidget(button);
+	addObjectButton->setText(tr("add rect"));
+	addObjectButton->setCheckable(true);
+
+	connect(addObjectButton, &QAbstractButton::toggled, this, &WidgetObjectMarker::addObjectStatusChangedSlotPrivte);
+
+	layout->addWidget(addObjectButton);
 
 	layout->addStretch();
 
 	setLayout(layout);
 }
+
+void WidgetObjectMarker::addObjectStatusChangedSlot(bool v)
+{
+	addObjectButton->setChecked(v);
+}
+
+void WidgetObjectMarker::addObjectStatusChangedSlotPrivte(bool v)
+{
+	addObjectStatusChangedSignal(v);
+}
+
