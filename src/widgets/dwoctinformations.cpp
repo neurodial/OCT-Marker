@@ -4,6 +4,7 @@
 
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
+#include <octdata/datastruct/sloimage.h>
 #include <octdata/datastruct/oct.h>
 
 #include <manager/octdatamanager.h>
@@ -289,6 +290,13 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 		addInformation(seriesInformations, tr("Scan focus"), QString("%1").arg(scanFocus), this);
 
 	addInformation(seriesInformations, tr("Description"), series->getDescription(), this);
+
+	const OctData::SloImage& slo = series->getSloImage();
+	if(slo.hasImage())
+	{
+		addInformation(seriesInformations, tr("Slo width (pixel)" ), QString("%1").arg(slo.getWidth ()), this);
+		addInformation(seriesInformations, tr("Slo height (pixel)"), QString("%1").arg(slo.getHeight()), this);
+	}
 }
 
 void DwOctInformations::setBScan(const OctData::BScan* bscan)
@@ -328,6 +336,9 @@ void DwOctInformations::setBScan(const OctData::BScan* bscan)
 	filler.setInformationConvert(bscanInformations, tr("Scale Z"         ), sf.getZ()           , scaleFactorZ          );
 
 	filler.setInformation       (bscanInformations, tr("Angle"           ), bscanAngleString    , bscanAngle            );
+
+	filler.setInformationConvert(bscanInformations, tr("width (pixel)"   ), bscan->getWidth()   , bscanWidthPx          );
+	filler.setInformationConvert(bscanInformations, tr("height (pixel)"  ), bscan->getHeight()  , bscanHeightPx         );
 
 }
 
