@@ -106,6 +106,12 @@ namespace
 			}
 		}
 	};
+
+
+	QString createSizeString(double scale, int sizePx)
+	{
+		return QString("%1 (%2)").arg(sizePx*scale).arg(sizePx);
+	};
 }
 
 
@@ -294,8 +300,9 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 	const OctData::SloImage& slo = series->getSloImage();
 	if(slo.hasImage())
 	{
-		addInformation(seriesInformations, tr("Slo width (pixel)" ), QString("%1").arg(slo.getWidth ()), this);
-		addInformation(seriesInformations, tr("Slo height (pixel)"), QString("%1").arg(slo.getHeight()), this);
+		OctData::ScaleFactor sf = slo.getScaleFactor();
+		addInformation(seriesInformations, tr("Slo width (pixel)" ), createSizeString(sf.getX(), slo.getWidth ()), this);
+		addInformation(seriesInformations, tr("Slo height (pixel)"), createSizeString(sf.getY(), slo.getHeight()), this);
 	}
 }
 
@@ -337,8 +344,8 @@ void DwOctInformations::setBScan(const OctData::BScan* bscan)
 
 	filler.setInformation       (bscanInformations, tr("Angle"           ), bscanAngleString    , bscanAngle            );
 
-	filler.setInformationConvert(bscanInformations, tr("width (pixel)"   ), bscan->getWidth()   , bscanWidthPx          );
-	filler.setInformationConvert(bscanInformations, tr("height (pixel)"  ), bscan->getHeight()  , bscanHeightPx         );
+	filler.setInformation       (bscanInformations, tr("width (pixel)"   ), createSizeString(sf.getX(), bscan->getWidth ()), bscanWidthPx          );
+	filler.setInformation       (bscanInformations, tr("height (pixel)"  ), createSizeString(sf.getZ(), bscan->getHeight()), bscanHeightPx         );
 
 }
 
