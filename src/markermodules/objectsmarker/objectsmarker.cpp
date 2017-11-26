@@ -155,14 +155,22 @@ QWidget* Objectsmarker::getWidget()
 }
 
 
-/*
 void Objectsmarker::drawMarker(QPainter& p, BScanMarkerWidget* markerWidget, const QRect& drawrect) const
 {
-	const double factor = markerWidget->getImageScaleFactor();
-	QRect sourceRect(drawrect.x()/factor, drawrect.y()/factor, drawrect.width()/factor, drawrect.height()/factor);
-	graphicsScene->render(&p, drawrect, sourceRect);
+	if(!isActivated)
+	{
+		const ScaleFactor& factor = markerWidget->getImageScaleFactor();
+		const double factorX = factor.getFactorX();
+		const double factorY = factor.getFactorY();
+
+		QRectF sourceRect(drawrect.x()/factorX, drawrect.y()/factorY, drawrect.width()/factorX, drawrect.height()/factorY);
+		graphicsScene->render(&p, drawrect, sourceRect);
+	}
+	else
+		BscanMarkerBase::drawMarker(p, markerWidget, drawrect);
 }
 
+/*
 
 BscanMarkerBase::RedrawRequest Objectsmarker::mousePressEvent(QMouseEvent* event, BScanMarkerWidget* markerWidget)
 {

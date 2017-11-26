@@ -50,30 +50,30 @@
 <context>
     <name>BScanMarkerWidget</name>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="96"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="97"/>
         <source>Save Raw Image</source>
         <translation>Rohdaten als Bild speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="103"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="570"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="104"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="567"/>
         <source>Save raw data as matrix</source>
         <translation>Rohdaten als openCV-Matrix speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="112"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="585"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="113"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="582"/>
         <source>Save raw data as bin</source>
         <translation>Rohdaten im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="118"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="598"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="119"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="595"/>
         <source>Save image data as bin</source>
         <translation>Bild im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="610"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="607"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
@@ -705,237 +705,237 @@
 <context>
     <name>DwOctInformations</name>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="146"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="190"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="207"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="152"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="196"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="213"/>
         <source>internal Id</source>
         <translation>Interne ID</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="148"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="154"/>
         <source>Surname</source>
         <translation>Nachname</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="149"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="155"/>
         <source>Forename</source>
         <translation>Vorname</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="150"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="156"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="151"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="157"/>
         <source>ID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="152"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="158"/>
         <source>Ancestry</source>
         <translation>Abstammung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="155"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="161"/>
         <source>Birthdate</source>
         <translation>Geburtstag</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="161"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="167"/>
         <source>Female</source>
         <translation>Weiblich</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="164"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="170"/>
         <source>Male</source>
         <translation>Männlich</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="169"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="175"/>
         <source>Sex</source>
         <translation>Geschlecht</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="170"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="192"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="215"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="176"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="198"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="221"/>
         <source>UID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="191"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="197"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="193"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="199"/>
         <source>Operator</source>
         <translation>Bediener</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="195"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="201"/>
         <source>Study date</source>
         <translation>Studiendatum</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="210"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="216"/>
         <source>Scan date</source>
         <translation>Aufnahmedatum</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="216"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="222"/>
         <source>Ref. UID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="220"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="226"/>
         <source>Baseline scan</source>
         <translation>Basisaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="220"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="226"/>
         <source>true</source>
         <translation>Wahr</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="220"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="226"/>
         <source>false</source>
         <translation>Falsch</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="228"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="234"/>
         <source>OS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="231"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="237"/>
         <source>OD</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="236"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="242"/>
         <source>Laterality</source>
         <translation>Lateralität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="242"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="248"/>
         <source>Single line scan</source>
         <translation>einzelner Linienscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="245"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="251"/>
         <source>Circular scan</source>
         <translation>Ringscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="248"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="254"/>
         <source>Volume scan</source>
         <translation>Volumenaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="251"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="257"/>
         <source>Fast volume scan</source>
         <translation>Schnelle Volumenaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="254"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="260"/>
         <source>Radial scan</source>
         <translation>Sternscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="257"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="263"/>
         <source>Radial+Circles scan</source>
         <translation>Stern- und Radialscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="264"/>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="283"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="270"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="289"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="267"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="273"/>
         <source>Scan pattern</source>
         <translation>Scanmuster</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="273"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="279"/>
         <source>ONH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="276"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="282"/>
         <source>Retina</source>
         <translation>Netzhaut</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="286"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="292"/>
         <source>Examined Structure</source>
         <translation>Untersuchte Struktur</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="290"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="296"/>
         <source>Scan focus</source>
         <translation>Aufnahmefokus</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="292"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="298"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="297"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="304"/>
         <source>Slo width (pixel)</source>
         <translation>Slobreite (Pixel)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="298"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="305"/>
         <source>Slo height (pixel)</source>
         <translation>Slohöhe (pixel)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="330"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="337"/>
         <source>Acquisition time</source>
         <translation>Aufnahmezeit</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="331"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="338"/>
         <source>Image quality</source>
         <translation>Bildqualität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="332"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="339"/>
         <source>Images average</source>
         <translation>Gemittelte Bilder</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="334"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="341"/>
         <source>Scale X</source>
         <translation>X-Skalierung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="335"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="342"/>
         <source>Distance</source>
         <translation>Distanz</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="336"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="343"/>
         <source>Scale Z</source>
         <translation>Y-Skalierung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="338"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="345"/>
         <source>Angle</source>
         <translation>Winkel</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="340"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="347"/>
         <source>width (pixel)</source>
         <translation>Breite (Pixel)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dwoctinformations.cpp" line="341"/>
+        <location filename="../src/widgets/dwoctinformations.cpp" line="348"/>
         <source>height (pixel)</source>
         <translation>Höhe (Pixel)</translation>
     </message>
@@ -951,7 +951,7 @@
 <context>
     <name>OCTMarkerMainWindow</name>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="185"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="201"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
@@ -960,17 +960,17 @@
         <translation type="vanished">OCT-Scan laden (XML)</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="110"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="113"/>
         <source>Oct Data</source>
         <translation>Oct-Daten</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="188"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="204"/>
         <source>Load OCT scan</source>
         <translation>OCT-Aufnahme laden</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="204"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="220"/>
         <source>load markers</source>
         <translation>Markierungen laden</translation>
     </message>
@@ -979,279 +979,284 @@
         <translation type="vanished">Markierungen hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="93"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="96"/>
         <source>SLO image</source>
         <translation>SLO-Bild</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="195"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="129"/>
+        <source>Oct markers</source>
+        <translation type="unfinished">OCT-Markierungen</translation>
+    </message>
+    <message>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="211"/>
         <source>Add OCT scans from folder</source>
         <translation>Dateien aus Ordner einlesen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="218"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="234"/>
         <source>save markers</source>
         <translation>Markierungen speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="224"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="240"/>
         <source>trigger auto save markers</source>
         <translation>Automatisches Speichern anstoßen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="234"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="250"/>
         <source>Quit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="244"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="260"/>
         <source>Options</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="251"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="267"/>
         <source>Fill empty pixels white</source>
         <translation>Leere Pixel weiß füllen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="252"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="268"/>
         <source>register BScans</source>
         <translation>B-Scans registrieren</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="253"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="269"/>
         <source>rotate SLO</source>
         <translation>SLO drehen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="254"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="270"/>
         <source>hold OCT raw data</source>
         <translation>OCT-Rohdaten im Speicher halten</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="255"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="271"/>
         <source>read BScans from OCT data</source>
         <translation>B-Scans aus OCT-Dateien lesen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="263"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="279"/>
         <source>E2E Gray</source>
         <translation>E2E-Grauwerte</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="268"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="284"/>
         <source>E2E nativ</source>
         <translation>nativ E2E</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="270"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="286"/>
         <source>Xml emulation</source>
         <translation>Xml emulieren</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="272"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="288"/>
         <source>Vol emulation</source>
         <translation>Vol emulieren</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="279"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="295"/>
         <source>Autosave markers</source>
         <translation>Marker automatisch speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="284"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="300"/>
         <source>Default filetype</source>
         <translation>Standarddateityp</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="289"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="305"/>
         <source>XML</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="291"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="307"/>
         <source>JSOM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="293"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="309"/>
         <source>INFO</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="300"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="316"/>
         <source>View</source>
         <translation>Ansicht</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="302"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="318"/>
         <source>change segmentation line color</source>
         <translation>Segmentierungslinenfarbe ändern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="304"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="320"/>
         <source>Active line color</source>
         <translation>aktive Linienfarbe</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="305"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="321"/>
         <source>Passiv line color</source>
         <translation>passive Linienfarbe</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="315"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="331"/>
         <source>Extras</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="318"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="932"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="334"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="948"/>
         <source>Save Matlab Bin Code</source>
         <translation>Matlab-Code für Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="324"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="939"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="340"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="955"/>
         <source>Save Matlab Write Bin Code</source>
         <translation>Matlab-Schreibcode für Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="334"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="350"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="337"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="353"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="338"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="354"/>
         <source>Show the Qt library&apos;s About box</source>
         <translation>Zeigt das Informationsfenster der Qt-Bibliothek</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="344"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="360"/>
         <source>About</source>
         <translation>Über OCT-Marker</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="363"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="379"/>
         <source>previous octScan</source>
         <translation>Vorheriger OCT-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="369"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="385"/>
         <source>next octScan</source>
         <translation>Nächster OCT-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="377"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="393"/>
         <source>next bscan</source>
         <translation>Nächster B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="392"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="408"/>
         <source>previous bscan</source>
         <translation>Vorheriger B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="398"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="414"/>
         <source>show extra segmentationslines</source>
         <translation>Zeige Extrasegmentierungslinien</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="402"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="418"/>
         <source>show segmentationslines</source>
         <translation>Segmentierungslinien anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="406"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="422"/>
         <source>Aspect ratio</source>
         <translation>Seitenverhältnis</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="416"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="432"/>
         <source>B-Scan</source>
         <translation>B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="436"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="452"/>
         <source>Zoom +</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="442"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="458"/>
         <source>actual zoom</source>
         <translation>Aktueller Zoom</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="497"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="513"/>
         <source>Zoom %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="460"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="476"/>
         <source>Zoom -</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="467"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="483"/>
         <source>Adjust image in width</source>
         <translation>Bildgröße an Festerbreite anpassen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="473"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="489"/>
         <source>Adjust image in height</source>
         <translation>Bildgröße an Festerhöhe anpassen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="562"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="578"/>
         <source>Marker</source>
         <translation>Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="571"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="587"/>
         <source>no marker</source>
         <translation>Keine Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="612"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="628"/>
         <source>Choose a folder to load Files</source>
         <translation>Ordner für das Einlesen auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="836"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="852"/>
         <source>OCT Markers</source>
         <translation>OCT-Marker</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="837"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="853"/>
         <source>OCT Markers Json file</source>
         <translation>OCT-Marker-Json-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="838"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="854"/>
         <source>OCT Markers XML file</source>
         <translation>OCT-Marker-XML-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="839"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="855"/>
         <source>OCT Markers INFO file</source>
         <translation>OCT-Marker-Info-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="973"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="989"/>
         <source>Unknown error on autosave</source>
         <translation>Unbekannter Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="977"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="993"/>
         <source>Error on autosave</source>
         <translation>Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="977"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="993"/>
         <source>Autosave fail with message: %1 &lt;br /&gt;Quit program?</source>
         <translation>Automatisches Speichern mit Meldung:&lt;br /&gt;%1&lt;br /&gt;fehlgeschlagen.&lt;br /&gt;Programm beenden?</translation>
     </message>
@@ -1264,17 +1269,17 @@
         <translation type="vanished">Fülle Intervall</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="627"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="643"/>
         <source>Choose a filename to load a File</source>
         <translation>Dateinamen zum Laden wählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="660"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="676"/>
         <source>All readabel (%1)</source>
         <translation>Alle lesbaren (%1)</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="661"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="677"/>
         <source>All files (* *.*)</source>
         <translation>Alle Dateien</translation>
     </message>
@@ -1303,17 +1308,17 @@
         <translation type="vanished">OCT-Marierungsdatei (*.xml)</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="877"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="893"/>
         <source>Choose a file to load markers</source>
         <translation>Markierungsdatei zum Laden auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="893"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="909"/>
         <source>Choose a filename to save markers</source>
         <translation>Markierungsdatei zum Speichern auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="908"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="924"/>
         <source>OCT-Marker - %1</source>
         <translation>OCT-Marker - %1</translation>
     </message>
@@ -1360,6 +1365,19 @@
         <location filename="../src/model/octdatamodel.cpp" line="75"/>
         <source>Series</source>
         <translation>Aufnahme</translation>
+    </message>
+</context>
+<context>
+    <name>PaintMarkerModel</name>
+    <message>
+        <location filename="../src/model/paintmarkermodel.cpp" line="106"/>
+        <source>marker name</source>
+        <translation>Markierung</translation>
+    </message>
+    <message>
+        <location filename="../src/model/paintmarkermodel.cpp" line="108"/>
+        <source>show</source>
+        <translation>Zeigen</translation>
     </message>
 </context>
 <context>

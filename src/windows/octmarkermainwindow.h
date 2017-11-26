@@ -19,6 +19,8 @@ class CScan;
 class ScrollAreaPan;
 class DWDebugOutput;
 
+class PaintMarker;
+
 
 class OCTMarkerMainWindow : public QMainWindow
 {
@@ -38,6 +40,8 @@ class OCTMarkerMainWindow : public QMainWindow
 	ScrollAreaPan*        bscanMarkerWidgetScrollArea = nullptr;
 	BScanMarkerWidget*    bscanMarkerWidget           = nullptr;
 	static DWDebugOutput* dwDebugOutput;
+
+	PaintMarker* pmm = nullptr;
 
 
 	QSpinBox*     bscanChooser     = nullptr;

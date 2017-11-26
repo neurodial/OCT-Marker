@@ -45,7 +45,7 @@ public:
 
 	QWidget* getWidget() override;
 
-// 	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect& drawrect) const override;
+	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect& drawrect) const override;
 
 
 // 	virtual RedrawRequest mouseMoveEvent   (QMouseEvent* event, BScanMarkerWidget* markerWidget) override;

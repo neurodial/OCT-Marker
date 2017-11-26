@@ -43,8 +43,6 @@ public:
 
 	const ExtraImageData* getExtraImageData() const;
 
-// 	void paintMarker(QPaintEvent* event, const BScanMarkerWidget*) const;
-
 private:
 	OctMarkerManager();
 	virtual ~OctMarkerManager();

@@ -41,6 +41,7 @@ QVariant PaintMarkerModel::data(const QModelIndex& index, int role) const
 		}
 	}
 
+
 	if(role == Qt::DisplayRole)
 	{
 		const PaintMarkerItem& item = markers.at(index.row());
@@ -54,6 +55,32 @@ QVariant PaintMarkerModel::data(const QModelIndex& index, int role) const
 
 	return QVariant();
 }
+
+bool PaintMarkerModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+	if(role == Qt::CheckStateRole)
+	{
+		if(index.column() == 1)
+		{
+			PaintMarkerItem& item = markers.at(index.row());
+			item.setShow(value.toBool());
+			return true;
+		}
+	}
+	return false;
+}
+
+Qt::ItemFlags PaintMarkerModel::flags(const QModelIndex& index) const
+{
+	if(!index.isValid())
+		return 0;
+
+	if(index.column() == 1)
+		return Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
+
+	return QAbstractTableModel::flags(index);
+}
+
 
 int PaintMarkerModel::columnCount(const QModelIndex& parent) const
 {
@@ -85,4 +112,12 @@ QVariant PaintMarkerModel::headerData(int section, Qt::Orientation orientation, 
 		return QString("%1").arg(section);
 
 	return QVariant();
+}
+
+void PaintMarkerModel::slotClicked(QModelIndex index)
+{
+
+	OctMarkerManager& manager = OctMarkerManager::getInstance();
+
+	manager.setBscanMarker(index.row());
 }

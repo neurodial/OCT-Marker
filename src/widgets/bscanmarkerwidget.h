@@ -17,6 +17,8 @@ class BscanMarkerBase;
 
 class ContureSegment;
 
+class PaintMarker;
+
 class BScanMarkerWidget : public CVImageWidget
 {
 	Q_OBJECT
@@ -31,6 +33,7 @@ class BScanMarkerWidget : public CVImageWidget
 	QAction*                                saveRawBinAction   = nullptr;
 	QAction*                                saveImageBinAction = nullptr;
 // 	const OctData::BScan*                   actBscan           = nullptr;
+	const PaintMarker*                      paintMarker        = nullptr;
 
 	bool controlUsed = false;
 	
@@ -59,6 +62,8 @@ public:
 	virtual ~BScanMarkerWidget();
 
 	static void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const std::vector<double>& segLine, const ScaleFactor& factor);
+
+	void setPaintMarker(const PaintMarker* pm)                      { paintMarker = pm; }
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;

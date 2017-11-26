@@ -2,6 +2,7 @@
 
 #include <manager/octmarkermanager.h>
 #include <manager/octdatamanager.h>
+#include <manager/paintmarker.h>
 
 #include <markermodules/bscanmarkerbase.h>
 
@@ -201,7 +202,8 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 			paintConture(segPainter, extraData->getContourSegments());
 	}
 	
-
+	if(paintMarker)
+		paintMarker->paintMarker(event, this);
 // 	markerManger.paintMarker(event, this);
 }
 

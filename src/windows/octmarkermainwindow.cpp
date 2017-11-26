@@ -62,6 +62,7 @@
 #include<windows/infodialogs.h>
 #include <helper/actionclasses.h>
 #include <widgets/wgoctmarkers.h>
+#include <manager/paintmarker.h>
 
 DWDebugOutput* OCTMarkerMainWindow::dwDebugOutput = nullptr;
 
@@ -124,13 +125,14 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 
 
 
-	PaintMarkerModel* pmm = new PaintMarkerModel();
+	pmm = new PaintMarker();
 	QDockWidget* markersDock = new QDockWidget(tr("Oct markers"), this);
-	WGOctMarkers* markerswidgets = new WGOctMarkers(pmm);
+	WGOctMarkers* markerswidgets = new WGOctMarkers(&(pmm->getModel()));
 	markersDock->setObjectName("DwMarkersWidgets");
 	markersDock->setWidget(markerswidgets);
 	addDockWidget(Qt::LeftDockWidgetArea, markersDock);
 
+	bscanMarkerWidget->setPaintMarker(pmm);
 
 
 
@@ -161,6 +163,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 
 OCTMarkerMainWindow::~OCTMarkerMainWindow()
 {
+	delete pmm;
 }
 
 void OCTMarkerMainWindow::messageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
