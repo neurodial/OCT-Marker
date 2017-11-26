@@ -63,7 +63,7 @@ public:
 
 	static void paintSegmentationLine(QPainter& segPainter, int bScanHeight, const std::vector<double>& segLine, const ScaleFactor& factor);
 
-	void setPaintMarker(const PaintMarker* pm)                      { paintMarker = pm; }
+	void setPaintMarker(const PaintMarker* pm);
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;

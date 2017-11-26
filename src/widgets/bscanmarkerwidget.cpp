@@ -637,3 +637,15 @@ void BScanMarkerWidget::showImage(const cv::Mat& image)
 		gvConvert->setImageSize(image.cols, image.rows);
 	updateGraphicsViewSize();
 }
+
+
+void BScanMarkerWidget::setPaintMarker(const PaintMarker* pm)
+{
+	if(paintMarker)
+		disconnect(paintMarker, &PaintMarker::viewChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+
+	paintMarker = pm;
+
+	if(paintMarker)
+		connect(paintMarker, &PaintMarker::viewChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+}

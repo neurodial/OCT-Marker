@@ -46,6 +46,9 @@ public:
 
 public slots:
 	void slotClicked(QModelIndex index);
+
+signals:
+	void viewChanged();
 };
 
 #endif // PAINTMARKERMODEL_H

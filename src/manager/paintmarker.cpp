@@ -11,6 +11,12 @@
 
 #include <markermodules/bscanmarkerbase.h>
 
+PaintMarker::PaintMarker()
+{
+	connect(&model, &PaintMarkerModel::viewChanged, this, &PaintMarker::viewChanged);
+}
+
+
 
 void PaintMarker::paintMarker(QPaintEvent* event, BScanMarkerWidget* widget) const
 {

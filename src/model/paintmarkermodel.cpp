@@ -64,6 +64,8 @@ bool PaintMarkerModel::setData(const QModelIndex& index, const QVariant& value, 
 		{
 			PaintMarkerItem& item = markers.at(index.row());
 			item.setShow(value.toBool());
+
+			emit(viewChanged());
 			return true;
 		}
 	}
