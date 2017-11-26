@@ -35,6 +35,7 @@
 
 #include <model/octfilesmodel.h>
 #include <model/octdatamodel.h>
+#include <model/paintmarkermodel.h>
 
 #include <octdata/datastruct/sloimage.h>
 #include <octdata/datastruct/bscan.h>
@@ -60,6 +61,7 @@
 
 #include<windows/infodialogs.h>
 #include <helper/actionclasses.h>
+#include <widgets/wgoctmarkers.h>
 
 DWDebugOutput* OCTMarkerMainWindow::dwDebugOutput = nullptr;
 
@@ -119,6 +121,17 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 	DWMarkerWidgets* dwmarkerwidgets = new DWMarkerWidgets(this);
 	dwmarkerwidgets->setObjectName("DwMarkerWidgets");
 	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
+
+
+
+	PaintMarkerModel* pmm = new PaintMarkerModel();
+	QDockWidget* markersDock = new QDockWidget(tr("Oct markers"), this);
+	WGOctMarkers* markerswidgets = new WGOctMarkers(pmm);
+	markersDock->setObjectName("DwMarkersWidgets");
+	markersDock->setWidget(markerswidgets);
+	addDockWidget(Qt::LeftDockWidgetArea, markersDock);
+
+
 
 
 	// General Config

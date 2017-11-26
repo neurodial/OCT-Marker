@@ -67,12 +67,12 @@ public:
 	
 
 private slots:
-	
+
 public slots:
 	void setOctData(const OctData::OCT* octData);
 	
-    void slotClicked(QModelIndex index);
-    void slotDoubleClicked(QModelIndex index);
+	void slotClicked(QModelIndex index);
+	void slotDoubleClicked(QModelIndex index);
 };
 
 #endif // OCTDATAMODEL_H

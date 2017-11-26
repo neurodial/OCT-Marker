@@ -70,9 +70,9 @@ public:
 	virtual QGraphicsScene* getGraphicsScene()                      { return nullptr; }
 	virtual const QGraphicsScene* getGraphicsScene() const          { return nullptr; }
 	
-	virtual const QString& getName()                                { return name; }
-	virtual const QString& getMarkerId()                            { return id;   }
-	virtual const QIcon&   getIcon()                                { return icon; }
+	virtual const QString& getName()                         const  { return name; }
+	virtual const QString& getMarkerId()                     const  { return id;   }
+	virtual const QIcon&   getIcon()                         const  { return icon; }
 	
 	virtual void activate(bool);
 	virtual void saveState(boost::property_tree::ptree&)            {}

@@ -17,6 +17,9 @@
 #include <QMessageBox>
 
 #include <QTime>
+#include<QPainter>
+#include<QPaintEvent>
+
 #include "octdatamanager.h"
 
 #include <markermodules/bscanmarkerbase.h>
@@ -292,3 +295,13 @@ const ExtraImageData* OctMarkerManager::getExtraImageData() const
 {
 	return extraSeriesData->getBScanExtraData(actBScan);
 }
+/*
+void OctMarkerManager::paintMarker(QPaintEvent* event, const BScanMarkerWidget* widget) const
+{
+	QPainter painter(widget);
+
+	if(actBscanMarker)
+		actBscanMarker->drawMarker(painter, widget, event->rect());
+
+	painter.end();
+}*/

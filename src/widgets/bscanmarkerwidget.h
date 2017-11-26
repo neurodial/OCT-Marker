@@ -20,13 +20,6 @@ class ContureSegment;
 class BScanMarkerWidget : public CVImageWidget
 {
 	Q_OBJECT
-/*
-	QPoint clickPos;
-	QPoint mousePos;
-
-	bool markerActiv = false;
-	bool mouseInWidget = false;*/
-
 
 	OctMarkerManager& markerManger;
 	QGraphicsView*  gv    = nullptr;

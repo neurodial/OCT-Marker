@@ -16,6 +16,9 @@ class BscanMarkerBase;
 class SloMarkerBase;
 class ExtraSeriesData;
 class ExtraImageData;
+class QPaintEvent;
+
+class BScanMarkerWidget;
 
 class OctMarkerManager : public QObject
 {
@@ -39,6 +42,8 @@ public:
 	void resetChangedSinceLastSaveState()                           { stateChangedSinceLastSave = false; }
 
 	const ExtraImageData* getExtraImageData() const;
+
+// 	void paintMarker(QPaintEvent* event, const BScanMarkerWidget*) const;
 
 private:
 	OctMarkerManager();

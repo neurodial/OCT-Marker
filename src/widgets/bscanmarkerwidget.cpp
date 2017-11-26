@@ -201,13 +201,8 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 			paintConture(segPainter, extraData->getContourSegments());
 	}
 	
-	QPainter painter(this);
-	
-	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
-	if(actMarker)
-		actMarker->drawMarker(painter, this, event->rect());
 
-	painter.end();
+// 	markerManger.paintMarker(event, this);
 }
 
 void BScanMarkerWidget::paintConture(QPainter& painter, const std::vector<ContureSegment>& contours)
