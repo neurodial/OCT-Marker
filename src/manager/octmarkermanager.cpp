@@ -88,8 +88,13 @@ void OctMarkerManager::chooseBScan(int bscan)
 
 	actBScan = bscan;
 
-	if(actBscanMarker)
-		actBscanMarker->setActBScan(actBScan);
+// 	if(actBscanMarker)
+// 		actBscanMarker->setActBScan(actBScan);
+
+	// TODO bessere Implementierung (nur aktualisieren was angezeigt wird)
+	for(BscanMarkerBase* marker : bscanMarkerObj)
+		marker->setActBScan(actBScan);
+
 
 	emit(newBScanShowed(series->getBScan(actBScan)));
 	emit(bscanChanged(actBScan));
