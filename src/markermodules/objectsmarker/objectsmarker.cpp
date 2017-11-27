@@ -164,7 +164,7 @@ void Objectsmarker::drawMarker(QPainter& p, BScanMarkerWidget* markerWidget, con
 		const double factorY = factor.getFactorY();
 
 		QRectF sourceRect(drawrect.x()/factorX, drawrect.y()/factorY, drawrect.width()/factorX, drawrect.height()/factorY);
-		graphicsScene->render(&p, drawrect, sourceRect);
+		graphicsScene->render(&p, drawrect, sourceRect, Qt::IgnoreAspectRatio);
 	}
 	else
 		BscanMarkerBase::drawMarker(p, markerWidget, drawrect);
