@@ -74,15 +74,19 @@ void Objectsmarker::loadState(boost::property_tree::ptree& markerTree)
 {
 	removeAllItems();
 	ObjectsMarkerPTree::parsePTree(markerTree, this, objectsfactory);
-	graphicsScene->markersFromList(itemsList.at(actBScanSceneNr));
+	if(itemsList.size() > actBScanSceneNr)
+		graphicsScene->markersFromList(itemsList.at(actBScanSceneNr));
 }
 
 
 void Objectsmarker::saveState(boost::property_tree::ptree& markerTree)
 {
-	graphicsScene->markersToList(itemsList.at(actBScanSceneNr));
-	ObjectsMarkerPTree::fillPTree(markerTree, this);
-	graphicsScene->markersFromList(itemsList.at(actBScanSceneNr));
+	if(itemsList.size() > actBScanSceneNr)
+	{
+		graphicsScene->markersToList(itemsList.at(actBScanSceneNr));
+		ObjectsMarkerPTree::fillPTree(markerTree, this);
+		graphicsScene->markersFromList(itemsList.at(actBScanSceneNr));
+	}
 }
 
 

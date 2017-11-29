@@ -264,7 +264,8 @@ void BScanLayerSegmentation::copySegLinesFromOctDataWhenNotFilled(std::size_t bs
 
 void BScanLayerSegmentation::setActBScan(std::size_t bscan)
 {
-	copySegLinesFromOctDataWhenNotFilled(bscan);
+	if(isActivated)
+		copySegLinesFromOctDataWhenNotFilled(bscan);
 
 	BScanSegData& segData = lines[bscan];
 	if(actEditMethod)
