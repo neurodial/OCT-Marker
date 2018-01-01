@@ -46,6 +46,7 @@ if(BUILD_QT_PROGRAMM)
 	include_directories(${CMAKE_SOURCE_DIR}/src/)
 	include_directories(${LibOctData_INCLUDE_DIRS})
 	include_directories(${CppFramework_INCLUDE_DIRS})
+	include_directories(${OpenCV_})
 
 
 	if(CMAKE_COMPILER_IS_GNUCXX)
@@ -88,7 +89,7 @@ if(BUILD_QT_PROGRAMM)
 	add_executable(octmarker src/main.cpp ${octmarker_SRCS}
 		${ui_files_headers}
 		${TRANSLATIONS}
-		${octmarker_RESOURCES_RCC})
+		${octmarker_RESOURCES_RCC} octmarker.rc)
 
 	if(WIN32 AND MSVC)
 		# suppress dos window
