@@ -107,6 +107,7 @@ void Objectsmarker::newSeriesLoaded(const OctData::Series* series, boost::proper
 {
 	resetMarkerObjects(series);
 	loadState(markerTree);
+	actBScanSceneNr = 0;
 }
 
 
@@ -148,9 +149,13 @@ void Objectsmarker::setActBScan(std::size_t bscan)
 	if(bscan == actBScanSceneNr)
 		return;
 
-	graphicsScene->markersToList(itemsList.at(actBScanSceneNr));
-	graphicsScene->markersFromList(itemsList.at(bscan));
-	actBScanSceneNr = bscan;
+	if(itemsList.size() >= actBScanSceneNr)
+		graphicsScene->markersToList(itemsList.at(actBScanSceneNr));
+	if(itemsList.size() >= bscan)
+	{
+		graphicsScene->markersFromList(itemsList.at(bscan));
+		actBScanSceneNr = bscan;
+	}
 }
 
 QWidget* Objectsmarker::getWidget()
