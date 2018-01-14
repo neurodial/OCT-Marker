@@ -22,6 +22,8 @@
 #include <cpp_framework/cvmat/treestructbin.h>
 #include "layersegmentationio.h"
 
+#include"thicknessmap.h"
+
 
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
@@ -166,6 +168,13 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 		case Qt::Key_2:
 			setSegMethod(BScanLayerSegmentation::SegMethod::Spline);
 			return true;
+
+		case Qt::Key_T:
+		{
+			ThicknessMap tm;
+			tm.createMap(getSeries(), lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM);
+		}
+		return true;
 	}
 
 	if(actEditMethod)
