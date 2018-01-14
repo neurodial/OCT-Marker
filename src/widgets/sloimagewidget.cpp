@@ -237,10 +237,15 @@ void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* serie
 
 void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker)
 {
-	if(bscan.getCenter())
-		paintBScanCircle(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
-	else
-		paintBScanLine(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
+	switch(bscan.getBScanType())
+	{
+		case OctData::BScan::BScanType::Line:
+			paintBScanLine(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
+			break;
+		case OctData::BScan::BScanType::Circle:
+			paintBScanCircle(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
+			break;
+	}
 }
 
 

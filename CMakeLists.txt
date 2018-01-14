@@ -46,7 +46,7 @@ if(BUILD_QT_PROGRAMM)
 	include_directories(${CMAKE_SOURCE_DIR}/src/)
 	include_directories(${LibOctData_INCLUDE_DIRS})
 	include_directories(${CppFramework_INCLUDE_DIRS})
-	include_directories(${OpenCV_})
+	include_directories(${OpenCV_INCLUDE_DIRS})
 
 
 	if(CMAKE_COMPILER_IS_GNUCXX)

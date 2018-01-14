@@ -31,12 +31,16 @@ public:
 
 class ExtraSeriesData
 {
-	std::vector<ExtraImageData> extraBScanData;
 public:
+	typedef std::vector<ExtraImageData> ExtraBScanData;
+
 	bool loadExtraData(const OctData::Series& series, const bpt::ptree& ptree);
 
 
 	ExtraImageData* getBScanExtraData(std::size_t bscanNum)         { if(bscanNum < extraBScanData.size()) return &extraBScanData[bscanNum]; return nullptr; }
+
+private:
+	ExtraBScanData extraBScanData;
 };
 
 #endif // EXTRASERIESDATA_H

@@ -8,16 +8,10 @@
 
 #include <QFileInfo>
 
-
-bool ExtraSeriesData::loadExtraData(const OctData::Series& series, const bpt::ptree& ptree)
+namespace
 {
-	try
+	bool loadExtraDataFromFile(ExtraSeriesData::ExtraBScanData& extraBScanData, const QString& contur2dFilename)
 	{
-		extraBScanData.clear();
-
-		// TODO: unschöne Übergangslösung
-		const QString& filename = OctDataManager::getInstance().getLoadedFilename();
-		QString contur2dFilename = filename + "_2d_cont.bin";
 		QFileInfo info(contur2dFilename);
 		if(info.exists())
 		{
@@ -46,12 +40,35 @@ bool ExtraSeriesData::loadExtraData(const OctData::Series& series, const bpt::pt
 
 			extraBScanData.push_back(std::move(imgData));
 			}
+			return true;
 		}
+		return false;
+	}
+}
+
+bool ExtraSeriesData::loadExtraData(const OctData::Series& series, const bpt::ptree& ptree)
+{
+	try
+	{
+		extraBScanData.clear();
+
+		// TODO: unschöne Übergangslösung
+		const QString& filename = OctDataManager::getInstance().getLoadedFilename();
+		QString contur2dFilename = filename + "_2d_cont.bin";
+		if(loadExtraDataFromFile(extraBScanData, contur2dFilename))
+			return true;
+
+		extraBScanData.clear();
+
+		QFileInfo info(filename);
+		contur2dFilename = info.path() + "/" + info.completeBaseName() + "_2d_cont.bin";
+		if(loadExtraDataFromFile(extraBScanData, contur2dFilename))
+			return true;
 	}
 	catch(...)
 	{
 
 	}
 
-	return true;
+	return false;
 }
