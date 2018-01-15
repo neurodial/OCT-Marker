@@ -246,6 +246,15 @@ void OCTMarkerMainWindow::setupMenu()
 
 	fileMenu->addSeparator();
 
+	QAction* saveOctScanAction = new QAction(this);
+	saveMarkersAction->setText(tr("save oct scan"));
+	saveMarkersAction->setIcon(QIcon(":/icons/disk.png"));
+	connect(saveMarkersAction, &QAction::triggered, this, &OCTMarkerMainWindow::showSaveOctScanDialog);
+	fileMenu->addAction(saveMarkersAction);
+
+
+	fileMenu->addSeparator();
+
 	QAction* actionQuit = new QAction(this);
 	actionQuit->setText(tr("Quit"));
 	actionQuit->setIcon(QIcon(":/icons/door_in.png"));
@@ -917,6 +926,23 @@ void OCTMarkerMainWindow::showSaveMarkersDialog()
 		QStringList filenames = fd.selectedFiles();
 		OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
 	}
+}
+
+
+void OCTMarkerMainWindow::showSaveOctScanDialog()
+{
+	QFileDialog fd;
+	QString filename = QFileDialog::getSaveFileName(this, tr("Choose a filename to save oct scan"), QString(), "*.octbin");
+/*
+	if(!filename.isEmpty())
+	{
+		OctDataManager::getInstance().
+	}
+	if(fd.exec())
+	{
+		QStringList filenames = fd.selectedFiles();
+		OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
+	}*/
 }
 
 void OCTMarkerMainWindow::newCscanLoaded()
