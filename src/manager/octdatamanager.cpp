@@ -326,3 +326,9 @@ void OctDataManager::saveMarkers(QString filename, OctMarkerFileformat format)
 	OctMarkerManager::getInstance().resetChangedSinceLastSaveState();
 }
 
+void OctDataManager::saveOctScan(QString filename)
+{
+	if(octData)
+		OctData::OctFileRead::writeFile(filename.toStdString(), *octData);
+}
+

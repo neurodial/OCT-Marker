@@ -63,6 +63,7 @@ public slots:
 	
 	void triggerSaveMarkersDefault();
 
+	void saveOctScan(QString filename);
 
 signals:
 	void octFileChanged(const OctData::OCT*    );
