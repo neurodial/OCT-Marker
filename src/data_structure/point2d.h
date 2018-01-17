@@ -51,4 +51,5 @@ inline std::ostream& operator<<(std::ostream& stream, const Point2DBase<T>& p) {
 
 typedef Point2DBase<double> Point2D;
 typedef Point2DBase<int> Point2DInt;
+typedef Point2DBase<std::size_t> PixtureElement;
 
