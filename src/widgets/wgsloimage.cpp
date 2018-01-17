@@ -14,7 +14,7 @@
 
 namespace
 {
-	void addIntAction(QToolBar* toolbar, OptionInt& intOption, int value, const QIcon& icon, const QString& text, WgSloImage* parent)
+	void addIntAction(QToolBar* toolbar, OptionInt& intOption, int value, const QIcon& icon, const QString& text, WgSloImage* parent, QActionGroup* actionGroup = nullptr)
 	{
 		IntValueAction* intAction = new IntValueAction(value, parent);
 		intAction->setText(text);
@@ -23,6 +23,8 @@ namespace
 		parent->connect(intAction, &IntValueAction::triggered, &intOption    , &OptionInt::setValue         );
 		parent->connect(&intOption    , &OptionInt::valueChanged  , intAction, &IntValueAction::valueChanged);
 		toolbar->addAction(intAction);
+		if(actionGroup)
+			actionGroup->addAction(intAction);
 	}
 }
 
@@ -50,9 +52,11 @@ WgSloImage::WgSloImage(QWidget* parent)
 
 	bar->addSeparator();
 
-	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 0, QIcon(":/icons/image.png" ), tr("show no bscans"         ), this);
-	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 1, QIcon(":/icons/layer.png" ), tr("show only actual bscans"), this);
-	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 2, QIcon(":/icons/layers.png"), tr("show bscans"            ), this);
+	QActionGroup* actionGroupBscan = new QActionGroup(this);
+
+	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 0, QIcon(":/icons/image.png" ), tr("show no bscans"         ), this, actionGroupBscan);
+	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 1, QIcon(":/icons/layer.png" ), tr("show only actual bscans"), this, actionGroupBscan);
+	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 2, QIcon(":/icons/layers.png"), tr("show bscans"            ), this, actionGroupBscan);
 
 
 	setContextMenuPolicy(Qt::NoContextMenu);
