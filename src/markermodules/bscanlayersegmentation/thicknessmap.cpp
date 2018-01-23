@@ -31,8 +31,14 @@ namespace
 		{
 			enum class Status : uint8_t { FAR_AWAY, ACCEPTED, TRAIL };
 
-			double distance = 0;
-			double value    = 0;
+			double distance  = 0;
+			double tempValue = 0;
+
+			double weight    = 0;
+			double value     = 0;
+
+			bool initValue = false;
+
 			Status status = Status::FAR_AWAY;
 
 // 			bool setInitialDistance(double dis, TrailMap& map, const VoxelElement& pix);
@@ -50,7 +56,8 @@ namespace
 		TrailMap  trailMap;
 
 
-		constexpr static const double maxDistance = 40;
+		constexpr static const double maxDistance = 15;
+		constexpr static const double lNorm = 2;
 
 
 		SegmentlineDataType minValue =  std::numeric_limits<SegmentlineDataType>::infinity();
@@ -83,15 +90,15 @@ namespace
 					return;
 			}
 
-			info.distance = distance;
-			info.value    = thickness;
+			info.distance  = distance;
+			info.tempValue = thickness;
 
 			trailMap.emplace(distance, PixtureElement(x, y));
 		}
 
 
 		template<int L>
-		inline double calcSetTrailDistanceL(std::size_t x, std::size_t y, double distance, double value)
+		inline void calcSetTrailDistanceL(std::size_t x, std::size_t y, double distance, double value)
 		{
 			PixelInfo& newTrailInfo = (*pixelMap)(x, y);
 			if(newTrailInfo.status != PixelInfo::Status::ACCEPTED)
@@ -129,7 +136,7 @@ namespace
 				if(x1.status == PixelInfo::Status::ACCEPTED)
 				{
 					valueX1     = x1.distance;
-					thicknessX1 = x1.value;
+					thicknessX1 = x1.tempValue;
 				}
 			}
 			if(x<pixelMap->getSizeX()-1)
@@ -138,7 +145,7 @@ namespace
 				if(x2.status == PixelInfo::Status::ACCEPTED)
 				{
 					valueX2     = x2.distance;
-					thicknessX2 = x2.value;
+					thicknessX2 = x2.tempValue;
 				}
 			}
 
@@ -148,7 +155,7 @@ namespace
 				if(y1.status == PixelInfo::Status::ACCEPTED)
 				{
 					valueY1     = y1.distance;
-					thicknessY1 = y1.value;
+					thicknessY1 = y1.tempValue;
 				}
 			}
 			if(y<pixelMap->getSizeY()-1)
@@ -157,7 +164,7 @@ namespace
 				if(y2.status == PixelInfo::Status::ACCEPTED)
 				{
 					valueY2     = y2.distance;
-					thicknessY2 = y2.value;
+					thicknessY2 = y2.tempValue;
 				}
 			}
 
@@ -220,11 +227,26 @@ namespace
 			}
 		}
 
+// 		double weigthFormular(double distance)
+// 		{
+// 			double actWeight = 1;
+// 			if(distance > 0)
+// 				actWeight = 1/(distance*distance);
+// 			return actWeight;
+// 		}
+//
 
-
-		void createMap()
+		double weigthFormular(double distance)
 		{
+			double actWeight = 0;
+			if(distance > 0)
+				actWeight = maxDistance-distance;
+			return actWeight;
+		}
 
+		template<int L>
+		void createDistValues()
+		{
 			double distance    = 0;
 
 			while(trailMap.size() > 0 && distance < maxDistance)
@@ -241,34 +263,57 @@ namespace
 				PixelInfo& info = (*pixelMap)(aktX, aktY);
 				info.status = PixelInfo::Status::ACCEPTED;
 
-				const double thickness    = info.value;
+				const double thickness    = info.tempValue;
 
 				if(aktY > 0)
-					calcSetTrailDistanceL<2>(aktX  , aktY-1, distance, thickness);
+					calcSetTrailDistanceL<L>(aktX  , aktY-1, distance, thickness);
 // 					addTrail(aktX  , aktY-1, nextDistance, thickness);
 				if(aktY < pixelMap->getSizeY()-1)
-					calcSetTrailDistanceL<2>(aktX  , aktY+1, distance, thickness);
+					calcSetTrailDistanceL<L>(aktX  , aktY+1, distance, thickness);
 // 					addTrail(aktX  , aktY+1, nextDistance, thickness);
 				if(aktX > 0)
-					calcSetTrailDistanceL<2>(aktX-1, aktY  , distance, thickness);
+					calcSetTrailDistanceL<L>(aktX-1, aktY  , distance, thickness);
 // 					addTrail(aktX-1, aktY  , nextDistance, thickness);
 				if(aktX < pixelMap->getSizeX()-1)
-					calcSetTrailDistanceL<2>(aktX+1, aktY  , distance, thickness);
+					calcSetTrailDistanceL<L>(aktX+1, aktY  , distance, thickness);
 // 					addTrail(aktX+1, aktY  , nextDistance, thickness);
+
+				if(!info.initValue)
+				{
+					const double actWeight = weigthFormular(distance);
+
+					info.value  += thickness*actWeight;
+					info.weight += actWeight;
+				}
 
 				trailMap.erase(aktIt);
 			}
 
+			for(PixelInfo& info : *pixelMap)
+			{
+				info.status = PixelInfo::Status::FAR_AWAY;
+			}
+		}
 
+		void calcActDistMap()
+		{
+			if(lNorm == 1)
+				createDistValues<1>();
+			else
+				createDistValues<2>();
+		}
+
+		void createMap()
+		{
 			for(std::size_t y = 0; y < pixelMap->getSizeY(); ++y)
 			{
 				uint8_t* imgIt = thicknessImage.ptr<uint8_t>(static_cast<int>(y));
 				for(std::size_t x = 0; x < pixelMap->getSizeX(); ++x)
 				{
 					PixelInfo& info = (*pixelMap)(y, x);
-					if(info.status == PixelInfo::Status::ACCEPTED)
+					if(info.weight > 0)
 					{
-						double value = info.value;
+						double value = info.value/info.weight;
 						*imgIt = static_cast<uint8_t>((value-minValue)/(maxValue-minValue)*255);
 					}
 					else
@@ -298,9 +343,12 @@ namespace
 				thickness = -thickness;
 
 			PixelInfo& info = (*pixelMap)(x, y);
-			info.status   = PixelInfo::Status::ACCEPTED;
-			info.distance = 0;
-			info.value    = thickness;
+			info.status    = PixelInfo::Status::ACCEPTED;
+			info.distance  = 0;
+			info.tempValue = thickness;
+			info.value     = thickness;
+			info.weight    = 1;
+			info.initValue = true;
 			trailMap.emplace(0, PixtureElement(x, y));
 
 // 			std::cout << thickness << std::endl;
@@ -325,6 +373,8 @@ namespace
 				const OctData::CoordSLOpx actPos = start_px*v + end_px*(1-v);
 				addPixelValue(actPos, segLine2[i], segLine1[i]);
 			}
+
+			calcActDistMap();
 		}
 
 
@@ -355,6 +405,7 @@ namespace
 				addPixelValue(actPos, segLine2[i], segLine1[i]);
 			}
 
+			calcActDistMap();
 		}
 
 
@@ -428,7 +479,7 @@ namespace
 
 
 	template<>
-	inline std::tuple<double, double> CreateThicknessMap::calcTrailDistanceL<1>(std::size_t x, std::size_t y, double distance, double thickness)
+	inline std::tuple<double, double> CreateThicknessMap::calcTrailDistanceL<1>(std::size_t /*x*/, std::size_t /*y*/, double distance, double thickness)
 	{
 		return std::make_tuple(distance+1, thickness);
 	}

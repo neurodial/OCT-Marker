@@ -22,6 +22,8 @@ public:
 	}
 
 
+	T* begin()                                                      { return field; }
+	T* end()                                                        { return field+sizeX*sizeY; }
 
 
 	Matrix(const Matrix& other)            = delete;
