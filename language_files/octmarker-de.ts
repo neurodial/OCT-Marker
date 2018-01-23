@@ -599,132 +599,125 @@
 <context>
     <name>DefinedIntervalMarker</name>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="6"/>
         <source>signal quality</source>
-        <translation>Signalqualität</translation>
+        <translation type="vanished">Signalqualität</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="8"/>
         <source>good signal</source>
-        <translation>Gutes Signal</translation>
+        <translation type="vanished">Gutes Signal</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="9"/>
         <source>middle signal</source>
-        <translation>Mittlmäßiges Signal</translation>
+        <translation type="vanished">Mittlmäßiges Signal</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="10"/>
         <source>bad signal</source>
-        <translation>Schlechtes Signal</translation>
+        <translation type="vanished">Schlechtes Signal</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="15"/>
         <source>segmentation quality</source>
-        <translation>Segmentierungsqualität</translation>
+        <translation type="vanished">Segmentierungsqualität</translation>
+    </message>
+    <message>
+        <source>good</source>
+        <translation type="vanished">Gut</translation>
     </message>
     <message>
         <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="17"/>
-        <source>good</source>
-        <translation>Gut</translation>
-    </message>
-    <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="25"/>
         <source>object zones</source>
         <translation>Objektbereiche</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="27"/>
         <source>macula</source>
-        <translation>Makula</translation>
+        <translation type="vanished">Makula</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="28"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="19"/>
         <source>edge</source>
         <translation>Rand</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="29"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="20"/>
         <source>blood vesel</source>
         <translation>Ader</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="36"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="27"/>
         <source>quality failures</source>
         <translation>Qualitätsfehler</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="38"/>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="62"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="29"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="53"/>
         <source>signal missing</source>
         <translation>Signal fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="39"/>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="50"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="30"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="41"/>
         <source>ILM upper</source>
         <translation>ILM schneidet oben</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="40"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="31"/>
         <source>ILM lower</source>
         <translation>ILM schneidet unten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="41"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="32"/>
         <source>BM upper</source>
         <translation>BM schneidet oben</translation>
     </message>
     <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="33"/>
         <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="42"/>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="51"/>
         <source>BM lower</source>
         <translation>BM schneidet unten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="48"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="39"/>
         <source>segmentation failures</source>
         <translation>Segmentierungsfehler</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="52"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="43"/>
         <source>missing ILM segmentation</source>
         <translation>ILM-Segmentierung fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="53"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="44"/>
         <source>missing BM segmentation</source>
         <translation>BM-Segmentierung fehlt</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="60"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="51"/>
         <source>quality grading</source>
         <translation>Qualitätsbewertung</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="63"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="54"/>
         <source>cut upper</source>
         <translation>Oben abgeschnitten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="64"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="55"/>
         <source>cut lower</source>
         <translation>Unten abgeschnitten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="65"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="56"/>
         <source>high noise</source>
         <translation>Hohes Rauschen</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="66"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="57"/>
         <source>bad_illumination</source>
         <translation>Schlechte Ausleuchtung</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="43"/>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="54"/>
-        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="67"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="34"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="45"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="58"/>
         <source>multi error</source>
         <translation>Mehrere Fehler</translation>
     </message>
@@ -1428,59 +1421,73 @@
 <context>
     <name>StupidSplineWindow</name>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="352"/>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="354"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="366"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="368"/>
         <source>OCT-Marker - simple spline gui</source>
         <translation>OCT-Marker - vereinfachte Spline-Oberfläche</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="107"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="113"/>
         <source>About</source>
         <translation>Über OCT-Marker</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="113"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="119"/>
         <source>Zoom +</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="122"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="128"/>
         <source>Zoom -</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="131"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="137"/>
         <source>fit image</source>
         <translation>Bild einpassen</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="179"/>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="190"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="185"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="196"/>
         <source>Quit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="184"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="190"/>
         <source>Save and Close</source>
         <translation>Speichern und Beenden</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="274"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="281"/>
         <source>Data not saved</source>
         <translation>Daten nicht gespeichert</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="274"/>
-        <source>Data not saved!&lt;br /&gt;Quit program?</source>
-        <translation>Daten nicht gespeichert&lt;br /&gt;Programm beenden?</translation>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="281"/>
+        <source>You have unsaved changes, what will you do?</source>
+        <translation>Es gibt ungespeicherte Änderungen, was wollen Sie tun?</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="360"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="288"/>
+        <source>Data cant saved</source>
+        <translation>Daten konnten nicht gespeichert werden</translation>
+    </message>
+    <message>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="288"/>
+        <source>The data cant be saved, abort closing</source>
+        <translation>Daten konnten nicht gespeichert werden, Beenden abgebrochen</translation>
+    </message>
+    <message>
+        <source>Data not saved!&lt;br /&gt;Quit program?</source>
+        <translation type="vanished">Daten nicht gespeichert&lt;br /&gt;Programm beenden?</translation>
+    </message>
+    <message>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="374"/>
         <source>Error on save</source>
         <translation>Fehler beim speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="360"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="374"/>
         <source>Internal error in saveLayerSegmentation()</source>
         <translation>Interner Fehler in saveLayerSegmentation()</translation>
     </message>

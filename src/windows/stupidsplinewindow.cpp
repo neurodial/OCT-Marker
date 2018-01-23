@@ -278,9 +278,16 @@ void StupidSplineWindow::closeEvent(QCloseEvent* e)
 {
 	if(!saved)
 	{
-		int ret = QMessageBox::warning(this, tr("Data not saved"), tr("Data not saved!<br />Quit program?"), QMessageBox::Yes | QMessageBox::No);
-		if(ret == QMessageBox::No)
+		int ret = QMessageBox::warning(this, tr("Data not saved"), tr("You have unsaved changes, what will you do?"), QMessageBox::Discard | QMessageBox::Cancel | QMessageBox::Save);
+// 		int ret = QMessageBox::warning(this, tr("Data not saved"), tr("Data not saved!<br />Quit program?"), QMessageBox::Discard | QMessageBox::Cancel | QMessageBox::Save);
+		if(ret == QMessageBox::Cancel)
 			return e->ignore();
+		if(ret == QMessageBox::Save)
+			if(!saveLayerSegmentation())
+			{
+				QMessageBox::critical(this, tr("Data cant saved"), tr("The data cant be saved, abort closing"));
+				return e->ignore();
+			}
 	}
 
 

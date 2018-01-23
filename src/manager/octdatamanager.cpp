@@ -110,12 +110,12 @@ bool OctDataManager::checkAndAskSaveBeforContinue()
 {
 	if(OctMarkerManager::getInstance().hasChangedSinceLastSave()) // TODO: move to new class for handel gui
 	{
-		QMessageBox::StandardButton result = QMessageBox::warning(nullptr, tr("Unsaved changes"), tr("You have unsaved changes, what will you do?"), QMessageBox::Save|QMessageBox::Cancel|QMessageBox::Ignore);
+		QMessageBox::StandardButton result = QMessageBox::warning(nullptr, tr("Unsaved changes"), tr("You have unsaved changes, what will you do?"), QMessageBox::Discard | QMessageBox::Cancel | QMessageBox::Save);
 		switch(result)
 		{
 			case QMessageBox::Cancel:
 				return false;
-			case QMessageBox::Ignore:
+			case QMessageBox::Discard:
 				break;
 			case QMessageBox::Save:
 				triggerSaveMarkersDefault();
