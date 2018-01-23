@@ -19,13 +19,28 @@ using SegmentlineDataType = OctData::Segmentationlines::SegmentlineDataType;
 
 
 #include<iostream> // TODO
-
+#include<opencv/highgui.h>
 
 namespace
 {
 
 	class CreateThicknessMap
 	{
+		struct SlideInfo
+		{
+			SlideInfo() = default;
+
+			SlideInfo(double distance, double value)
+			: distance(distance)
+			, value   (value)
+			{}
+
+
+			double distance = std::numeric_limits<double>::infinity();
+			double value    = 0;
+
+			bool operator<(const SlideInfo& info) const { return distance < info.distance; }
+		};
 
 		struct PixelInfo
 		{
@@ -41,11 +56,16 @@ namespace
 
 			Status status = Status::FAR_AWAY;
 
-// 			bool setInitialDistance(double dis, TrailMap& map, const VoxelElement& pix);
-// 			void setTrailDistance(double dis, TrailMap& map, const VoxelElement& pos);
-//
-// 			void print(std::ostream& stream) const;
-// 			static void printStatus(std::ostream& stream, Status st);
+			SlideInfo val1;
+			SlideInfo val2;
+
+			void updateValue(const SlideInfo& info)
+			{
+				if(info < val2)
+					val2 = info;
+				if(val2 < val1)
+					std::swap(val1, val2);
+			}
 		};
 
 		typedef Matrix<PixelInfo> PixelMap;
@@ -92,6 +112,8 @@ namespace
 
 			info.distance  = distance;
 			info.tempValue = thickness;
+
+			info.updateValue(SlideInfo(distance, thickness));
 
 			trailMap.emplace(distance, PixtureElement(x, y));
 		}
