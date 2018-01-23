@@ -147,7 +147,10 @@ void OctMarkerManager::setBscanMarkerTextID(QString id)
 	for(BscanMarkerBase* marker : bscanMarkerObj)
 	{
 		if(marker && marker->getMarkerId() == id)
+		{
 			setBscanMarker(numId);
+			return;
+		}
 		++numId;
 	}
 }

@@ -9,6 +9,7 @@ class ScrollAreaPan;
 class QProgressDialog;
 
 class BScanLayerSegmentation;
+class PaintMarker;
 
 class StupidSplineWindow : public QMainWindow
 {
@@ -25,6 +26,8 @@ class StupidSplineWindow : public QMainWindow
 	QAction*      zoomFitAction    = nullptr;
 
 	QProgressDialog* progressDialog = nullptr;
+
+	PaintMarker* pmm = nullptr;
 
 	bool saved = false;
 

@@ -42,7 +42,7 @@ public:
 	virtual int rowCount(const QModelIndex& parent) const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-	const std::vector<PaintMarkerItem> getMarkers() const { return markers; }
+	const std::vector<PaintMarkerItem> getMarkers()            const { return markers; }
 
 public slots:
 	void slotClicked(QModelIndex index);

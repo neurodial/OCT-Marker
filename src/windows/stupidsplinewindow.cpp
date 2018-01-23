@@ -18,6 +18,7 @@
 #include <manager/octmarkermanager.h>
 #include <manager/octdatamanager.h>
 #include <manager/octmarkerio.h>
+#include <manager/paintmarker.h>
 #include <markermodules/bscanmarkerbase.h>
 
 #include <model/octfilesmodel.h>
@@ -76,6 +77,11 @@ StupidSplineWindow::StupidSplineWindow()
 	ProgramOptions::bscansShowSegmentationslines.setValue(false);
 	setMinimumWidth(1000);
 // 	setMinimumHeight(600);
+
+
+	pmm = new PaintMarker();
+	bscanMarkerWidget->setPaintMarker(pmm);
+
 
 	bscanMarkerWidgetScrollArea = new ScrollAreaPan(this);
 	bscanMarkerWidgetScrollArea->setWidget(bscanMarkerWidget);
@@ -210,6 +216,7 @@ StupidSplineWindow::StupidSplineWindow()
 
 StupidSplineWindow::~StupidSplineWindow()
 {
+	delete pmm;
 }
 
 
