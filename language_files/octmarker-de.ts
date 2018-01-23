@@ -655,6 +655,7 @@
     </message>
     <message>
         <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="38"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="62"/>
         <source>signal missing</source>
         <translation>Signal fehlt</translation>
     </message>
@@ -696,8 +697,34 @@
         <translation>BM-Segmentierung fehlt</translation>
     </message>
     <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="60"/>
+        <source>quality grading</source>
+        <translation>Qualitätsbewertung</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="63"/>
+        <source>cut upper</source>
+        <translation>Oben abgeschnitten</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="64"/>
+        <source>cut lower</source>
+        <translation>Unten abgeschnitten</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="65"/>
+        <source>high noise</source>
+        <translation>Hohes Rauschen</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="66"/>
+        <source>bad_illumination</source>
+        <translation>Schlechte Ausleuchtung</translation>
+    </message>
+    <message>
         <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="43"/>
         <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="54"/>
+        <location filename="../src/markermodules/bscanintervalmarker/definedintervalmarker.cpp" line="67"/>
         <source>multi error</source>
         <translation>Mehrere Fehler</translation>
     </message>
@@ -1573,37 +1600,37 @@
         <translation type="vanished">Nur aktuellen B-Scan zeigen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/wgsloimage.cpp" line="43"/>
+        <location filename="../src/widgets/wgsloimage.cpp" line="45"/>
         <source>show grid</source>
         <translation>Zeige Grid</translation>
     </message>
     <message>
-        <location filename="../src/widgets/wgsloimage.cpp" line="48"/>
+        <location filename="../src/widgets/wgsloimage.cpp" line="50"/>
         <source>show mouse pos</source>
         <translation>Zeige Mausposition</translation>
     </message>
     <message>
-        <location filename="../src/widgets/wgsloimage.cpp" line="54"/>
+        <location filename="../src/widgets/wgsloimage.cpp" line="58"/>
         <source>show no bscans</source>
         <translation>Keine B-Scan-Anzeige</translation>
     </message>
     <message>
-        <location filename="../src/widgets/wgsloimage.cpp" line="55"/>
+        <location filename="../src/widgets/wgsloimage.cpp" line="59"/>
         <source>show only actual bscans</source>
         <translation>Zeige nur aktuellen B-Scan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/wgsloimage.cpp" line="56"/>
+        <location filename="../src/widgets/wgsloimage.cpp" line="60"/>
         <source>show bscans</source>
         <translation>Zeige alle B-Scans</translation>
     </message>
     <message>
-        <location filename="../src/widgets/wgsloimage.cpp" line="89"/>
+        <location filename="../src/widgets/wgsloimage.cpp" line="93"/>
         <source>Marker</source>
         <translation>Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/wgsloimage.cpp" line="97"/>
+        <location filename="../src/widgets/wgsloimage.cpp" line="101"/>
         <source>no marker</source>
         <translation>Keine Markierungen</translation>
     </message>

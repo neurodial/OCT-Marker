@@ -3,15 +3,7 @@
 
 DefinedIntervalMarker::DefinedIntervalMarker()
 {
-	IntervalMarker signalQuality("signalQuality", tr("signal quality").toStdString());
-
-	signalQuality.addMarker(IntervalMarker::Marker("good"          , tr("good signal"             ).toStdString(),   0, 255,   0));
-	signalQuality.addMarker(IntervalMarker::Marker("mid"           , tr("middle signal"           ).toStdString(), 255, 255,   0));
-	signalQuality.addMarker(IntervalMarker::Marker("bad"           , tr("bad signal"              ).toStdString(), 255,   0,   0));
-
-	intervallMarkerMap.emplace("signalQuality", signalQuality);
-
-
+/*
 	IntervalMarker segmentationQuality("segmentationQuality", tr("segmentation quality").toStdString());
 
 	segmentationQuality.addMarker(IntervalMarker::Marker("good"          , tr("good"             ).toStdString(),   0, 255,   0));
@@ -19,12 +11,11 @@ DefinedIntervalMarker::DefinedIntervalMarker()
 // 	segmentationQuality.addMarker(IntervalMarker::Marker("bad"           , tr("bad"              ).toStdString(), 255,   0,   0));
 
 	intervallMarkerMap.emplace("segmentationQuality", segmentationQuality);
-
+*/
 
 
 	IntervalMarker objectZones("objectZones", tr("object zones").toStdString());
 
-	objectZones.addMarker(IntervalMarker::Marker("macula"        , tr("macula"                  ).toStdString(),   0, 255,   0));
 	objectZones.addMarker(IntervalMarker::Marker("edge"          , tr("edge"                    ).toStdString(), 255, 255,   0));
 	objectZones.addMarker(IntervalMarker::Marker("bloodVessel"   , tr("blood vesel"             ).toStdString(), 255,   0,   0));
 
@@ -55,6 +46,18 @@ DefinedIntervalMarker::DefinedIntervalMarker()
 
 	intervallMarkerMap.emplace("segmentationFailures", segmentationFailures);
 
+
+
+	IntervalMarker qualityGrading("qualityGrading", tr("quality grading").toStdString());
+
+	qualityGrading.addMarker(IntervalMarker::Marker("signalmissing"   , tr("signal missing"          ).toStdString(), 255, 255,   0));
+	qualityGrading.addMarker(IntervalMarker::Marker("cut_upper"       , tr("cut upper"               ).toStdString(), 255,   0,   0));
+	qualityGrading.addMarker(IntervalMarker::Marker("cut_lower"       , tr("cut lower"               ).toStdString(),   0, 128,   0));
+	qualityGrading.addMarker(IntervalMarker::Marker("high_noise"      , tr("high noise"              ).toStdString(), 255, 140,   0));
+	qualityGrading.addMarker(IntervalMarker::Marker("bad_illumination", tr("bad_illumination"        ).toStdString(),   0, 255, 255));
+	qualityGrading.addMarker(IntervalMarker::Marker("MultiError"      , tr("multi error"             ).toStdString(), 138,  43, 226));
+
+	intervallMarkerMap.emplace("qualityGrading", qualityGrading);
 }
 
 

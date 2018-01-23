@@ -230,7 +230,7 @@ void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* serie
 		if(actBScan)
 		{
 			painter.setPen(activBscanPen);
-			paintBScan(painter, *actBScan, factor, shift, transform, 0, paintMarker);
+			paintBScan(painter, *actBScan, factor, shift, transform, activBScan, paintMarker);
 		}
 	}
 }
