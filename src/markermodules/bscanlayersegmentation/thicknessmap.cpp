@@ -9,6 +9,8 @@
 #include<data_structure/matrx.h>
 #include<data_structure/point2d.h>
 
+#include<algos/linebresenhamalgo.h>
+
 #include<opencv/cv.hpp>
 
 #include<limits>
@@ -27,7 +29,7 @@ namespace
 	class CreateThicknessMap
 	{
 		constexpr static const double maxDistance = 15;
-		constexpr static const double lNorm = 2;
+		constexpr static const double lNorm = 1; // TODO L2 ist defekt
 
 
 		struct SlideInfo
@@ -50,13 +52,13 @@ namespace
 		class PixelInfo
 		{
 		public:
-			enum class Status : uint8_t { FAR_AWAY, ACCEPTED, TRAIL };
+			enum class Status : uint8_t { FAR_AWAY, ACCEPTED, TRAIL, BRODER };
 
 			double distance  = 0;
 			double tempValue = 0;
 
-			double weight    = 0;
-			double value     = 0;
+// 			double weight    = 0;
+// 			double value     = 0;
 
 			bool initValue = false;
 
@@ -65,17 +67,17 @@ namespace
 			SlideInfo val1;
 			SlideInfo val2;
 
-			void setValueFinal()
+			bool setValueFinal()
 			{
 				SlideInfo info(distance, tempValue);
 				status = Status::ACCEPTED;
-				updateValue(info);
+				return updateValue(info);
 			}
 
 			double getMixValue() const
 			{
-				if(val1.distance == 0)
-					return 0;
+// 				if(val1.distance == 0)
+// 					return 0;
 
 				if(!val1)
 					return 0;
@@ -97,12 +99,15 @@ namespace
 
 		private:
 
-			void updateValue(const SlideInfo& info)
+			bool updateValue(const SlideInfo& info)
 			{
-				if(info < val2)
-					val2 = info;
+				if(val2 < info)
+					return false;
+
+				val2 = info;
 				if(val2 < val1)
 					std::swap(val1, val2);
+				return true;
 			}
 		};
 
@@ -157,7 +162,7 @@ namespace
 		inline void calcSetTrailDistanceL(std::size_t x, std::size_t y, double distance, double value)
 		{
 			PixelInfo& newTrailInfo = (*pixelMap)(x, y);
-			if(newTrailInfo.status != PixelInfo::Status::ACCEPTED)
+			if(newTrailInfo.status != PixelInfo::Status::ACCEPTED && newTrailInfo.status != PixelInfo::Status::BRODER)
 			{
 				double trailDistance;
 				double thicknessVal;
@@ -270,15 +275,6 @@ namespace
 			{
 				std::cout << "x: " << x << "\ty: " << y <<"\tD: " << d << "\tvalueX: " << valueX << "\tvalueY: " << valueY << std::endl;
 
-// 				for(int i=-1; i<=1; ++i)
-// 				{
-// 					for(int j=-1; j<=1; ++j)
-// 					{
-// 						pixelInfos(x+j, y+i).print(std::cout);
-// 					}
-// 					std::cout << std::endl;
-// 				}
-
 				return std::make_tuple(std::numeric_limits<double>::quiet_NaN(), 0.0);
 			}
 		}
@@ -317,37 +313,35 @@ namespace
 
 
 				PixelInfo& info = (*pixelMap)(aktX, aktY);
-				info.setValueFinal();
-
-				const double thickness = info.tempValue;
-
-				if(aktY > 0)
-					calcSetTrailDistanceL<L>(aktX  , aktY-1, distance, thickness);
-// 					addTrail(aktX  , aktY-1, nextDistance, thickness);
-				if(aktY < pixelMap->getSizeY()-1)
-					calcSetTrailDistanceL<L>(aktX  , aktY+1, distance, thickness);
-// 					addTrail(aktX  , aktY+1, nextDistance, thickness);
-				if(aktX > 0)
-					calcSetTrailDistanceL<L>(aktX-1, aktY  , distance, thickness);
-// 					addTrail(aktX-1, aktY  , nextDistance, thickness);
-				if(aktX < pixelMap->getSizeX()-1)
-					calcSetTrailDistanceL<L>(aktX+1, aktY  , distance, thickness);
-// 					addTrail(aktX+1, aktY  , nextDistance, thickness);
-
-				if(!info.initValue)
+				if(info.setValueFinal())
 				{
-					const double actWeight = weigthFormular(distance);
+					const double thickness = info.tempValue;
 
-					info.value  += thickness*actWeight;
-					info.weight += actWeight;
+					if(aktY > 0)
+						calcSetTrailDistanceL<L>(aktX  , aktY-1, distance, thickness);
+					if(aktY < pixelMap->getSizeY()-1)
+						calcSetTrailDistanceL<L>(aktX  , aktY+1, distance, thickness);
+					if(aktX > 0)
+						calcSetTrailDistanceL<L>(aktX-1, aktY  , distance, thickness);
+					if(aktX < pixelMap->getSizeX()-1)
+						calcSetTrailDistanceL<L>(aktX+1, aktY  , distance, thickness);
 				}
+
+// 					if(!info.initValue)
+// 					{
+// 						const double actWeight = weigthFormular(distance);
+//
+// 						info.value  += thickness*actWeight;
+// 						info.weight += actWeight;
+// 					}
 
 				trailMap.erase(aktIt);
 			}
 
 			for(PixelInfo& info : *pixelMap)
 			{
-				info.status = PixelInfo::Status::FAR_AWAY;
+				if(info.status != PixelInfo::Status::BRODER)
+					info.status = PixelInfo::Status::FAR_AWAY;
 			}
 		}
 
@@ -361,13 +355,13 @@ namespace
 
 		void createMap()
 		{
-			std::cout << "maxValue: " << maxValue << "\nminValue: " << minValue << std::endl;
+// 			std::cout << "maxValue: " << maxValue << "\nminValue: " << minValue << std::endl;
 			for(std::size_t y = 0; y < pixelMap->getSizeY(); ++y)
 			{
 				uint8_t* imgIt = thicknessImage.ptr<uint8_t>(static_cast<int>(y));
 				for(std::size_t x = 0; x < pixelMap->getSizeX(); ++x)
 				{
-					PixelInfo& info = (*pixelMap)(y, x);
+					PixelInfo& info = (*pixelMap)(x, y);
 
 					double mixThickness = info.getMixValue();
 					if(mixThickness < minValue)
@@ -410,11 +404,14 @@ namespace
 				thickness = -thickness;
 
 			PixelInfo& info = (*pixelMap)(x, y);
+// 			if(info.status == PixelInfo::Status::BRODER)
+// 				return;
+
 			info.status    = PixelInfo::Status::ACCEPTED;
 			info.distance  = 0;
 			info.tempValue = thickness;
-			info.value     = thickness;
-			info.weight    = 1;
+// 			info.value     = thickness;
+// 			info.weight    = 1;
 			info.initValue = true;
 			trailMap.emplace(0, PixtureElement(x, y));
 
@@ -424,10 +421,15 @@ namespace
 			if(thickness > maxValue) maxValue = thickness;
 		}
 
+		OctData::CoordSLOpx transformCoord(const OctData::CoordSLOmm& coord)
+		{
+			return (transform*coord)*factor + shift;
+		}
+
 		void addLineScan(const OctData::BScan& bscan, const Segmentline& segLine1, const Segmentline& segLine2)
 		{
-			const OctData::CoordSLOpx& start_px = (transform * bscan.getStart())*factor + shift;
-			const OctData::CoordSLOpx&   end_px = (transform * bscan.getEnd()  )*factor + shift;
+			const OctData::CoordSLOpx& start_px = transformCoord(bscan.getStart());
+			const OctData::CoordSLOpx&   end_px = transformCoord(bscan.getEnd()  );
 
 			const std::size_t bscanWidth = static_cast<std::size_t>(bscan.getWidth());
 
@@ -447,8 +449,8 @@ namespace
 
 		void addCircleScan(const OctData::BScan& bscan, const Segmentline& segLine1, const Segmentline& segLine2)
 		{
-			const OctData::CoordSLOpx& start_px = (transform * bscan.getStart ())*factor + shift;
-			const OctData::CoordSLOpx&   end_px = (transform * bscan.getCenter())*factor + shift;
+			const OctData::CoordSLOpx& start_px = transformCoord(bscan.getStart ());
+			const OctData::CoordSLOpx&   end_px = transformCoord(bscan.getCenter());
 
 			const std::size_t bscanWidth = static_cast<std::size_t>(bscan.getWidth());
 
@@ -493,6 +495,54 @@ namespace
 			}
 		}
 
+		void addBroder(const OctData::Series::BScanSLOCoordList& broderPoints)
+		{
+			class DrawBroder
+			{
+				PixelMap& pixelMap;
+			public:
+				DrawBroder(PixelMap& map) : pixelMap(map) {}
+
+				void plot(int x, int y)
+				{
+					std::cout << x << ", " << y << std::endl;
+					if(x<0 && y<0)
+						return;
+
+					const std::size_t xs = static_cast<std::size_t>(x);
+					const std::size_t ys = static_cast<std::size_t>(y);
+					if(xs<pixelMap.getSizeX() && ys<pixelMap.getSizeY())
+					{
+						std::cout << xs << ", " << ys << std::endl;
+						pixelMap(xs, ys).status = PixelInfo::Status::BRODER;
+					}
+				}
+			};
+
+			if(broderPoints.size() < 2)
+				return;
+
+			if(!pixelMap)
+				return;
+
+			DrawBroder db(*pixelMap);
+			LineBresenhamAlgo<DrawBroder> lineAlgo(db);
+
+			OctData::CoordSLOpx lastPoint = transformCoord(*(broderPoints.end()-1));
+			for(const OctData::CoordSLOmm& actPoint : broderPoints)
+			{
+				OctData::CoordSLOpx actPointPx = transformCoord(actPoint);
+
+				std::cout << "von : " << actPointPx.getX() << " , " << actPointPx.getY() << std::endl;
+				std::cout << "nach: " << lastPoint .getX() << " , " << lastPoint .getY() << std::endl;
+
+				lineAlgo.plotLine(actPointPx.getX(), actPointPx.getY()
+				                , lastPoint .getX(), lastPoint .getY());
+
+				lastPoint = actPointPx;
+			}
+		}
+
 	public:
 		CreateThicknessMap(const OctData::Series* series
 		                 , const std::vector<BScanLayerSegmentation::BScanSegData>& lines
@@ -502,7 +552,7 @@ namespace
 			if(!series)
 				return;
 
-// 			const OctData::Series::BScanSLOCoordList& convexHull = series->getConvexHull();
+			const OctData::Series::BScanSLOCoordList& convexHull = series->getConvexHull();
 			const OctData::SloImage& sloImage = series->getSloImage();
 
 			cv::Mat sloImageMat = sloImage.getImage();
@@ -515,6 +565,8 @@ namespace
 			factor    = sloImage.getScaleFactor();
 			shift     = sloImage.getShift()      ;
 			transform = sloImage.getTransform()  ;
+
+			addBroder(convexHull);
 
 			if(lines.size() < series->bscanCount())
 				return;
