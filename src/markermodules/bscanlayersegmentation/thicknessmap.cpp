@@ -26,6 +26,10 @@ namespace
 
 	class CreateThicknessMap
 	{
+		constexpr static const double maxDistance = 15;
+		constexpr static const double lNorm = 2;
+
+
 		struct SlideInfo
 		{
 			SlideInfo() = default;
@@ -35,15 +39,17 @@ namespace
 			, value   (value)
 			{}
 
+			bool operator<(const SlideInfo& info)                   const { return distance < info.distance; }
+			operator bool()                                         const { return distance != std::numeric_limits<double>::infinity(); }
+
 
 			double distance = std::numeric_limits<double>::infinity();
 			double value    = 0;
-
-			bool operator<(const SlideInfo& info) const { return distance < info.distance; }
 		};
 
-		struct PixelInfo
+		class PixelInfo
 		{
+		public:
 			enum class Status : uint8_t { FAR_AWAY, ACCEPTED, TRAIL };
 
 			double distance  = 0;
@@ -58,6 +64,38 @@ namespace
 
 			SlideInfo val1;
 			SlideInfo val2;
+
+			void setValueFinal()
+			{
+				SlideInfo info(distance, tempValue);
+				status = Status::ACCEPTED;
+				updateValue(info);
+			}
+
+			double getMixValue() const
+			{
+				if(val1.distance == 0)
+					return 0;
+
+				if(!val1)
+					return 0;
+				if(!val2)
+					return val1.value;
+
+				double w1 = maxDistance - val1.distance;
+				double w2 = maxDistance - val2.distance;
+
+				w1 *= w1;
+				w2 *= w2;
+
+				const double sum = w1+w2;
+
+// 				std::cout << val1.value << '\t' << val2.value << '\t';
+
+				return (val1.value*w1 + val2.value*w2)/sum;
+			}
+
+		private:
 
 			void updateValue(const SlideInfo& info)
 			{
@@ -76,8 +114,6 @@ namespace
 		TrailMap  trailMap;
 
 
-		constexpr static const double maxDistance = 15;
-		constexpr static const double lNorm = 2;
 
 
 		SegmentlineDataType minValue =  std::numeric_limits<SegmentlineDataType>::infinity();
@@ -112,8 +148,6 @@ namespace
 
 			info.distance  = distance;
 			info.tempValue = thickness;
-
-			info.updateValue(SlideInfo(distance, thickness));
 
 			trailMap.emplace(distance, PixtureElement(x, y));
 		}
@@ -283,9 +317,9 @@ namespace
 
 
 				PixelInfo& info = (*pixelMap)(aktX, aktY);
-				info.status = PixelInfo::Status::ACCEPTED;
+				info.setValueFinal();
 
-				const double thickness    = info.tempValue;
+				const double thickness = info.tempValue;
 
 				if(aktY > 0)
 					calcSetTrailDistanceL<L>(aktX  , aktY-1, distance, thickness);
@@ -327,19 +361,30 @@ namespace
 
 		void createMap()
 		{
+			std::cout << "maxValue: " << maxValue << "\nminValue: " << minValue << std::endl;
 			for(std::size_t y = 0; y < pixelMap->getSizeY(); ++y)
 			{
 				uint8_t* imgIt = thicknessImage.ptr<uint8_t>(static_cast<int>(y));
 				for(std::size_t x = 0; x < pixelMap->getSizeX(); ++x)
 				{
 					PixelInfo& info = (*pixelMap)(y, x);
-					if(info.weight > 0)
-					{
-						double value = info.value/info.weight;
-						*imgIt = static_cast<uint8_t>((value-minValue)/(maxValue-minValue)*255);
-					}
-					else
+
+					double mixThickness = info.getMixValue();
+					if(mixThickness < minValue)
 						*imgIt = 0;
+					else
+						*imgIt = static_cast<uint8_t>((mixThickness-minValue)/(maxValue-minValue)*255);
+// 					std::cout << mixThickness << "\t" << (mixThickness-minValue)/(maxValue-minValue)*255 << std::endl;
+// 					*imgIt = static_cast<uint8_t>(mixThickness*255);
+
+
+// 					if(info.weight > 0)
+// 					{
+// 						double value = info.value/info.weight;
+// 						*imgIt = static_cast<uint8_t>((value-minValue)/(maxValue-minValue)*255);
+// 					}
+// 					else
+// 						*imgIt = 0;
 					++imgIt;
 				}
 			}
