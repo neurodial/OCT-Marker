@@ -6,6 +6,8 @@
 #include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/sloimage.h>
 
+#include<helper/convertcolorspace.h>
+
 #include<data_structure/matrx.h>
 #include<data_structure/point2d.h>
 
@@ -28,7 +30,7 @@ namespace
 
 	class CreateThicknessMap
 	{
-		constexpr static const double maxDistance = 15;
+		constexpr static const double maxDistance = 25;
 		constexpr static const double lNorm = 1; // TODO L2 ist defekt
 
 
@@ -57,8 +59,6 @@ namespace
 			double distance  = 0;
 			double tempValue = 0;
 
-// 			double weight    = 0;
-// 			double value     = 0;
 
 			bool initValue = false;
 
@@ -76,25 +76,21 @@ namespace
 
 			double getMixValue() const
 			{
-// 				if(val1.distance == 0)
-// 					return 0;
-
 				if(!val1)
 					return 0;
 				if(!val2)
 					return val1.value;
 
-				double w1 = maxDistance - val1.distance;
-				double w2 = maxDistance - val2.distance;
+				const double l = val1.distance + val2.distance;
+				if(l == 0)
+					return val1.value;
 
-				w1 *= w1;
-				w2 *= w2;
+				const double w1 = val2.distance/l;
+				const double w2 = val1.distance/l;
 
-				const double sum = w1+w2;
+				const double result = val1.value*w1 + val2.value*w2;
 
-// 				std::cout << val1.value << '\t' << val2.value << '\t';
-
-				return (val1.value*w1 + val2.value*w2)/sum;
+				return result;
 			}
 
 		private:
@@ -279,23 +275,6 @@ namespace
 			}
 		}
 
-// 		double weigthFormular(double distance)
-// 		{
-// 			double actWeight = 1;
-// 			if(distance > 0)
-// 				actWeight = 1/(distance*distance);
-// 			return actWeight;
-// 		}
-//
-
-		double weigthFormular(double distance)
-		{
-			double actWeight = 0;
-			if(distance > 0)
-				actWeight = maxDistance-distance;
-			return actWeight;
-		}
-
 		template<int L>
 		void createDistValues()
 		{
@@ -327,14 +306,6 @@ namespace
 						calcSetTrailDistanceL<L>(aktX+1, aktY  , distance, thickness);
 				}
 
-// 					if(!info.initValue)
-// 					{
-// 						const double actWeight = weigthFormular(distance);
-//
-// 						info.value  += thickness*actWeight;
-// 						info.weight += actWeight;
-// 					}
-
 				trailMap.erase(aktIt);
 			}
 
@@ -355,7 +326,7 @@ namespace
 
 		void createMap()
 		{
-// 			std::cout << "maxValue: " << maxValue << "\nminValue: " << minValue << std::endl;
+			std::cout << "maxValue: " << maxValue << "\nminValue: " << minValue << std::endl;
 			for(std::size_t y = 0; y < pixelMap->getSizeY(); ++y)
 			{
 				uint8_t* imgIt = thicknessImage.ptr<uint8_t>(static_cast<int>(y));
@@ -364,22 +335,32 @@ namespace
 					PixelInfo& info = (*pixelMap)(x, y);
 
 					double mixThickness = info.getMixValue();
-					if(mixThickness < minValue)
-						*imgIt = 0;
+					if(mixThickness >= maxValue)
+					{
+						imgIt[0] = 255;
+						imgIt[1] = 255;
+						imgIt[2] = 255;
+					}
+// 					else if(mixThickness < minValue)
+					else if(mixThickness == 0)
+					{
+						imgIt[0] = 0;
+						imgIt[1] = 0;
+						imgIt[2] = 0;
+					}
 					else
-						*imgIt = static_cast<uint8_t>((mixThickness-minValue)/(maxValue-minValue)*255);
-// 					std::cout << mixThickness << "\t" << (mixThickness-minValue)/(maxValue-minValue)*255 << std::endl;
-// 					*imgIt = static_cast<uint8_t>(mixThickness*255);
+					{
+						double rd, gd, bd;
+						double hue = mixThickness*360/maxValue;
+						std::tie(rd, gd, bd) = hsv2rgb(hue, 1, 1);
 
+						imgIt[0] = static_cast<uint8_t>(rd*255);
+						imgIt[1] = static_cast<uint8_t>(gd*255);
+						imgIt[2] = static_cast<uint8_t>(bd*255);
+					}
+// 						*imgIt = static_cast<uint8_t>((mixThickness-minValue)/(maxValue-minValue)*255);
 
-// 					if(info.weight > 0)
-// 					{
-// 						double value = info.value/info.weight;
-// 						*imgIt = static_cast<uint8_t>((value-minValue)/(maxValue-minValue)*255);
-// 					}
-// 					else
-// 						*imgIt = 0;
-					++imgIt;
+					imgIt += 3;
 				}
 			}
 
@@ -560,13 +541,13 @@ namespace
 				return;
 
 			pixelMap = new PixelMap(sloImageMat.cols, sloImageMat.rows);
-			thicknessImage.create(sloImageMat.size(), cv::DataType<uint8_t>::type);
+			thicknessImage.create(sloImageMat.size(), CV_8UC3);
 
 			factor    = sloImage.getScaleFactor();
 			shift     = sloImage.getShift()      ;
 			transform = sloImage.getTransform()  ;
 
-			addBroder(convexHull);
+// 			addBroder(convexHull);
 
 			if(lines.size() < series->bscanCount())
 				return;
