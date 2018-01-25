@@ -70,6 +70,7 @@ private slots:
 	virtual void reloadMarkerStateSlot()                            { loadMarkerStateSlot(series); }
 
 	virtual void udateFromMarkerModul();
+	void sloOverlayUpdateFromMarkerModul();
 
 	void handleSloRedrawAfterMarkerChange();
 
@@ -93,6 +94,7 @@ signals:
 	void newBScanShowed    (const OctData::BScan * series);
 	void bscanMarkerChanged(BscanMarkerBase* marker);
 	void sloMarkerChanged  (SloMarkerBase  * marker);
+	void sloOverlayChanged ();
 
 private:
 	Q_OBJECT

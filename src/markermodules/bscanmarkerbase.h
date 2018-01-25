@@ -25,7 +25,12 @@ namespace OctData
 	class Series;
 	class BScan;
 	class CoordSLOpx;
-};
+}
+
+namespace cv
+{
+	class Mat;
+}
 
 
 class BscanMarkerBase : public QObject
@@ -50,6 +55,8 @@ public:
 	                                                                {}
 	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect& /*drawrect*/) const    {}
 	virtual bool drawBScan() const                                  { return true;  }
+	virtual bool drawSLOOverlayImage(const cv::Mat& /*sloImage*/, cv::Mat& /*outSloImage*/, double /*alpha*/) const
+	                                                                { return false; }
 	
 	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) { return RedrawRequest(); }
 	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) { return RedrawRequest(); }
@@ -85,6 +92,7 @@ public:
 signals:
 	void enabledToolbar(bool b);
 	void requestFullUpdate();
+	void requestSloOverlayUpdate();
 	void sloViewHasChanged();
 	
 	

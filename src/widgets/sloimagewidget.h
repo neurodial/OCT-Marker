@@ -43,12 +43,15 @@ class SLOImageWidget : public CVImageWidget
 	bool drawConvexHull   = true;
 	bool singelBScanScan  = false;
 
-	void createIntervallColors();
-	void deleteIntervallColors();
+// 	void createIntervallColors();
+// 	void deleteIntervallColors();
+
+	double overlayImageAlpha = 0.7;
 
 	int getBScanNearPos(int x, int y, double tol);
 
 	void updateGraphicsViewSize();
+
 public:
 	SLOImageWidget(QWidget* parent = 0);
 
@@ -86,6 +89,7 @@ private slots:
 	void sloViewChanged  ();
 
 	void setBScanVisibility(int opt);
+	void updateMarkerOverlayImage();
 };
 
 #endif // SLOIMAGE_H

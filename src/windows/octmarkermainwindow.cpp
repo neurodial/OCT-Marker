@@ -103,10 +103,10 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 	addDockWidget(Qt::LeftDockWidgetArea, dwImageColorAdjustments);
 	bscanMarkerWidget->setImageFilter(dwImageColorAdjustments->getImageFilter());
 
-	if(!dwDebugOutput)
-		dwDebugOutput = new DWDebugOutput(this);
-	dwDebugOutput->setObjectName("DWDebugOutput");
-	addDockWidget(Qt::RightDockWidgetArea, dwDebugOutput);
+// 	if(!dwDebugOutput)
+// 		dwDebugOutput = new DWDebugOutput(this);
+// 	dwDebugOutput->setObjectName("DWDebugOutput");
+// 	addDockWidget(Qt::RightDockWidgetArea, dwDebugOutput);
 
 
 	WGOctDataTree* tree = new WGOctDataTree();

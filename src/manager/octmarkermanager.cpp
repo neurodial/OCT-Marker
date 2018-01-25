@@ -55,8 +55,9 @@ OctMarkerManager::OctMarkerManager()
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
 		obj->activate(false);
-		connect(obj, &BscanMarkerBase::requestFullUpdate, this, &OctMarkerManager::udateFromMarkerModul            );
-		connect(obj, &BscanMarkerBase::sloViewHasChanged, this, &OctMarkerManager::handleSloRedrawAfterMarkerChange);
+		connect(obj, &BscanMarkerBase::requestFullUpdate      , this, &OctMarkerManager::udateFromMarkerModul            );
+		connect(obj, &BscanMarkerBase::sloViewHasChanged      , this, &OctMarkerManager::handleSloRedrawAfterMarkerChange);
+		connect(obj, &BscanMarkerBase::requestSloOverlayUpdate, this, &OctMarkerManager::sloOverlayUpdateFromMarkerModul );
 	}
 
 
@@ -277,6 +278,8 @@ void OctMarkerManager::udateFromMarkerModul()
 	 }
 }
 
+
+
 bool OctMarkerManager::hasActMarkerChanged() const
 {
 	bool result = false;
@@ -289,6 +292,12 @@ void OctMarkerManager::handleSloRedrawAfterMarkerChange()
 {
 	emit(sloViewChanged());
 }
+
+void OctMarkerManager::sloOverlayUpdateFromMarkerModul()
+{
+	emit(sloOverlayChanged());
+}
+
 
 const OctData::BScan* OctMarkerManager::getActBScan() const
 {

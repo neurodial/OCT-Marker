@@ -340,6 +340,7 @@ namespace
 						imgIt[0] = 255;
 						imgIt[1] = 255;
 						imgIt[2] = 255;
+						imgIt[3] = 255;
 					}
 // 					else if(mixThickness < minValue)
 					else if(mixThickness == 0)
@@ -347,6 +348,7 @@ namespace
 						imgIt[0] = 0;
 						imgIt[1] = 0;
 						imgIt[2] = 0;
+						imgIt[3] = 0;
 					}
 					else
 					{
@@ -357,10 +359,11 @@ namespace
 						imgIt[0] = static_cast<uint8_t>(rd*255);
 						imgIt[1] = static_cast<uint8_t>(gd*255);
 						imgIt[2] = static_cast<uint8_t>(bd*255);
+						imgIt[3] = 255;
 					}
 // 						*imgIt = static_cast<uint8_t>((mixThickness-minValue)/(maxValue-minValue)*255);
 
-					imgIt += 3;
+					imgIt += 4;
 				}
 			}
 
@@ -381,8 +384,8 @@ namespace
 			if(x >= pixelMap->getSizeX() || y >= pixelMap->getSizeY())
 				return;
 
-			if(thickness < 0)
-				thickness = -thickness;
+// 			if(thickness < 0)
+// 				thickness = -thickness;
 
 			PixelInfo& info = (*pixelMap)(x, y);
 // 			if(info.status == PixelInfo::Status::BRODER)
@@ -391,8 +394,6 @@ namespace
 			info.status    = PixelInfo::Status::ACCEPTED;
 			info.distance  = 0;
 			info.tempValue = thickness;
-// 			info.value     = thickness;
-// 			info.weight    = 1;
 			info.initValue = true;
 			trailMap.emplace(0, PixtureElement(x, y));
 
@@ -420,7 +421,7 @@ namespace
 			for(std::size_t i=0; i<bscanWidth; ++i)
 			{
 				const double v = static_cast<double>(i)/static_cast<double>(bscanWidth-1);
-				const OctData::CoordSLOpx actPos = start_px*v + end_px*(1-v);
+				const OctData::CoordSLOpx actPos = start_px*(1-v) + end_px*v;
 				addPixelValue(actPos, segLine2[i], segLine1[i]);
 			}
 
@@ -541,7 +542,7 @@ namespace
 				return;
 
 			pixelMap = new PixelMap(sloImageMat.cols, sloImageMat.rows);
-			thicknessImage.create(sloImageMat.size(), CV_8UC3);
+			thicknessImage.create(sloImageMat.size(), CV_8UC4);
 
 			factor    = sloImage.getScaleFactor();
 			shift     = sloImage.getShift()      ;
@@ -593,6 +594,17 @@ namespace
 
 }
 
+ThicknessMap::ThicknessMap()
+: thicknessMap(new cv::Mat)
+{
+}
+
+
+
+ThicknessMap::~ThicknessMap()
+{
+	delete thicknessMap;
+}
 
 
 
@@ -601,7 +613,10 @@ void ThicknessMap::createMap(const OctData::Series* series
                            , OctData::Segmentationlines::SegmentlineType t1
                            , OctData::Segmentationlines::SegmentlineType t2)
 {
-	CreateThicknessMap thicknessMap(series, lines, t1, t2);
+	CreateThicknessMap thicknessMapCreator(series, lines, t1, t2);
 
-	imshow("Thicknessmap", thicknessMap.getThicknessMap());
+	thicknessMapCreator.getThicknessMap().copyTo(*thicknessMap);
+
+// 	imshow("Thicknessmap", thicknessMapCreator.getThicknessMap());
 }
+

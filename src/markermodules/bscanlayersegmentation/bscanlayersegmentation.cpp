@@ -1,5 +1,7 @@
 #include "bscanlayersegmentation.h"
 
+#include<opencv/cv.hpp>
+
 #include <widgets/bscanmarkerwidget.h>
 #include <QPainter>
 #include <QMouseEvent>
@@ -29,6 +31,7 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , editMethodSpline(new EditSpline(this))
 , editMethodPen   (new EditPen   (this))
+, thicknesMapImage(new cv::Mat)
 {
 	name = tr("Layer Segmentation");
 	id   = "LayerSegmentation";
@@ -43,6 +46,8 @@ BScanLayerSegmentation::~BScanLayerSegmentation()
 {
 	delete editMethodSpline;
 	delete editMethodPen   ;
+
+	delete thicknesMapImage;
 }
 
 
@@ -173,6 +178,8 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 		{
 			ThicknessMap tm;
 			tm.createMap(getSeries(), lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM);
+			*thicknesMapImage = tm.getThicknessMap();
+			requestSloOverlayUpdate();
 		}
 		return true;
 	}
@@ -182,6 +189,44 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 
 	return false;
 }
+
+bool BScanLayerSegmentation::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha) const
+{
+	if(thicknesMapImage->cols == sloImage.cols && thicknesMapImage->rows == sloImage.rows)
+	{
+		std::cout << sloImage.type() << " != " << CV_8UC3 << " || " << thicknesMapImage->type() << " != " << CV_8UC4 << std::endl;
+		if(sloImage.type() != CV_8U || thicknesMapImage->type() != CV_8UC4)
+			return false;
+
+		outSloImage.create(sloImage.size(), CV_8UC3);
+		const std::size_t length = sloImage.cols*sloImage.rows;
+
+		const uint8_t* thi  = thicknesMapImage->ptr<uint8_t>(0);
+		const uint8_t* src  =    sloImage      .ptr<uint8_t>(0);
+		      uint8_t* dest = outSloImage      .ptr<uint8_t>(0);
+
+		for(std::size_t i = 0; i<length; ++i)
+		{
+			uint8_t alphaThicknes = thi[3];
+			if(alphaThicknes > 0)
+			{
+				double blend = static_cast<double>(alphaThicknes)/255. * alpha;
+				for(int k = 0; k<3; ++k)
+					dest[k] = static_cast<uint8_t>(src[0]*(1-blend) + thi[k]*blend);
+			}
+			else
+				for(int k = 0; k<3; ++k)
+					dest[k] = src[0];
+
+			thi  += 4;
+			dest += 3;
+			++src;
+		}
+		return true;
+	}
+	return false;
+}
+
 
 
 void BScanLayerSegmentation::copyAllSegLinesFromOctData()

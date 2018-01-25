@@ -34,6 +34,7 @@ public:
 	~BScanLayerSegmentation();
 
 	virtual void drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*drawrect*/) const override;
+	virtual bool drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha) const override;
 
 	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
 	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
@@ -77,6 +78,8 @@ private:
 	EditBase  * actEditMethod    = nullptr;
 	EditSpline* editMethodSpline = nullptr;
 	EditPen   * editMethodPen    = nullptr;
+
+	cv::Mat* thicknesMapImage = nullptr;
 
 	void copySegLinesFromOctDataWhenNotFilled();
 	void copySegLinesFromOctDataWhenNotFilled(std::size_t bscan);

@@ -50,10 +50,11 @@ SLOImageWidget::SLOImageWidget(QWidget* parent)
 , markerManger(OctMarkerManager::getInstance())
 {
 	OctDataManager& octDataManager = OctDataManager::getInstance();
-	connect(&octDataManager, &OctDataManager::seriesChanged     , this, &SLOImageWidget::reladSLOImage   );
-	connect(&markerManger  , &OctMarkerManager::bscanChanged    , this, &SLOImageWidget::bscanChanged    );
-	connect(&markerManger  , &OctMarkerManager::sloViewChanged  , this, &SLOImageWidget::sloViewChanged  );
-	connect(&markerManger  , &OctMarkerManager::sloMarkerChanged, this, &SLOImageWidget::sloMarkerChanged);
+	connect(&octDataManager, &OctDataManager  ::seriesChanged    , this, &SLOImageWidget::reladSLOImage           );
+	connect(&markerManger  , &OctMarkerManager::bscanChanged     , this, &SLOImageWidget::bscanChanged            );
+	connect(&markerManger  , &OctMarkerManager::sloViewChanged   , this, &SLOImageWidget::sloViewChanged          );
+	connect(&markerManger  , &OctMarkerManager::sloMarkerChanged , this, &SLOImageWidget::sloMarkerChanged        );
+	connect(&markerManger  , &OctMarkerManager::sloOverlayChanged, this, &SLOImageWidget::updateMarkerOverlayImage);
 
 	connect(&ProgramOptions::sloShowsBScansPos, &OptionInt::valueChanged, this, &SLOImageWidget::setBScanVisibility);
 
@@ -353,18 +354,43 @@ void SLOImageWidget::showPosOnBScan(double t)
 }
 
 
-
-void SLOImageWidget::reladSLOImage()
+void SLOImageWidget::updateMarkerOverlayImage()
 {
 	const OctData::Series* series = OctDataManager::getInstance().getSeries();
 	if(!series)
 		return;
 	const OctData::SloImage& sloImage = series->getSloImage();
-	//if(sloImage)
-		showImage(sloImage.getImage());
 
+	const cv::Mat& sloPixture = sloImage.getImage();
+
+	bool showPureSloImage = true;
+
+	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
+	if(actMarker)
+	{
+		cv::Mat outImage;
+		bool overlayCreated = actMarker->drawSLOOverlayImage(sloPixture, outImage, overlayImageAlpha);
+		showPureSloImage = !overlayCreated;
+		if(!showPureSloImage)
+		{
+			if(outImage.empty())
+				showPureSloImage = true;
+			else
+				showImage(outImage);
+		}
+	}
+
+	if(showPureSloImage)
+		showImage(sloPixture);
 
 	singelBScanScan = (series->bscanCount() == 1);
+}
+
+
+void SLOImageWidget::reladSLOImage()
+{
+	updateMarkerOverlayImage();
+
 
 	updateGraphicsViewSize();
 // 	gv->setSceneRect(0, 0, imageWidth(), imageHight());
