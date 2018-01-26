@@ -56,11 +56,7 @@ namespace
 		public:
 			enum class Status : uint8_t { FAR_AWAY, ACCEPTED, BRODER };
 
-			double distance = 0;
 			double value    = 0;
-
-
-			bool initValue = false;
 
 			Status status = Status::FAR_AWAY;
 
@@ -117,8 +113,6 @@ namespace
 		SegmentlineDataType minValue =  std::numeric_limits<SegmentlineDataType>::infinity();
 		SegmentlineDataType maxValue = -std::numeric_limits<SegmentlineDataType>::infinity();
 
-// 		cv::Mat rawImage;
-// 		cv::Mat mask;
 		cv::Mat thicknessImage;
 		bool thicknessImageCreated = false;
 
@@ -128,13 +122,9 @@ namespace
 
 		inline void addTrail(std::size_t x, std::size_t y, double distance, double thickness, PixelInfo& info)
 		{
-			if(info.initValue)
-				return;
-
 			if(std::isnan(distance))
 				return;
 
-			info.distance = distance;
 			info.value    = thickness;
 			info.status   = PixelInfo::Status::ACCEPTED;
 
@@ -151,7 +141,6 @@ namespace
 				double trailDistance = distance + 1;
 				if(trailDistance < maxDistance)
 					addTrail(x, y, trailDistance, value, newTrailInfo);
-// 					newTrailInfo.setTrailDistance(trailDistance, trailmap, x, y);
 			}
 		}
 
@@ -255,17 +244,12 @@ namespace
 			if(x >= pixelMap->getSizeX() || y >= pixelMap->getSizeY())
 				return;
 
-// 			if(thickness < 0)
-// 				thickness = -thickness;
 
 			PixelInfo& info = (*pixelMap)(x, y);
-// 			if(info.status == PixelInfo::Status::BRODER)
-// 				return;
 
-			info.status    = PixelInfo::Status::ACCEPTED;
-			info.distance  = 0;
+
+			info.status    = PixelInfo::Status::BRODER;
 			info.value     = thickness;
-			info.initValue = true;
 			info.updateValue(SlideInfo(0, thickness));
 			trailMap.emplace(0, PixtureElement(x, y));
 
@@ -303,7 +287,7 @@ namespace
 					return;
 
 				PixelInfo& info = (*ctm.pixelMap)(x, y);
-				info.initValue = true;
+				info.status = PixelInfo::Status::BRODER;
 			}
 			constexpr static const bool calcDistMap = false;
 		};
