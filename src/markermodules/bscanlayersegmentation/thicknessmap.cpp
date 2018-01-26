@@ -32,7 +32,6 @@ namespace
 	class CreateThicknessMap
 	{
 		constexpr static const double maxDistance = 25;
-		constexpr static const double lNorm = 1; // TODO L2 ist defekt
 		bool blendColor = true;
 
 		struct SlideInfo
@@ -55,10 +54,10 @@ namespace
 		class PixelInfo
 		{
 		public:
-			enum class Status : uint8_t { FAR_AWAY, ACCEPTED, TRAIL, BRODER };
+			enum class Status : uint8_t { FAR_AWAY, ACCEPTED, BRODER };
 
-			double distance  = 0;
-			double tempValue = 0;
+			double distance = 0;
+			double value    = 0;
 
 
 			bool initValue = false;
@@ -67,13 +66,6 @@ namespace
 
 			SlideInfo val1;
 			SlideInfo val2;
-
-			bool setValueFinal()
-			{
-				SlideInfo info(distance, tempValue);
-				status = Status::ACCEPTED;
-				return updateValue(info);
-			}
 
 			double getMixValue() const
 			{
@@ -97,8 +89,6 @@ namespace
 				return result;
 			}
 
-		private:
-
 			bool updateValue(const SlideInfo& info)
 			{
 				if(val2 < info)
@@ -109,6 +99,9 @@ namespace
 					std::swap(val1, val2);
 				return true;
 			}
+
+		private:
+
 		};
 
 		typedef Matrix<PixelInfo> PixelMap;
@@ -133,155 +126,36 @@ namespace
 		OctData::CoordSLOpx     shift    ;
 		OctData::CoordTransform transform;
 
-		void addTrail(std::size_t x, std::size_t y, double distance, double thickness, PixelInfo& info)
+		inline void addTrail(std::size_t x, std::size_t y, double distance, double thickness, PixelInfo& info)
 		{
+			if(info.initValue)
+				return;
+
 			if(std::isnan(distance))
 				return;
 
-			switch(info.status)
-			{
-				case PixelInfo::Status::FAR_AWAY:
-					info.status   = PixelInfo::Status::TRAIL;
-					break;
-				case PixelInfo::Status::TRAIL:
-					if(distance >= info.distance)
-						return;
-					break;
-				default:
-					return;
-			}
+			info.distance = distance;
+			info.value    = thickness;
+			info.status   = PixelInfo::Status::ACCEPTED;
 
-			info.distance  = distance;
-			info.tempValue = thickness;
-
-			if(!info.initValue)
+			if(info.updateValue(SlideInfo(distance, thickness)))
 				trailMap.emplace(distance, PixtureElement(x, y));
 		}
 
 
-		template<int L>
-		inline void calcSetTrailDistanceL(std::size_t x, std::size_t y, double distance, double value)
+		inline void calcSetTrailDistanceL1(std::size_t x, std::size_t y, double distance, double value)
 		{
 			PixelInfo& newTrailInfo = (*pixelMap)(x, y);
-			if(newTrailInfo.status != PixelInfo::Status::ACCEPTED && newTrailInfo.status != PixelInfo::Status::BRODER)
+			if(newTrailInfo.status == PixelInfo::Status::FAR_AWAY)
 			{
-				double trailDistance;
-				double thicknessVal;
-				std::tie(trailDistance, thicknessVal) = calcTrailDistanceL<L>(x, y, distance, value);
+				double trailDistance = distance + 1;
 				if(trailDistance < maxDistance)
-					addTrail(x, y, trailDistance, thicknessVal, newTrailInfo);
+					addTrail(x, y, trailDistance, value, newTrailInfo);
 // 					newTrailInfo.setTrailDistance(trailDistance, trailmap, x, y);
 			}
 		}
 
-
-		template<int L>
-		inline std::tuple<double, double> calcTrailDistanceL(std::size_t x, std::size_t y, double distance, double value);
-
-
-
-		std::tuple<double, double> calcTrailDistanceL2(std::size_t x, std::size_t y)
-		{
-			double valueX1 = std::numeric_limits<double>::infinity();
-			double valueX2 = std::numeric_limits<double>::infinity();
-			double valueY1 = std::numeric_limits<double>::infinity();
-			double valueY2 = std::numeric_limits<double>::infinity();
-
-			double thicknessX1;
-			double thicknessX2;
-			double thicknessY1;
-			double thicknessY2;
-
-			if(x>0)
-			{
-				const PixelInfo& x1 = (*pixelMap)(x-1, y);
-				if(x1.status == PixelInfo::Status::ACCEPTED)
-				{
-					valueX1     = x1.distance;
-					thicknessX1 = x1.tempValue;
-				}
-			}
-			if(x<pixelMap->getSizeX()-1)
-			{
-				const PixelInfo& x2 = (*pixelMap)(x+1, y);
-				if(x2.status == PixelInfo::Status::ACCEPTED)
-				{
-					valueX2     = x2.distance;
-					thicknessX2 = x2.tempValue;
-				}
-			}
-
-			if(y>0)
-			{
-				const PixelInfo& y1 = (*pixelMap)(x, y-1);
-				if(y1.status == PixelInfo::Status::ACCEPTED)
-				{
-					valueY1     = y1.distance;
-					thicknessY1 = y1.tempValue;
-				}
-			}
-			if(y<pixelMap->getSizeY()-1)
-			{
-				const PixelInfo& y2 = (*pixelMap)(x, y+1);
-				if(y2.status == PixelInfo::Status::ACCEPTED)
-				{
-					valueY2     = y2.distance;
-					thicknessY2 = y2.tempValue;
-				}
-			}
-
-			double valueX; // = std::min(valueX1, valueX2);
-			double valueY; // = std::min(valueY1, valueY2);
-			double thicknessX;
-			double thicknessY;
-
-			if(valueX1 < valueX2)
-			{
-				valueX     = valueX1;
-				thicknessX = thicknessX1;
-			}
-			else
-			{
-				valueX     = valueX2;
-				thicknessX = thicknessX2;
-			}
-
-			if(valueY1 < valueY2)
-			{
-				valueY     = valueY1;
-				thicknessY = thicknessY1;
-			}
-			else
-			{
-				valueY     = valueY2;
-				thicknessY = thicknessY2;
-			}
-
-			if(valueX == std::numeric_limits<double>::infinity())
-				return std::make_tuple(valueY + 1, thicknessY);
-			if(valueY == std::numeric_limits<double>::infinity())
-				return std::make_tuple(valueX + 1, thicknessX);
-
-			double d = (valueX+valueY)*(valueX+valueY)/4 - (valueX*valueX + valueY*valueY -1)/2.;
-
-			if(d>0)
-			{
-				double v1 = (valueX+valueY)/2 + std::sqrt(d);
-				double thicknessVal;
-				if(valueX < valueY) thicknessVal = thicknessX;
-				else                thicknessVal = thicknessY;
-				return std::make_tuple(v1, thicknessVal);
-			}
-			else
-			{
-				std::cout << "x: " << x << "\ty: " << y <<"\tD: " << d << "\tvalueX: " << valueX << "\tvalueY: " << valueY << std::endl;
-
-				return std::make_tuple(std::numeric_limits<double>::quiet_NaN(), 0.0);
-			}
-		}
-
-		template<int L>
-		void createDistValues()
+		void calcActDistMap()
 		{
 			double distance    = 0;
 
@@ -297,19 +171,12 @@ namespace
 
 
 				PixelInfo& info = (*pixelMap)(aktX, aktY);
-				if(info.setValueFinal())
-				{
-					const double thickness = info.tempValue;
+				const double thickness = info.value;
 
-					if(aktY > 0)
-						calcSetTrailDistanceL<L>(aktX  , aktY-1, distance, thickness);
-					if(aktY < pixelMap->getSizeY()-1)
-						calcSetTrailDistanceL<L>(aktX  , aktY+1, distance, thickness);
-					if(aktX > 0)
-						calcSetTrailDistanceL<L>(aktX-1, aktY  , distance, thickness);
-					if(aktX < pixelMap->getSizeX()-1)
-						calcSetTrailDistanceL<L>(aktX+1, aktY  , distance, thickness);
-				}
+				if(aktY > 0                     ) calcSetTrailDistanceL1(aktX  , aktY-1, distance, thickness);
+				if(aktY < pixelMap->getSizeY()-1) calcSetTrailDistanceL1(aktX  , aktY+1, distance, thickness);
+				if(aktX > 0                     ) calcSetTrailDistanceL1(aktX-1, aktY  , distance, thickness);
+				if(aktX < pixelMap->getSizeX()-1) calcSetTrailDistanceL1(aktX+1, aktY  , distance, thickness);
 
 				trailMap.erase(aktIt);
 			}
@@ -321,13 +188,6 @@ namespace
 			}
 		}
 
-		void calcActDistMap()
-		{
-			if(lNorm == 1)
-				createDistValues<1>();
-			else
-				createDistValues<2>();
-		}
 
 		void createColorMap()
 		{
@@ -404,8 +264,9 @@ namespace
 
 			info.status    = PixelInfo::Status::ACCEPTED;
 			info.distance  = 0;
-			info.tempValue = thickness;
+			info.value     = thickness;
 			info.initValue = true;
+			info.updateValue(SlideInfo(0, thickness));
 			trailMap.emplace(0, PixtureElement(x, y));
 
 // 			std::cout << thickness << std::endl;
@@ -670,17 +531,6 @@ namespace
 	};
 
 
-	template<>
-	inline std::tuple<double, double> CreateThicknessMap::calcTrailDistanceL<1>(std::size_t /*x*/, std::size_t /*y*/, double distance, double thickness)
-	{
-		return std::make_tuple(distance+1, thickness);
-	}
-
-	template<>
-	inline std::tuple<double, double> CreateThicknessMap::calcTrailDistanceL<2>(std::size_t x, std::size_t y, double /*distance*/, double /*thickness*/)
-	{
-		return calcTrailDistanceL2(x, y);
-	}
 
 
 }
