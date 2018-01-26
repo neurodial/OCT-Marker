@@ -18,7 +18,14 @@ CVImageWidget::CVImageWidget(QWidget* parent): QWidget(parent), contextMenu(new 
 	saveAction->setText(tr("Save Image"));
 	saveAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveAction);
-	connect(saveAction, SIGNAL(triggered(bool)), this, SLOT(saveImage()));
+	connect(saveAction, &QAction::triggered, this, &CVImageWidget::saveImage);
+
+	QAction* saveBaseImageAction = new QAction(this);
+	saveBaseImageAction->setText(tr("Save Base Image"));
+	saveBaseImageAction->setIcon(QIcon(":/icons/disk.png"));
+	contextMenu->addAction(saveBaseImageAction);
+	connect(saveBaseImageAction, &QAction::triggered, this, &CVImageWidget::saveBaseImage);
+
 
 	contextMenu->addSeparator();
 
@@ -54,7 +61,7 @@ void CVImageWidget::addZoomItems()
 
 void CVImageWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-	if(!event->isAccepted())
+// 	if(!event->isAccepted())
 	{
 		QWidget::contextMenuEvent(event);
 		contextMenu->setVisible(true);
@@ -184,7 +191,24 @@ void CVImageWidget::fitImage(int width, int heigth)
 }
 
 
+void CVImageWidget::cvImage2qtImage(const cv::Mat& cvImage, QImage& qimage)
+{
+	if(cvImage.empty())
+	{
+		qimage = QImage();
+		return;
+	}
 
+	assert(cvImage.isContinuous());
+	// Assign OpenCV's image buffer to the QImage. Note that the bytesPerLine parameter
+	// (http://qt-project.org/doc/qt-4.8/qimage.html#QImage-6) is 3*width because each pixel
+	// has three bytes.
+	if(cvImage.channels() == 1)
+		qimage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols, QImage::Format_Grayscale8);
+	else
+		qimage = QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.cols*3, QImage::Format_RGB888);
+
+}
 
 
 void CVImageWidget::cvImage2qtImage()
@@ -200,15 +224,7 @@ void CVImageWidget::cvImage2qtImage()
 	else
 		outputImage = cvImage;
 
-	assert(outputImage.isContinuous());
-	// Assign OpenCV's image buffer to the QImage. Note that the bytesPerLine parameter
-	// (http://qt-project.org/doc/qt-4.8/qimage.html#QImage-6) is 3*width because each pixel
-	// has three bytes.
-	if(grayCvImage)
-		qtImage = QImage(outputImage.data, outputImage.cols, outputImage.rows, outputImage.cols, QImage::Format_Grayscale8);
-	else
-		qtImage = QImage(outputImage.data, outputImage.cols, outputImage.rows, outputImage.cols*3, QImage::Format_RGB888);
-
+	cvImage2qtImage(outputImage, qtImage);
 
 	switch(scaleMethod)
 	{
@@ -257,6 +273,18 @@ void CVImageWidget::saveImage()
 		pixmap.save(filename);
 	}
 }
+
+void CVImageWidget::saveBaseImage()
+{
+	QString filename;
+	if(fileDialog(filename))
+	{
+		QImage imageTmp;
+		cvImage2qtImage(outputImage, imageTmp);
+		imageTmp.save(filename);
+	}
+}
+
 
 void CVImageWidget::paintEvent(QPaintEvent* event)
 {

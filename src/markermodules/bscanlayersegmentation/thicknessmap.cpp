@@ -78,8 +78,11 @@ namespace
 			{
 				if(!val1)
 					return 0;
-				if(!val2)
+				if(val1.value <= 0)
+					return 0;
+				if(!val2 || val2.value <= 0)
 					return val1.value;
+
 
 				const double l = val1.distance + val2.distance;
 				if(l == 0)
@@ -150,7 +153,8 @@ namespace
 			info.distance  = distance;
 			info.tempValue = thickness;
 
-			trailMap.emplace(distance, PixtureElement(x, y));
+			if(!info.initValue)
+				trailMap.emplace(distance, PixtureElement(x, y));
 		}
 
 
@@ -372,11 +376,17 @@ namespace
 
 		void addPixelValue(const OctData::CoordSLOpx& coord, SegmentlineDataType value1, SegmentlineDataType value2)
 		{
+			double thickness = (value1 - value2); // TODO: ScaleFactor
+
 			if(value1 < 0 || value1 > 10000
 			|| value2 < 0 || value2 > 10000)
-				return;
+				thickness = -100;
+			else
+			{
+				if(thickness < minValue) minValue = thickness;
+				if(thickness > maxValue) maxValue = thickness;
+			}
 
-			double thickness = (value1 - value2); // TODO: ScaleFactor
 
 			const std::size_t x = static_cast<std::size_t>(coord.getX());
 			const std::size_t y = static_cast<std::size_t>(coord.getY());
@@ -399,16 +409,51 @@ namespace
 
 // 			std::cout << thickness << std::endl;
 
-			if(thickness < minValue) minValue = thickness;
-			if(thickness > maxValue) maxValue = thickness;
 		}
+
+		class AddPixelValueSetter
+		{
+			CreateThicknessMap& ctm;
+		public:
+			AddPixelValueSetter(CreateThicknessMap& ctm, bool calcDistMap) : ctm(ctm), calcDistMap(calcDistMap) {}
+
+			void operator()(const OctData::CoordSLOpx& coord, SegmentlineDataType value1, SegmentlineDataType value2)
+			{
+				ctm.addPixelValue(coord, value1, value2);
+			}
+
+			const bool calcDistMap;
+
+		};
+
+		class InitValueSetter
+		{
+			CreateThicknessMap& ctm;
+		public:
+			InitValueSetter(CreateThicknessMap& ctm) : ctm(ctm) {}
+
+			void operator()(const OctData::CoordSLOpx& coord, SegmentlineDataType value1, SegmentlineDataType value2)
+			{
+				const std::size_t x = static_cast<std::size_t>(coord.getX());
+				const std::size_t y = static_cast<std::size_t>(coord.getY());
+
+				if(x >= ctm.pixelMap->getSizeX() || y >= ctm.pixelMap->getSizeY())
+					return;
+
+				PixelInfo& info = (*ctm.pixelMap)(x, y);
+				info.initValue = true;
+			}
+			constexpr static const bool calcDistMap = false;
+		};
+
 
 		OctData::CoordSLOpx transformCoord(const OctData::CoordSLOmm& coord)
 		{
 			return (transform*coord)*factor + shift;
 		}
 
-		void addLineScan(const OctData::BScan& bscan, const Segmentline& segLine1, const Segmentline& segLine2)
+		template<typename Setter>
+		void addLineScan(const OctData::BScan& bscan, const Segmentline& segLine1, const Segmentline& segLine2, Setter& pixelSetter)
 		{
 			const OctData::CoordSLOpx& start_px = transformCoord(bscan.getStart());
 			const OctData::CoordSLOpx&   end_px = transformCoord(bscan.getEnd()  );
@@ -422,45 +467,54 @@ namespace
 			{
 				const double v = static_cast<double>(i)/static_cast<double>(bscanWidth-1);
 				const OctData::CoordSLOpx actPos = start_px*(1-v) + end_px*v;
-				addPixelValue(actPos, segLine2[i], segLine1[i]);
+				pixelSetter(actPos, segLine2[i], segLine1[i]);
 			}
 
-			calcActDistMap();
+			if(pixelSetter.calcDistMap)
+				calcActDistMap();
 		}
 
 
-		void addCircleScan(const OctData::BScan& bscan, const Segmentline& segLine1, const Segmentline& segLine2)
+		template<typename Setter>
+		void addCircleScan(const OctData::BScan& bscan, const Segmentline& segLine1, const Segmentline& segLine2, Setter& pixelSetter)
 		{
-			const OctData::CoordSLOpx& start_px = transformCoord(bscan.getStart ());
-			const OctData::CoordSLOpx&   end_px = transformCoord(bscan.getCenter());
+			const OctData::CoordSLOpx& start_px  = transformCoord(bscan.getStart ());
+			const OctData::CoordSLOpx& center_px = transformCoord(bscan.getCenter());
 
 			const std::size_t bscanWidth = static_cast<std::size_t>(bscan.getWidth());
 
 			if(bscanWidth < 2)
 				return;
 
-			double mX = end_px.getXf();
-			double mY = end_px.getYf();
-			double sX = start_px.getXf() - end_px.getXf();
-			double sY = start_px.getYf() - end_px.getYf();
-			double r = sqrt(sX*sX + sY*sY);
+			bool clockwise = bscan.getClockwiseRot();
+
+			double radius = start_px.abs(center_px);
+			double ratio  = start_px.getXf() - center_px.getXf();
+			double nullAngle = acos( ratio/radius )/M_PI/2;
+
+			const int rotationFactor = clockwise?1:-1;
+
+			double mX = center_px.getXf();
+			double mY = center_px.getYf();
 
 			for(std::size_t i=0; i<bscanWidth; ++i)
 			{
 				const double v     = static_cast<double>(i)/static_cast<double>(bscanWidth-1);
-				const double angle = v*2.*M_PI;
+				const double angle = (v+nullAngle)*2.*M_PI*rotationFactor;
 
-				const double x = cos(angle)*r + mX;
-				const double y = sin(angle)*r + mY;
+				const double x = cos(angle)*radius + mX;
+				const double y = sin(angle)*radius + mY;
 				const OctData::CoordSLOpx actPos(x, y);
-				addPixelValue(actPos, segLine2[i], segLine1[i]);
+				pixelSetter(actPos, segLine2[i], segLine1[i]);
 			}
 
-			calcActDistMap();
+			if(pixelSetter.calcDistMap)
+				calcActDistMap();
 		}
 
 
-		void addBScan(const OctData::BScan& bscan, const Segmentline& segLine1, const Segmentline& segLine2)
+		template<typename Setter>
+		void addBScan(const OctData::BScan& bscan, const Segmentline& segLine1, const Segmentline& segLine2, Setter& pixelSetter)
 		{
 			const std::size_t bscanWidth = static_cast<std::size_t>(bscan.getWidth());
 			if(bscanWidth != segLine1.size() || bscanWidth != segLine2.size())
@@ -469,11 +523,35 @@ namespace
 			switch(bscan.getBScanType())
 			{
 				case OctData::BScan::BScanType::Line:
-					addLineScan(bscan, segLine1, segLine2);
+					addLineScan(bscan, segLine1, segLine2, pixelSetter);
 					break;
 				case OctData::BScan::BScanType::Circle:
-					addCircleScan(bscan, segLine1, segLine2);
+					addCircleScan(bscan, segLine1, segLine2, pixelSetter);
 					break;
+			}
+		}
+
+
+		template<typename Setter>
+		void addBScans(const OctData::Series* series
+		             , const std::vector<BScanLayerSegmentation::BScanSegData>& lines
+		             , OctData::Segmentationlines::SegmentlineType t1
+		             , OctData::Segmentationlines::SegmentlineType t2
+		             , Setter& pixelSetter)
+		{
+			std::size_t bscanNr = 0;
+			for(const OctData::BScan* bscan : series->getBScans())
+			{
+				if(!bscan)
+					continue;
+
+				const BScanLayerSegmentation::BScanSegData& data = lines[bscanNr];
+				const Segmentline& segLine1 = data.lines.getSegmentLine(t1);
+				const Segmentline& segLine2 = data.lines.getSegmentLine(t2);
+
+				addBScan(*bscan, segLine1, segLine2, pixelSetter);
+
+				++bscanNr;
 			}
 		}
 
@@ -553,20 +631,19 @@ namespace
 			if(lines.size() < series->bscanCount())
 				return;
 
-			std::size_t bscanNr = 0;
-			for(const OctData::BScan* bscan : series->getBScans())
+			bool blend = true;
+
+			if(blend)
 			{
-				if(!bscan)
-					continue;
-
-				const BScanLayerSegmentation::BScanSegData& data = lines[bscanNr];
-				const Segmentline& segLine1 = data.lines.getSegmentLine(t1);
-				const Segmentline& segLine2 = data.lines.getSegmentLine(t2);
-
-				addBScan(*bscan, segLine1, segLine2);
-
-				++bscanNr;
+				InitValueSetter ivs(*this);
+				addBScans(series, lines, t1, t2, ivs);
 			}
+
+			AddPixelValueSetter apvs(*this, blend);
+			addBScans(series, lines, t1, t2, apvs);
+
+			if(!blend)
+				calcActDistMap();
 		}
 
 		~CreateThicknessMap()

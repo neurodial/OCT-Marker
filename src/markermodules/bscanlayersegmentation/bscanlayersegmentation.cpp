@@ -163,7 +163,10 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 	switch(key)
 	{
 		case Qt::Key_C:
-			copySegLinesFromOctData();
+			if(event->modifiers() == Qt::ShiftModifier)
+				copyAllSegLinesFromOctData();
+			else
+				copySegLinesFromOctData();
 			return true;
 
 		case Qt::Key_1:

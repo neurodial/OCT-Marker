@@ -89,9 +89,11 @@ protected:
 
 	void cvImage2qtImage();
 	void updateScaleFactor();
+	static void cvImage2qtImage(const cv::Mat& cvImage, QImage& qimage);
 	
 public slots:
 	virtual void saveImage();
+	virtual void saveBaseImage();
 	virtual void showImage(const cv::Mat& image);
 
 	void setZoom(double factor)                                  { if(scaleFactorConfig != factor && factor <= 8 && factor > 0) { scaleFactorConfig = factor; updateScaleFactorXY(); cvImage2qtImage(); zoomChanged(factor); } }
