@@ -58,6 +58,7 @@ OptionInt    ProgramOptions::layerSegActiveLineSize      (       2, "ActiveLineS
 OptionInt    ProgramOptions::layerSegPassivLineSize      (       1, "PassivLineSize" , "LayerSeg");
 
 OptionInt    ProgramOptions::layerSegSplinePointSize     (       8, "SplinePointSize", "LayerSeg");
+OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true    , "ThicknessmapBlend", "LayerSeg");
 
 
 ProgramOptions::ProgramOptions()

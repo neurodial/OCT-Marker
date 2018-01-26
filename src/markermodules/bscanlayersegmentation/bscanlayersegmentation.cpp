@@ -25,6 +25,7 @@
 #include "layersegmentationio.h"
 
 #include"thicknessmap.h"
+#include <qelapsedtimer.h>
 
 
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
@@ -179,10 +180,15 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 
 		case Qt::Key_T:
 		{
+			QElapsedTimer timer;
+			timer.start();
+
 			ThicknessMap tm;
 			tm.createMap(getSeries(), lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM);
 			*thicknesMapImage = tm.getThicknessMap();
 			requestSloOverlayUpdate();
+
+			std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
 		}
 		return true;
 	}
@@ -197,7 +203,7 @@ bool BScanLayerSegmentation::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Ma
 {
 	if(thicknesMapImage->cols == sloImage.cols && thicknesMapImage->rows == sloImage.rows)
 	{
-		std::cout << sloImage.type() << " != " << CV_8UC3 << " || " << thicknesMapImage->type() << " != " << CV_8UC4 << std::endl;
+// 		std::cout << sloImage.type() << " != " << CV_8U << " || " << thicknesMapImage->type() << " != " << CV_8UC4 << std::endl;
 		if(sloImage.type() != CV_8U || thicknesMapImage->type() != CV_8UC4)
 			return false;
 

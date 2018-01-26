@@ -10,6 +10,7 @@
 
 #include<data_structure/matrx.h>
 #include<data_structure/point2d.h>
+#include<data_structure/programoptions.h>
 
 #include<algos/linebresenhamalgo.h>
 
@@ -32,7 +33,7 @@ namespace
 	{
 		constexpr static const double maxDistance = 25;
 		constexpr static const double lNorm = 1; // TODO L2 ist defekt
-
+		bool blendColor = true;
 
 		struct SlideInfo
 		{
@@ -328,9 +329,9 @@ namespace
 				createDistValues<2>();
 		}
 
-		void createMap()
+		void createColorMap()
 		{
-			std::cout << "maxValue: " << maxValue << "\nminValue: " << minValue << std::endl;
+// 			std::cout << "maxValue: " << maxValue << "\nminValue: " << minValue << std::endl;
 			for(std::size_t y = 0; y < pixelMap->getSizeY(); ++y)
 			{
 				uint8_t* imgIt = thicknessImage.ptr<uint8_t>(static_cast<int>(y));
@@ -603,11 +604,23 @@ namespace
 			}
 		}
 
+		const OctData::Series* series                                 ;
+		const std::vector<BScanLayerSegmentation::BScanSegData>& lines;
+		OctData::Segmentationlines::SegmentlineType t1                ;
+		OctData::Segmentationlines::SegmentlineType t2                ;
+
 	public:
 		CreateThicknessMap(const OctData::Series* series
 		                 , const std::vector<BScanLayerSegmentation::BScanSegData>& lines
 		                 , OctData::Segmentationlines::SegmentlineType t1
 		                 , OctData::Segmentationlines::SegmentlineType t2)
+		: series(series)
+		, lines(lines)
+		, t1(t1)
+		, t2(t2)
+		{}
+
+		void createMap()
 		{
 			if(!series)
 				return;
@@ -631,18 +644,17 @@ namespace
 			if(lines.size() < series->bscanCount())
 				return;
 
-			bool blend = true;
 
-			if(blend)
+			if(blendColor)
 			{
 				InitValueSetter ivs(*this);
 				addBScans(series, lines, t1, t2, ivs);
 			}
 
-			AddPixelValueSetter apvs(*this, blend);
+			AddPixelValueSetter apvs(*this, blendColor);
 			addBScans(series, lines, t1, t2, apvs);
 
-			if(!blend)
+			if(!blendColor)
 				calcActDistMap();
 		}
 
@@ -651,8 +663,10 @@ namespace
 			delete pixelMap;
 		}
 
+		void setBlendColor(bool b)                                     { blendColor = b; }
 
-		const cv::Mat& getThicknessMap() { if(!thicknessImageCreated) createMap(); return thicknessImage; }
+
+		const cv::Mat& getThicknessMap() { if(!thicknessImageCreated) createColorMap(); return thicknessImage; }
 	};
 
 
@@ -691,6 +705,10 @@ void ThicknessMap::createMap(const OctData::Series* series
                            , OctData::Segmentationlines::SegmentlineType t2)
 {
 	CreateThicknessMap thicknessMapCreator(series, lines, t1, t2);
+
+	thicknessMapCreator.setBlendColor(ProgramOptions::layerSegThicknessmapBlend());
+
+	thicknessMapCreator.createMap();
 
 	thicknessMapCreator.getThicknessMap().copyTo(*thicknessMap);
 

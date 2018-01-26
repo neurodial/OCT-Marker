@@ -321,13 +321,22 @@ void OCTMarkerMainWindow::setupMenu()
 	// View
 	// ----------
 
+	QMenu* layerSegmentMenu = new QMenu(this);
+	layerSegmentMenu->setTitle(tr("Layer segmentation"));
+	layerSegmentMenu->addAction(createColorOptionAction(ProgramOptions::layerSegActiveLineColor, tr("Active line color")));
+	layerSegmentMenu->addAction(createColorOptionAction(ProgramOptions::layerSegPassivLineColor, tr("Passiv line color")));
+	QAction* layerSegBlendThicknessmapAction = ProgramOptions::layerSegThicknessmapBlend.getAction();
+	layerSegBlendThicknessmapAction->setText(tr("Blend Thicknessmap Color"));
+	layerSegmentMenu->addAction(layerSegBlendThicknessmapAction);
+
+
 	QMenu* viewMenu = new QMenu(this);
 	viewMenu->setTitle(tr("View"));
 
+
 	viewMenu->addAction(createColorOptionAction(ProgramOptions::bscanSegmetationLineColor, tr("change segmentation line color")));
 	viewMenu->addSeparator();
-	viewMenu->addAction(createColorOptionAction(ProgramOptions::layerSegActiveLineColor, tr("Active line color")));
-	viewMenu->addAction(createColorOptionAction(ProgramOptions::layerSegPassivLineColor, tr("Passiv line color")));
+	viewMenu->addMenu(layerSegmentMenu);
 	viewMenu->addSeparator();
 	viewMenu->addAction(ProgramOptions::bscanShowExtraSegmentationslines.getAction());
 

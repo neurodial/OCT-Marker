@@ -69,6 +69,7 @@ public:
 	static OptionInt    layerSegPassivLineSize;
 	static OptionInt    layerSegSplinePointSize;
 
+	static OptionBool   layerSegThicknessmapBlend;
 	
 	static std::vector<Option*>& getAllOptions()                    { return getAllOptionsPrivate().allConfig; }
 	
