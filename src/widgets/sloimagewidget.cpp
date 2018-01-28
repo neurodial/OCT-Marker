@@ -50,11 +50,12 @@ SLOImageWidget::SLOImageWidget(QWidget* parent)
 , markerManger(OctMarkerManager::getInstance())
 {
 	OctDataManager& octDataManager = OctDataManager::getInstance();
-	connect(&octDataManager, &OctDataManager  ::seriesChanged    , this, &SLOImageWidget::reladSLOImage           );
-	connect(&markerManger  , &OctMarkerManager::bscanChanged     , this, &SLOImageWidget::bscanChanged            );
-	connect(&markerManger  , &OctMarkerManager::sloViewChanged   , this, &SLOImageWidget::sloViewChanged          );
-	connect(&markerManger  , &OctMarkerManager::sloMarkerChanged , this, &SLOImageWidget::sloMarkerChanged        );
-	connect(&markerManger  , &OctMarkerManager::sloOverlayChanged, this, &SLOImageWidget::updateMarkerOverlayImage);
+	connect(&octDataManager, &OctDataManager  ::seriesChanged     , this, &SLOImageWidget::reladSLOImage           );
+	connect(&markerManger  , &OctMarkerManager::bscanChanged      , this, &SLOImageWidget::bscanChanged            );
+	connect(&markerManger  , &OctMarkerManager::sloViewChanged    , this, &SLOImageWidget::sloViewChanged          );
+	connect(&markerManger  , &OctMarkerManager::sloMarkerChanged  , this, &SLOImageWidget::sloMarkerChanged        );
+	connect(&markerManger  , &OctMarkerManager::sloOverlayChanged , this, &SLOImageWidget::updateMarkerOverlayImage);
+	connect(&markerManger  , &OctMarkerManager::bscanMarkerChanged, this, &SLOImageWidget::updateMarkerOverlayImage);
 
 	connect(&ProgramOptions::sloShowsBScansPos, &OptionInt::valueChanged, this, &SLOImageWidget::setBScanVisibility);
 
