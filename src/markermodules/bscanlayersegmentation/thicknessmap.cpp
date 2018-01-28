@@ -13,6 +13,7 @@
 #include<data_structure/programoptions.h>
 
 #include<algos/linebresenhamalgo.h>
+#include<algos/fillarea.h>
 
 #include<opencv/cv.hpp>
 
@@ -401,51 +402,92 @@ namespace
 			}
 		}
 
+
+		class FillBroder
+		{
+			PixelMap& pixelMap;
+		public:
+			FillBroder(PixelMap& map) : pixelMap(map) {}
+
+			bool isInArea(std::size_t x, std::size_t y) const
+			{
+				if(x>=pixelMap.getSizeX() || y>=pixelMap.getSizeY())
+					return false;
+				return pixelMap(x, y).status != PixelInfo::Status::BRODER;
+			}
+
+			void paint(std::size_t x, std::size_t y)
+			{
+				if(x<pixelMap.getSizeX() && y<pixelMap.getSizeY())
+					pixelMap(x, y).status = PixelInfo::Status::BRODER;
+			}
+
+			void plot(int x, int y)
+			{
+				if(x<0 && y<0)
+					return;
+				paint(static_cast<std::size_t>(x), static_cast<std::size_t>(y));
+			}
+		};
+
+
 		void addBroder(const OctData::Series::BScanSLOCoordList& broderPoints)
 		{
-			class DrawBroder
-			{
-				PixelMap& pixelMap;
-			public:
-				DrawBroder(PixelMap& map) : pixelMap(map) {}
-
-				void plot(int x, int y)
-				{
-					std::cout << x << ", " << y << std::endl;
-					if(x<0 && y<0)
-						return;
-
-					const std::size_t xs = static_cast<std::size_t>(x);
-					const std::size_t ys = static_cast<std::size_t>(y);
-					if(xs<pixelMap.getSizeX() && ys<pixelMap.getSizeY())
-					{
-						std::cout << xs << ", " << ys << std::endl;
-						pixelMap(xs, ys).status = PixelInfo::Status::BRODER;
-					}
-				}
-			};
-
 			if(broderPoints.size() < 2)
 				return;
 
 			if(!pixelMap)
 				return;
 
-			DrawBroder db(*pixelMap);
-			LineBresenhamAlgo<DrawBroder> lineAlgo(db);
+			FillBroder db(*pixelMap);
+			LineBresenhamAlgo<FillBroder> lineAlgo(db);
 
 			OctData::CoordSLOpx lastPoint = transformCoord(*(broderPoints.end()-1));
 			for(const OctData::CoordSLOmm& actPoint : broderPoints)
 			{
 				OctData::CoordSLOpx actPointPx = transformCoord(actPoint);
-
-				std::cout << "von : " << actPointPx.getX() << " , " << actPointPx.getY() << std::endl;
-				std::cout << "nach: " << lastPoint .getX() << " , " << lastPoint .getY() << std::endl;
-
 				lineAlgo.plotLine(actPointPx.getX(), actPointPx.getY()
 				                , lastPoint .getX(), lastPoint .getY());
 
 				lastPoint = actPointPx;
+			}
+		}
+
+		static Point2D coordSLO2Point(const OctData::CoordSLOpx& c) { return Point2D(c.getXf(), c.getYf()); }
+
+		void fillBroder(const OctData::Series::BScanSLOCoordList& broderPoints)
+		{
+			if(broderPoints.size() < 4)
+				return;
+
+			if(!pixelMap)
+				return;
+
+			FillBroder db(*pixelMap);
+			FillArea<FillBroder> fillAlgo(db);
+
+			Point2D pointM2 = coordSLO2Point(transformCoord(*(broderPoints.end()-2)));
+			Point2D pointM1 = coordSLO2Point(transformCoord(*(broderPoints.end()-1)));
+			for(const OctData::CoordSLOmm& actPoint : broderPoints)
+			{
+				Point2D actPointPx = coordSLO2Point(transformCoord(actPoint));
+
+				Point2D vec1 = pointM1 - pointM2;
+				Point2D vec2 = actPointPx - pointM2;
+
+				vec1.normize();
+				vec2.normize();
+
+				Point2D vecK = vec1 - vec2;
+				if(vecK.normquadrat() > 0)
+				{
+					vecK.normize();
+					Point2D fillPoint = pointM1 + vecK;
+					fillAlgo.fill(static_cast<std::size_t>(fillPoint.getX())
+					            , static_cast<std::size_t>(fillPoint.getY()));
+				}
+				pointM2 = pointM1;
+				pointM1 = actPointPx;
 			}
 		}
 
@@ -484,7 +526,8 @@ namespace
 			shift     = sloImage.getShift()      ;
 			transform = sloImage.getTransform()  ;
 
-// 			addBroder(convexHull);
+			addBroder(convexHull);
+			fillBroder(convexHull);
 
 			if(lines.size() < series->bscanCount())
 				return;
