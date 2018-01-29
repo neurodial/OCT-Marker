@@ -375,6 +375,8 @@ namespace
 				case OctData::BScan::BScanType::Circle:
 					addCircleScan(bscan, segLine1, segLine2, pixelSetter);
 					break;
+				case OctData::BScan::BScanType::Unknown:
+					break;
 			}
 		}
 

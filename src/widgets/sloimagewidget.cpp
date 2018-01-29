@@ -247,6 +247,8 @@ void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, 
 		case OctData::BScan::BScanType::Circle:
 			paintBScanCircle(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
 			break;
+		case OctData::BScan::BScanType::Unknown:
+			break;
 	}
 }
 

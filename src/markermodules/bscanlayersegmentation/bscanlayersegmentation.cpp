@@ -117,6 +117,7 @@ void BScanLayerSegmentation::contextMenuEvent(QContextMenuEvent* event)
 
 void BScanLayerSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& ptree)
 {
+	*thicknesMapImage = cv::Mat();
 	resetMarkers(series);
 	loadState(ptree);
 }
