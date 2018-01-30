@@ -15,6 +15,7 @@
 #include <octdata/datastruct/oct.h>
 #include <octdata/octfileread.h>
 #include <octdata/filereadoptions.h>
+#include <octdata/filewriteoptions.h>
 
 #include <helper/ptreehelper.h>
 
@@ -329,6 +330,11 @@ void OctDataManager::saveMarkers(QString filename, OctMarkerFileformat format)
 void OctDataManager::saveOctScan(QString filename)
 {
 	if(octData)
-		OctData::OctFileRead::writeFile(filename.toStdString(), *octData);
+	{
+		OctData::FileWriteOptions fwo;
+		fwo.octBinFlat = ProgramOptions::saveOctBinFlat();
+
+		OctData::OctFileRead::writeFile(filename.toStdString(), *octData, fwo);
+	}
 }
 

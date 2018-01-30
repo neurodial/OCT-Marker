@@ -25,6 +25,8 @@ OptionBool ProgramOptions::fillEmptyPixelWhite(false, "fillEmptyPixelWhite", "Pr
 OptionBool ProgramOptions::registerBScans     (true , "registerBScans"     , "ProgramOptions");
 OptionBool ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      , "ProgramOptions");
 
+OptionBool ProgramOptions::saveOctBinFlat     (false, "saveOctBinFlat"     , "ProgramOptions");
+
 OptionBool ProgramOptions::holdOCTRawData     (false, "holdOCTRawData"     , "ProgramOptions");
 OptionBool ProgramOptions::readBScans         (true , "readBScans"         , "ProgramOptions");
 

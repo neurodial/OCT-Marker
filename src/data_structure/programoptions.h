@@ -39,6 +39,9 @@ public:
 	static OptionBool registerBScans;
 	static OptionBool loadRotateSlo;
 
+	static OptionBool saveOctBinFlat;
+
+
 	static OptionBool holdOCTRawData;
 	static OptionBool readBScans;
 
