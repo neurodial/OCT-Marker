@@ -32,23 +32,25 @@ namespace
 
 	class CreateThicknessMap
 	{
-		constexpr static const double maxDistance = 25;
+		typedef double DistanceType;
+
+		constexpr static const DistanceType maxDistance = 25;
 		bool blendColor = true;
 
 		struct SlideInfo
 		{
 			SlideInfo() = default;
 
-			SlideInfo(double distance, double value)
+			SlideInfo(DistanceType distance, double value)
 			: distance(distance)
 			, value   (value)
 			{}
 
 			bool operator<(const SlideInfo& info)                   const { return distance < info.distance; }
-			operator bool()                                         const { return distance != std::numeric_limits<double>::infinity(); }
+			operator bool()                                         const { return distance != std::numeric_limits<DistanceType>::infinity(); }
 
 
-			double distance = std::numeric_limits<double>::infinity();
+			DistanceType distance = std::numeric_limits<DistanceType>::infinity();
 			double value    = 0;
 		};
 
@@ -101,8 +103,47 @@ namespace
 
 		};
 
+		class TrailMap
+		{
+			std::vector<PixtureElement> actTrailDist;
+			std::vector<PixtureElement> nextTrailDist;
+			DistanceType actDist = 0;
+		public:
+			void clear()
+			{
+				actTrailDist.clear();
+				nextTrailDist.clear();
+				actDist = 0;
+			}
+
+			void emplace(DistanceType dist, const PixtureElement& ele)
+			{
+				if(dist == actDist)
+					actTrailDist.push_back(ele);
+				else
+					nextTrailDist.push_back(ele);
+			}
+
+			std::tuple<int, PixtureElement> getElement()
+			{
+				if(actTrailDist.size() == 0)
+				{
+					actTrailDist.swap(nextTrailDist);
+					actDist += 1;
+				}
+// 					std::swap(actTrailDist, nextTrailDist);
+				PixtureElement ele = actTrailDist.back();
+				actTrailDist.pop_back();
+				return std::make_tuple(actDist, ele);
+			}
+
+			std::size_t size() const { return actTrailDist.size() + nextTrailDist.size(); }
+
+		};
+
+
 		typedef Matrix<PixelInfo> PixelMap;
-		typedef std::multimap<double, PixtureElement> TrailMap;
+// 		typedef std::multimap<DistanceType, PixtureElement> TrailMap;
 
 
 		PixelMap* pixelMap = nullptr;
@@ -121,7 +162,7 @@ namespace
 		OctData::CoordSLOpx     shift    ;
 		OctData::CoordTransform transform;
 
-		inline void addTrail(std::size_t x, std::size_t y, double distance, double thickness, PixelInfo& info)
+		inline void addTrail(std::size_t x, std::size_t y, DistanceType distance, double thickness, PixelInfo& info)
 		{
 			if(std::isnan(distance))
 				return;
@@ -134,12 +175,12 @@ namespace
 		}
 
 
-		inline void calcSetTrailDistanceL1(std::size_t x, std::size_t y, double distance, double value)
+		inline void calcSetTrailDistanceL1(std::size_t x, std::size_t y, DistanceType distance, double value)
 		{
 			PixelInfo& newTrailInfo = (*pixelMap)(x, y);
 			if(newTrailInfo.status == PixelInfo::Status::FAR_AWAY)
 			{
-				double trailDistance = distance + 1;
+				DistanceType trailDistance = distance + 1;
 				if(trailDistance < maxDistance)
 					addTrail(x, y, trailDistance, value, newTrailInfo);
 			}
@@ -147,14 +188,19 @@ namespace
 
 		void calcActDistMap()
 		{
-			double distance    = 0;
+			DistanceType distance    = 0;
 
 			while(trailMap.size() > 0 && distance < maxDistance)
 			{
+				/*
 				auto aktIt = trailMap.begin();
 
 				PixtureElement& aktEle = aktIt->second;
 				distance = aktIt->first;
+				*/
+
+				PixtureElement aktEle;
+				std::tie(distance, aktEle) = trailMap.getElement();
 
 				const std::size_t aktX = aktEle.getX();
 				const std::size_t aktY = aktEle.getY();
@@ -168,8 +214,10 @@ namespace
 				if(aktX > 0                     ) calcSetTrailDistanceL1(aktX-1, aktY  , distance, thickness);
 				if(aktX < pixelMap->getSizeX()-1) calcSetTrailDistanceL1(aktX+1, aktY  , distance, thickness);
 
-				trailMap.erase(aktIt);
+// 				trailMap.erase(aktIt);
 			}
+
+			trailMap.clear();
 
 			for(PixelInfo& info : *pixelMap)
 			{

@@ -1,5 +1,9 @@
 #include "bscanlayersegmentation.h"
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+
 #include<opencv/cv.hpp>
 
 #include <widgets/bscanmarkerwidget.h>
