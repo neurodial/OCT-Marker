@@ -244,7 +244,6 @@ namespace
 						imgIt[2] = static_cast<uint8_t>(bd*255);
 						imgIt[3] = 255;
 					}
-// 						*imgIt = static_cast<uint8_t>((mixThickness-minValue)/(maxValue-minValue)*255);
 
 					imgIt += 4;
 				}
