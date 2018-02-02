@@ -25,6 +25,7 @@ public:
 	T* begin()                                                      { return field; }
 	T* end()                                                        { return field+sizeX*sizeY; }
 
+	T* scanLine(std::size_t y)                                      { return field+sizeX*y; }
 
 	Matrix(const Matrix& other)            = delete;
 	Matrix& operator=(const Matrix& other) = delete;

@@ -481,65 +481,81 @@ namespace
 		};
 
 
-		void addBroder(const OctData::Series::BScanSLOCoordList& broderPoints)
-		{
-			if(broderPoints.size() < 2)
-				return;
-
-			if(!pixelMap)
-				return;
-
-			FillBroder db(*pixelMap);
-			LineBresenhamAlgo<FillBroder> lineAlgo(db);
-
-			OctData::CoordSLOpx lastPoint = transformCoord(*(broderPoints.end()-1));
-			for(const OctData::CoordSLOmm& actPoint : broderPoints)
-			{
-				OctData::CoordSLOpx actPointPx = transformCoord(actPoint);
-				lineAlgo.plotLine(actPointPx.getX(), actPointPx.getY()
-				                , lastPoint .getX(), lastPoint .getY());
-
-				lastPoint = actPointPx;
-			}
-		}
-
 		static Point2D coordSLO2Point(const OctData::CoordSLOpx& c) { return Point2D(c.getXf(), c.getYf()); }
 
-		void fillBroder(const OctData::Series::BScanSLOCoordList& broderPoints)
+		double calcIntersectionX(const Point2D& lowerPoint, const Point2D& upperPoint, double y)
+		{
+			const double lengthY = upperPoint.getY() - lowerPoint.getY();
+			const double lengthX = upperPoint.getX() - lowerPoint.getX();
+			const double intersectionPosY = y - lowerPoint.getY();
+			const double intersectionFrac = intersectionPosY/lengthY;
+			const double intersectionX = intersectionFrac*lengthX + lowerPoint.getX();
+			return intersectionX;
+		}
+
+		bool setIntersections(const Point2D& lowerPoint, const Point2D& upperPoint, double y, double& pos1, double& pos2)
+		{
+			double pos = calcIntersectionX(lowerPoint, upperPoint, y);
+			if(pos1 == std::numeric_limits<double>::infinity())
+			{
+				pos1 = pos;
+				return false;
+			}
+			pos2 = pos;
+			return true;
+		}
+
+		void drawScanLine(std::size_t y, std::size_t x1, std::size_t x2)
+		{
+			PixelInfo* it = pixelMap->scanLine(y);
+			const PixelInfo* const itEnd = pixelMap->scanLine(y) + x2;
+			it += x1;
+			for(;it != itEnd; ++it)
+				it->status = PixelInfo::Status::BRODER;
+		}
+
+		void fillConvexBroder(const OctData::Series::BScanSLOCoordList& broderPoints)
 		{
 			if(broderPoints.size() < 4)
 				return;
 
 			if(!pixelMap)
 				return;
+			// scan line algo
 
-			FillBroder db(*pixelMap);
-			FillArea<FillBroder> fillAlgo(db);
+			const std::size_t sizeY = pixelMap->getSizeY();
+			const std::size_t sizeX = pixelMap->getSizeX();
 
-			Point2D pointM2 = coordSLO2Point(transformCoord(*(broderPoints.end()-2)));
-			Point2D pointM1 = coordSLO2Point(transformCoord(*(broderPoints.end()-1)));
-			for(const OctData::CoordSLOmm& actPoint : broderPoints)
+			for(std::size_t y = 0; y < sizeY; ++y)
 			{
-				Point2D actPointPx = coordSLO2Point(transformCoord(actPoint));
-
-				Point2D vec1 = pointM1 - pointM2;
-				Point2D vec2 = actPointPx - pointM2;
-
-				vec1.normize();
-				vec2.normize();
-
-				Point2D vecK = vec1 - vec2;
-				if(vecK.normquadrat() > 0)
+				const double yd = static_cast<double>(y);
+				double pos1 = std::numeric_limits<double>::infinity();
+				double pos2 = std::numeric_limits<double>::infinity();
+				Point2D lastPoint = coordSLO2Point(transformCoord(*(broderPoints.end()-1)));
+				for(const OctData::CoordSLOmm& actPoint : broderPoints)
 				{
-					vecK.normize();
-					Point2D fillPoint = pointM1 + vecK;
-					fillAlgo.fill(static_cast<std::size_t>(fillPoint.getX())
-					            , static_cast<std::size_t>(fillPoint.getY()));
+					Point2D actPointPx = coordSLO2Point(transformCoord(actPoint));
+					     if(lastPoint .getY() < y && actPointPx.getY() >= y) { if(setIntersections(lastPoint, actPointPx , yd, pos1, pos2)) break; }
+					else if(actPointPx.getY() < y && lastPoint .getY() >= y) { if(setIntersections(actPointPx , lastPoint, yd, pos1, pos2)) break; }
+					lastPoint = actPointPx;
 				}
-				pointM2 = pointM1;
-				pointM1 = actPointPx;
+
+				if(pos2 < pos1)
+					std::swap(pos1, pos2);
+
+				if(pos1 != std::numeric_limits<double>::infinity())
+				{
+					pos1 -= 1;
+					pos2 += 2;
+					if(pos1 > 0      ) drawScanLine(y, 0                                           , std::min(sizeX, static_cast<std::size_t>(pos1)));
+					if(pos2 < sizeY-1) drawScanLine(y, static_cast<std::size_t>(std::max(0., pos2)), sizeX                                          );
+				}
+				else
+					drawScanLine(y, 0, sizeX);
 			}
+
 		}
+
 
 		const OctData::Series* series                                 ;
 		const std::vector<BScanLayerSegmentation::BScanSegData>& lines;
@@ -576,8 +592,7 @@ namespace
 			shift     = sloImage.getShift()      ;
 			transform = sloImage.getTransform()  ;
 
-			addBroder(convexHull);
-			fillBroder(convexHull);
+			fillConvexBroder(convexHull);
 
 			if(lines.size() < series->bscanCount())
 				return;
