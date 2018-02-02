@@ -124,33 +124,25 @@ namespace
 					nextTrailDist.push_back(ele);
 			}
 
-			std::tuple<int, PixtureElement> getElement()
+			void getElement(PixtureElement& ele, DistanceType& dist)
 			{
 				if(actTrailDist.size() == 0)
 				{
 					actTrailDist.swap(nextTrailDist);
 					actDist += 1;
 				}
-// 					std::swap(actTrailDist, nextTrailDist);
-				PixtureElement ele = actTrailDist.back();
+				dist = actDist;
+				ele  = actTrailDist.back();
 				actTrailDist.pop_back();
-				return std::make_tuple(actDist, ele);
 			}
-
 			std::size_t size() const { return actTrailDist.size() + nextTrailDist.size(); }
 
 		};
 
-
 		typedef Matrix<PixelInfo> PixelMap;
-// 		typedef std::multimap<DistanceType, PixtureElement> TrailMap;
-
 
 		PixelMap* pixelMap = nullptr;
 		TrailMap  trailMap;
-
-
-
 
 		SegmentlineDataType minValue =  std::numeric_limits<SegmentlineDataType>::infinity();
 		SegmentlineDataType maxValue = -std::numeric_limits<SegmentlineDataType>::infinity();
@@ -164,9 +156,6 @@ namespace
 
 		inline void addTrail(std::size_t x, std::size_t y, DistanceType distance, double thickness, PixelInfo& info)
 		{
-			if(std::isnan(distance))
-				return;
-
 			info.value    = thickness;
 			info.status   = PixelInfo::Status::ACCEPTED;
 
@@ -192,15 +181,8 @@ namespace
 
 			while(trailMap.size() > 0 && distance < maxDistance)
 			{
-				/*
-				auto aktIt = trailMap.begin();
-
-				PixtureElement& aktEle = aktIt->second;
-				distance = aktIt->first;
-				*/
-
 				PixtureElement aktEle;
-				std::tie(distance, aktEle) = trailMap.getElement();
+				trailMap.getElement(aktEle, distance);
 
 				const std::size_t aktX = aktEle.getX();
 				const std::size_t aktY = aktEle.getY();
@@ -213,8 +195,6 @@ namespace
 				if(aktY < pixelMap->getSizeY()-1) calcSetTrailDistanceL1(aktX  , aktY+1, distance, thickness);
 				if(aktX > 0                     ) calcSetTrailDistanceL1(aktX-1, aktY  , distance, thickness);
 				if(aktX < pixelMap->getSizeX()-1) calcSetTrailDistanceL1(aktX+1, aktY  , distance, thickness);
-
-// 				trailMap.erase(aktIt);
 			}
 
 			trailMap.clear();
