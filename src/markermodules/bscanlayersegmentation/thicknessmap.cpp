@@ -1,10 +1,17 @@
 #include "thicknessmap.h"
 
-#include <map>
 
-#include <octdata/datastruct/series.h>
-#include <octdata/datastruct/bscan.h>
-#include <octdata/datastruct/sloimage.h>
+#define _USE_MATH_DEFINES
+
+#include<map>
+#include<limits>
+#include<cmath>
+
+#include<opencv/cv.hpp>
+
+#include<octdata/datastruct/series.h>
+#include<octdata/datastruct/bscan.h>
+#include<octdata/datastruct/sloimage.h>
 
 #include<helper/convertcolorspace.h>
 
@@ -15,21 +22,13 @@
 #include<algos/linebresenhamalgo.h>
 #include<algos/fillarea.h>
 
-#include<opencv/cv.hpp>
-
-#include<limits>
 
 using Segmentline         = OctData::Segmentationlines::Segmentline;
 using SegmentlineDataType = OctData::Segmentationlines::SegmentlineDataType;
 
 
-
-#include<iostream> // TODO
-#include<opencv/highgui.h>
-
 namespace
 {
-
 	class CreateThicknessMap
 	{
 		typedef double DistanceType;
@@ -306,7 +305,7 @@ namespace
 		public:
 			InitValueSetter(CreateThicknessMap& ctm) : ctm(ctm) {}
 
-			void operator()(const OctData::CoordSLOpx& coord, SegmentlineDataType value1, SegmentlineDataType value2)
+			void operator()(const OctData::CoordSLOpx& coord, SegmentlineDataType /*value1*/, SegmentlineDataType /*value2*/)
 			{
 				const std::size_t x = static_cast<std::size_t>(coord.getX());
 				const std::size_t y = static_cast<std::size_t>(coord.getY());
@@ -364,7 +363,7 @@ namespace
 
 			double radius = start_px.abs(center_px);
 			double ratio  = start_px.getXf() - center_px.getXf();
-			double nullAngle = acos( ratio/radius )/M_PI/2;
+			double nullAngle = acos( ratio/radius )/M_PI/2.;
 
 			const int rotationFactor = clockwise?1:-1;
 
@@ -507,15 +506,16 @@ namespace
 
 			for(std::size_t y = 0; y < sizeY; ++y)
 			{
-				const double yd = static_cast<double>(y);
+// 				const double yd = static_cast<double>(y);
+				Point2D::value_type yd = static_cast<Point2D::value_type>(y);
 				double pos1 = std::numeric_limits<double>::infinity();
 				double pos2 = std::numeric_limits<double>::infinity();
 				Point2D lastPoint = coordSLO2Point(transformCoord(*(broderPoints.end()-1)));
 				for(const OctData::CoordSLOmm& actPoint : broderPoints)
 				{
 					Point2D actPointPx = coordSLO2Point(transformCoord(actPoint));
-					     if(lastPoint .getY() < y && actPointPx.getY() >= y) { if(setIntersections(lastPoint, actPointPx , yd, pos1, pos2)) break; }
-					else if(actPointPx.getY() < y && lastPoint .getY() >= y) { if(setIntersections(actPointPx , lastPoint, yd, pos1, pos2)) break; }
+					     if(lastPoint .getY() < yd && actPointPx.getY() >= yd) { if(setIntersections(lastPoint, actPointPx , yd, pos1, pos2)) break; }
+					else if(actPointPx.getY() < yd && lastPoint .getY() >= yd) { if(setIntersections(actPointPx , lastPoint, yd, pos1, pos2)) break; }
 					lastPoint = actPointPx;
 				}
 
@@ -526,8 +526,8 @@ namespace
 				{
 					pos1 -= 1;
 					pos2 += 2;
-					if(pos1 > 0      ) drawScanLine(y, 0                                           , std::min(sizeX, static_cast<std::size_t>(pos1)));
-					if(pos2 < sizeY-1) drawScanLine(y, static_cast<std::size_t>(std::max(0., pos2)), sizeX                                          );
+					if(pos1 > 0                           ) drawScanLine(y, 0                                           , std::min(sizeX, static_cast<std::size_t>(pos1)));
+					if(pos2 < static_cast<double>(sizeY-1)) drawScanLine(y, static_cast<std::size_t>(std::max(0., pos2)), sizeX                                          );
 				}
 				else
 					drawScanLine(y, 0, sizeX);
@@ -600,11 +600,8 @@ namespace
 
 		const cv::Mat& getThicknessMap() { if(!thicknessImageCreated) createColorMap(); return thicknessImage; }
 	};
-
-
-
-
 }
+
 
 ThicknessMap::ThicknessMap()
 : thicknessMap(new cv::Mat)
@@ -628,11 +625,7 @@ void ThicknessMap::createMap(const OctData::Series* series
 	CreateThicknessMap thicknessMapCreator(series, lines, t1, t2);
 
 	thicknessMapCreator.setBlendColor(ProgramOptions::layerSegThicknessmapBlend());
-
 	thicknessMapCreator.createMap();
-
 	thicknessMapCreator.getThicknessMap().copyTo(*thicknessMap);
-
-// 	imshow("Thicknessmap", thicknessMapCreator.getThicknessMap());
 }
 
