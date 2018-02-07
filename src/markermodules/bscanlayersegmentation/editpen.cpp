@@ -33,9 +33,12 @@ BscanMarkerBase::RedrawRequest EditPen::mouseMoveEvent(QMouseEvent* event, BScan
 
 BscanMarkerBase::RedrawRequest EditPen::mousePressEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
-	paintSegLine = true;
-	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
-	lastPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
+	if(event->button() == Qt::LeftButton)
+	{
+		paintSegLine = true;
+		const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
+		lastPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
+	}
 	return BscanMarkerBase::RedrawRequest();
 }
 
@@ -49,6 +52,7 @@ BscanMarkerBase::RedrawRequest EditPen::mouseReleaseEvent(QMouseEvent* event, BS
 
 void EditPen::segLineChanged(OctData::Segmentationlines::Segmentline* segLine)
 {
+	paintSegLine = false;
 	this->segLine = segLine;
 }
 

@@ -364,7 +364,8 @@ void BScanMarkerWidget::contextMenuEvent(QContextMenuEvent* event)
 	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
 		actMarker->contextMenuEvent(event);
-	CVImageWidget::contextMenuEvent(event);
+	if(!event->isAccepted())
+		CVImageWidget::contextMenuEvent(event);
 }
 
 
