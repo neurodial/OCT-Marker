@@ -32,6 +32,10 @@
 #include <qelapsedtimer.h>
 
 
+#include<QMainWindow> // TODO
+#include"thicknessmaplegend.h"
+
+
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , editMethodSpline(new EditSpline(this))
@@ -45,6 +49,10 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
 
 	actEditMethod = editMethodPen;
+
+	QMainWindow* tml = new QMainWindow;
+	tml->setCentralWidget(new ThicknessmapLegend);
+	tml->show();
 }
 
 BScanLayerSegmentation::~BScanLayerSegmentation()
