@@ -9,12 +9,13 @@
 #include "colormaphsv.h"
 
 
-ThicknessmapLegend::BarLabel::BarLabel(double value, QWidget* parent)
+
+ThicknessmapLegend::BarLabel::BarLabel(double value, QWidget* parent, int xpos)
 : label(new QLabel(QString("%1").arg(value), parent))
 , value(value)
 {
 	QSize s = label->minimumSizeHint();
-	label->setGeometry(40, 0, s.width(), s.height());
+	label->setGeometry(xpos, 0, s.width(), s.height());
 }
 
 void ThicknessmapLegend::BarLabel::setHPos(int pos)
@@ -27,19 +28,39 @@ void ThicknessmapLegend::BarLabel::setHPos(int pos)
 ThicknessmapLegend::ThicknessmapLegend(QWidget* parent, Qt::WindowFlags f)
 : QWidget(parent, f)
 {
-	thicknessLabels.push_back(BarLabel(0  , this));
-	thicknessLabels.push_back(BarLabel(50, this));
-	thicknessLabels.push_back(BarLabel(100, this));
-	thicknessLabels.push_back(BarLabel(200, this));
-	thicknessLabels.push_back(BarLabel(300, this));
-	thicknessLabels.push_back(BarLabel(400, this));
-	thicknessLabels.push_back(BarLabel(500, this));
+	const int labelXpos = distanceBarLabel + legendBarWidth + broder;
+	thicknessLabels.push_back(BarLabel(0  , this, labelXpos));
+	thicknessLabels.push_back(BarLabel(50 , this, labelXpos));
+	thicknessLabels.push_back(BarLabel(100, this, labelXpos));
+	thicknessLabels.push_back(BarLabel(200, this, labelXpos));
+	thicknessLabels.push_back(BarLabel(300, this, labelXpos));
+	thicknessLabels.push_back(BarLabel(400, this, labelXpos));
+	thicknessLabels.push_back(BarLabel(500, this, labelXpos));
+	updateLabelsWidth();
+
+	colormap = new ColormapYellow;
 }
 
 ThicknessmapLegend::~ThicknessmapLegend()
 {
-
+	delete colormap;
 }
+
+void ThicknessmapLegend::updateLabelsWidth()
+{
+	labelsMaxHeight = 0;
+	labelsMaxWidth  = 0;
+	for(BarLabel& label : thicknessLabels)
+	{
+		QSize s = label.label->minimumSizeHint();
+		if(labelsMaxWidth < s.width())
+			labelsMaxWidth = s.width();
+		if(labelsMaxHeight < s.height())
+			labelsMaxHeight = s.height();
+	}
+	broderH = labelsMaxHeight/2+broder;
+}
+
 
 void ThicknessmapLegend::adjustLabel(ThicknessmapLegend::BarLabel& label, int height)
 {
@@ -49,55 +70,78 @@ void ThicknessmapLegend::adjustLabel(ThicknessmapLegend::BarLabel& label, int he
 
 QSize ThicknessmapLegend::minimumSizeHint() const
 {
-	return QSize(50+broder*2, 200);
+	return QSize(broder*2 + legendBarWidth + distanceBarLabel + labelsMaxWidth, 200);
 }
 
 void ThicknessmapLegend::paintEvent(QPaintEvent* event)
 {
 	QPainter p(this);
 
-	p.drawPixmap(broder, broder, legend);
+	p.drawPixmap(broder, broderH, legend);
 
+	int lineStartX = broder + legendBarWidth;
+	int lineEndX   = lineStartX + distanceBarLabel/2;
+
+	QPen pen(Qt::black);
+	p.setPen(pen);
+
+	for(BarLabel& label : thicknessLabels)
+	{
+		QRect geo = label.label->geometry();
+		int h = geo.height()/2 + geo.y();
+		p.drawLine(lineStartX, h, lineEndX, h);
+	}
 }
 
 int ThicknessmapLegend::value2HeightPos(double value, int height)
 {
-	ColormapHSV colormap;
-
-	const int barHeight = height - 2*broder;
-	const double maxValue = colormap.getMaxValue();
+	const int barHeight = height - 2*broderH;
+	const double maxValue = colormap->getMaxValue();
 	const double relValue = 1-value/maxValue;
 
-	return static_cast<int>(relValue*barHeight) + broder;
+	return static_cast<int>(relValue*barHeight) + broderH;
+}
+
+namespace
+{
+	void drawBlackLine(QRgb* line, int size)
+	{
+		for(int x = 0; x < size; ++x)
+		{
+			*line = Qt::black;
+			++line;
+		}
+	}
 }
 
 
 void ThicknessmapLegend::resizeEvent(QResizeEvent* event)
 {
 	QSize s = event->size();
-
-	ColormapHSV colormap;
-
-	const int legendBarHeight = s.height()-broder*2;
-	const int legendBarWidth  = 30;
-
+	const int legendBarHeight = s.height()-broderH*2;
 	QImage legendImage(legendBarWidth, legendBarHeight, QImage::Format_RGB32);
+	double maxValue = colormap->getMaxValue();
 
-	double maxValue = colormap.getMaxValue();
-
-	for(int i = 0; i<legendBarHeight; ++i)
+	for(int i = 1; i<legendBarHeight-1; ++i)
 	{
 		const double pos = maxValue*(legendBarHeight - i)/legendBarHeight;
 		uchar r, g, b;
-		colormap.getColor(pos, r, g, b);
+		colormap->getColor(pos, r, g, b);
 		QRgb rgb = qRgb(r, g, b);
 		QRgb* line = reinterpret_cast<QRgb*>(legendImage.scanLine(i));
-		for(int x = 0; x < legendBarWidth; ++x)
+		*line = Qt::black;
+		++line;
+		for(int x = 2; x < legendBarWidth; ++x)
 		{
 			*line = rgb;
 			++line;
 		}
+		*line = Qt::black;
+		++line;
 	}
+
+	drawBlackLine(reinterpret_cast<QRgb*>(legendImage.scanLine(0                )), legendBarWidth);
+	drawBlackLine(reinterpret_cast<QRgb*>(legendImage.scanLine(legendBarHeight-1)), legendBarWidth);
 
 
 	legend = QPixmap::fromImage(legendImage);

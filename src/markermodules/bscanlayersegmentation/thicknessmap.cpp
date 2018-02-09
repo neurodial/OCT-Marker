@@ -22,6 +22,8 @@
 #include<algos/linebresenhamalgo.h>
 #include<algos/fillarea.h>
 
+#include"colormaphsv.h"
+
 
 using Segmentline         = OctData::Segmentationlines::Segmentline;
 using SegmentlineDataType = OctData::Segmentationlines::SegmentlineDataType;
@@ -35,6 +37,8 @@ namespace
 
 		constexpr static const DistanceType maxDistance = 25;
 		bool blendColor = true;
+
+		Colormap* colormap = new ColormapYellow();
 
 		struct SlideInfo
 		{
@@ -217,31 +221,17 @@ namespace
 					PixelInfo& info = (*pixelMap)(x, y);
 
 					double mixThickness = info.getMixValue();
-					if(mixThickness >= maxValue)
+					if(mixThickness > 0 && colormap)
 					{
-						imgIt[0] = 255;
-						imgIt[1] = 255;
-						imgIt[2] = 255;
+						colormap->getColor(mixThickness, imgIt[0], imgIt[1], imgIt[2]);
 						imgIt[3] = 255;
 					}
-// 					else if(mixThickness < minValue)
-					else if(mixThickness == 0)
+					else
 					{
 						imgIt[0] = 0;
 						imgIt[1] = 0;
 						imgIt[2] = 0;
 						imgIt[3] = 0;
-					}
-					else
-					{
-						double rd, gd, bd;
-						double hue = mixThickness*360/maxValue;
-						std::tie(rd, gd, bd) = hsv2rgb(hue, 1, 1);
-
-						imgIt[0] = static_cast<uint8_t>(rd*255);
-						imgIt[1] = static_cast<uint8_t>(gd*255);
-						imgIt[2] = static_cast<uint8_t>(bd*255);
-						imgIt[3] = 255;
 					}
 
 					imgIt += 4;
@@ -253,7 +243,7 @@ namespace
 
 		void addPixelValue(const OctData::CoordSLOpx& coord, SegmentlineDataType value1, SegmentlineDataType value2)
 		{
-			double thickness = (value1 - value2); // TODO: ScaleFactor
+			double thickness = (value1 - value2);
 
 			if(value1 < 0 || value1 > 10000
 			|| value2 < 0 || value2 > 10000)
@@ -336,11 +326,13 @@ namespace
 			if(bscanWidth < 2)
 				return;
 
+			const double scaleFactor = bscan.getScaleFactor().getZ()*1000; // mm -> μm
+
 			for(std::size_t i=0; i<bscanWidth; ++i)
 			{
 				const double v = static_cast<double>(i)/static_cast<double>(bscanWidth-1);
 				const OctData::CoordSLOpx actPos = start_px*(1-v) + end_px*v;
-				pixelSetter(actPos, segLine2[i], segLine1[i]);
+				pixelSetter(actPos, segLine2[i]*scaleFactor, segLine1[i]*scaleFactor);
 			}
 
 			if(pixelSetter.calcDistMap)
@@ -358,6 +350,8 @@ namespace
 
 			if(bscanWidth < 2)
 				return;
+
+			const double scaleFactor = bscan.getScaleFactor().getZ()*1000; // mm -> μm
 
 			bool clockwise = bscan.getClockwiseRot();
 
@@ -378,7 +372,7 @@ namespace
 				const double x = cos(angle)*radius + mX;
 				const double y = sin(angle)*radius + mY;
 				const OctData::CoordSLOpx actPos(x, y);
-				pixelSetter(actPos, segLine2[i], segLine1[i]);
+				pixelSetter(actPos, segLine2[i]*scaleFactor, segLine1[i]*scaleFactor);
 			}
 
 			if(pixelSetter.calcDistMap)
@@ -593,6 +587,7 @@ namespace
 		~CreateThicknessMap()
 		{
 			delete pixelMap;
+			delete colormap;
 		}
 
 		void setBlendColor(bool b)                                     { blendColor = b; }

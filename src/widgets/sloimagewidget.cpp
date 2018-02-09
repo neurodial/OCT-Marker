@@ -373,14 +373,19 @@ void SLOImageWidget::updateMarkerOverlayImage()
 	{
 		cv::Mat outImage;
 		bool overlayCreated = actMarker->drawSLOOverlayImage(sloPixture, outImage, overlayImageAlpha);
-		showPureSloImage = !overlayCreated;
-		if(!showPureSloImage)
+		if(overlayCreated && !outImage.empty())
 		{
-			if(outImage.empty())
-				showPureSloImage = true;
-			else
-				showImage(outImage);
+			showPureSloImage = false;
+			showImage(outImage);
 		}
+// 		showPureSloImage = !overlayCreated;
+// 		if(!showPureSloImage)
+// 		{
+// 			if(outImage.empty())
+// 				showPureSloImage = true;
+// 			else
+// 				showImage(outImage);
+// 		}
 	}
 
 	if(showPureSloImage)

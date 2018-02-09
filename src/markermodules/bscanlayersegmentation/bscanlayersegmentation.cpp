@@ -50,9 +50,11 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 
 	actEditMethod = editMethodPen;
 
-	QMainWindow* tml = new QMainWindow;
-	tml->setCentralWidget(new ThicknessmapLegend);
-	tml->show();
+// 	QMainWindow* tml = new QMainWindow;
+// 	tml->setCentralWidget(new ThicknessmapLegend);
+// 	tml->show();
+
+	legendWG = new ThicknessmapLegend;
 }
 
 BScanLayerSegmentation::~BScanLayerSegmentation()
@@ -61,6 +63,7 @@ BScanLayerSegmentation::~BScanLayerSegmentation()
 	delete editMethodPen   ;
 
 	delete thicknesMapImage;
+	delete legendWG;
 }
 
 

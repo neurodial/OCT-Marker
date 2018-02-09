@@ -72,7 +72,8 @@ public:
 	virtual bool hasChangedSinceLastSave() const                    { return false; }
 	
 	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
-	virtual QWidget*  getWidget ()                                  { return nullptr; }
+	virtual QWidget*  getWidget()                                   { return nullptr; }
+	virtual QWidget*  getSloLegendWidget()                          { return nullptr; }
 
 	virtual QGraphicsScene* getGraphicsScene()                      { return nullptr; }
 	virtual const QGraphicsScene* getGraphicsScene() const          { return nullptr; }

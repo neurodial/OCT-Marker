@@ -7,10 +7,14 @@
 #include <QResizeEvent>
 #include <QToolBar>
 #include <QAction>
+#include <QDockWidget>
 #include <QSignalMapper>
 #include <markermodules/slomarkerbase.h>
 
 #include<helper/actionclasses.h>
+
+#include<manager/octdatamanager.h>
+#include<markermodules/bscanmarkerbase.h>
 
 namespace
 {
@@ -63,6 +67,11 @@ WgSloImage::WgSloImage(QWidget* parent)
 	addToolBar(bar);
 
 	createMarkerToolbar();
+
+
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
+	connect(&markerManager  , &OctMarkerManager::sloOverlayChanged , this, &WgSloImage::updateMarkerOverlayImage);
+	connect(&markerManager  , &OctMarkerManager::bscanMarkerChanged, this, &WgSloImage::updateMarkerOverlayImage);
 }
 
 
@@ -124,3 +133,27 @@ void WgSloImage::createMarkerToolbar()
 
 	addToolBar(toolBar);
 }
+
+
+void WgSloImage::updateMarkerOverlayImage()
+{
+	QWidget* legend = nullptr;
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
+	BscanMarkerBase* marker = markerManager.getActBscanMarker();
+	if(marker)
+	{
+		legend = marker->getSloLegendWidget();
+		if(legend && !legendDW)
+		{
+			legendDW = new QDockWidget(this);
+			addDockWidget(Qt::RightDockWidgetArea, legendDW);
+		}
+	}
+
+	if(legendDW)
+	{
+		legendDW->setWidget(legend);
+		legendDW->setVisible(legend != nullptr);
+	}
+}
+

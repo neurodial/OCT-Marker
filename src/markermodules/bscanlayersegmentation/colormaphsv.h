@@ -4,7 +4,17 @@
 
 #include<helper/convertcolorspace.h>
 
-class ColormapHSV
+
+class Colormap
+{
+public:
+	virtual ~Colormap() {}
+
+	virtual double getMaxValue() const = 0;
+	virtual void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const = 0;
+};
+
+class ColormapHSV : public Colormap
 {
 	double minValue = 100;
 	double maxValue = 500;
@@ -18,9 +28,9 @@ class ColormapHSV
 public:
 
 
-	double getMaxValue() const { return 750; }
+	double getMaxValue() const override { return 750; }
 
-	void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b)
+	void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const override
 	{
 // 		if(value < minValue)
 // 		{
@@ -34,7 +44,7 @@ public:
 		{
 			double relValue   = 1.-(value-minValue)/(maxValue-minValue);
 			double saturation = 1; // relValue>0.8?(0.8-relValue)*5:1;
-			double value      = 1; // relValue<0.2?(relValue*5):1;
+			double hsvValue   = 1; // relValue<0.2?(relValue*5):1;
 			double hue        = relValue*360;
 
 			if(hue < fadeInHue)
@@ -45,8 +55,8 @@ public:
 
 			if(hue > fadeOutHue)
 			{
-				value = 1-(hue-fadeOutHue)/360./fadeOut;
-				if(value < 0) value = 0;
+				hsvValue = 1-(hue-fadeOutHue)/360./fadeOut;
+				if(hsvValue < 0) hsvValue = 0;
 			}
 
 			if(hue > maxHue)
@@ -56,12 +66,64 @@ public:
 
 
 			double rd, gd, bd;
-			std::tie(rd, gd, bd) = hsv2rgb(hue, saturation, value);
+			std::tie(rd, gd, bd) = hsv2rgb(hue, saturation, hsvValue);
 
 			r = static_cast<uint8_t>(rd*255);
 			g = static_cast<uint8_t>(gd*255);
 			b = static_cast<uint8_t>(bd*255);
 		}
+	}
+
+};
+
+
+class ColormapYellow : public Colormap
+{
+	double minValue = 0;
+	double maxValue = 500;
+public:
+
+	double getMaxValue() const override                             { return maxValue; }
+
+
+	void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const override
+	{
+		if(value < minValue)
+		{
+			r = g = b = 0;
+			return;
+		}
+		if(value > maxValue)
+		{
+			r = g = b = 255;
+			return;
+		}
+
+		double relValue   = 1.-(value-minValue)/(maxValue-minValue);
+		double saturation = 1; // relValue>0.8?(0.8-relValue)*5:1;
+		double hsvValue   = 1; // relValue<0.2?(relValue*5):1;
+		double hue        = (1-relValue)*60;
+
+		if(relValue < 0.5)
+		{
+			saturation = relValue*2;
+			if(saturation < 0)
+				saturation = 0;
+		}
+		else
+		{
+			hsvValue = 2-relValue*2;
+			if(hsvValue < 0)
+				hsvValue = 0;
+		}
+
+
+		double rd, gd, bd;
+		std::tie(rd, gd, bd) = hsv2rgb(hue, saturation, hsvValue);
+
+		r = static_cast<uint8_t>(rd*255);
+		g = static_cast<uint8_t>(gd*255);
+		b = static_cast<uint8_t>(bd*255);
 	}
 
 };

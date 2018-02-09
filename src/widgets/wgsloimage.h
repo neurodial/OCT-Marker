@@ -7,6 +7,8 @@
 class OctMarkerManager;
 class SLOImageWidget;
 
+class QDockWidget;
+
 
 class WgSloImage : public QMainWindow
 {
@@ -14,6 +16,7 @@ class WgSloImage : public QMainWindow
 	
 	SLOImageWidget* imageWidget;
 	OctMarkerManager& markerManager;
+	QDockWidget* legendDW = nullptr;
 
 	void createMarkerToolbar();
 public:
@@ -25,6 +28,9 @@ public:
 
 protected:
 	virtual void wheelEvent       (QWheelEvent*);
+
+private slots:
+	void updateMarkerOverlayImage();
 };
 
 #endif // WGSLOIMAGE_H
