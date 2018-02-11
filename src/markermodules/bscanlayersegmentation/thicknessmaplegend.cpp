@@ -38,7 +38,7 @@ ThicknessmapLegend::ThicknessmapLegend(QWidget* parent, Qt::WindowFlags f)
 	thicknessLabels.push_back(BarLabel(500, this, labelXpos));
 	updateLabelsWidth();
 
-	colormap = new ColormapYellow;
+	colormap = new ColormapHSV;
 }
 
 ThicknessmapLegend::~ThicknessmapLegend()

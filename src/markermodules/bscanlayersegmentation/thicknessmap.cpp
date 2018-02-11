@@ -38,7 +38,7 @@ namespace
 		constexpr static const DistanceType maxDistance = 25;
 		bool blendColor = true;
 
-		Colormap* colormap = new ColormapYellow();
+		Colormap* colormap = new ColormapHSV();
 
 		struct SlideInfo
 		{

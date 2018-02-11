@@ -32,17 +32,17 @@ public:
 
 	void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const override
 	{
-// 		if(value < minValue)
-// 		{
-// 			r = g = b = 0;
-// 		}
-// 		else if(value > maxValue)
-// 		{
-// 			r = g = b = 255;
-// 		}
-// 		else
+		if(value < minValue)
 		{
-			double relValue   = 1.-(value-minValue)/(maxValue-minValue);
+			r = g = b = 0;
+		}
+		else if(value > maxValue)
+		{
+			r = g = b = 255;
+		}
+		else
+		{
+			double relValue   = 1.-(value-minValue)/(maxValue-minValue)*(1+fadeIn);
 			double saturation = 1; // relValue>0.8?(0.8-relValue)*5:1;
 			double hsvValue   = 1; // relValue<0.2?(relValue*5):1;
 			double hue        = relValue*360;
