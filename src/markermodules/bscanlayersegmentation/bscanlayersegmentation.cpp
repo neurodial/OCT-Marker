@@ -46,15 +46,11 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 	id   = "LayerSegmentation";
 	icon = QIcon(":/icons/typicons_mod/layer_seg.svg");
 
-	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
+	setSegMethod(SegMethod::Pen);
 
-	actEditMethod = editMethodPen;
-
-// 	QMainWindow* tml = new QMainWindow;
-// 	tml->setCentralWidget(new ThicknessmapLegend);
-// 	tml->show();
 
 	legendWG = new ThicknessmapLegend;
+	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
 }
 
 BScanLayerSegmentation::~BScanLayerSegmentation()
@@ -275,7 +271,7 @@ void BScanLayerSegmentation::copySegLinesFromOctData() { copySegLinesFromOctData
 
 void BScanLayerSegmentation::copySegLinesFromOctData(const std::size_t bScanNr)
 {
-	if(actEditMethod)
+	if(actEditMethod && bScanNr == getActBScanNr())
 		actEditMethod->segLineChanged(nullptr);
 
 	const OctData::BScan* bscan = getBScan(bScanNr);
@@ -291,11 +287,13 @@ void BScanLayerSegmentation::copySegLinesFromOctData(const std::size_t bScanNr)
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 		segData.lines.getSegmentLine(type).resize(bscanWidth);
 
-	if(actEditMethod)
-		actEditMethod->segLineChanged(&segData.lines.getSegmentLine(actEditType));
-
 	if(bScanNr == getActBScanNr())
+	{
+		if(actEditMethod)
+			actEditMethod->segLineChanged(&segData.lines.getSegmentLine(actEditType));
+
 		requestFullUpdate();
+	}
 }
 
 void BScanLayerSegmentation::setSegMethod(BScanLayerSegmentation::SegMethod method)
