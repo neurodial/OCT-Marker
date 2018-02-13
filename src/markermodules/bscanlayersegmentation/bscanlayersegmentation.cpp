@@ -49,7 +49,7 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 	setSegMethod(SegMethod::Pen);
 
 
-	legendWG = new ThicknessmapLegend;
+	legendWG             = new ThicknessmapLegend;
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
 }
 
@@ -59,7 +59,7 @@ BScanLayerSegmentation::~BScanLayerSegmentation()
 	delete editMethodPen   ;
 
 	delete thicknesMapImage;
-	delete legendWG;
+// 	delete legendWG; // TODO
 }
 
 
@@ -405,5 +405,13 @@ void BScanLayerSegmentation::setSegmentationLinesVisible(bool visible)
 {
 	showSegmentationlines = visible;
 	requestFullUpdate();
+}
+
+
+QWidget* BScanLayerSegmentation::getSloLegendWidget()
+{
+	if(thicknesMapImage->empty())
+		return nullptr;
+	return legendWG;
 }
 

@@ -50,7 +50,7 @@ public:
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;
 
 	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGLayerSeg; }
-	virtual QWidget* getSloLegendWidget()    override               { return legendWG; }
+	virtual QWidget* getSloLegendWidget()    override;
 
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& ptree) override;
 

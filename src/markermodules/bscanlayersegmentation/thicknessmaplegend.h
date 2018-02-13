@@ -31,7 +31,7 @@ class ThicknessmapLegend : public QWidget
 		double value;
 	};
 
-	Colormap* colormap;
+	Colormap* colormap = nullptr;
 
 	void adjustLabel(BarLabel& label, int height);
 	void updateLabelsWidth();
@@ -39,6 +39,9 @@ class ThicknessmapLegend : public QWidget
 public:
 	ThicknessmapLegend(QWidget* parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
 	~ThicknessmapLegend();
+
+	ThicknessmapLegend(const ThicknessmapLegend& other) = delete;
+	ThicknessmapLegend& operator=(const ThicknessmapLegend& other) = delete;
 
 
 	virtual QSize minimumSizeHint() const;
