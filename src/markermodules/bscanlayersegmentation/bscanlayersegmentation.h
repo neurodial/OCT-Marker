@@ -67,6 +67,8 @@ public:
 
 	void setIconsToSimple(int size);
 
+	bool isSegmentationLinesVisible()                         const { return showSegmentationlines; }
+
 private:
 	std::vector<BScanSegData> lines;
 	OctData::Segmentationlines::SegmentlineType actEditType = OctData::Segmentationlines::SegmentlineType::ILM;
@@ -81,6 +83,8 @@ private:
 	EditSpline* editMethodSpline = nullptr;
 	EditPen   * editMethodPen    = nullptr;
 
+	bool showSegmentationlines = true;
+
 	cv::Mat* thicknesMapImage = nullptr;
 
 	void copySegLinesFromOctDataWhenNotFilled();
@@ -92,6 +96,9 @@ private:
 	std::size_t getMaxBscanWidth() const;
 signals:
 	void segMethodChanged();
+
+public slots:
+	void setSegmentationLinesVisible(bool visible);
 };
 
 #endif // BSCANLAYERSEGMENTATION_H

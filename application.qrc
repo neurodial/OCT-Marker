@@ -71,5 +71,6 @@
 	<file>icons/typicons_mod/object_marker.svg</file>
 
 	<file>icons/own/plain_retina.svg</file>
+	<file>icons/own/seglines.svg</file>
 </qresource>
 </RCC>

@@ -25,9 +25,11 @@ class WGLayerSeg : public QWidget
 
 	QAction* actionMarkerMethodPen    = nullptr;
 	QAction* actionMarkerMethodSpline = nullptr;
+	QAction* actionShowSeglines       = nullptr;
 
 	QToolButton* buttonMarkerMethodPen    = nullptr;
 	QToolButton* buttonMarkerMethodSpline = nullptr;
+	QToolButton* buttonShowSeglines       = nullptr;
 
 public:
 	WGLayerSeg(BScanLayerSegmentation* parent);

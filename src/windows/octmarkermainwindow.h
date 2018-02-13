@@ -2,6 +2,7 @@
 #define OCTMARKERMAINWINDOW_H
 
 #include <QMainWindow>
+#include<functional>
 
 class QLabel;
 class QSpinBox;
@@ -61,6 +62,8 @@ class OCTMarkerMainWindow : public QMainWindow
 	virtual void closeEvent(QCloseEvent* e);
 
 	void handleOpenUrl(const QUrl& url, bool singleInput);
+
+	bool catchSaveError(std::function<void ()>& saveObj, std::string& errorStr);
 
 protected:
 	virtual void dropEvent     (QDropEvent     * event);

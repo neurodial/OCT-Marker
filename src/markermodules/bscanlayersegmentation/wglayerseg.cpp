@@ -111,6 +111,15 @@ QWidget* WGLayerSeg::createMarkerToolButtons()
 
 	layout->addStretch();
 
+	actionShowSeglines = new QAction(this);
+	actionShowSeglines->setText(tr("show segmentationlines"));
+	actionShowSeglines->setIcon(QIcon(":/icons/own/seglines.svg"));
+	actionShowSeglines->setCheckable(true);
+	actionShowSeglines->setChecked(parent->isSegmentationLinesVisible());
+	connect(actionShowSeglines, &QAction::triggered, parent, &BScanLayerSegmentation::setSegmentationLinesVisible);
+	buttonShowSeglines = createActionToolButton(this, actionShowSeglines);
+	layout->addWidget(buttonShowSeglines);
+
 	widget->setLayout(layout);
 	return widget;
 }
@@ -135,5 +144,7 @@ void WGLayerSeg::setIconsToSimple(int size)
 
 	actionMarkerMethodSpline->setIcon(QIcon(":/icons/typicons/spline.svg"));
 	buttonMarkerMethodSpline->setIconSize(iconSize);
+
+	buttonShowSeglines->setIconSize(iconSize);
 }
 

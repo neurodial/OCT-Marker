@@ -70,6 +70,9 @@ BScanLayerSegmentation::~BScanLayerSegmentation()
 
 void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& rec) const
 {
+	if(!showSegmentationlines)
+		return;
+
 	int bScanHeight = getBScanHight();
 	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
 
@@ -100,6 +103,8 @@ void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* wi
 
 BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mouseMoveEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
+	if(!showSegmentationlines)
+		return BscanMarkerBase::RedrawRequest();
 	if(actEditMethod)
 		return actEditMethod->mouseMoveEvent(event, widget);
 	return BscanMarkerBase::RedrawRequest();
@@ -107,6 +112,8 @@ BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mouseMoveEvent(QMouseEven
 
 BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mousePressEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
+	if(!showSegmentationlines)
+		return BscanMarkerBase::RedrawRequest();
 // 	paintSegLine = true;
 // 	double scaleFactor = widget->getImageScaleFactor();
 // 	lastPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
@@ -125,6 +132,8 @@ BscanMarkerBase::RedrawRequest BScanLayerSegmentation::mouseReleaseEvent(QMouseE
 
 void BScanLayerSegmentation::contextMenuEvent(QContextMenuEvent* event)
 {
+	if(!showSegmentationlines)
+		return;
 	if(actEditMethod)
 		actEditMethod->contextMenuEvent(event);
 }
@@ -179,13 +188,14 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 	int key = event->key();
 	switch(key)
 	{
+#ifndef NDEBUG
 		case Qt::Key_C:
 			if(event->modifiers() == Qt::ShiftModifier)
 				copyAllSegLinesFromOctData();
 			else
 				copySegLinesFromOctData();
 			return true;
-
+#endif
 		case Qt::Key_1:
 			setSegMethod(BScanLayerSegmentation::SegMethod::Pen);
 			return true;
@@ -391,5 +401,11 @@ void BScanLayerSegmentation::setIconsToSimple(int size)
 	WGLayerSeg* widget = dynamic_cast<WGLayerSeg*>(widgetPtr2WGLayerSeg);
 	if(widget)
 		widget->setIconsToSimple(size);
+}
+
+void BScanLayerSegmentation::setSegmentationLinesVisible(bool visible)
+{
+	showSegmentationlines = visible;
+	requestFullUpdate();
 }
 

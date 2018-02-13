@@ -899,6 +899,36 @@ namespace
 	}
 }
 
+bool OCTMarkerMainWindow::catchSaveError(std::function<void ()>& saveObj, std::string& errorStr)
+{
+	bool saveSuccessful = true;
+	try
+	{
+		saveObj();
+	}
+	catch(boost::exception& e)
+	{
+		saveSuccessful = false;
+		errorStr = boost::diagnostic_information(e);
+	}
+	catch(std::exception& e)
+	{
+		saveSuccessful = false;
+		errorStr = e.what();
+	}
+	catch(const char* str)
+	{
+		saveSuccessful = false;
+		errorStr = str;
+	}
+	catch(...)
+	{
+		saveSuccessful = false;
+		errorStr = tr("Unknown error on save").toStdString();
+	}
+	return saveSuccessful;
+}
+
 
 void OCTMarkerMainWindow::setMarkersFilters(QFileDialog& fd)
 {
@@ -935,8 +965,14 @@ void OCTMarkerMainWindow::showSaveMarkersDialog()
 
 	if(fd.exec())
 	{
+		std::string errorStr;
 		QStringList filenames = fd.selectedFiles();
-		OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
+// 		OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
+		std::function<void ()> saveFun = [&]() { OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter())); };
+
+		bool saveResult = catchSaveError(saveFun, errorStr);
+		if(!saveResult)
+			QMessageBox::critical(this, tr("Error on save"), tr("Save fail with message: %1").arg(errorStr.c_str()), QMessageBox::Ok);
 	}
 }
 
