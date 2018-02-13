@@ -68,7 +68,7 @@ namespace
 		double h1 = getHeight(segData, t1, ascan);
 		double h2 = getHeight(segData, t2, ascan);
 
-		return h1-h2;
+		return h2-h1;
 	}
 
 	double getMixValue(const std::vector<BScanLayerSegmentation::BScanSegData>& lines, const SloBScanDistanceMap::PixelInfo& pinfo

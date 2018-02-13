@@ -216,10 +216,10 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 				const SloBScanDistanceMap* distMap = manager.getSeriesSLODistanceMap();
 				if(bscan && distMap)
 				{
-
+					double factor = bscan->getScaleFactor().getZ()*1000; // milli meter -> micro meter
 
 					ThicknessMap tm;
-					tm.createMap(*distMap, lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM, bscan->getScaleFactor().getY(), *thicknessmapColor);
+					tm.createMap(*distMap, lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM, factor, *thicknessmapColor);
 					*thicknesMapImage = tm.getThicknessMap();
 					requestSloOverlayUpdate();
 

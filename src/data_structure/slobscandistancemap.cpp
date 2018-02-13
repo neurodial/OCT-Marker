@@ -64,9 +64,10 @@ namespace
 	{
 		SlideInfo() = default;
 
-		SlideInfo(DistanceType distance, std::size_t bscanId)
+		SlideInfo(DistanceType distance, std::size_t bscanId, std::size_t ascanId)
 		: distance(distance)
 		, bscanId (bscanId)
+		, ascanId (ascanId)
 		{}
 
 		bool operator<(const SlideInfo& info)                   const { return distance < info.distance; }
@@ -75,6 +76,7 @@ namespace
 
 		DistanceType distance = std::numeric_limits<DistanceType>::infinity();
 		std::size_t bscanId   = std::numeric_limits<std::size_t>::max();
+		std::size_t ascanId   = std::numeric_limits<std::size_t>::max();
 	};
 
 
@@ -84,6 +86,8 @@ namespace
 		enum class Status : uint8_t { FAR_AWAY, ACCEPTED, BRODER };
 
 		Status status = Status::FAR_AWAY;
+		std::size_t ascan = 0;
+		bool hasValue = false;
 
 		SlideInfo val1;
 		SlideInfo val2;
@@ -96,6 +100,8 @@ namespace
 			val2 = info;
 			if(val2 < val1)
 				std::swap(val1, val2);
+
+			hasValue = true;
 			return true;
 		}
 	};
@@ -132,7 +138,7 @@ namespace
 		public:
 			ValueSetter(FillPreCalcData& ctm, bool add2TrailMap) : ctm(ctm), add2TrailMap(add2TrailMap) {}
 
-			void operator()(const OctData::CoordSLOpx& coord, std::size_t /*ascan*/)
+			void operator()(const OctData::CoordSLOpx& coord, std::size_t ascan)
 			{
 				const std::size_t x = static_cast<std::size_t>(coord.getX());
 				const std::size_t y = static_cast<std::size_t>(coord.getY());
@@ -142,9 +148,10 @@ namespace
 
 				PixelInfo& info = ctm.pixelMap(x, y);
 				info.status = PixelInfo::Status::BRODER;
+				info.ascan  = ascan;
 				if(add2TrailMap)
 				{
-					info.updateValue(SlideInfo(0, ctm.actBscanNr));
+					info.updateValue(SlideInfo(0, ctm.actBscanNr, ascan));
 					ctm.trailMap.emplace(0, PixtureElement(x, y));
 				}
 			}
@@ -267,23 +274,24 @@ namespace
 		// ----------------------
 		// create L1 distance map
 		// ----------------------
-		inline void addTrail(std::size_t x, std::size_t y, DistanceType distance, PixelInfo& info)
+		inline void addTrail(std::size_t x, std::size_t y, DistanceType distance, PixelInfo& info, std::size_t ascan)
 		{
-			info.status   = PixelInfo::Status::ACCEPTED;
+			info.status = PixelInfo::Status::ACCEPTED;
+			info.ascan  = ascan;
 
-			if(info.updateValue(SlideInfo(distance, actBscanNr)))
+			if(info.updateValue(SlideInfo(distance, actBscanNr, ascan)))
 				trailMap.emplace(distance, PixtureElement(x, y));
 		}
 
 
-		inline void calcSetTrailDistanceL1(std::size_t x, std::size_t y, DistanceType distance)
+		inline void calcSetTrailDistanceL1(std::size_t x, std::size_t y, DistanceType distance, std::size_t ascan)
 		{
 			PixelInfo& newTrailInfo = pixelMap(x, y);
 			if(newTrailInfo.status == PixelInfo::Status::FAR_AWAY)
 			{
 				DistanceType trailDistance = distance + 1;
 				if(trailDistance < maxDistance)
-					addTrail(x, y, trailDistance, newTrailInfo);
+					addTrail(x, y, trailDistance, newTrailInfo, ascan);
 			}
 		}
 
@@ -299,10 +307,12 @@ namespace
 				const std::size_t aktX = aktEle.getX();
 				const std::size_t aktY = aktEle.getY();
 
-				if(aktY > 0                    ) calcSetTrailDistanceL1(aktX  , aktY-1, distance);
-				if(aktY < pixelMap.getSizeY()-1) calcSetTrailDistanceL1(aktX  , aktY+1, distance);
-				if(aktX > 0                    ) calcSetTrailDistanceL1(aktX-1, aktY  , distance);
-				if(aktX < pixelMap.getSizeX()-1) calcSetTrailDistanceL1(aktX+1, aktY  , distance);
+				std::size_t ascan = pixelMap(aktX, aktY).ascan;
+
+				if(aktY > 0                    ) calcSetTrailDistanceL1(aktX  , aktY-1, distance, ascan);
+				if(aktY < pixelMap.getSizeY()-1) calcSetTrailDistanceL1(aktX  , aktY+1, distance, ascan);
+				if(aktX > 0                    ) calcSetTrailDistanceL1(aktX-1, aktY  , distance, ascan);
+				if(aktX < pixelMap.getSizeX()-1) calcSetTrailDistanceL1(aktX+1, aktY  , distance, ascan);
 			}
 
 			trailMap.clear();
@@ -450,14 +460,23 @@ namespace
 				std::cout << y << std::endl;
 				for(std::size_t x = 0; x < sizeX; ++x)
 				{
-					if(itIn->status != PixelInfo::Status::BRODER)
+// 					if(itIn->status != PixelInfo::Status::BRODER)
+					if(itIn->hasValue)
 					{
 						SloBScanDistanceMap::InfoBScanDist info1;
 						SloBScanDistanceMap::InfoBScanDist info2;
 						info1.bscan = itIn->val1.bscanId;
 						info2.bscan = itIn->val2.bscanId;
+
+#if false
 						recalcDistDataL2(x, y, info1);
 						recalcDistDataL2(x, y, info2);
+#else
+						info1.ascan    = itIn->val1.ascanId;
+						info2.ascan    = itIn->val2.ascanId;
+						info1.distance = itIn->val1.distance;
+						info2.distance = itIn->val2.distance;
+#endif
 
 						if(info2.distance < info1.distance)
 							std::swap(info1, info2);
