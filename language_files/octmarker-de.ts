@@ -1609,6 +1609,11 @@
         <source>Spline</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="115"/>
+        <source>show segmentationlines</source>
+        <translation>Segmentierungslinien anzeigen</translation>
+    </message>
 </context>
 <context>
     <name>WGSegmentation</name>

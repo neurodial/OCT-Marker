@@ -32,11 +32,11 @@ public:
 
 	void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const override
 	{
-		if(value < minValue)
+		/*if(value < minValue)
 		{
 			r = g = b = 0;
 		}
-		else if(value > maxValue)
+		else */if(value > maxValue)
 		{
 			r = g = b = 255;
 		}
