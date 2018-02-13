@@ -17,6 +17,7 @@
 
 class QString;
 class OctMarkerIO;
+class SloBScanDistanceMap;
 
 namespace OctData
 {
@@ -55,6 +56,9 @@ public slots:
 	void openFile(const QString& filename);
 	
 	void chooseSeries(const OctData::Series* seriesReq);
+
+
+	const SloBScanDistanceMap* getSeriesSLODistanceMap() const;
 	
 	
 	virtual bool loadMarkers(QString filename, OctMarkerFileformat format);
@@ -92,6 +96,8 @@ private:
 	const OctData::Patient* actPatient = nullptr;
 	const OctData::Study*   actStudy   = nullptr;
 	const OctData::Series*  actSeries  = nullptr;
+
+	mutable SloBScanDistanceMap* seriesSLODistanceMap = nullptr;
 	
 	OctDataManagerThread* loadThread = nullptr;
 	

@@ -4,22 +4,37 @@
 
 #include "bscanlayersegmentation.h"
 
+#include<data_structure/matrx.h>
+#include<data_structure/slobscandistancemap.h>
+#include<limits>
 
+class Colormap;
 namespace cv { class Mat; }
 
 class ThicknessMap
 {
-	cv::Mat* thicknessMap = nullptr;
 public:
+
 	ThicknessMap();
 	~ThicknessMap();
 
 	ThicknessMap(const ThicknessMap& other) = delete;
 	ThicknessMap& operator=(const ThicknessMap& other) = delete;
 
-	void createMap(const OctData::Series* series, const std::vector<BScanLayerSegmentation::BScanSegData>& lines, OctData::Segmentationlines::SegmentlineType t1, OctData::Segmentationlines::SegmentlineType t2);
+	void resetThicknessMapCache();
+
+
+	void createMap(const SloBScanDistanceMap& distanceMap
+	             , const std::vector<BScanLayerSegmentation::BScanSegData>& lines
+	             , OctData::Segmentationlines::SegmentlineType t1
+	             , OctData::Segmentationlines::SegmentlineType t2
+	             , double scaleFactor
+                 , const Colormap& colormap);
 
 	const cv::Mat& getThicknessMap() const { return *thicknessMap; }
+
+private:
+	cv::Mat* thicknessMap = nullptr;
 };
 
 #endif // THICKNESSMAP_H

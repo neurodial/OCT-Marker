@@ -34,6 +34,8 @@
 
 #include<QMainWindow> // TODO
 #include"thicknessmaplegend.h"
+#include <manager/octdatamanager.h>
+#include "colormaphsv.h"
 
 
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
@@ -48,6 +50,7 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 
 	setSegMethod(SegMethod::Pen);
 
+	thicknessmapColor = new ColormapHSV;
 
 	legendWG             = new ThicknessmapLegend;
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
@@ -59,6 +62,7 @@ BScanLayerSegmentation::~BScanLayerSegmentation()
 	delete editMethodPen   ;
 
 	delete thicknesMapImage;
+	delete thicknessmapColor;
 // 	delete legendWG; // TODO
 }
 
@@ -202,15 +206,26 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 
 		case Qt::Key_T:
 		{
-			QElapsedTimer timer;
-			timer.start();
+			if(thicknessmapColor)
+			{
+				QElapsedTimer timer;
+				timer.start();
 
-			ThicknessMap tm;
-			tm.createMap(getSeries(), lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM);
-			*thicknesMapImage = tm.getThicknessMap();
-			requestSloOverlayUpdate();
+				const OctData::BScan* bscan = getActBScan();
+				OctDataManager& manager = OctDataManager::getInstance();
+				const SloBScanDistanceMap* distMap = manager.getSeriesSLODistanceMap();
+				if(bscan && distMap)
+				{
 
-			std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
+
+					ThicknessMap tm;
+					tm.createMap(*distMap, lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM, bscan->getScaleFactor().getY(), *thicknessmapColor);
+					*thicknesMapImage = tm.getThicknessMap();
+					requestSloOverlayUpdate();
+
+					std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
+				}
+			}
 		}
 		return true;
 	}

@@ -12,6 +12,7 @@ class QWidget;
 class EditBase;
 class EditSpline;
 class EditPen;
+class Colormap;
 
 class BScanLayerSegmentation : public BscanMarkerBase
 {
@@ -82,6 +83,8 @@ private:
 	EditBase  * actEditMethod    = nullptr;
 	EditSpline* editMethodSpline = nullptr;
 	EditPen   * editMethodPen    = nullptr;
+
+	Colormap* thicknessmapColor = nullptr;
 
 	bool showSegmentationlines = true;
 

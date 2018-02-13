@@ -1,5 +1,6 @@
 #include "octdatamanager.h"
 #include <data_structure/programoptions.h>
+#include <data_structure/slobscandistancemap.h>
 
 #include <iostream>
 
@@ -47,6 +48,7 @@ OctDataManager::~OctDataManager()
 	delete octData;
 	delete markerstree;
 	delete markerIO;
+	delete seriesSLODistanceMap;
 }
 
 
@@ -252,6 +254,8 @@ void OctDataManager::chooseSeries(const OctData::Series* seriesReq)
 {
 	saveMarkerState(actSeries);
 	
+	delete seriesSLODistanceMap;
+	seriesSLODistanceMap = nullptr;
 	
 	if(seriesReq == actSeries)
 		return;
@@ -338,3 +342,13 @@ void OctDataManager::saveOctScan(QString filename)
 	}
 }
 
+const SloBScanDistanceMap* OctDataManager::getSeriesSLODistanceMap() const
+{
+	if(!seriesSLODistanceMap)
+	{
+		seriesSLODistanceMap = new SloBScanDistanceMap();
+		seriesSLODistanceMap->createData(actSeries);
+	}
+
+	return seriesSLODistanceMap;
+}

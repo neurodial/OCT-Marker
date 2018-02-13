@@ -9,6 +9,9 @@ class Matrix
 	std::size_t sizeY;
 	T* field = nullptr;
 public:
+	typedef T value_type;
+
+	Matrix() = default;
 	Matrix(std::size_t x, std::size_t y)
 	: sizeX(x)
 	, sizeY(y)
