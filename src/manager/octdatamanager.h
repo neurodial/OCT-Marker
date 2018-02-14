@@ -51,6 +51,7 @@ public:
 private slots:
 	void loadOctDataThreadProgress(double frac)                     { emit(loadFileProgress(frac)); }
 	void loadOctDataThreadFinish();
+	void clearSeriesCache();
 
 public slots:
 	void openFile(const QString& filename);

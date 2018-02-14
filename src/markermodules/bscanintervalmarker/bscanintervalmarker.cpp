@@ -658,3 +658,4 @@ bool BScanIntervalMarker::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& 
 		return BscanMarkerBase::drawSLOOverlayImage(sloImage, outSloImage, alpha, *sloOverlayImage);
 	return false;
 }
+

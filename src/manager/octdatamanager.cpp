@@ -39,6 +39,7 @@ OctDataManager::OctDataManager()
 : markerstree(new bpt::ptree)
 , markerIO(new OctMarkerIO(markerstree))
 {
+	connect(this, &OctDataManager::seriesChanged, this, &OctDataManager::clearSeriesCache);
 }
 
 
@@ -254,8 +255,6 @@ void OctDataManager::chooseSeries(const OctData::Series* seriesReq)
 {
 	saveMarkerState(actSeries);
 	
-	delete seriesSLODistanceMap;
-	seriesSLODistanceMap = nullptr;
 	
 	if(seriesReq == actSeries)
 		return;
@@ -351,4 +350,10 @@ const SloBScanDistanceMap* OctDataManager::getSeriesSLODistanceMap() const
 	}
 
 	return seriesSLODistanceMap;
+}
+
+void OctDataManager::clearSeriesCache()
+{
+	delete seriesSLODistanceMap;
+	seriesSLODistanceMap = nullptr;
 }
