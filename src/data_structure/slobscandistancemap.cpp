@@ -17,7 +17,6 @@
 #include<data_structure/matrx.h>
 #include<data_structure/point2d.h>
 
-#include<iostream> // TODO
 
 namespace
 {
@@ -135,6 +134,7 @@ namespace
 		{
 			FillPreCalcData& ctm;
 			bool add2TrailMap = false; // add2TrailMap == false: For set broder value on each a-scan position to stop evaluation from other b-scans on this bariere (reduce calculation time and artefacts)
+			std::size_t nextAscan = 0;
 		public:
 			ValueSetter(FillPreCalcData& ctm, bool add2TrailMap) : ctm(ctm), add2TrailMap(add2TrailMap) {}
 
@@ -156,15 +156,26 @@ namespace
 				}
 			}
 			constexpr static const bool calcDistMap = false;
+
+			void loopInit()                          { nextAscan = 0; }
+			bool loopIncrement(std::size_t maxAscan) { ++nextAscan; return nextAscan < maxAscan; }
+			std::size_t getNextAscanNr() const       { return nextAscan; }
 		};
 
 		class FindMinAScan
 		{
+			OctData::CoordSLOpx pos;
 			std::size_t minAscan = 0;
 			double minDistance = std::numeric_limits<double>::infinity();
-			OctData::CoordSLOpx pos;
+
+			std::size_t nextAscan = 0;
+			double lastDistance1 = std::numeric_limits<double>::infinity();
+			double lastDistance2 = std::numeric_limits<double>::infinity();
+			enum class State { Start, Init, TestPost, Pos, Neg, End };
+			State state;
+
 		public:
-			FindMinAScan(const OctData::CoordSLOpx& pos) : pos(pos) {}
+			FindMinAScan(const OctData::CoordSLOpx& pos, std::size_t startAScan) : pos(pos), minAscan(startAScan) {}
 
 			void operator()(const OctData::CoordSLOpx& coord, std::size_t ascan)
 			{
@@ -174,16 +185,50 @@ namespace
 					minDistance = d;
 					minAscan    = ascan;
 				}
+				lastDistance2 = lastDistance1;
+				lastDistance1 = d;
 			}
 
 			std::size_t getMinAScan() const { return minAscan; }
 			double getMinDistance()   const { return std::sqrt(minDistance); }
+
+			void loopInit()                          { nextAscan = minAscan; state = State::Start; }
+			bool loopIncrement(std::size_t maxAscan)
+			{
+				if(state == State::Pos || state == State::Neg)
+					if(lastDistance1 > lastDistance2)
+						return false;
+
+				switch(state)
+				{
+					case State::Start: // iteration 0, no value has checked
+						state = State::Init;
+						return true;
+					case State::Init: // iteration 1, the start value has checked
+						if(minAscan == maxAscan-1) { state = State::Neg     ; --nextAscan; } // end of bscan, only neg is possible
+						else                       { state = State::TestPost; ++nextAscan; }
+						return true;
+					case State::TestPost:
+						if(lastDistance1 > lastDistance2) { state = State::Neg; --nextAscan; } // wrong direction
+						else                              { state = State::Pos; ++nextAscan; } // pos is good
+						return true;
+					case State::Pos:
+						++nextAscan;
+						return nextAscan < maxAscan;
+					case State::Neg:
+						return nextAscan-- > 0;
+					case State::End:
+						return false;
+				}
+				return false;
+			}
+			std::size_t getNextAscanNr() const       { return nextAscan; }
 		};
 
 
 
 		template<typename AScanHandler>
-		void addLineScan(const OctData::BScan& bscan, AScanHandler& pixelSetter)
+		void addLineScan(const OctData::BScan& bscan, AScanHandler& handler)
 		{
 			const OctData::CoordSLOpx& start_px = transformCoord(bscan.getStart());
 			const OctData::CoordSLOpx&   end_px = transformCoord(bscan.getEnd()  );
@@ -193,17 +238,20 @@ namespace
 			if(bscanWidth < 2)
 				return;
 
-			for(std::size_t i=0; i<bscanWidth; ++i)
+// 			for(std::size_t i=0; i<bscanWidth; ++i)
+			handler.loopInit();
+			while(handler.loopIncrement(bscanWidth))
 			{
+				const std::size_t i = handler.getNextAscanNr();
 				const double v = static_cast<double>(i)/static_cast<double>(bscanWidth-1);
 				const OctData::CoordSLOpx actPos = start_px*(1-v) + end_px*v;
-				pixelSetter(actPos, i);
+				handler(actPos, i);
 			}
 		}
 
 
 		template<typename AScanHandler>
-		void addCircleScan(const OctData::BScan& bscan, AScanHandler& pixelSetter)
+		void addCircleScan(const OctData::BScan& bscan, AScanHandler& handler)
 		{
 			const OctData::CoordSLOpx& start_px  = transformCoord(bscan.getStart ());
 			const OctData::CoordSLOpx& center_px = transformCoord(bscan.getCenter());
@@ -224,15 +272,18 @@ namespace
 			double mX = center_px.getXf();
 			double mY = center_px.getYf();
 
-			for(std::size_t i=0; i<bscanWidth; ++i)
+// 			for(std::size_t i=0; i<bscanWidth; ++i)
+			handler.loopInit();
+			while(handler.loopIncrement(bscanWidth))
 			{
+				const std::size_t i = handler.getNextAscanNr();
 				const double v     = static_cast<double>(i)/static_cast<double>(bscanWidth-1);
 				const double angle = (v+nullAngle)*2.*M_PI*rotationFactor;
 
 				const double x = cos(angle)*radius + mX;
 				const double y = sin(angle)*radius + mY;
 				const OctData::CoordSLOpx actPos(x, y);
-				pixelSetter(actPos, i);
+				handler(actPos, i);
 			}
 		}
 
@@ -429,20 +480,18 @@ namespace
 		// finisch distance map
 		// --------------------
 
-		void recalcDistDataL2(std::size_t x, std::size_t y, SloBScanDistanceMap::InfoBScanDist& info)
+		void recalcDistDataL2(std::size_t x, std::size_t y, SloBScanDistanceMap::InfoBScanDist& info, const SlideInfo& slideInfo)
 		{
 			std::size_t bscanNr = info.bscan;
 			if(bscanNr >= series.bscanCount())
 				return;
 
-
-			FindMinAScan fmas(OctData::CoordSLOpx(x, y));
+			FindMinAScan fmas(OctData::CoordSLOpx(x, y), slideInfo.ascanId);
 
 			const OctData::BScan* bscan = series.getBScan(bscanNr);
 			if(bscan)
 				addBScan(*bscan, fmas);
 
-// 			addBScans(fmas, false);
 			info.ascan    = fmas.getMinAScan();
 			info.distance = fmas.getMinDistance();
 		}
@@ -457,10 +506,8 @@ namespace
 
 			for(std::size_t y = 0; y < sizeY; ++y)
 			{
-// 				std::cout << y << std::endl;
 				for(std::size_t x = 0; x < sizeX; ++x)
 				{
-// 					if(itIn->status != PixelInfo::Status::BRODER)
 					if(itIn->hasValue)
 					{
 						SloBScanDistanceMap::InfoBScanDist info1;
@@ -468,9 +515,9 @@ namespace
 						info1.bscan = itIn->val1.bscanId;
 						info2.bscan = itIn->val2.bscanId;
 
-#if false
-						recalcDistDataL2(x, y, info1);
-						recalcDistDataL2(x, y, info2);
+#if true
+						recalcDistDataL2(x, y, info1, itIn->val1);
+						recalcDistDataL2(x, y, info2, itIn->val2);
 #else
 						info1.ascan    = itIn->val1.ascanId;
 						info2.ascan    = itIn->val2.ascanId;
