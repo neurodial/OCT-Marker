@@ -127,7 +127,7 @@ namespace
 
 		static Point2D coordSLO2Point(const OctData::CoordSLOpx& c)                { return Point2D(c.getXf(), c.getYf()); }
 		OctData::CoordSLOpx transformCoord(const OctData::CoordSLOmm& coord) const { return (transform*coord)*factor + shift; }
-		OctData::CoordSLOmm transformCoord(const OctData::CoordSLOpx& coord) const { return transform.inv()*((coord-shift)/factor); }
+// 		OctData::CoordSLOmm transformCoord(const OctData::CoordSLOpx& coord) const { return transform.inv()*((coord-shift)/factor); }
 
 
 
@@ -457,7 +457,7 @@ namespace
 
 			for(std::size_t y = 0; y < sizeY; ++y)
 			{
-				std::cout << y << std::endl;
+// 				std::cout << y << std::endl;
 				for(std::size_t x = 0; x < sizeX; ++x)
 				{
 // 					if(itIn->status != PixelInfo::Status::BRODER)

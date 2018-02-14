@@ -1,12 +1,15 @@
 #ifndef THICKNESSMAP_H
 #define THICKNESSMAP_H
 
+#include<vector>
 
 #include "bscanlayersegmentation.h"
 
 #include<data_structure/matrx.h>
 #include<data_structure/slobscandistancemap.h>
 #include<limits>
+
+#include<octdata/datastruct/segmentationlines.h>
 
 class Colormap;
 namespace cv { class Mat; }
@@ -35,6 +38,17 @@ public:
 
 private:
 	cv::Mat* thicknessMap = nullptr;
+
+	double getMixValue(const SloBScanDistanceMap::PixelInfo& pinfo);
+	double getHeight(const OctData::Segmentationlines::Segmentline& line, const std::size_t ascan);
+	double getValue(const SloBScanDistanceMap::InfoBScanDist& info);
+
+	void fillLineVec(const std::vector<BScanLayerSegmentation::BScanSegData>& lines
+	               , OctData::Segmentationlines::SegmentlineType t1
+	               , OctData::Segmentationlines::SegmentlineType t2);
+
+	std::vector<const OctData::Segmentationlines::Segmentline*> layer1;
+	std::vector<const OctData::Segmentationlines::Segmentline*> layer2;
 };
 
 #endif // THICKNESSMAP_H
