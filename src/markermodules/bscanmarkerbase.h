@@ -108,6 +108,8 @@ protected:
 	const OctData::Series* getSeries() const;
 	const OctData::BScan * getActBScan() const;
 	const OctData::BScan * getBScan(std::size_t nr) const;
+
+	bool drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha, const cv::Mat& sloOverlay) const;
 	
 	QString name;
 	QString id;

@@ -64,6 +64,7 @@ public:
 	virtual void drawBScanSLOLine  (QPainter&, std::size_t bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& end_px   , SLOImageWidget*) const override;
 	virtual void drawBScanSLOCircle(QPainter&, std::size_t bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& center_px, bool clockwise, SLOImageWidget*) const override;
 	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect&) const override;
+	virtual bool drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha) const override;
 	virtual bool drawBScan() const                         override { return true;  }
 	
 	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
@@ -136,6 +137,8 @@ private:
 	Method markerMethod = Method::Paint;
 	std::vector<QAction*> markerMethodActions;
 
+
+	cv::Mat* sloOverlayImage = nullptr;
 
 	MarkerMap nullMarkerMap; // TODO
 

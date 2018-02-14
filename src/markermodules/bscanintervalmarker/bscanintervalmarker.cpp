@@ -22,6 +22,10 @@
 #include <QToolTip>
 
 #include <QMouseEvent>
+#include <QElapsedTimer>
+
+#include<opencv/cv.hpp>
+
 #include <widgets/bscanmarkerwidget.h>
 
 #include <manager/octmarkermanager.h>
@@ -34,6 +38,8 @@
 #include "definedintervalmarker.h"
 #include "wgintervalmarker.h"
 #include "importintervalmarker.h"
+#include"slointervallmap.h"
+#include <manager/octdatamanager.h>
 
 // namespace
 // {
@@ -48,6 +54,7 @@
 
 BScanIntervalMarker::BScanIntervalMarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
+, sloOverlayImage(new cv::Mat)
 {
 	name = tr("Interval marker");
 	id   = "IntervalMarker";
@@ -304,6 +311,26 @@ bool BScanIntervalMarker::keyPressEvent(QKeyEvent* e ,BScanMarkerWidget*)
 			case Qt::Key_F:
 				chooseMethodID(Method::Fill);
 				return true;
+			case Qt::Key_T:
+			{
+				QElapsedTimer timer;
+				timer.start();
+
+				OctDataManager& manager = OctDataManager::getInstance();
+				const SloBScanDistanceMap* distMap = manager.getSeriesSLODistanceMap();
+				if(distMap && actCollectionValid())
+				{
+					SloIntervallMap tm;
+
+					tm.createMap(*distMap, actCollection->second.markers, getSeries());
+// 					tm.createMap(*distMap, lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM, factor, *thicknessmapColor);
+					*sloOverlayImage = tm.getSloMap();
+					requestSloOverlayUpdate();
+
+					std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
+				}
+				return true;
+			}
 		}
 	}
 	return false;
@@ -379,7 +406,7 @@ void BScanIntervalMarker::drawBScanSLOLine(QPainter& painter, std::size_t bscanN
 	if(bscanNr >= getMarkerMapSize())
 		return;
 
-	double bscanWidth = getBScanWidth();
+	double bscanWidth = getBScanWidth(bscanNr);
 	QPen pen;
 	pen.setWidth(3);
 
@@ -409,7 +436,7 @@ void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, std::size_t bsca
 	if(bscanNr >= getMarkerMapSize())
 		return;
 
-	double bscanWidth = getBScanWidth();
+	double bscanWidth = getBScanWidth(bscanNr);
 	QPen pen;
 	pen.setWidth(3);
 
@@ -437,8 +464,6 @@ void BScanIntervalMarker::drawBScanSLOCircle(QPainter& painter, std::size_t bsca
 			int spanAngle  = static_cast<int>((f2-f1       )*360*16)*rotationFactor;
 
 			painter.drawArc(rectangle, startAngle, spanAngle);
-
-
 		}
 	}
 }
@@ -625,4 +650,11 @@ std::size_t BScanIntervalMarker::getMaxBscanWidth() const
 		}
 	}
 	return maxBscanWidth;
+}
+
+bool BScanIntervalMarker::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha) const
+{
+	if(sloOverlayImage)
+		return BscanMarkerBase::drawSLOOverlayImage(sloImage, outSloImage, alpha, *sloOverlayImage);
+	return false;
 }

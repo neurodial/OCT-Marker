@@ -6,6 +6,7 @@
 
 #include <QToolBar>
 
+#include<opencv/cv.hpp>
 
 #include <manager/octmarkermanager.h>
 
@@ -83,3 +84,39 @@ bool BscanMarkerBase::setMarkerActive(bool active, BScanMarkerWidget*)
 	return result;
 }
 
+bool BscanMarkerBase::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha, const cv::Mat& sloOverlay) const
+{
+	if(sloOverlay.cols == sloImage.cols && sloOverlay.rows == sloImage.rows)
+	{
+// 		std::cout << sloImage.type() << " != " << CV_8U << " || " << thicknesMapImage->type() << " != " << CV_8UC4 << std::endl;
+		if(sloImage.type() != CV_8U || sloOverlay.type() != CV_8UC4)
+			return false;
+
+		outSloImage.create(sloImage.size(), CV_8UC3);
+		const std::size_t length = static_cast<std::size_t>(sloImage.cols*sloImage.rows);
+
+		const uint8_t* thi  = sloOverlay .ptr<uint8_t>(0);
+		const uint8_t* src  =    sloImage.ptr<uint8_t>(0);
+		      uint8_t* dest = outSloImage.ptr<uint8_t>(0);
+
+		for(std::size_t i = 0; i<length; ++i)
+		{
+			uint8_t alphaThicknes = thi[3];
+			if(alphaThicknes > 0)
+			{
+				double blend = static_cast<double>(alphaThicknes)/255. * alpha;
+				for(int k = 0; k<3; ++k)
+					dest[k] = static_cast<uint8_t>(src[0]*(1-blend) + thi[k]*blend);
+			}
+			else
+				for(int k = 0; k<3; ++k)
+					dest[k] = src[0];
+
+			thi  += 4;
+			dest += 3;
+			++src;
+		}
+		return true;
+	}
+	return false;
+}
