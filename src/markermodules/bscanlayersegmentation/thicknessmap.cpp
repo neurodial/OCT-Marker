@@ -53,6 +53,8 @@ void ThicknessMap::createMap(const SloBScanDistanceMap& distMap
 	if(!distMatrix)
 		return;
 
+	bool blendColor = ProgramOptions::layerSegThicknessmapBlend();
+
 	const std::size_t sizeX = distMatrix->getSizeX();
 	const std::size_t sizeY = distMatrix->getSizeY();
 
@@ -69,8 +71,10 @@ void ThicknessMap::createMap(const SloBScanDistanceMap& distMap
 		{
 			if(srcPtr->init)
 			{
-// 				double value = getMixValue(lines, *srcPtr, t1, t2);
-				double value = getMixValue(*srcPtr);
+				double value;
+				if(blendColor) value = getMixValue(*srcPtr);
+				else           value = getSingleValue(*srcPtr);
+
 				if(value <= 0.)
 				{
 					destPtr[0] = 0;
@@ -100,13 +104,19 @@ void ThicknessMap::createMap(const SloBScanDistanceMap& distMap
 		}
 
 	}
-
-// 	CreateThicknessMap thicknessMapCreator(series, lines, t1, t2);
-//
-// 	thicknessMapCreator.setBlendColor(ProgramOptions::layerSegThicknessmapBlend());
-// 	thicknessMapCreator.createMap();
-// 	thicknessMapCreator.getThicknessMap().copyTo(*thicknessMap);
 }
+
+double ThicknessMap::getSingleValue(const SloBScanDistanceMap::PixelInfo& pinfo)
+{
+	const SloBScanDistanceMap::InfoBScanDist& bInfo1 = pinfo.bscan1;
+	std::size_t b1 = bInfo1.bscan;
+	const std::size_t numBscans = layer1.size();
+	if(b1 >= numBscans)
+		return 0;
+
+	return getValue( bInfo1);
+}
+
 
 double ThicknessMap::getMixValue(const SloBScanDistanceMap::PixelInfo& pinfo)
 {

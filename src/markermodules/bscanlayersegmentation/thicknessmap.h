@@ -39,6 +39,7 @@ public:
 private:
 	cv::Mat* thicknessMap = nullptr;
 
+	double getSingleValue(const SloBScanDistanceMap::PixelInfo& pinfo);
 	double getMixValue(const SloBScanDistanceMap::PixelInfo& pinfo);
 	double getHeight(const OctData::Segmentationlines::Segmentline& line, const std::size_t ascan);
 	double getValue(const SloBScanDistanceMap::InfoBScanDist& info);
