@@ -1,7 +1,11 @@
 #include "sloimagewidget.h"
 
+#include<fstream>
+
 #include <QPainter>
 #include <QResizeEvent>
+#include<QMenu>
+#include<QIcon>
 
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/sloimage.h>
@@ -18,14 +22,19 @@
 #include <data_structure/programoptions.h>
 #include<data_structure/rect2d.h>
 
+#include<helper/slocoordtranslator.h>
+
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
 
 #include <cmath>
 #include <limits>
+#include <QFileDialog>
+#include <QFileInfo>
 
 namespace
 {
+
 	class GraphicsView : public QGraphicsView
 	{
 		double scaleFactor = 100;
@@ -80,6 +89,12 @@ SLOImageWidget::SLOImageWidget(QWidget* parent)
 	// gv->setVisible(ProgramOptions::sloShowLabels());
 	sloMarkerChanged(markerManger.getActSloMarker());
 	updateGraphicsViewSize();
+
+	QAction* saveTexAction = new QAction(this);
+	saveTexAction->setText(tr("save latex"));
+	saveTexAction->setIcon(QIcon(":/icons/disk.png"));
+	connect(saveTexAction, &QAction::triggered, this, &SLOImageWidget::saveLatexImageSlot);
+	contextMenu->addAction(saveTexAction);
 }
 
 SLOImageWidget::~SLOImageWidget()
@@ -118,20 +133,6 @@ void SLOImageWidget::paintEvent(QPaintEvent* event)
 
 }
 
-namespace
-{
-	OctData::ScaleFactor operator/(const OctData::ScaleFactor& osf, const ScaleFactor& isf)
-	{
-		return OctData::ScaleFactor(osf.getX()/isf.getFactorX(), osf.getY()/isf.getFactorY(), 1);
-	}
-
-	OctData::CoordSLOpx operator*(const OctData::CoordSLOpx& osf, const ScaleFactor& isf)
-	{
-		return OctData::CoordSLOpx(osf.getXf()*isf.getFactorX(), osf.getYf()*isf.getFactorY());
-	}
-
-}
-
 
 void SLOImageWidget::paintConvexHull(QPainter& painter, const OctData::Series* series)
 {
@@ -147,16 +148,12 @@ void SLOImageWidget::paintConvexHull(QPainter& painter, const OctData::Series* s
 	pen.setWidth(2);
 	painter.setPen(pen);
 
-	const OctData::SloImage&       sloImage  = series->getSloImage();
-
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
-	const OctData::CoordTransform& transform = sloImage.getTransform();
+	SloCoordTranslator sct(*series, getImageScaleFactor());
 
 	for(std::size_t i = 1; i < hull.size(); ++i)
 	{
-		const OctData::CoordSLOpx& start_px = (transform * hull[i-1])*factor + shift;
-		const OctData::CoordSLOpx&   end_px = (transform * hull[i  ])*factor + shift;
+		const OctData::CoordSLOpx start_px = sct(hull[i-1]);
+		const OctData::CoordSLOpx   end_px = sct(hull[i  ]);
 
 		painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
 	}
@@ -165,6 +162,9 @@ void SLOImageWidget::paintConvexHull(QPainter& painter, const OctData::Series* s
 
 void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* series)
 {
+	if(!series)
+		return;
+
 	QPen normalBscanPen;
 	QPen activBscanPen;
 
@@ -178,13 +178,10 @@ void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* serie
 
 	
 	const OctData::Series::BScanList bscans = series->getBScans();
+	std::size_t activBScan                  = static_cast<std::size_t>(markerManger.getActBScanNum());
 
-	const OctData::SloImage&       sloImage  = series->getSloImage();
+	SloCoordTranslator coordTranslator(*series, getImageScaleFactor());
 
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
-	const OctData::CoordTransform& transform = sloImage.getTransform();
-	std::size_t activBScan                   = static_cast<std::size_t>(markerManger.getActBScanNum());
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
 	bool paintMarker = false;
@@ -204,7 +201,7 @@ void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* serie
 				else
 					painter.setPen(activBscanPen);
 
-				paintBScan(painter, *actBScan, factor, shift, transform, activBScan, paintMarker);
+				paintBScan(painter, *actBScan, coordTranslator, activBScan, paintMarker);
 			}
 		}
 	}
@@ -223,7 +220,7 @@ void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* serie
 				else
 				{
 					painter.setPen(normalBscanPen);
-					paintBScan(painter, *bscan, factor, shift, transform, bscanCounter, paintMarker);
+					paintBScan(painter, *bscan, coordTranslator, bscanCounter, paintMarker);
 				}
 			}
 			++bscanCounter;
@@ -232,20 +229,20 @@ void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* serie
 		if(actBScan)
 		{
 			painter.setPen(activBscanPen);
-			paintBScan(painter, *actBScan, factor, shift, transform, activBScan, paintMarker);
+			paintBScan(painter, *actBScan, coordTranslator, activBScan, paintMarker);
 		}
 	}
 }
 
-void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, const SloCoordTranslator& coordTranslator, std::size_t bscanNr, bool paintMarker)
 {
 	switch(bscan.getBScanType())
 	{
 		case OctData::BScan::BScanType::Line:
-			paintBScanLine(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
+			paintBScanLine(painter, bscan, coordTranslator, bscanNr, paintMarker);
 			break;
 		case OctData::BScan::BScanType::Circle:
-			paintBScanCircle(painter, bscan, factor, shift, transform, bscanNr, paintMarker);
+			paintBScanCircle(painter, bscan, coordTranslator, bscanNr, paintMarker);
 			break;
 		case OctData::BScan::BScanType::Unknown:
 			break;
@@ -253,10 +250,10 @@ void SLOImageWidget::paintBScan(QPainter& painter, const OctData::BScan& bscan, 
 }
 
 
-void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bscan, const SloCoordTranslator& coordTranslator, std::size_t bscanNr, bool paintMarker)
 {
-	const OctData::CoordSLOpx& start_px = (transform * bscan.getStart())*factor + shift;
-	const OctData::CoordSLOpx&   end_px = (transform * bscan.getEnd()  )*factor + shift;
+	const OctData::CoordSLOpx start_px = coordTranslator(bscan.getStart());
+	const OctData::CoordSLOpx   end_px = coordTranslator(bscan.getEnd()  );
 
 	painter.drawLine(start_px.getX(), start_px.getY(), end_px.getX(), end_px.getY());
 
@@ -268,10 +265,10 @@ void SLOImageWidget::paintBScanLine(QPainter& painter, const OctData::BScan& bsc
 	}
 }
 
-void SLOImageWidget::paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker)
+void SLOImageWidget::paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const SloCoordTranslator& coordTranslator, std::size_t bscanNr, bool paintMarker)
 {
-	const OctData::CoordSLOpx&  start_px = (transform * bscan.getStart() ) * factor + shift;
-	const OctData::CoordSLOpx& center_px = (transform * bscan.getCenter()) * factor + shift;
+	const OctData::CoordSLOpx  start_px = coordTranslator(bscan.getStart() );
+	const OctData::CoordSLOpx center_px = coordTranslator(bscan.getCenter());
 
 	double radius = center_px.abs(start_px);
 
@@ -302,19 +299,14 @@ void SLOImageWidget::paintAnalyseGrid(QPainter& painter, const OctData::Series* 
 	if(diameters.size() == 0)
 		return;
 
+	SloCoordTranslator sct(*series, getImageScaleFactor());
 
-	const OctData::SloImage&       sloImage  = series->getSloImage();
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
-	const OctData::CoordTransform& transform = sloImage.getTransform();
-
-
-	const OctData::CoordSLOpx&  centerPx = (transform * grid.getCenter()) * factor + shift;
+	const OctData::CoordSLOpx centerPx = sct(grid.getCenter());
 
 	for(double d : diameters)
 	{
 		double r = d/2.;
-		OctData::CoordSLOpx radius = (transform * OctData::CoordSLOmm(r, r))*factor;
+		OctData::CoordSLOpx radius = sct(OctData::CoordSLOmm(r, r));
 		painter.drawEllipse(QPointF(centerPx.getXf(), centerPx.getYf()), radius.getXf(), radius.getYf());
 	}
 }
@@ -324,34 +316,30 @@ void SLOImageWidget::showPosOnBScan(double t)
 	if(!ProgramOptions::sloShowBScanMousePos())
 		return;
 
-	const OctData::BScan* actBScan = markerManger.getActBScan();
-
 	Rect2DInt rect(markPos.p);
-	if(t<0 || t>1 || !actBScan)
+	const OctData::BScan* actBScan = markerManger.getActBScan();
+	if(actBScan)
 	{
-		markPos.show = false;
-		rect.addBroder(10);
-		update(rect.toQRect());
-		return;
+		if(t<0 || t>1 || !actBScan)
+		{
+			markPos.show = false;
+			rect.addBroder(10);
+			update(rect.toQRect());
+			return;
+		}
 	}
 
-
-	OctData::CoordSLOmm point = actBScan->getStart()*(1-t) + actBScan->getEnd()*(t); // TODO falsche Richtung?
-
 	const OctData::Series* series            = OctDataManager::getInstance().getSeries();
-	const OctData::SloImage&       sloImage  = series->getSloImage();
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
-	const OctData::CoordTransform& transform = sloImage.getTransform();
+	if(series)
+	{
+		SloCoordTranslator sct(*series, getImageScaleFactor());
+		OctData::CoordSLOmm point = actBScan->getStart()*(1-t) + actBScan->getEnd()*(t); // TODO falsche Richtung?
+		const OctData::CoordSLOpx markPx = sct(point);
 
-
-	const OctData::CoordSLOpx& markPx = (transform * point) * factor + shift;
-
-
-
-	markPos.show = true;
-	markPos.p = Point2DInt(markPx.getX(), markPx.getY());
-	rect += markPos.p;
+		markPos.show = true;
+		markPos.p = Point2DInt(markPx.getX(), markPx.getY());
+		rect += markPos.p;
+	}
 	rect.addBroder(10);
 	update(rect.toQRect());
 }
@@ -462,10 +450,10 @@ void SLOImageWidget::sloViewChanged()
 
 namespace
 {
-	double calcAbsBScanLine(const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, const OctData::CoordSLOpx& clickPos)
+	double calcAbsBScanLine(const OctData::BScan& bscan, const SloCoordTranslator& transform, const OctData::CoordSLOpx& clickPos)
 	{
-		const OctData::CoordSLOpx& start_px = (transform * bscan.getStart())*factor + shift;
-		const OctData::CoordSLOpx&   end_px = (transform * bscan.getEnd()  )*factor + shift;
+		const OctData::CoordSLOpx start_px = transform(bscan.getStart());
+		const OctData::CoordSLOpx   end_px = transform(bscan.getEnd()  );
 
 
 		const OctData::CoordSLOpx geradenvektor = end_px  -start_px;
@@ -478,10 +466,10 @@ namespace
 		return std::numeric_limits<double>::infinity();
 	}
 
-	double calcAbsBScanCircle(const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, const OctData::CoordSLOpx& clickPos)
+	double calcAbsBScanCircle(const OctData::BScan& bscan, const SloCoordTranslator& transform, const OctData::CoordSLOpx& clickPos)
 	{
-		const OctData::CoordSLOpx&  start_px = (transform * bscan.getStart() ) * factor + shift;
-		const OctData::CoordSLOpx& center_px = (transform * bscan.getCenter()) * factor + shift;
+		const OctData::CoordSLOpx  start_px = transform(bscan.getStart() );
+		const OctData::CoordSLOpx center_px = transform(bscan.getCenter());
 
 		double radiusCircle = center_px.abs(start_px);
 		double distCenter   = center_px.abs(clickPos);
@@ -490,12 +478,12 @@ namespace
 	}
 
 
-	double calcAbsBScan(const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, const OctData::CoordSLOpx& clickPos)
+	double calcAbsBScan(const OctData::BScan& bscan, const SloCoordTranslator& transform, const OctData::CoordSLOpx& clickPos)
 	{
 		if(bscan.getCenter())
-			return calcAbsBScanCircle(bscan, factor, shift, transform, clickPos);
+			return calcAbsBScanCircle(bscan, transform, clickPos);
 		else
-			return calcAbsBScanLine(bscan, factor, shift, transform, clickPos);
+			return calcAbsBScanLine(bscan, transform, clickPos);
 	}
 }
 
@@ -508,12 +496,8 @@ int SLOImageWidget::getBScanNearPos(int x, int y, double tol)
 		return -1;
 	const OctData::Series::BScanList bscans  = series->getBScans();
 
-	const OctData::SloImage&       sloImage  = series->getSloImage();
-	const OctData::ScaleFactor     factor    = sloImage.getScaleFactor() / getImageScaleFactor();
-	const OctData::CoordSLOpx      shift     = sloImage.getShift()       * getImageScaleFactor();
-	const OctData::CoordTransform& transform = sloImage.getTransform();
-
-	const OctData::CoordSLOpx      clickPos(x,y);
+	SloCoordTranslator transform(*series, getImageScaleFactor());
+	const OctData::CoordSLOpx clickPos(x,y);
 
 	int    nearstScan = 0;
 	double nearstDist = std::numeric_limits<double>::infinity();
@@ -523,7 +507,7 @@ int SLOImageWidget::getBScanNearPos(int x, int y, double tol)
 	{
 		if(bscan)
 		{
-			double dist = calcAbsBScan(*bscan, factor, shift, transform, clickPos);
+			double dist = calcAbsBScan(*bscan, transform, clickPos);
 			if(dist < nearstDist)
 			{
 				nearstScan = bscanCounter;
@@ -584,3 +568,117 @@ void SLOImageWidget::setBScanVisibility(int opt)
 	update();
 }
 
+void SLOImageWidget::saveLatexImageSlot()
+{
+	OctDataManager& manager = OctDataManager::getInstance();
+	const OctData::Series* series = manager.getSeries();
+	if(!series)
+		return;
+
+	const int seriesId = series->getInternalId();
+	const QString& loadedFilename = manager.getLoadedFilename();
+	const QFileInfo fileinfo(loadedFilename);
+	QString filename = QFileDialog::getSaveFileName(this, tr("Choose a base filename to save latex images"), fileinfo.baseName() + "_" + QString::number(seriesId) + ".tex", "*.tex");
+	if(!filename.isEmpty())
+		saveLatexImage(filename);
+}
+
+void SLOImageWidget::saveLatexImage(const QString& filename) const
+{
+	OctDataManager& manager = OctDataManager::getInstance();
+	const OctData::Series* series = manager.getSeries();
+	if(!series)
+		return;
+
+	std::ofstream stream(filename.toStdString());
+	if(!stream.good())
+		return;
+
+
+
+	std::string cleanFilename = filename.toStdString();
+	std::transform(cleanFilename.begin(), cleanFilename.end(), cleanFilename.begin(), [](char c) -> char { return c=='.'?'_':c; });
+	std::string imageFilename = cleanFilename + "_base.jpg";
+	std::string imageOverlayFilename = cleanFilename + "_overlay.png";
+
+	cv::imwrite(imageFilename, series->getSloImage().getImage(), {CV_IMWRITE_JPEG_QUALITY, 75});
+
+	bool overlayCreated = false;
+	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
+	if(actMarker)
+	{
+		cv::Mat outImage;
+		overlayCreated = actMarker->drawSLOOverlayImage(cvImage, outImage, -1);
+		if(overlayCreated && !outImage.empty())
+		{
+			cvtColor(outImage, outImage, CV_BGRA2RGBA);
+			cv::imwrite(imageOverlayFilename, outImage);
+		}
+	}
+
+
+	double height = static_cast<double>(cvImage.cols);
+	double width  = static_cast<double>(cvImage.rows);
+
+	double imgWidth  = height/30.;
+	double imgHeight = width /30.;
+
+	double aspectRatio = static_cast<double>(height)/static_cast<double>(width);
+	double tikzFactorX = 1./static_cast<double>(width)             ;
+	double tikzFactorY = 1./static_cast<double>(height)*aspectRatio;
+
+
+	stream << "\\documentclass{standalone}\n\\usepackage{tikz}\n\n";
+	stream << "\n\\begin{document}";
+	stream << "\n\n\n\\begin{tikzpicture}\n";
+// 		stream << "\\def\\skal{ 1 }\t% Skalierungsfaktor\n\n";
+	stream << "\t\\def\\hulllinewidth{1.75mm}\n\n";
+
+	stream << "\t\\definecolor{colorA}{rgb}{0.000000,1.000000,0.000000}\n";
+	stream << "\t\\definecolor{colorB}{rgb}{1.000000,0.000000,0.000000}\n";
+	stream << "\t\\definecolor{DeviceSegColor}{rgb}{0.000000,0.666666,1.000000}\n";
+	stream << "\t\\definecolor{CVSegColor}{rgb}{1.000000,0.000000,0.000000}\n";
+
+	stream << "\n\t\\node[anchor=south west,inner sep=0,scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};\n\n";
+	if(overlayCreated)
+		stream << "\n\t\\node[anchor=south west, inner sep=0, scale=1, opacity=0.7] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};\n\n";
+	stream << "\n\t\\begin{scope}[xscale=" << imgWidth << ",yscale=" << imgWidth << "]\n";
+
+
+
+	const OctData::Series::BScanSLOCoordList& hull = series->getConvexHull();
+	if(hull.size() >= 3)
+	{
+		ScaleFactor tikzScale(tikzFactorX, tikzFactorY, 1.);
+		SloCoordTranslator transform(*series, tikzScale);
+
+		stream << "\\definecolor{convexHullColor}{rgb}{0.5,1.0,0.5}\n\n";
+
+		stream << "\\draw[convexHullColor, line width=\\hulllinewidth] ";
+		bool firstVal = true;
+		std::size_t pos = 0;
+
+		for(std::size_t i = 0; i < hull.size(); ++i)
+		{
+			if(pos % 5 == 0)
+				stream << "\n";
+			if(firstVal)
+				firstVal = false;
+			else
+				stream << " -- ";
+
+			const OctData::CoordSLOpx pointPx = transform(hull[i]);
+			stream << "(" << (pointPx.getXf()) << ", " << (aspectRatio - pointPx.getYf()) << ")";
+			++pos;
+		}
+
+		stream <<  " -- cycle";
+		stream <<  ";\n\n";
+	}
+
+
+
+	stream << "\n\t\t\\end{scope}";
+	stream << "\n\t\\end{tikzpicture}";
+	stream << "\n\\end{document}\n";
+}

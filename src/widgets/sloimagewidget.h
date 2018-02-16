@@ -25,6 +25,8 @@ class SloMarkerBase;
 
 class QWheelEvent;
 
+class SloCoordTranslator;
+
 class SLOImageWidget : public CVImageWidget
 {
 	Q_OBJECT
@@ -74,13 +76,16 @@ protected:
 	void paintEvent(QPaintEvent* event) override;
 	virtual void mousePressEvent(QMouseEvent*) override;
 
-	void paintBScan      (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
-	void paintBScanLine  (QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
-	void paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const OctData::ScaleFactor& factor, const OctData::CoordSLOpx& shift, const OctData::CoordTransform& transform, std::size_t bscanNr, bool paintMarker);
+	void paintBScan      (QPainter& painter, const OctData::BScan& bscan, const SloCoordTranslator& transform, std::size_t bscanNr, bool paintMarker);
+	void paintBScanLine  (QPainter& painter, const OctData::BScan& bscan, const SloCoordTranslator& transform, std::size_t bscanNr, bool paintMarker);
+	void paintBScanCircle(QPainter& painter, const OctData::BScan& bscan, const SloCoordTranslator& transform, std::size_t bscanNr, bool paintMarker);
 
 	void paintAnalyseGrid(QPainter& painter, const OctData::Series* series);
 	void paintBScans     (QPainter& painter, const OctData::Series* series);
 	void paintConvexHull (QPainter& painter, const OctData::Series* series);
+
+
+	void saveLatexImage(const QString& filename) const;
 
 private slots:
 	void reladSLOImage();
@@ -90,6 +95,8 @@ private slots:
 
 	void setBScanVisibility(int opt);
 	void updateMarkerOverlayImage();
+
+	void saveLatexImageSlot();
 };
 
 #endif // SLOIMAGE_H

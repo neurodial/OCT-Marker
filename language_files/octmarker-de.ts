@@ -4,8 +4,8 @@
 <context>
     <name>BScanIntervalMarker</name>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="52"/>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="106"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="59"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="113"/>
         <source>Interval marker</source>
         <translation>Intervallmarkierung</translation>
     </message>
@@ -14,12 +14,12 @@
         <translation type="obsolete">Intervallmarkierung</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="82"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="89"/>
         <source>paint marker</source>
         <translation>Zeichne Intervall</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="92"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="99"/>
         <source>fill marker</source>
         <translation>Fülle Intervall</translation>
     </message>
@@ -42,7 +42,7 @@
 <context>
     <name>BScanLayerSegmentation</name>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/bscanlayersegmentation.cpp" line="45"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/bscanlayersegmentation.cpp" line="46"/>
         <source>Layer Segmentation</source>
         <translation>Schichtensegmentierung</translation>
     </message>
@@ -1155,13 +1155,13 @@
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="355"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="1018"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="1017"/>
         <source>Save Matlab Bin Code</source>
         <translation>Matlab-Code für Bin-Format speichern</translation>
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="361"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="1025"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="1024"/>
         <source>Save Matlab Write Bin Code</source>
         <translation>Matlab-Schreibcode für Bin-Format speichern</translation>
     </message>
@@ -1306,22 +1306,22 @@
         <translation>Speichern fehlgeschlagen mit Meldung:&lt;br /&gt;%1&lt;br /&gt;</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="985"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="984"/>
         <source>Choose a filename to save oct scan</source>
         <translation>Dateiname für OCT-Scan zum Speichern auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="1059"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="1058"/>
         <source>Unknown error on autosave</source>
         <translation>Unbekannter Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="1063"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="1062"/>
         <source>Error on autosave</source>
         <translation>Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="1063"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="1062"/>
         <source>Autosave fail with message: %1 &lt;br /&gt;Quit program?</source>
         <translation>Automatisches Speichern mit Meldung:&lt;br /&gt;%1&lt;br /&gt;fehlgeschlagen.&lt;br /&gt;Programm beenden?</translation>
     </message>
@@ -1383,7 +1383,7 @@
         <translation>Markierungsdatei zum Speichern auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="994"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="993"/>
         <source>OCT-Marker - %1</source>
         <translation>OCT-Marker - %1</translation>
     </message>
@@ -1399,12 +1399,12 @@
 <context>
     <name>OctDataManager</name>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="114"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="117"/>
         <source>Unsaved changes</source>
         <translation>Ungespeicherte Änderungen</translation>
     </message>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="114"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="117"/>
         <source>You have unsaved changes, what will you do?</source>
         <translation>Es gibt ungespeicherte Änderungen, was wollen Sie tun?</translation>
     </message>
@@ -1443,6 +1443,19 @@
         <location filename="../src/model/paintmarkermodel.cpp" line="110"/>
         <source>show</source>
         <translation>Zeigen</translation>
+    </message>
+</context>
+<context>
+    <name>SLOImageWidget</name>
+    <message>
+        <location filename="../src/widgets/sloimagewidget.cpp" line="98"/>
+        <source>save latex</source>
+        <translation>als LaTeX speichern</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/sloimagewidget.cpp" line="585"/>
+        <source>Choose a base filename to save latex images</source>
+        <translation type="unfinished">Basisname für den LaTeX-Export angeben</translation>
     </message>
 </context>
 <context>
@@ -1605,12 +1618,12 @@
         <translation>Stift</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="98"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="99"/>
         <source>Spline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="115"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="117"/>
         <source>show segmentationlines</source>
         <translation>Segmentierungslinien anzeigen</translation>
     </message>

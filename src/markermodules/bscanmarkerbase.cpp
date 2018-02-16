@@ -86,6 +86,12 @@ bool BscanMarkerBase::setMarkerActive(bool active, BScanMarkerWidget*)
 
 bool BscanMarkerBase::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha, const cv::Mat& sloOverlay) const
 {
+	if(alpha == -1.)
+	{
+		outSloImage = sloOverlay;
+		return true;
+	}
+
 	if(sloOverlay.cols == sloImage.cols && sloOverlay.rows == sloImage.rows)
 	{
 // 		std::cout << sloImage.type() << " != " << CV_8U << " || " << thicknesMapImage->type() << " != " << CV_8UC4 << std::endl;
