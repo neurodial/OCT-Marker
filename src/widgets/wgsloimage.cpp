@@ -1,8 +1,6 @@
 #include "wgsloimage.h"
 
-#include "sloimagewidget.h"
-#include <manager/octmarkermanager.h>
-#include <data_structure/programoptions.h>
+#include "slowithlegendwidget.h"
 
 #include <QResizeEvent>
 #include <QToolBar>
@@ -13,8 +11,9 @@
 
 #include<helper/actionclasses.h>
 
+#include<data_structure/programoptions.h>
 #include<manager/octdatamanager.h>
-#include<markermodules/bscanmarkerbase.h>
+#include<manager/octmarkermanager.h>
 
 namespace
 {
@@ -34,11 +33,9 @@ namespace
 
 WgSloImage::WgSloImage(QWidget* parent)
 : QMainWindow(parent)
-, imageWidget(new SLOImageWidget(parent))
 , markerManager(OctMarkerManager::getInstance())
+, imageWidget(new SloWithLegendWidget(parent))
 {
-
-	imageWidget->setImageSize(size());
 	setCentralWidget(imageWidget);
 
 
@@ -68,11 +65,12 @@ WgSloImage::WgSloImage(QWidget* parent)
 
 	createMarkerToolbar();
 
-
-	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
-	connect(&markerManager  , &OctMarkerManager::sloOverlayChanged , this, &WgSloImage::updateMarkerOverlayImage);
-	connect(&markerManager  , &OctMarkerManager::bscanMarkerChanged, this, &WgSloImage::updateMarkerOverlayImage);
 }
+
+WgSloImage::~WgSloImage()
+{
+}
+
 
 
 void WgSloImage::wheelEvent(QWheelEvent* wheelE)
@@ -83,13 +81,6 @@ void WgSloImage::wheelEvent(QWheelEvent* wheelE)
 	else
 		markerManager.nextBScan();
 	wheelE->accept();
-}
-
-
-void WgSloImage::resizeEvent(QResizeEvent* event)
-{
-	imageWidget->setImageSize(event->size());
-	QWidget::resizeEvent(event);
 }
 
 
@@ -134,26 +125,7 @@ void WgSloImage::createMarkerToolbar()
 	addToolBar(toolBar);
 }
 
-
-void WgSloImage::updateMarkerOverlayImage()
+SLOImageWidget* WgSloImage::getImageWidget()
 {
-	QWidget* legend = nullptr;
-	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
-	BscanMarkerBase* marker = markerManager.getActBscanMarker();
-	if(marker)
-	{
-		legend = marker->getSloLegendWidget();
-		if(legend && !legendDW)
-		{
-			legendDW = new QDockWidget(this);
-			addDockWidget(Qt::RightDockWidgetArea, legendDW);
-		}
-	}
-
-	if(legendDW)
-	{
-		legendDW->setWidget(legend);
-		legendDW->setVisible(legend != nullptr);
-	}
+	return imageWidget->getImageWidget();
 }
-

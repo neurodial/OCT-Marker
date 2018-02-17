@@ -55,9 +55,9 @@ class SLOImageWidget : public CVImageWidget
 	void updateGraphicsViewSize();
 
 public:
-	SLOImageWidget(QWidget* parent = 0);
+	explicit SLOImageWidget(QWidget* parent = 0);
 
-    virtual ~SLOImageWidget();
+	virtual ~SLOImageWidget();
 
 	bool getShowBScans() const                                   { return drawBScans; }
 
@@ -86,6 +86,8 @@ protected:
 
 
 	void saveLatexImage(const QString& filename) const;
+
+	void resizeEvent(QResizeEvent* event) override;
 
 private slots:
 	void reladSLOImage();

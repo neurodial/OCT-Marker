@@ -5,32 +5,29 @@
 
 
 class OctMarkerManager;
+class SloWithLegendWidget;
 class SLOImageWidget;
 
-class QDockWidget;
+
+class QGridLayout;
 
 
 class WgSloImage : public QMainWindow
 {
 	Q_OBJECT
 	
-	SLOImageWidget* imageWidget;
 	OctMarkerManager& markerManager;
-	QDockWidget* legendDW = nullptr;
-
+	SloWithLegendWidget* imageWidget;
 	void createMarkerToolbar();
 public:
 	explicit WgSloImage(QWidget* parent = nullptr);
+	~WgSloImage();
 	
-	SLOImageWidget* getImageWidget() { return imageWidget; }
-	
-	virtual void resizeEvent(QResizeEvent* event);
+	SLOImageWidget* getImageWidget();
 
 protected:
 	virtual void wheelEvent       (QWheelEvent*);
 
-private slots:
-	void updateMarkerOverlayImage();
 };
 
 #endif // WGSLOIMAGE_H

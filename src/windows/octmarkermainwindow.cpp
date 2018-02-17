@@ -363,6 +363,12 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(actionSaveMatlabWriteBinCode, &QAction::triggered, this, &OCTMarkerMainWindow::saveMatlabWriteBinCode);
 	extrisMenu->addAction(actionSaveMatlabWriteBinCode);
 
+
+	QAction* actionSaveScreenshot = new QAction(this);
+	actionSaveScreenshot->setText(tr("create screenshot"));
+	actionSaveScreenshot->setIcon(QIcon(":/icons/disk.png"));
+	connect(actionSaveScreenshot, &QAction::triggered, this, &OCTMarkerMainWindow::screenshot);
+	extrisMenu->addAction(actionSaveScreenshot);
 	// ----------
 	// Help Menu
 	// ----------
@@ -1112,3 +1118,25 @@ void OCTMarkerMainWindow::loadFileProgress(double frac)
 }
 
 
+void OCTMarkerMainWindow::screenshot()
+{
+
+	QString filename = QFileDialog::getSaveFileName(this, tr("save filename"), "octmarker.pdf", "*.pdf");
+	if(filename.isEmpty())
+		return;
+
+	QPdfWriter generator(filename);
+	generator.setTitle(tr("overlay legend"));;
+	generator.setPageSize(QPageSize(size()));
+	generator.setResolution(100);
+
+	QPainter painter;
+	QFont font;
+	font.setPointSizeF(font.pointSizeF()*2);
+	painter.begin(&generator);
+	painter.setFont(font);
+	render(&painter, QPoint(), QRegion(), DrawChildren | DrawWindowBackground | IgnoreMask);
+// 				const QPoint &targetOffset = QPoint(), const QRegion &sourceRegion = QRegion(), RenderFlags renderFlags = RenderFlags( DrawWindowBackground | DrawChildren ))
+	painter.end();
+
+}

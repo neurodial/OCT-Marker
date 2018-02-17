@@ -108,6 +108,8 @@ public slots:
 	virtual void strechBScanImage2MaxHeight();
 
 	virtual void showSaveOctScanDialog();
+
+	virtual void screenshot();
 };
 
 

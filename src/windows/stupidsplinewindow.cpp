@@ -8,6 +8,7 @@
 #include <QProgressDialog>
 #include <QLabel>
 
+#include <widgets/slowithlegendwidget.h>
 #include <widgets/sloimagewidget.h>
 #include <widgets/bscanmarkerwidget.h>
 #include <widgets/dwmarkerwidgets.h>
@@ -42,31 +43,6 @@
 
 #include<windows/infodialogs.h>
 #include <markermodules/bscanlayersegmentation/bscanlayersegmentation.h>
-
-
-namespace
-{
-	class SimpleWgSloImage : public QMainWindow
-	{
-		SLOImageWidget* imageWidget;
-	public:
-		explicit SimpleWgSloImage(QWidget* parent = nullptr) : QMainWindow(parent), imageWidget(new SLOImageWidget(this))
-		{
-			setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-			imageWidget->setImageSize(size());
-			setCentralWidget(imageWidget);
-		}
-		SLOImageWidget* getImageWidget() { return imageWidget; }
-
-	protected:
-		virtual void resizeEvent(QResizeEvent* event) override
-		{
-			imageWidget->setImageSize(event->size());
-			QWidget::resizeEvent(event);
-		}
-	};
-
-}
 
 
 StupidSplineWindow::StupidSplineWindow()
@@ -156,7 +132,7 @@ StupidSplineWindow::StupidSplineWindow()
 
 
 
-	SimpleWgSloImage* sloImageWidget = new SimpleWgSloImage(this);
+	SloWithLegendWidget* sloImageWidget = new SloWithLegendWidget(this);
 	sloImageWidget->setMinimumWidth(250);
 	sloImageWidget->setMinimumHeight(250);
 	dwSloImage->setWindowTitle("SLO");

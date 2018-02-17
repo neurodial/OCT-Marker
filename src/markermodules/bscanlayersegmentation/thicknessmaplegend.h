@@ -14,7 +14,7 @@ class ThicknessmapLegend : public QWidget
 
 	int broderH = 5;
 	const int broder         = 5;
-	const int legendBarWidth = 30;
+	const int legendBarWidth = 20;
 	int labelsMaxWidth  = 10;
 	int labelsMaxHeight = 10;
 	const int distanceBarLabel = 10;

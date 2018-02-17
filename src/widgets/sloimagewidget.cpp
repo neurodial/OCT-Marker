@@ -32,6 +32,9 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
+#include <QPdfWriter>
+
+
 namespace
 {
 
@@ -421,6 +424,10 @@ void SLOImageWidget::updateGraphicsViewSize()
 	gv->setGeometry(0, 0, scaledImageWidth(), scaledImageHeight());
 }
 
+void SLOImageWidget::resizeEvent(QResizeEvent* event)
+{
+	setImageSize(event->size());
+}
 
 
 void SLOImageWidget::sloMarkerChanged(SloMarkerBase* marker)
@@ -594,16 +601,18 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 	if(!stream.good())
 		return;
 
-
-
-	std::string cleanFilename = filename.toStdString();
+	QFileInfo fileinfo(filename);
+	std::string cleanFilename = fileinfo.fileName().toStdString();
+	std::string path = fileinfo.path().toStdString();
 	std::transform(cleanFilename.begin(), cleanFilename.end(), cleanFilename.begin(), [](char c) -> char { return c=='.'?'_':c; });
 	std::string imageFilename = cleanFilename + "_base.jpg";
 	std::string imageOverlayFilename = cleanFilename + "_overlay.png";
+	std::string imageOverlayLegendFilename = cleanFilename + "_legend.pdf";
 
-	cv::imwrite(imageFilename, series->getSloImage().getImage(), {CV_IMWRITE_JPEG_QUALITY, 75});
+	cv::imwrite(path + "/" + imageFilename, series->getSloImage().getImage(), {CV_IMWRITE_JPEG_QUALITY, 75});
 
 	bool overlayCreated = false;
+	QWidget* overlayLegend = nullptr;
 	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
 	{
@@ -612,7 +621,41 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 		if(overlayCreated && !outImage.empty())
 		{
 			cvtColor(outImage, outImage, CV_BGRA2RGBA);
-			cv::imwrite(imageOverlayFilename, outImage);
+			cv::imwrite(path + "/" + imageOverlayFilename, outImage);
+
+
+			overlayLegend = actMarker->getSloLegendWidget();
+			if(overlayLegend)
+			{
+// 				class Writer : public QPdfWriter
+// 				{
+// 				public:
+// 					Writer(const QString& filename) : QPdfWriter(filename) {}
+//
+// 				protected:
+// 					virtual int metric(PaintDeviceMetric metric) const
+// 					{
+// 						if(metric == QPaintDevice::PdmDevicePixelRatio)
+// 							return 3;
+// 						return QPdfWriter::metric(metric);
+// 					}
+// 				};
+
+
+				QPdfWriter generator(QString::fromStdString(path + "/" + imageOverlayLegendFilename));
+				generator.setTitle(tr("overlay legend"));;
+				generator.setPageSize(QPageSize(overlayLegend->size()));
+				generator.setResolution(100);
+
+				QPainter painter;
+				QFont font;
+				font.setPointSizeF(font.pointSizeF()*2);
+				painter.begin(&generator);
+				painter.setFont(font);
+				overlayLegend->render(&painter, QPoint(), QRegion(), DrawChildren);
+// 				const QPoint &targetOffset = QPoint(), const QRegion &sourceRegion = QRegion(), RenderFlags renderFlags = RenderFlags( DrawWindowBackground | DrawChildren ))
+				painter.end();
+			}
 		}
 	}
 
@@ -639,9 +682,13 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 	stream << "\t\\definecolor{DeviceSegColor}{rgb}{0.000000,0.666666,1.000000}\n";
 	stream << "\t\\definecolor{CVSegColor}{rgb}{1.000000,0.000000,0.000000}\n";
 
-	stream << "\n\t\\node[anchor=south west,inner sep=0,scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};\n\n";
+	stream << "\n\t\\node[anchor=south west,inner sep=0,scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};\n";
 	if(overlayCreated)
-		stream << "\n\t\\node[anchor=south west, inner sep=0, scale=1, opacity=0.7] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};\n\n";
+		stream << "\n\t\\node[anchor=south west, inner sep=0, scale=1, opacity=0.7] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};\n";
+
+	if(overlayLegend)
+		stream << "\n\t\\node[anchor=south west,inner sep=0,scale=1] (legend) at (" << imgWidth*1.04 << "cm,0) {\\includegraphics[height=" << imgHeight << "cm]{" << imageOverlayLegendFilename << "}};";
+
 	stream << "\n\t\\begin{scope}[xscale=" << imgWidth << ",yscale=" << imgWidth << "]\n";
 
 

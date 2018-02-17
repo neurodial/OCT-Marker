@@ -87,6 +87,7 @@ void ThicknessmapLegend::paintEvent(QPaintEvent* event)
 
 	for(BarLabel& label : thicknessLabels)
 	{
+// 		label.label->setFont();
 		QRect geo = label.label->geometry();
 		int h = geo.height()/2 + geo.y();
 		p.drawLine(lineStartX, h, lineEndX, h);
