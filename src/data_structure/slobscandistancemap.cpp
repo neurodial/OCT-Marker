@@ -16,6 +16,7 @@
 
 #include<data_structure/matrx.h>
 #include<data_structure/point2d.h>
+#include <helper/slocoordtranslator.h>
 
 
 namespace
@@ -116,19 +117,12 @@ namespace
 		PixelMap pixelMap;
 		TrailMap trailMap;
 
-		OctData::ScaleFactor    factor   ;
-		OctData::CoordSLOpx     shift    ;
-		OctData::CoordTransform transform;
+		SloCoordTranslator transformCoord;
 
 		constexpr static const DistanceType maxDistance = 25;
 		std::size_t actBscanNr = 0;
 
-
 		static Point2D coordSLO2Point(const OctData::CoordSLOpx& c)                { return Point2D(c.getXf(), c.getYf()); }
-		OctData::CoordSLOpx transformCoord(const OctData::CoordSLOmm& coord) const { return (transform*coord)*factor + shift; }
-// 		OctData::CoordSLOmm transformCoord(const OctData::CoordSLOpx& coord) const { return transform.inv()*((coord-shift)/factor); }
-
-
 
 		class ValueSetter
 		{
@@ -230,8 +224,8 @@ namespace
 		template<typename AScanHandler>
 		void addLineScan(const OctData::BScan& bscan, AScanHandler& handler)
 		{
-			const OctData::CoordSLOpx& start_px = transformCoord(bscan.getStart());
-			const OctData::CoordSLOpx&   end_px = transformCoord(bscan.getEnd()  );
+			const OctData::CoordSLOpx start_px = transformCoord(bscan.getStart());
+			const OctData::CoordSLOpx   end_px = transformCoord(bscan.getEnd()  );
 
 			const std::size_t bscanWidth = static_cast<std::size_t>(bscan.getWidth());
 
@@ -253,8 +247,8 @@ namespace
 		template<typename AScanHandler>
 		void addCircleScan(const OctData::BScan& bscan, AScanHandler& handler)
 		{
-			const OctData::CoordSLOpx& start_px  = transformCoord(bscan.getStart ());
-			const OctData::CoordSLOpx& center_px = transformCoord(bscan.getCenter());
+			const OctData::CoordSLOpx start_px  = transformCoord(bscan.getStart ());
+			const OctData::CoordSLOpx center_px = transformCoord(bscan.getCenter());
 
 			const std::size_t bscanWidth = static_cast<std::size_t>(bscan.getWidth());
 
@@ -459,10 +453,6 @@ namespace
 			if(sloImageMat.empty())
 				return;
 
-			factor    = sloImage.getScaleFactor();
-			shift     = sloImage.getShift()      ;
-			transform = sloImage.getTransform()  ;
-
 			fillConvexBroder(convexHull);
 
 			ValueSetter ivs(*this, false);
@@ -544,6 +534,7 @@ namespace
 		: matrix(matrix)
 		, series(series)
 		, pixelMap(matrix.getSizeX(), matrix.getSizeY())
+		, transformCoord(series)
 		{
 			creatL1DistanceMap();
 			fillPreCalcData();
