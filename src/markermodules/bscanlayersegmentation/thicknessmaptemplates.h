@@ -1,24 +1,26 @@
 #pragma once
 
-#include<string>
+#include<QObject>
+#include<QString>
 #include<vector>
 
 #include<octdata/datastruct/segmentationlines.h>
 
-class ThicknessmapTemplates
+class ThicknessmapTemplates : QObject
 {
+	Q_OBJECT
 public:
 	enum class UseColorMap { hsv, yellow };
 	class Configuration
 	{
-		std::string name;
-		OctData::Segmentationlines::SegmentlineType line1;
-		OctData::Segmentationlines::SegmentlineType line2;
-		double minValue;
-		double maxValue;
-		UseColorMap useColorMap;
+		const QString name;
+		const OctData::Segmentationlines::SegmentlineType line1;
+		const OctData::Segmentationlines::SegmentlineType line2;
+		const double minValue;
+		const double maxValue;
+		const UseColorMap useColorMap;
 	public:
-		Configuration(const std::string& name
+		Configuration(const QString& name
 		            , OctData::Segmentationlines::SegmentlineType line1
 		            , OctData::Segmentationlines::SegmentlineType line2
 		            , double minValue
@@ -33,7 +35,7 @@ public:
 		{}
 
 
-		const std::string& getName()                             const { return name; }
+		const QString& getName()                                 const { return name; }
 		OctData::Segmentationlines::SegmentlineType getLine1()   const { return line1; }
 		OctData::Segmentationlines::SegmentlineType getLine2()   const { return line2; }
 		double getMinValue()                                     const { return minValue; }
@@ -42,6 +44,8 @@ public:
 	};
 
 	static ThicknessmapTemplates& getInstance() { static ThicknessmapTemplates instance; return instance; }
+
+	const std::vector<Configuration>& getConfigurations()        const { return configurations; }
 
 private:
 	ThicknessmapTemplates();

@@ -29,6 +29,19 @@ public:
 		bool filled = false;
 	};
 
+	class ThicknessmapConfig
+	{
+		friend class BScanLayerSegmentation;
+		Colormap* colormap = nullptr;
+	public:
+		OctData::Segmentationlines::SegmentlineType upperLayer;
+		OctData::Segmentationlines::SegmentlineType lowerLayer;
+
+		void setUpperColorLimit(double thickness);
+		void setYellowColor();
+		void setHSVColor();
+	};
+
 	enum class SegMethod { None, Pen, Spline };
 
 	BScanLayerSegmentation(OctMarkerManager* markerManager);
@@ -70,6 +83,8 @@ public:
 
 	bool isSegmentationLinesVisible()                         const { return showSegmentationlines; }
 
+	ThicknessmapConfig& getThicknessmapConfig() { return thicknessmapConfig; }
+
 private:
 	std::vector<BScanSegData> lines;
 	OctData::Segmentationlines::SegmentlineType actEditType = OctData::Segmentationlines::SegmentlineType::ILM;
@@ -84,7 +99,8 @@ private:
 	EditSpline* editMethodSpline = nullptr;
 	EditPen   * editMethodPen    = nullptr;
 
-	Colormap* thicknessmapColor = nullptr;
+	ThicknessmapConfig thicknessmapConfig;
+// 	Colormap* thicknessmapColor = nullptr;
 
 	bool showSegmentationlines = true;
 
@@ -102,6 +118,8 @@ signals:
 
 public slots:
 	void setSegmentationLinesVisible(bool visible);
+
+	void generateThicknessmap();
 };
 
 #endif // BSCANLAYERSEGMENTATION_H

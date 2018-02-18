@@ -49,7 +49,7 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 
 	setSegMethod(SegMethod::Pen);
 
-	thicknessmapColor = new ColormapHSV;
+// 	thicknessmapColor = new ColormapHSV;
 
 	legendWG             = new ThicknessmapLegend;
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
@@ -61,7 +61,7 @@ BScanLayerSegmentation::~BScanLayerSegmentation()
 	delete editMethodPen   ;
 
 	delete thicknesMapImage;
-	delete thicknessmapColor;
+// 	delete thicknessmapColor;
 // 	delete legendWG; // TODO
 }
 
@@ -204,29 +204,8 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 			return true;
 
 		case Qt::Key_T:
-		{
-			if(thicknessmapColor)
-			{
-				QElapsedTimer timer;
-				timer.start();
-
-				const OctData::BScan* bscan = getActBScan();
-				OctDataManager& manager = OctDataManager::getInstance();
-				const SloBScanDistanceMap* distMap = manager.getSeriesSLODistanceMap();
-				if(bscan && distMap)
-				{
-					double factor = bscan->getScaleFactor().getZ()*1000; // milli meter -> micro meter
-
-					ThicknessMap tm;
-					tm.createMap(*distMap, lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM, factor, *thicknessmapColor);
-					*thicknesMapImage = tm.getThicknessMap();
-					requestSloOverlayUpdate();
-
-					std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
-				}
-			}
-		}
-		return true;
+			generateThicknessmap();
+			return true;
 	}
 
 	if(actEditMethod)
@@ -234,6 +213,31 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 
 	return false;
 }
+
+void BScanLayerSegmentation::generateThicknessmap()
+{
+	if(thicknessmapConfig.colormap)
+	{
+		QElapsedTimer timer;
+		timer.start();
+
+		const OctData::BScan* bscan = getActBScan();
+		OctDataManager& manager = OctDataManager::getInstance();
+		const SloBScanDistanceMap* distMap = manager.getSeriesSLODistanceMap();
+		if(bscan && distMap)
+		{
+			double factor = bscan->getScaleFactor().getZ()*1000; // milli meter -> micro meter
+
+			ThicknessMap tm;
+			tm.createMap(*distMap, lines, thicknessmapConfig.upperLayer, thicknessmapConfig.lowerLayer, factor, *thicknessmapConfig.colormap);
+			*thicknesMapImage = tm.getThicknessMap();
+			requestSloOverlayUpdate();
+
+			std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
+		}
+	}
+}
+
 
 bool BScanLayerSegmentation::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha) const
 {
@@ -398,4 +402,27 @@ QWidget* BScanLayerSegmentation::getSloLegendWidget()
 		return nullptr;
 	return legendWG;
 }
+
+
+void BScanLayerSegmentation::ThicknessmapConfig::setHSVColor()
+{
+	static ColormapHSV hsvMap;
+	colormap = &hsvMap;
+}
+
+void BScanLayerSegmentation::ThicknessmapConfig::setYellowColor()
+{
+	static ColormapYellow mapYellow;
+	colormap = &mapYellow;
+}
+
+void BScanLayerSegmentation::ThicknessmapConfig::setUpperColorLimit(double thickness)
+{
+	if(colormap)
+		colormap->setMaxValue(thickness);
+}
+
+
+
+
 

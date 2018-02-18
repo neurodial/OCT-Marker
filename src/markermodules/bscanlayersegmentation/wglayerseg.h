@@ -11,6 +11,7 @@ class QButtonGroup;
 class QPushButton;
 class QAction;
 class QToolButton;
+class QComboBox;
 
 class WGLayerSeg : public QWidget
 {
@@ -21,7 +22,6 @@ class WGLayerSeg : public QWidget
 	QButtonGroup* layerButtons = nullptr;
 	std::vector<QPushButton*> seglineButtons;
 
-	QWidget* createMarkerToolButtons();
 
 	QAction* actionMarkerMethodPen    = nullptr;
 	QAction* actionMarkerMethodSpline = nullptr;
@@ -30,6 +30,12 @@ class WGLayerSeg : public QWidget
 	QToolButton* buttonMarkerMethodPen    = nullptr;
 	QToolButton* buttonMarkerMethodSpline = nullptr;
 	QToolButton* buttonShowSeglines       = nullptr;
+
+	QComboBox* thicknessmapTemplates = nullptr;
+
+	void createMarkerToolButtons(QLayout& layout);
+	void addLayerButtons(QLayout& layout);
+	void addThicknessMapControls(QLayout& layout);
 
 public:
 	WGLayerSeg(BScanLayerSegmentation* parent);
@@ -45,6 +51,8 @@ private slots:
 
 	void setMarkerMethodPen();
 	void setMarkerMethodSpline();
+
+	void thicknessmapTemplateChanged(int index);
 };
 
 #endif // WGLAYERSEG_H

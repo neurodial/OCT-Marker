@@ -9,28 +9,47 @@
 #include<QActionGroup>
 #include<QAction>
 #include<QToolButton>
+#include<QComboBox>
 
 #include<octdata/datastruct/segmentationlines.h>
+
+#include"thicknessmaptemplates.h"
 
 
 WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
 : parent(parent)
+, thicknessmapTemplates(new QComboBox(this))
 {
 	connect(parent, &BScanLayerSegmentation::segMethodChanged, this, &WGLayerSeg::markerMethodChanged);
+	connect(thicknessmapTemplates, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &WGLayerSeg::thicknessmapTemplateChanged);
 
 	QVBoxLayout* layout = new QVBoxLayout();
-	layout->addWidget(createMarkerToolButtons());
+
+	addThicknessMapControls(*layout);
+	createMarkerToolButtons(*layout);
+
+	addLayerButtons(*layout);
 
 
+	layout->addStretch();
+	setLayout(layout);
+}
+
+
+WGLayerSeg::~WGLayerSeg()
+{
+}
+
+
+void WGLayerSeg::addLayerButtons(QLayout& layout)
+{
 	layerButtons = new QButtonGroup(this);
-
 	QSignalMapper* signalMapper = new QSignalMapper(this);
 
 	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
 	seglineButtons.resize(numSegLines);
 
 	const OctData::Segmentationlines::SegmentlineType actType = parent->getActEditSeglineType();
-
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 	{
 		QPushButton* button = new QPushButton(OctData::Segmentationlines::getSegmentlineName(type));
@@ -43,19 +62,13 @@ WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
 			button->setChecked(true);
 
 		layerButtons->addButton(button);
-		layout->addWidget(button);
+		layout.addWidget(button);
 		seglineButtons[static_cast<std::size_t>(type)] = button;
+
+		qDebug("%s", OctData::Segmentationlines::getSegmentlineName(type));
 	}
 
     connect(signalMapper, static_cast<void (QSignalMapper::*)(int)>(&QSignalMapper::mapped), this, &WGLayerSeg::changeSeglineId);
-
-	layout->addStretch();
-	setLayout(layout);
-}
-
-
-WGLayerSeg::~WGLayerSeg()
-{
 }
 
 
@@ -81,10 +94,10 @@ namespace
 
 
 
-QWidget* WGLayerSeg::createMarkerToolButtons()
+void WGLayerSeg::createMarkerToolButtons(QLayout& layout)
 {
 	QWidget* widget = new QWidget(this);
-	QHBoxLayout* layout = new QHBoxLayout(this);
+	QHBoxLayout* layoutTools = new QHBoxLayout(widget);
 
 	actionMarkerMethodPen = new QAction(this);
 	actionMarkerMethodPen->setText(tr("pen"));
@@ -93,7 +106,7 @@ QWidget* WGLayerSeg::createMarkerToolButtons()
 	actionMarkerMethodPen->setCheckable(true);
 	connect(actionMarkerMethodPen, &QAction::triggered, this, &WGLayerSeg::setMarkerMethodPen);
 	buttonMarkerMethodPen = createActionToolButton(this, actionMarkerMethodPen);
-	layout->addWidget(buttonMarkerMethodPen);
+	layoutTools->addWidget(buttonMarkerMethodPen);
 
 	actionMarkerMethodSpline = new QAction(this);
 	actionMarkerMethodSpline->setText(tr("Spline"));
@@ -102,7 +115,7 @@ QWidget* WGLayerSeg::createMarkerToolButtons()
 	actionMarkerMethodSpline->setCheckable(true);
 	connect(actionMarkerMethodSpline, &QAction::triggered, this, &WGLayerSeg::setMarkerMethodSpline);
 	buttonMarkerMethodSpline = createActionToolButton(this, actionMarkerMethodSpline);
-	layout->addWidget(buttonMarkerMethodSpline);
+	layoutTools->addWidget(buttonMarkerMethodSpline);
 
 
 	QActionGroup* alignmentGroup = new QActionGroup(this);
@@ -111,7 +124,7 @@ QWidget* WGLayerSeg::createMarkerToolButtons()
 
 	markerMethodChanged();
 
-	layout->addStretch();
+	layoutTools->addStretch();
 
 	actionShowSeglines = new QAction(this);
 	actionShowSeglines->setText(tr("show segmentationlines"));
@@ -120,11 +133,26 @@ QWidget* WGLayerSeg::createMarkerToolButtons()
 	actionShowSeglines->setChecked(parent->isSegmentationLinesVisible());
 	connect(actionShowSeglines, &QAction::triggered, parent, &BScanLayerSegmentation::setSegmentationLinesVisible);
 	buttonShowSeglines = createActionToolButton(this, actionShowSeglines);
-	layout->addWidget(buttonShowSeglines);
+	layoutTools->addWidget(buttonShowSeglines);
 
-	widget->setLayout(layout);
-	return widget;
+	widget->setLayout(layoutTools);
+	layout.addWidget(widget);
 }
+
+
+void WGLayerSeg::addThicknessMapControls(QLayout& layout)
+{
+	ThicknessmapTemplates& templates = ThicknessmapTemplates::getInstance();
+
+	for(const ThicknessmapTemplates::Configuration& config : templates.getConfigurations())
+		thicknessmapTemplates->addItem(config.getName());
+
+
+	layout.addWidget(thicknessmapTemplates);
+}
+
+
+
 
 void WGLayerSeg::setMarkerMethodPen   () { parent->setSegMethod(BScanLayerSegmentation::SegMethod::Pen   ); }
 void WGLayerSeg::setMarkerMethodSpline() { parent->setSegMethod(BScanLayerSegmentation::SegMethod::Spline); }
@@ -148,3 +176,30 @@ void WGLayerSeg::setIconsToSimple(int size)
 	buttonShowSeglines->setIconSize(iconSize);
 }
 
+void WGLayerSeg::thicknessmapTemplateChanged(int indexInt)
+{
+	const std::size_t index = static_cast<std::size_t>(indexInt);
+	ThicknessmapTemplates& templates = ThicknessmapTemplates::getInstance();
+	const std::vector<ThicknessmapTemplates::Configuration>& configurations = templates.getConfigurations();
+	if(index < configurations.size())
+	{
+		BScanLayerSegmentation::ThicknessmapConfig& thicknessmapConfig = parent->getThicknessmapConfig();
+
+		const ThicknessmapTemplates::Configuration& config = configurations[index];
+
+		switch(config.getUseColorMap())
+		{
+			case ThicknessmapTemplates::UseColorMap::hsv:
+				thicknessmapConfig.setHSVColor();
+				break;
+			case ThicknessmapTemplates::UseColorMap::yellow:
+				thicknessmapConfig.setYellowColor();
+				break;
+		}
+		thicknessmapConfig.setUpperColorLimit(config.getMaxValue());
+		thicknessmapConfig.upperLayer = config.getLine1();
+		thicknessmapConfig.lowerLayer = config.getLine2();
+
+		parent->generateThicknessmap();
+	}
+}
