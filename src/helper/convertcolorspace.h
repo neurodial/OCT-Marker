@@ -3,7 +3,8 @@
 #include<tuple>
 
 
-inline std::tuple<double, double, double> hsv2rgb(double h, double s, double v)
+
+inline void hsv2rgb(double h, double s, double v, double& r, double& g, double& b)
 {
 	const int hi = static_cast<int>(h/60);
 	const double f = h/60 - static_cast<double>(hi);
@@ -16,18 +17,32 @@ inline std::tuple<double, double, double> hsv2rgb(double h, double s, double v)
 	{
 		case 0:
 		case 6:
-			return std::make_tuple(v, t, p);
+			r = v; g = t; b = p;
+			break;
 		case 1:
-			return std::make_tuple(q, v, p);
+			r = q; g = v; b = p;
+			break;
 		case 2:
-			return std::make_tuple(p, v, t);
+			r = p; g = v; b = t;
+			break;
 		case 3:
-			return std::make_tuple(p, q, v);
+			r = p; g = q; b = v;
+			break;
 		case 4:
-			return std::make_tuple(t, p, v);
+			r = t; g = p; b = v;
+			break;
 		case 5:
-			return std::make_tuple(v, p, q);
+			r = v; g = p; b = q;
+			break;
+		default:
+			r = 0; g = 0; b = 0;
+			break;
 	}
+}
 
-	return std::make_tuple(0, 0, 0);
+inline std::tuple<double, double, double> hsv2rgb(double h, double s, double v)
+{
+	double r, g, b;
+	hsv2rgb(h, s, v, r, g, b);
+	return std::make_tuple(r, g, b);
 }

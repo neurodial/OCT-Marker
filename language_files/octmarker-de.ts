@@ -1690,19 +1690,34 @@
 <context>
     <name>WGLayerSeg</name>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="103"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="104"/>
         <source>pen</source>
         <translation>Stift</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="112"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="113"/>
         <source>Spline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="130"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="131"/>
         <source>show segmentationlines</source>
         <translation>Segmentierungslinien anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="149"/>
+        <source>Thicknessmap</source>
+        <translation>Dickenkarte</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="152"/>
+        <source>None</source>
+        <translation>Keine</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanlayersegmentation/wglayerseg.cpp" line="165"/>
+        <source>update thicknessmap</source>
+        <translation>Dickenkarte aktualisieren</translation>
     </message>
 </context>
 <context>

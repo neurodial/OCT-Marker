@@ -218,8 +218,8 @@ void BScanLayerSegmentation::generateThicknessmap()
 {
 	if(thicknessmapConfig.colormap)
 	{
-		QElapsedTimer timer;
-		timer.start();
+// 		QElapsedTimer timer;
+// 		timer.start();
 
 		const OctData::BScan* bscan = getActBScan();
 		OctDataManager& manager = OctDataManager::getInstance();
@@ -231,9 +231,10 @@ void BScanLayerSegmentation::generateThicknessmap()
 			ThicknessMap tm;
 			tm.createMap(*distMap, lines, thicknessmapConfig.upperLayer, thicknessmapConfig.lowerLayer, factor, *thicknessmapConfig.colormap);
 			*thicknesMapImage = tm.getThicknessMap();
+			showThicknessmap = true;
 			requestSloOverlayUpdate();
 
-			std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
+// 			std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
 		}
 	}
 
@@ -243,7 +244,7 @@ void BScanLayerSegmentation::generateThicknessmap()
 
 bool BScanLayerSegmentation::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha) const
 {
-	if(thicknesMapImage)
+	if(thicknesMapImage && showThicknessmap)
 		return BscanMarkerBase::drawSLOOverlayImage(sloImage, outSloImage, alpha, *thicknesMapImage);
 	return false;
 }
@@ -393,14 +394,27 @@ void BScanLayerSegmentation::setIconsToSimple(int size)
 
 void BScanLayerSegmentation::setSegmentationLinesVisible(bool visible)
 {
-	showSegmentationlines = visible;
-	requestFullUpdate();
+	if(visible != showSegmentationlines)
+	{
+		showSegmentationlines = visible;
+		requestFullUpdate();
+	}
 }
+
+void BScanLayerSegmentation::setThicknessmapVisible(bool visible)
+{
+	if(visible != showThicknessmap)
+	{
+		showThicknessmap = visible;
+		requestSloOverlayUpdate();
+	}
+}
+
 
 
 QWidget* BScanLayerSegmentation::getSloLegendWidget()
 {
-	if(thicknesMapImage->empty())
+	if(thicknesMapImage->empty() || !showThicknessmap)
 		return nullptr;
 	return legendWG;
 }

@@ -10,6 +10,7 @@
 #include<QAction>
 #include<QToolButton>
 #include<QComboBox>
+#include <QLabel>
 
 #include<octdata/datastruct/segmentationlines.h>
 
@@ -20,19 +21,21 @@ WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
 : parent(parent)
 , thicknessmapTemplates(new QComboBox(this))
 {
-	connect(parent, &BScanLayerSegmentation::segMethodChanged, this, &WGLayerSeg::markerMethodChanged);
-	connect(thicknessmapTemplates, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &WGLayerSeg::thicknessmapTemplateChanged);
 
 	QVBoxLayout* layout = new QVBoxLayout();
+
 
 	addThicknessMapControls(*layout);
 	createMarkerToolButtons(*layout);
 
 	addLayerButtons(*layout);
 
-
 	layout->addStretch();
 	setLayout(layout);
+
+
+	connect(parent, &BScanLayerSegmentation::segMethodChanged, this, &WGLayerSeg::markerMethodChanged);
+	connect(thicknessmapTemplates, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &WGLayerSeg::thicknessmapTemplateChanged);
 }
 
 
@@ -140,14 +143,34 @@ void WGLayerSeg::createMarkerToolButtons(QLayout& layout)
 
 void WGLayerSeg::addThicknessMapControls(QLayout& layout)
 {
+	QWidget* widgetTools = new QWidget(this);
+	QHBoxLayout* layoutTools = new QHBoxLayout(widgetTools);
+
+	layoutTools->addWidget(new QLabel(tr("Thicknessmap")));
+
 	ThicknessmapTemplates& templates = ThicknessmapTemplates::getInstance();
-
-	thicknessmapTemplates->addItem(tr("None"));
+	thicknessmapTemplates->addItem(tr("None"), QVariant::fromValue(nullptr));
 	for(const ThicknessmapTemplates::Configuration& config : templates.getConfigurations())
-		thicknessmapTemplates->addItem(config.getName());
+	{
+		QString text = QString("%1 (%2 - %3)").arg(config.getName())
+		                                      .arg(OctData::Segmentationlines::getSegmentlineName(config.getLine1()))
+		                                      .arg(OctData::Segmentationlines::getSegmentlineName(config.getLine2()));
+		thicknessmapTemplates->addItem(text, QVariant::fromValue(const_cast<void*>(static_cast<const void*>(&config))));
+	}
+	layoutTools->addWidget(thicknessmapTemplates);
+
+	layoutTools->addStretch();
+
+	QAction* actionUpdateThicknessmap = new QAction(this);
+	actionUpdateThicknessmap->setText(tr("update thicknessmap"));
+	actionUpdateThicknessmap->setIcon(QIcon(":/icons/typicons/arrow-sync-outline.svg"));
+// 	actionUpdateThicknessmap->setIcon(QIcon(":/icons/vector.png"));
+	connect(actionUpdateThicknessmap, &QAction::triggered, parent, &BScanLayerSegmentation::generateThicknessmap);
+	QToolButton* buttonUpdateThicknessmap = createActionToolButton(this, actionUpdateThicknessmap);
+	layoutTools->addWidget(buttonUpdateThicknessmap);
 
 
-	layout.addWidget(thicknessmapTemplates);
+	layout.addWidget(widgetTools);
 }
 
 
@@ -178,7 +201,10 @@ void WGLayerSeg::setIconsToSimple(int size)
 void WGLayerSeg::thicknessmapTemplateChanged(int indexInt)
 {
 	if(indexInt == 0) // none thicknessmap
+	{
+		parent->setThicknessmapVisible(false);
 		return;
+	}
 
 	const std::size_t index = static_cast<std::size_t>(indexInt-1);
 	ThicknessmapTemplates& templates = ThicknessmapTemplates::getInstance();
@@ -204,4 +230,5 @@ void WGLayerSeg::thicknessmapTemplateChanged(int indexInt)
 
 		parent->generateThicknessmap();
 	}
+
 }

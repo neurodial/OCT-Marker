@@ -68,7 +68,8 @@ public:
 
 
 			double rd, gd, bd;
-			std::tie(rd, gd, bd) = hsv2rgb(hue, saturation, hsvValue);
+// 			std::tie(rd, gd, bd) = hsv2rgb(hue, saturation, hsvValue);
+			hsv2rgb(hue, saturation, hsvValue, rd, gd, bd);
 
 			r = static_cast<uint8_t>(rd*255);
 			g = static_cast<uint8_t>(gd*255);
@@ -122,7 +123,8 @@ public:
 
 
 		double rd, gd, bd;
-		std::tie(rd, gd, bd) = hsv2rgb(hue, saturation, hsvValue);
+// 		std::tie(rd, gd, bd) = hsv2rgb(hue, saturation, hsvValue);
+		hsv2rgb(hue, saturation, hsvValue, rd, gd, bd);
 
 		r = static_cast<uint8_t>(rd*255);
 		g = static_cast<uint8_t>(gd*255);

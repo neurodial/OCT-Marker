@@ -83,8 +83,10 @@ public:
 	void setIconsToSimple(int size);
 
 	bool isSegmentationLinesVisible()                         const { return showSegmentationlines; }
+	bool isThicknessmapVisible()                              const { return showThicknessmap; }
 
-	ThicknessmapConfig& getThicknessmapConfig() { return thicknessmapConfig; }
+
+	ThicknessmapConfig& getThicknessmapConfig()                     { return thicknessmapConfig; }
 
 private:
 	std::vector<BScanSegData> lines;
@@ -104,6 +106,7 @@ private:
 // 	Colormap* thicknessmapColor = nullptr;
 
 	bool showSegmentationlines = true;
+	bool showThicknessmap      = true;
 
 	cv::Mat* thicknesMapImage = nullptr;
 
@@ -119,6 +122,7 @@ signals:
 
 public slots:
 	void setSegmentationLinesVisible(bool visible);
+	void setThicknessmapVisible(bool visible);
 
 	void generateThicknessmap();
 };
