@@ -13,6 +13,7 @@ class EditBase;
 class EditSpline;
 class EditPen;
 class Colormap;
+class ThicknessmapLegend;
 
 class BScanLayerSegmentation : public BscanMarkerBase
 {
@@ -92,7 +93,7 @@ private:
 	void resetMarkers(const OctData::Series* series);
 
 	QWidget* widgetPtr2WGLayerSeg = nullptr;
-	QWidget* legendWG = nullptr;
+	ThicknessmapLegend* legendWG = nullptr;
 
 
 	EditBase  * actEditMethod    = nullptr;

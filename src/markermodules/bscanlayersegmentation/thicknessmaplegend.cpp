@@ -37,13 +37,10 @@ ThicknessmapLegend::ThicknessmapLegend(QWidget* parent, Qt::WindowFlags f)
 	thicknessLabels.push_back(BarLabel(400, this, labelXpos));
 	thicknessLabels.push_back(BarLabel(500, this, labelXpos));
 	updateLabelsWidth();
-
-	colormap = new ColormapHSV;
 }
 
 ThicknessmapLegend::~ThicknessmapLegend()
 {
-	delete colormap;
 }
 
 void ThicknessmapLegend::updateLabelsWidth()
@@ -100,6 +97,8 @@ int ThicknessmapLegend::value2HeightPos(double value, int height)
 	const double maxValue = colormap->getMaxValue();
 	const double relValue = 1-value/maxValue;
 
+	size();
+
 	return static_cast<int>(relValue*barHeight) + broderH;
 }
 
@@ -118,8 +117,21 @@ namespace
 
 void ThicknessmapLegend::resizeEvent(QResizeEvent* event)
 {
-	QSize s = event->size();
-	const int legendBarHeight = s.height()-broderH*2;
+	updateLegend(event->size());
+}
+
+
+void ThicknessmapLegend::updateLegend()
+{
+	updateLegend(size());
+}
+
+void ThicknessmapLegend::updateLegend(const QSize& wgSize)
+{
+	if(!colormap)
+		return;
+
+	const int legendBarHeight = wgSize.height()-broderH*2;
 	QImage legendImage(legendBarWidth, legendBarHeight, QImage::Format_RGB32);
 	double maxValue = colormap->getMaxValue();
 
@@ -149,5 +161,5 @@ void ThicknessmapLegend::resizeEvent(QResizeEvent* event)
 
 
 	for(BarLabel& label : thicknessLabels)
-		adjustLabel(label, s.height());
+		adjustLabel(label, wgSize.height());
 }

@@ -236,6 +236,8 @@ void BScanLayerSegmentation::generateThicknessmap()
 			std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
 		}
 	}
+
+	legendWG->setColormap(thicknessmapConfig.colormap);
 }
 
 
