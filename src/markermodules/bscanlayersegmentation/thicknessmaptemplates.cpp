@@ -4,7 +4,7 @@
 ThicknessmapTemplates::ThicknessmapTemplates()
 {
 	configurations.emplace_back(tr("Full Retina"               ), OctData::Segmentationlines::SegmentlineType::ILM , OctData::Segmentationlines::SegmentlineType::BM  , 100, 500, UseColorMap::hsv   );
-	configurations.emplace_back(tr("RNFL"                      ), OctData::Segmentationlines::SegmentlineType::ILM , OctData::Segmentationlines::SegmentlineType::RNFL, 0  , 100, UseColorMap::yellow);
+	configurations.emplace_back(tr("Retinal Nerve Fiber Layer" ), OctData::Segmentationlines::SegmentlineType::ILM , OctData::Segmentationlines::SegmentlineType::RNFL, 0  , 100, UseColorMap::yellow);
 	configurations.emplace_back(tr("Ganglion Cell Layer"       ), OctData::Segmentationlines::SegmentlineType::RNFL, OctData::Segmentationlines::SegmentlineType::GCL , 0  , 75 , UseColorMap::yellow);
 	configurations.emplace_back(tr("Inner Plexiform Layer"     ), OctData::Segmentationlines::SegmentlineType::GCL , OctData::Segmentationlines::SegmentlineType::IPL , 0  , 75 , UseColorMap::yellow);
 	configurations.emplace_back(tr("Inner Nuclear Layer"       ), OctData::Segmentationlines::SegmentlineType::IPL , OctData::Segmentationlines::SegmentlineType::INL , 0  , 75 , UseColorMap::yellow);

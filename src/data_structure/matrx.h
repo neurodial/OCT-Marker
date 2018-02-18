@@ -35,6 +35,16 @@ public:
 
 
 	T& operator()(std::size_t x, std::size_t y)                     { return field[x + y*sizeX]; }
-	std::size_t getSizeX()                                          { return sizeX; }
-	std::size_t getSizeY()                                          { return sizeY; }
+	const T& operator()(std::size_t x, std::size_t y)        const  { return field[x + y*sizeX]; }
+	std::size_t getSizeX()                                   const  { return sizeX; }
+	std::size_t getSizeY()                                   const  { return sizeY; }
+
+	void resize(std::size_t x, std::size_t y)
+	{
+		T* fieldOld = field;
+		field = new T[x*y];
+		delete[] fieldOld;
+		sizeX = x;
+		sizeY = y;
+	}
 };

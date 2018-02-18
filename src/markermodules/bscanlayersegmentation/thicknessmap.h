@@ -39,17 +39,24 @@ public:
 private:
 	cv::Mat* thicknessMap = nullptr;
 
-	double getSingleValue(const SloBScanDistanceMap::PixelInfo& pinfo);
-	double getMixValue(const SloBScanDistanceMap::PixelInfo& pinfo);
-	double getHeight(const OctData::Segmentationlines::Segmentline& line, const std::size_t ascan);
-	double getValue(const SloBScanDistanceMap::InfoBScanDist& info);
+	double getSingleValue(const SloBScanDistanceMap::PixelInfo& pinfo) const;
+	double getMixValue(const SloBScanDistanceMap::PixelInfo& pinfo) const;
+	double getValue(const SloBScanDistanceMap::InfoBScanDist& info) const;
 
 	void fillLineVec(const std::vector<BScanLayerSegmentation::BScanSegData>& lines
 	               , OctData::Segmentationlines::SegmentlineType t1
 	               , OctData::Segmentationlines::SegmentlineType t2);
 
-	std::vector<const OctData::Segmentationlines::Segmentline*> layer1;
-	std::vector<const OctData::Segmentationlines::Segmentline*> layer2;
+	void fillThicknessBscan(const BScanLayerSegmentation::BScanSegData& bscan
+	                      , const std::size_t bscanNr
+	                      , OctData::Segmentationlines::SegmentlineType t1
+	                      , OctData::Segmentationlines::SegmentlineType t2);
+
+	void initThicknessMatrix(const std::vector<BScanLayerSegmentation::BScanSegData>& lines
+	                       , OctData::Segmentationlines::SegmentlineType t1
+	                       , OctData::Segmentationlines::SegmentlineType t2);
+
+	Matrix<double> thicknessMatrix;
 };
 
 #endif // THICKNESSMAP_H

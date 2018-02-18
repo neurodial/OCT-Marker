@@ -75,7 +75,7 @@ void ThicknessMap::createMap(const SloBScanDistanceMap& distMap
 				if(blendColor) value = getMixValue(*srcPtr);
 				else           value = getSingleValue(*srcPtr);
 
-				if(value <= 0.)
+				if(value < 0.)
 				{
 					destPtr[0] = 0;
 					destPtr[1] = 0;
@@ -106,36 +106,31 @@ void ThicknessMap::createMap(const SloBScanDistanceMap& distMap
 	}
 }
 
-double ThicknessMap::getSingleValue(const SloBScanDistanceMap::PixelInfo& pinfo)
+double ThicknessMap::getSingleValue(const SloBScanDistanceMap::PixelInfo& pinfo) const
 {
 	const SloBScanDistanceMap::InfoBScanDist& bInfo1 = pinfo.bscan1;
-	std::size_t b1 = bInfo1.bscan;
-	const std::size_t numBscans = layer1.size();
-	if(b1 >= numBscans)
-		return 0;
-
-	return getValue( bInfo1);
+	return getValue(bInfo1);
 }
 
 
-double ThicknessMap::getMixValue(const SloBScanDistanceMap::PixelInfo& pinfo)
+double ThicknessMap::getMixValue(const SloBScanDistanceMap::PixelInfo& pinfo) const
 {
 	const SloBScanDistanceMap::InfoBScanDist& bInfo1 = pinfo.bscan1;
 	const SloBScanDistanceMap::InfoBScanDist& bInfo2 = pinfo.bscan2;
 
 
-	std::size_t b1 = bInfo1.bscan;
-	std::size_t b2 = bInfo2.bscan;
+	const std::size_t b1 = bInfo1.bscan;
+	const std::size_t b2 = bInfo2.bscan;
 
-	const std::size_t numBscans = layer1.size();
+	const size_t numBscans = thicknessMatrix.getSizeY();
 
 	if(b1 >= numBscans)
-		return 0;
+		return -1;
 
-	double h1 = getValue( bInfo1);
+	double h1 = getValue(bInfo1);
 
-	if(h1 <= 0)
-		return 0;
+	if(std::isnan(h1) || h1 < 0)
+		return -1;
 	if(b2 >= numBscans)
 		return h1;
 
@@ -155,48 +150,24 @@ double ThicknessMap::getMixValue(const SloBScanDistanceMap::PixelInfo& pinfo)
 	return result;
 }
 
-double ThicknessMap::getHeight(const OctData::Segmentationlines::Segmentline& line, const std::size_t ascan)
-{
-	if(line.size() > ascan)
-	{
-		double val = line[ascan];
-		if(val < 1e6)
-			return val;
-	}
-	return -1;
-}
 
-double ThicknessMap::getValue(const SloBScanDistanceMap::InfoBScanDist& info)
+double ThicknessMap::getValue(const SloBScanDistanceMap::InfoBScanDist& info) const
 {
 	std::size_t ascan = info.ascan;
 	std::size_t bscan = info.bscan;
 
-	if(bscan >= layer1.size() && bscan >= layer2.size())
-		return 0.;
+	if(ascan >= thicknessMatrix.getSizeX() || bscan >= thicknessMatrix.getSizeY())
+		return std::numeric_limits<double>::quiet_NaN();
 
-	const OctData::Segmentationlines::Segmentline* line1 = layer1[bscan];
-	const OctData::Segmentationlines::Segmentline* line2 = layer2[bscan];
-
-
-	if(!line1 || !line2)
-		return 0;
-
-	double h1 = getHeight(*line1, ascan);
-	double h2 = getHeight(*line2, ascan);
-
-	if(h1 >= 0 && h2 >= 0)
-		return h2-h1;
-	return 0;
+	return thicknessMatrix(ascan, bscan);
 }
 
 
 
-void ThicknessMap::fillLineVec(const std::vector<BScanLayerSegmentation::BScanSegData>& lines
-                             , OctData::Segmentationlines::SegmentlineType t1
-                             , OctData::Segmentationlines::SegmentlineType t2)
+void ThicknessMap::initThicknessMatrix(const std::vector<BScanLayerSegmentation::BScanSegData>& lines, OctData::Segmentationlines::SegmentlineType t1, OctData::Segmentationlines::SegmentlineType t2)
 {
-	layer1.clear();
-	layer2.clear();
+	const std::size_t numBscans = lines.size();
+	std::size_t maxAscanNum = 0;
 
 	for(const BScanLayerSegmentation::BScanSegData& segData : lines)
 	{
@@ -206,12 +177,66 @@ void ThicknessMap::fillLineVec(const std::vector<BScanLayerSegmentation::BScanSe
 		{
 			l1 = &(segData.lines.getSegmentLine(t1));
 			l2 = &(segData.lines.getSegmentLine(t2));
-		}
 
-		layer1.push_back(l1);
-		layer2.push_back(l2);
+			const std::size_t numAscans = std::min(l1->size(), l2->size());
+			if(numAscans > maxAscanNum)
+				maxAscanNum = numAscans;
+		}
+	}
+
+	thicknessMatrix.resize(maxAscanNum, numBscans);
+}
+
+void ThicknessMap::fillLineVec(const std::vector<BScanLayerSegmentation::BScanSegData>& lines
+                             , OctData::Segmentationlines::SegmentlineType t1
+                             , OctData::Segmentationlines::SegmentlineType t2)
+{
+	initThicknessMatrix(lines, t1, t2);
+	std::size_t nrBscan = 0;
+	for(const BScanLayerSegmentation::BScanSegData& segData : lines)
+	{
+		fillThicknessBscan(segData, nrBscan, t1, t2);
+		++nrBscan;
 	}
 }
+
+namespace
+{
+	double getValue(const double* const line, std::size_t index)
+	{
+		const double value = line[index];
+		if(value > 1e8)
+			return std::numeric_limits<double>::quiet_NaN();
+		return value;
+	}
+}
+
+void ThicknessMap::fillThicknessBscan(const BScanLayerSegmentation::BScanSegData& bscanData, const std::size_t bscanNr, OctData::Segmentationlines::SegmentlineType t1, OctData::Segmentationlines::SegmentlineType t2)
+{
+	double* const scanline = thicknessMatrix.scanLine(bscanNr);
+
+	std::size_t filledAscans = 0;
+	if(bscanData.filled)
+	{
+		const OctData::Segmentationlines::Segmentline* l1 = &(bscanData.lines.getSegmentLine(t1));
+		const OctData::Segmentationlines::Segmentline* l2 = &(bscanData.lines.getSegmentLine(t2));
+		if(l1 && l2)
+		{
+			const std::size_t numAscans = std::min(l1->size(), l2->size());
+
+			const double* const l1data = l1->data();
+			const double* const l2data = l2->data();
+
+			for(std::size_t i = 0; i < numAscans; ++i)
+				scanline[i] = ::getValue(l2data, i) - ::getValue(l1data, i);
+			filledAscans = numAscans;
+		}
+	}
+	const std::size_t maxAscanNum = thicknessMatrix.getSizeX();
+	for(std::size_t i = filledAscans; i < maxAscanNum; ++i)
+		scanline[i] = std::numeric_limits<double>::quiet_NaN();
+}
+
 
 void ThicknessMap::resetThicknessMapCache()
 {

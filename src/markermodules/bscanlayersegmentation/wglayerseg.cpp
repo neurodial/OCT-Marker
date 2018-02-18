@@ -64,8 +64,6 @@ void WGLayerSeg::addLayerButtons(QLayout& layout)
 		layerButtons->addButton(button);
 		layout.addWidget(button);
 		seglineButtons[static_cast<std::size_t>(type)] = button;
-
-		qDebug("%s", OctData::Segmentationlines::getSegmentlineName(type));
 	}
 
     connect(signalMapper, static_cast<void (QSignalMapper::*)(int)>(&QSignalMapper::mapped), this, &WGLayerSeg::changeSeglineId);
@@ -144,6 +142,7 @@ void WGLayerSeg::addThicknessMapControls(QLayout& layout)
 {
 	ThicknessmapTemplates& templates = ThicknessmapTemplates::getInstance();
 
+	thicknessmapTemplates->addItem(tr("None"));
 	for(const ThicknessmapTemplates::Configuration& config : templates.getConfigurations())
 		thicknessmapTemplates->addItem(config.getName());
 
@@ -178,7 +177,10 @@ void WGLayerSeg::setIconsToSimple(int size)
 
 void WGLayerSeg::thicknessmapTemplateChanged(int indexInt)
 {
-	const std::size_t index = static_cast<std::size_t>(indexInt);
+	if(indexInt == 0) // none thicknessmap
+		return;
+
+	const std::size_t index = static_cast<std::size_t>(indexInt-1);
 	ThicknessmapTemplates& templates = ThicknessmapTemplates::getInstance();
 	const std::vector<ThicknessmapTemplates::Configuration>& configurations = templates.getConfigurations();
 	if(index < configurations.size())
