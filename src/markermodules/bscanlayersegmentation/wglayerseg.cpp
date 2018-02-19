@@ -149,7 +149,7 @@ void WGLayerSeg::addThicknessMapControls(QLayout& layout)
 	layoutTools->addWidget(new QLabel(tr("Thicknessmap")));
 
 	ThicknessmapTemplates& templates = ThicknessmapTemplates::getInstance();
-	thicknessmapTemplates->addItem(tr("None"), QVariant::fromValue(nullptr));
+	thicknessmapTemplates->addItem(tr("None"), QVariant::fromValue(static_cast<void*>(nullptr)));
 	for(const ThicknessmapTemplates::Configuration& config : templates.getConfigurations())
 	{
 		QString text = QString("%1 (%2 - %3)").arg(config.getName())

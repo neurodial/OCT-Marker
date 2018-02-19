@@ -276,7 +276,13 @@ void BScanLayerSegmentation::copySegLinesFromOctData(const std::size_t bScanNr)
 
 	const std::size_t bscanWidth = static_cast<std::size_t>(bscan->getWidth());
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
-		segData.lines.getSegmentLine(type).resize(bscanWidth);
+	{
+		OctData::Segmentationlines::Segmentline& segline = segData.lines.getSegmentLine(type);
+		std::size_t seglineSize = segline.size();
+		segline.resize(bscanWidth);
+		for(std::size_t i = seglineSize; i < bscanWidth; ++i)
+			segline[i] = std::numeric_limits<double>::quiet_NaN();
+	}
 
 	if(bScanNr == getActBScanNr())
 	{
