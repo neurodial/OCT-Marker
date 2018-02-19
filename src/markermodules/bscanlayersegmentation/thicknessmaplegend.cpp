@@ -1,5 +1,6 @@
 #include "thicknessmaplegend.h"
 
+#include<cmath>
 
 #include<QPaintEvent>
 #include<QPainter>
@@ -7,7 +8,6 @@
 #include<QLabel>
 
 #include "colormaphsv.h"
-
 
 
 ThicknessmapLegend::BarLabel::BarLabel(double value, QWidget* parent, int xpos)
@@ -18,30 +18,86 @@ ThicknessmapLegend::BarLabel::BarLabel(double value, QWidget* parent, int xpos)
 	label->setGeometry(xpos, 0, s.width(), s.height());
 }
 
+ThicknessmapLegend::BarLabel::BarLabel(ThicknessmapLegend::BarLabel&& other)
+: value(other.value)
+{
+	std::swap(label, other.label);
+}
+
+ThicknessmapLegend::BarLabel::~BarLabel()
+{
+	delete label;
+}
+
+ThicknessmapLegend::BarLabel& ThicknessmapLegend::BarLabel::operator=(ThicknessmapLegend::BarLabel&& other)
+{
+	value = other.value;
+	std::swap(label, other.label);
+}
+
+void ThicknessmapLegend::BarLabel::setVisible(bool s)
+{
+	if(!label)
+		return;
+	label->setVisible(s);
+}
+
+bool ThicknessmapLegend::BarLabel::isVisible() const
+{
+	if(!label)
+		return false;
+	return label->isVisible();
+}
+
+
+
+
 void ThicknessmapLegend::BarLabel::setHPos(int pos)
 {
+	if(!label)
+		return;
 	QRect geo = label->geometry();
 	label->setGeometry(geo.x(), pos-geo.height()/2, geo.width(), geo.height());
 }
+
+void ThicknessmapLegend::BarLabel::setValue(double v)
+{
+	if(!label)
+		return;
+	value = v;
+	QString text = QString("%1").arg(value);
+	label->setText(text);
+
+	QSize s = label->minimumSizeHint();
+	const QRect r = label->geometry();
+	label->setGeometry(r.x(), 0, s.width(), s.height());
+}
+
 
 
 ThicknessmapLegend::ThicknessmapLegend(QWidget* parent, Qt::WindowFlags f)
 : QWidget(parent, f)
 {
-	const int labelXpos = distanceBarLabel + legendBarWidth + broder;
+	updateLabelXpos();
 	thicknessLabels.push_back(BarLabel(0  , this, labelXpos));
-	thicknessLabels.push_back(BarLabel(50 , this, labelXpos));
-	thicknessLabels.push_back(BarLabel(100, this, labelXpos));
-	thicknessLabels.push_back(BarLabel(200, this, labelXpos));
-	thicknessLabels.push_back(BarLabel(300, this, labelXpos));
-	thicknessLabels.push_back(BarLabel(400, this, labelXpos));
-	thicknessLabels.push_back(BarLabel(500, this, labelXpos));
-	updateLabelsWidth();
+// 	thicknessLabels.push_back(BarLabel(50 , this, labelXpos));
+// 	thicknessLabels.push_back(BarLabel(100, this, labelXpos));
+// 	thicknessLabels.push_back(BarLabel(200, this, labelXpos));
+// 	thicknessLabels.push_back(BarLabel(300, this, labelXpos));
+// 	thicknessLabels.push_back(BarLabel(400, this, labelXpos));
+// 	thicknessLabels.push_back(BarLabel(500, this, labelXpos));
+	updateLegendLabels();
 }
 
 ThicknessmapLegend::~ThicknessmapLegend()
 {
 }
+
+void ThicknessmapLegend::updateLabelXpos()
+{
+	labelXpos = distanceBarLabel + legendBarWidth + broder;
+}
+
 
 void ThicknessmapLegend::updateLabelsWidth()
 {
@@ -49,19 +105,28 @@ void ThicknessmapLegend::updateLabelsWidth()
 	labelsMaxWidth  = 0;
 	for(BarLabel& label : thicknessLabels)
 	{
-		QSize s = label.label->minimumSizeHint();
-		if(labelsMaxWidth < s.width())
-			labelsMaxWidth = s.width();
-		if(labelsMaxHeight < s.height())
-			labelsMaxHeight = s.height();
+		if(!label.isVisible())
+			break;
+
+		const QSize s = label.getLabel()->minimumSizeHint();
+
+		int height = s.height();
+		int width  = s.width();
+
+		if(labelsMaxWidth < width)
+			labelsMaxWidth = width;
+		if(labelsMaxHeight < height)
+			labelsMaxHeight = height;
 	}
 	broderH = labelsMaxHeight/2+broder;
+
+	updateGeometry();
 }
 
 
 void ThicknessmapLegend::adjustLabel(ThicknessmapLegend::BarLabel& label, int height)
 {
-	label.setHPos(value2HeightPos(label.value, height));
+	label.setHPos(value2HeightPos(label.getValue(), height));
 }
 
 
@@ -84,8 +149,10 @@ void ThicknessmapLegend::paintEvent(QPaintEvent* event)
 
 	for(BarLabel& label : thicknessLabels)
 	{
-// 		label.label->setFont();
-		QRect geo = label.label->geometry();
+		if(!label.isVisible())
+			break;
+
+		QRect geo = label.getLabel()->geometry();
 		int h = geo.height()/2 + geo.y();
 		p.drawLine(lineStartX, h, lineEndX, h);
 	}
@@ -159,7 +226,55 @@ void ThicknessmapLegend::updateLegend(const QSize& wgSize)
 
 	legend = QPixmap::fromImage(legendImage);
 
+	updateLegendLabels();
 
 	for(BarLabel& label : thicknessLabels)
 		adjustLabel(label, wgSize.height());
 }
+
+
+void ThicknessmapLegend::updateInsertLabel(std::size_t nr, double value)
+{
+	if(thicknessLabels.size() <= nr)
+		thicknessLabels.push_back(BarLabel(value, this, labelXpos));
+	else
+	{
+		thicknessLabels[nr].setValue(value);
+		thicknessLabels[nr].setVisible(true);
+	}
+
+}
+
+
+
+void ThicknessmapLegend::updateLegendLabels()
+{
+	if(!colormap)
+		return;
+
+	double maxValue = colormap->getMaxValue();
+	double numDigits = std::floor(std::log10(maxValue));
+	double magnitude = exp10(numDigits);
+
+	double highstSignDigit = std::floor(maxValue/magnitude);
+
+	if(highstSignDigit == 1)
+	{
+		magnitude /= 10;
+		highstSignDigit = std::floor(maxValue/magnitude);
+	}
+
+	std::size_t actLabelNr = 1;
+
+	for(int i = 0; i <= highstSignDigit; ++i)
+	{
+		updateInsertLabel(actLabelNr, i*magnitude);
+		++actLabelNr;
+	}
+
+	for(std::size_t i = actLabelNr; i < thicknessLabels.size(); ++i)
+		thicknessLabels[i].setVisible(false);
+
+	updateLabelsWidth();
+}
+
