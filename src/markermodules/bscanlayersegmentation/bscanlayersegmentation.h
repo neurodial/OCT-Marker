@@ -116,9 +116,14 @@ private:
 	void copySegLinesFromOctData();
 	void copySegLinesFromOctData(std::size_t bscan);
 
+
+	void changeSeglineId(std::size_t index);
+
 	std::size_t getMaxBscanWidth() const;
 signals:
 	void segMethodChanged();
+	void segLineIdChanged(std::size_t id);
+	void segLineVisibleChanged(bool);
 
 public slots:
 	void setSegmentationLinesVisible(bool visible);

@@ -279,7 +279,7 @@ void ThicknessmapLegend::updateLegendLabels()
 	{
 		double maxValue = colormap->getMaxValue();
 		double numDigits = std::floor(std::log10(maxValue));
-		double magnitude = exp10(numDigits);
+		double magnitude = std::pow(10, numDigits);
 
 		double highstSignDigit = std::floor(maxValue/magnitude);
 

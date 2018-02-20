@@ -12,5 +12,5 @@ void NumberPushButton::paintEvent(QPaintEvent* p)
 	int h = height();
 
 	QRect rect(w-h, 0, h, h);
-	paint.drawText(rect, Qt::AlignCenter, QString::number(number));
+	paint.drawText(rect, Qt::AlignCenter, additionalText);
 }

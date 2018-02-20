@@ -53,6 +53,9 @@ private slots:
 	void setMarkerMethodSpline();
 
 	void thicknessmapTemplateChanged(int index);
+
+	void segLineIdChanged(std::size_t index);
+	void segLineVisibleChanged(bool v);
 };
 
 #endif // WGLAYERSEG_H

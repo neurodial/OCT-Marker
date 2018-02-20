@@ -176,7 +176,11 @@ void BScanLayerSegmentation::setActEditLinetype(OctData::Segmentationlines::Segm
 
 
 	if(actEditMethod)
+	{
 		actEditMethod->segLineChanged(&lines[getActBScanNr()].lines.getSegmentLine(actEditType));
+
+		emit(segLineIdChanged(static_cast<int>(type)));
+	}
 
 	requestFullUpdate();
 }
@@ -185,27 +189,38 @@ void BScanLayerSegmentation::setActEditLinetype(OctData::Segmentationlines::Segm
 bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* widget)
 {
 	int key = event->key();
-	switch(key)
+	if(key >= Qt::Key_0 && key <= Qt::Key_9)
 	{
-#ifndef NDEBUG
-		case Qt::Key_C:
-			if(event->modifiers() == Qt::ShiftModifier)
-				copyAllSegLinesFromOctData();
-			else
-				copySegLinesFromOctData();
-			return true;
-#endif
-		case Qt::Key_1:
-			setSegMethod(BScanLayerSegmentation::SegMethod::Pen);
-			return true;
+		changeSeglineId(key-Qt::Key_0);
+	}
+	else
+	{
+		switch(key)
+		{
+	#ifndef NDEBUG
+			case Qt::Key_C:
+				if(event->modifiers() == Qt::ShiftModifier)
+					copyAllSegLinesFromOctData();
+				else
+					copySegLinesFromOctData();
+				return true;
+	#endif
+			case Qt::Key_Q:
+				setSegMethod(BScanLayerSegmentation::SegMethod::Pen);
+				return true;
 
-		case Qt::Key_2:
-			setSegMethod(BScanLayerSegmentation::SegMethod::Spline);
-			return true;
+			case Qt::Key_W:
+				setSegMethod(BScanLayerSegmentation::SegMethod::Spline);
+				return true;
 
-		case Qt::Key_T:
-			generateThicknessmap();
-			return true;
+			case Qt::Key_E:
+				setSegmentationLinesVisible(!showSegmentationlines);
+				return true;
+
+			case Qt::Key_T:
+				generateThicknessmap();
+				return true;
+		}
 	}
 
 	if(actEditMethod)
@@ -403,6 +418,7 @@ void BScanLayerSegmentation::setSegmentationLinesVisible(bool visible)
 	if(visible != showSegmentationlines)
 	{
 		showSegmentationlines = visible;
+		emit(segLineVisibleChanged(visible));
 		requestFullUpdate();
 	}
 }
@@ -445,6 +461,12 @@ void BScanLayerSegmentation::ThicknessmapConfig::setUpperColorLimit(double thick
 }
 
 
+void BScanLayerSegmentation::changeSeglineId(std::size_t index)
+{
+	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
+	if(index < numSegLines)
+		setActEditLinetype(OctData::Segmentationlines::getSegmentlineTypes().at(index));
+}
 
 
 

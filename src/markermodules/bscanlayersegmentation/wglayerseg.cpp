@@ -14,6 +14,8 @@
 
 #include<octdata/datastruct/segmentationlines.h>
 
+#include<widgets/numberpushbutton.h>
+
 #include"thicknessmaptemplates.h"
 
 
@@ -34,7 +36,9 @@ WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
 	setLayout(layout);
 
 
-	connect(parent, &BScanLayerSegmentation::segMethodChanged, this, &WGLayerSeg::markerMethodChanged);
+	connect(parent, &BScanLayerSegmentation::segMethodChanged     , this, &WGLayerSeg::markerMethodChanged  );
+	connect(parent, &BScanLayerSegmentation::segLineIdChanged     , this, &WGLayerSeg::segLineIdChanged     );
+	connect(parent, &BScanLayerSegmentation::segLineVisibleChanged, this, &WGLayerSeg::segLineVisibleChanged);
 	connect(thicknessmapTemplates, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &WGLayerSeg::thicknessmapTemplateChanged);
 }
 
@@ -52,10 +56,13 @@ void WGLayerSeg::addLayerButtons(QLayout& layout)
 	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
 	seglineButtons.resize(numSegLines);
 
+	std::size_t id = 0;
 	const OctData::Segmentationlines::SegmentlineType actType = parent->getActEditSeglineType();
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 	{
-		QPushButton* button = new QPushButton(OctData::Segmentationlines::getSegmentlineName(type));
+		QPushButton* button = new NumberPushButton(id++, this);
+		button->setText(OctData::Segmentationlines::getSegmentlineName(type));
+// 		QPushButton* button = new QPushButton(OctData::Segmentationlines::getSegmentlineName(type));
 		button->setCheckable(true);
 
         connect(button, &QPushButton::clicked, signalMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
@@ -232,3 +239,18 @@ void WGLayerSeg::thicknessmapTemplateChanged(int indexInt)
 	}
 
 }
+
+
+void WGLayerSeg::segLineIdChanged(std::size_t index)
+{
+	if(seglineButtons.size() > index)
+	{
+		seglineButtons[index]->setChecked(true);
+	}
+}
+
+void WGLayerSeg::segLineVisibleChanged(bool v)
+{
+	actionShowSeglines->setChecked(v);
+}
+

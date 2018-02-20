@@ -7,11 +7,16 @@ class NumberPushButton : public QPushButton
 {
 	Q_OBJECT
 
-	int number;
+	QString additionalText;
 public:
 	NumberPushButton(int number, QWidget *parent = nullptr)
 	: QPushButton(parent)
-	, number(number)
+	, additionalText(QString::number(number))
+	{}
+
+	NumberPushButton(const QString& number, QWidget *parent = nullptr)
+	: QPushButton(parent)
+	, additionalText(number)
 	{}
 
 	void paintEvent(QPaintEvent* p) override;
