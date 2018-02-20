@@ -55,6 +55,7 @@ class ThicknessmapLegend : public QWidget
 	const Colormap* colormap = nullptr;
 
 	void adjustLabel(BarLabel& label, int height);
+	void calcLabelsSize(int& maxHeight, int& maxWidth);
 	void updateLabelsWidth();
 
 	void updateLegend(const QSize& wgSize);

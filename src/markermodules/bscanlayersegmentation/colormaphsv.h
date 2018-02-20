@@ -30,7 +30,7 @@ class ColormapHSV : public Colormap
 public:
 
 	void   setMaxValue(double value) override { maxValue = value; }
-	double getMaxValue() const override { return 750; }
+	double getMaxValue() const override { return maxValue; }
 
 	void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const override
 	{

@@ -33,6 +33,7 @@ ThicknessmapLegend::BarLabel& ThicknessmapLegend::BarLabel::operator=(Thicknessm
 {
 	value = other.value;
 	std::swap(label, other.label);
+	return *this;
 }
 
 void ThicknessmapLegend::BarLabel::setVisible(bool s)
@@ -99,10 +100,10 @@ void ThicknessmapLegend::updateLabelXpos()
 }
 
 
-void ThicknessmapLegend::updateLabelsWidth()
+void ThicknessmapLegend::calcLabelsSize(int& maxHeight, int& maxWidth)
 {
-	labelsMaxHeight = 0;
-	labelsMaxWidth  = 0;
+	maxHeight = 0;
+	maxWidth  = 0;
 	for(BarLabel& label : thicknessLabels)
 	{
 		if(!label.isVisible())
@@ -113,13 +114,26 @@ void ThicknessmapLegend::updateLabelsWidth()
 		int height = s.height();
 		int width  = s.width();
 
-		if(labelsMaxWidth < width)
-			labelsMaxWidth = width;
-		if(labelsMaxHeight < height)
-			labelsMaxHeight = height;
+		if(maxWidth < width)
+			maxWidth = width;
+		if(maxHeight < height)
+			maxHeight = height;
 	}
-	broderH = labelsMaxHeight/2+broder;
+}
 
+void ThicknessmapLegend::updateLabelsWidth()
+{
+	int maxHeight = 0;
+	int maxWidth  = 0;
+	calcLabelsSize(maxHeight, maxWidth);
+
+	if(maxHeight == 0 || maxWidth == 0)
+		return;
+
+	labelsMaxHeight = maxHeight;
+	labelsMaxWidth  = maxWidth ;
+
+	broderH = labelsMaxHeight/2+broder;
 	updateGeometry();
 }
 
@@ -229,7 +243,7 @@ void ThicknessmapLegend::updateLegend(const QSize& wgSize)
 	updateLegendLabels();
 
 	for(BarLabel& label : thicknessLabels)
-		adjustLabel(label, wgSize.height());
+		adjustLabel(label, wgSize.height()-1);
 }
 
 
@@ -252,24 +266,38 @@ void ThicknessmapLegend::updateLegendLabels()
 	if(!colormap)
 		return;
 
-	double maxValue = colormap->getMaxValue();
-	double numDigits = std::floor(std::log10(maxValue));
-	double magnitude = exp10(numDigits);
-
-	double highstSignDigit = std::floor(maxValue/magnitude);
-
-	if(highstSignDigit == 1)
-	{
-		magnitude /= 10;
-		highstSignDigit = std::floor(maxValue/magnitude);
-	}
-
 	std::size_t actLabelNr = 1;
 
-	for(int i = 0; i <= highstSignDigit; ++i)
+	const int labelDistance = 4;
+	const int widgetHeight = height();
+
+	if(widgetHeight == 0)
+		return;
+
+	const int maxLabels = widgetHeight/labelsMaxHeight/labelDistance;
+	if(maxLabels > 0)
 	{
-		updateInsertLabel(actLabelNr, i*magnitude);
-		++actLabelNr;
+		double maxValue = colormap->getMaxValue();
+		double numDigits = std::floor(std::log10(maxValue));
+		double magnitude = exp10(numDigits);
+
+		double highstSignDigit = std::floor(maxValue/magnitude);
+
+		if(highstSignDigit == 1)
+		{
+			magnitude /= 10;
+			highstSignDigit = std::floor(maxValue/magnitude);
+		}
+
+		int stepSize = static_cast<int>(highstSignDigit)/maxLabels;
+		if(stepSize == 0)
+			stepSize = 1;
+
+		for(int i = 0; i <= highstSignDigit; i += stepSize)
+		{
+			updateInsertLabel(actLabelNr, i*magnitude);
+			++actLabelNr;
+		}
 	}
 
 	for(std::size_t i = actLabelNr; i < thicknessLabels.size(); ++i)
