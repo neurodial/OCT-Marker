@@ -33,6 +33,7 @@
 
 
 #include"thicknessmaplegend.h"
+#include<markermodules/widgetoverlaylegend.h>
 #include <manager/octdatamanager.h>
 #include "colormaphsv.h"
 
@@ -49,9 +50,8 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 
 	setSegMethod(SegMethod::Pen);
 
-// 	thicknessmapColor = new ColormapHSV;
-
-	legendWG             = new ThicknessmapLegend;
+	thicknessMapLegend   = new ThicknessmapLegend;
+	legendWG             = new WidgetOverlayLegend(thicknessMapLegend);
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
 }
 
@@ -61,8 +61,8 @@ BScanLayerSegmentation::~BScanLayerSegmentation()
 	delete editMethodPen   ;
 
 	delete thicknesMapImage;
-// 	delete thicknessmapColor;
-// 	delete legendWG; // TODO
+// 	delete thicknessMapLegend; // TODO
+	delete legendWG;
 }
 
 
@@ -253,7 +253,7 @@ void BScanLayerSegmentation::generateThicknessmap()
 		}
 	}
 
-	legendWG->setColormap(thicknessmapConfig.colormap);
+	thicknessMapLegend->setColormap(thicknessmapConfig.colormap);
 }
 
 
@@ -434,7 +434,7 @@ void BScanLayerSegmentation::setThicknessmapVisible(bool visible)
 
 
 
-QWidget* BScanLayerSegmentation::getSloLegendWidget()
+WidgetOverlayLegend* BScanLayerSegmentation::getSloLegendWidget()
 {
 	if(thicknesMapImage->empty() || !showThicknessmap)
 		return nullptr;

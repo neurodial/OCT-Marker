@@ -18,6 +18,7 @@ class QGraphicsScene;
 
 class OctMarkerManager;
 class SLOImageWidget;
+class WidgetOverlayLegend;
 
 
 namespace OctData
@@ -73,7 +74,7 @@ public:
 	
 	virtual QToolBar* createToolbar(QObject*)                       { return nullptr; }
 	virtual QWidget*  getWidget()                                   { return nullptr; }
-	virtual QWidget*  getSloLegendWidget()                          { return nullptr; }
+	virtual WidgetOverlayLegend* getSloLegendWidget()               { return nullptr; }
 
 	virtual QGraphicsScene* getGraphicsScene()                      { return nullptr; }
 	virtual const QGraphicsScene* getGraphicsScene() const          { return nullptr; }

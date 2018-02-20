@@ -33,6 +33,7 @@
 #include <QFileInfo>
 
 #include <QPdfWriter>
+#include <markermodules/widgetoverlaylegend.h>
 
 
 namespace
@@ -612,7 +613,8 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 	cv::imwrite(path + "/" + imageFilename, series->getSloImage().getImage(), {CV_IMWRITE_JPEG_QUALITY, 75});
 
 	bool overlayCreated = false;
-	QWidget* overlayLegend = nullptr;
+	QWidget* overlayLegendWidget = nullptr;
+	QString overlayLatexString;
 	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
 	if(actMarker)
 	{
@@ -623,28 +625,20 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 			cvtColor(outImage, outImage, CV_BGRA2RGBA);
 			cv::imwrite(path + "/" + imageOverlayFilename, outImage);
 
+			WidgetOverlayLegend* overlayLegend = actMarker->getSloLegendWidget();
 
-			overlayLegend = actMarker->getSloLegendWidget();
 			if(overlayLegend)
 			{
-// 				class Writer : public QPdfWriter
-// 				{
-// 				public:
-// 					Writer(const QString& filename) : QPdfWriter(filename) {}
-//
-// 				protected:
-// 					virtual int metric(PaintDeviceMetric metric) const
-// 					{
-// 						if(metric == QPaintDevice::PdmDevicePixelRatio)
-// 							return 3;
-// 						return QPdfWriter::metric(metric);
-// 					}
-// 				};
+				overlayLatexString  = overlayLegend->getLatexCode();
+				if(overlayLatexString.isEmpty())
+					overlayLegendWidget = overlayLegend->getWidget();
+			}
 
-
+			if(overlayLegendWidget)
+			{
 				QPdfWriter generator(QString::fromStdString(path + "/" + imageOverlayLegendFilename));
 				generator.setTitle(tr("overlay legend"));;
-				generator.setPageSize(QPageSize(overlayLegend->size()));
+				generator.setPageSize(QPageSize(overlayLegendWidget->size()));
 				generator.setResolution(100);
 
 				QPainter painter;
@@ -652,7 +646,7 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 				font.setPointSizeF(font.pointSizeF()*2);
 				painter.begin(&generator);
 				painter.setFont(font);
-				overlayLegend->render(&painter, QPoint(), QRegion(), DrawChildren);
+				overlayLegendWidget->render(&painter, QPoint(), QRegion(), DrawChildren);
 // 				const QPoint &targetOffset = QPoint(), const QRegion &sourceRegion = QRegion(), RenderFlags renderFlags = RenderFlags( DrawWindowBackground | DrawChildren ))
 				painter.end();
 			}
@@ -673,23 +667,24 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 
 	stream << "\\documentclass{standalone}\n\\usepackage{tikz}\n\n";
 	stream << "\n\\begin{document}";
-	stream << "\n\n\n\\begin{tikzpicture}\n";
+	stream << "\n\t\\resizebox{7cm}{!}{%";
+	stream << "\n\n\n\t\\begin{tikzpicture}";
 // 		stream << "\\def\\skal{ 1 }\t% Skalierungsfaktor\n\n";
-	stream << "\t\\def\\hulllinewidth{1.75mm}\n\n";
+	stream << "\n\t\t\\def\\hulllinewidth{1.75mm}\n\n";
 
-	stream << "\t\\definecolor{colorA}{rgb}{0.000000,1.000000,0.000000}\n";
-	stream << "\t\\definecolor{colorB}{rgb}{1.000000,0.000000,0.000000}\n";
-	stream << "\t\\definecolor{DeviceSegColor}{rgb}{0.000000,0.666666,1.000000}\n";
-	stream << "\t\\definecolor{CVSegColor}{rgb}{1.000000,0.000000,0.000000}\n";
+	stream << "\t\t\\definecolor{colorA}{rgb}{0.000000,1.000000,0.000000}\n";
+	stream << "\t\t\\definecolor{colorB}{rgb}{1.000000,0.000000,0.000000}\n";
+	stream << "\t\t\\definecolor{DeviceSegColor}{rgb}{0.000000,0.666666,1.000000}\n";
+	stream << "\t\t\\definecolor{CVSegColor}{rgb}{1.000000,0.000000,0.000000}\n";
 
-	stream << "\n\t\\node[anchor=south west,inner sep=0,scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};\n";
+	stream << "\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};\n";
 	if(overlayCreated)
-		stream << "\n\t\\node[anchor=south west, inner sep=0, scale=1, opacity=0.7] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};\n";
+		stream << "\n\t\t\\node[anchor=south west, inner sep=0, scale=1, opacity=0.7] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};\n";
 
-	if(overlayLegend)
-		stream << "\n\t\\node[anchor=south west,inner sep=0,scale=1] (legend) at (" << imgWidth*1.04 << "cm,0) {\\includegraphics[height=" << imgHeight << "cm]{" << imageOverlayLegendFilename << "}};";
+	if(overlayLegendWidget)
+		stream << "\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (legend) at (" << imgWidth*1.04 << "cm,0) {\\includegraphics[height=" << imgHeight << "cm]{" << imageOverlayLegendFilename << "}};";
 
-	stream << "\n\t\\begin{scope}[xscale=" << imgWidth << ",yscale=" << imgWidth << "]\n";
+	stream << "\n\t\t\\begin{scope}[xscale=" << imgWidth << ",yscale=" << imgWidth << "]\n";
 
 
 
@@ -699,9 +694,9 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 		ScaleFactor tikzScale(tikzFactorX, tikzFactorY, 1.);
 		SloCoordTranslator transform(*series, tikzScale);
 
-		stream << "\\definecolor{convexHullColor}{rgb}{0.5,1.0,0.5}\n\n";
+		stream << "\n\t\t\t\\definecolor{convexHullColor}{rgb}{0.5,1.0,0.5}";
 
-		stream << "\\draw[convexHullColor, line width=\\hulllinewidth] ";
+		stream << "\n\n\t\t\t\\draw[convexHullColor, line width=\\hulllinewidth] ";
 		bool firstVal = true;
 		std::size_t pos = 0;
 
@@ -719,13 +714,19 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 			++pos;
 		}
 
-		stream <<  " -- cycle";
-		stream <<  ";\n\n";
+		stream <<  " -- cycle;\n\n";
 	}
 
 
 
 	stream << "\n\t\t\\end{scope}";
-	stream << "\n\t\\end{tikzpicture}";
+	stream << "\n\t\\end{tikzpicture}%";
+	stream << "\n\t}";
+
+	if(!overlayLatexString.isEmpty())
+	{
+		stream << "\n" << overlayLatexString.toStdString();
+	}
+
 	stream << "\n\\end{document}\n";
 }

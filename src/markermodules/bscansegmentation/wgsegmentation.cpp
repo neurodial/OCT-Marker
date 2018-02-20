@@ -675,9 +675,11 @@ void WGSegmentationThreshold::setThresholdData(const BScanSegmentationMarker::Th
 		case BScanSegmentationMarker::ThresholdMethod::Absolute:
 			if(buttonAbsolut)
 				buttonAbsolut->setChecked(true);
+			break;
 		case BScanSegmentationMarker::ThresholdMethod::Relative:
 			if(buttonRelativ)
 				buttonRelativ->setChecked(true);
+			break;
 	}
 }
 

@@ -62,6 +62,9 @@ public:
 	const std::string& getViewName    ()                 const  { return viewName    ;}
 	const std::string& getInternalName()                 const  { return internalName;}
 
+	IntervalMarkerList::const_iterator begin()                const { return markerList.begin(); }
+	IntervalMarkerList::const_iterator end()                  const { return markerList.end(); }
+
 	void addMarker(const Marker& marker);
 private:
 	IntervalMarkerList markerList;

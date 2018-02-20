@@ -55,6 +55,7 @@
 BScanIntervalMarker::BScanIntervalMarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , sloOverlayImage(new cv::Mat)
+, widgetOverlayLegend(*this)
 {
 	name = tr("Interval marker");
 	id   = "IntervalMarker";

@@ -6,6 +6,7 @@
 #include"sloimagewidget.h"
 #include<manager/octmarkermanager.h>
 #include<markermodules/bscanmarkerbase.h>
+#include<markermodules/widgetoverlaylegend.h>
 
 
 SloWithLegendWidget::SloWithLegendWidget(QWidget* parent)
@@ -50,11 +51,15 @@ void SloWithLegendWidget::updateMarkerOverlayImage()
 
 	if(marker)
 	{
-		actLegendWidget = marker->getSloLegendWidget();
-		if(actLegendWidget)
+		WidgetOverlayLegend* overlaylegend = marker->getSloLegendWidget();
+		if(overlaylegend)
 		{
-			layout->addWidget(actLegendWidget, 0, 1);
-			actLegendWidget->show();
+			actLegendWidget = overlaylegend->getWidget();
+			if(actLegendWidget)
+			{
+				layout->addWidget(actLegendWidget, 0, 1);
+				actLegendWidget->show();
+			}
 		}
 	}
 }

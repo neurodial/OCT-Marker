@@ -5,6 +5,7 @@
 
 #include <boost/icl/interval_map.hpp>
 #include <data_structure/intervalmarker.h>
+#include"intervalllegend.h"
 #include <vector>
 
 #include <QPoint>
@@ -13,7 +14,9 @@ class QAction;
 class QToolBar;
 class QActionGroup;
 class QWidget;
+
 class ScaleFactor;
+class WidgetOverlayLegend;
 
 
 class BScanIntervalMarker : public BscanMarkerBase
@@ -59,6 +62,7 @@ public:
 	
 	QToolBar* createToolbar(QObject* parent) override;
 	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGIntevalMarker; }
+	WidgetOverlayLegend* getSloLegendWidget() override              { return &widgetOverlayLegend; }
 	
 	virtual bool drawingBScanOnSLO() const   override               { return true; }
 	virtual void drawBScanSLOLine  (QPainter&, std::size_t bscanNr, const OctData::CoordSLOpx& start_px, const OctData::CoordSLOpx& end_px   , SLOImageWidget*) const override;
@@ -80,6 +84,7 @@ public:
 	
 	const IntervalMarker* getMarkersList(const MarkerCollectionWork& collection) const
 	                                                                { if(collection.actCollection == markersCollectionsData.end()) return nullptr; return collection.actCollection->second.markerCollection; }
+	const IntervalMarker* getMarkersList() const                    { return getMarkersList(MarkerCollectionWork(actCollection)); }
 
 	const MarkerMap& getMarkers() const                             { return getMarkers(getActBScanNr()); }
 	const MarkerMap& getMarkers(std::size_t bscan) const;
@@ -124,6 +129,7 @@ private:
 
 	bool markerActiv = false;
 	bool mouseInWidget = false;
+	IntervallLegend widgetOverlayLegend;
 	
 // 	QAction* fillMarkerAction  = nullptr;
 // 	QAction* paintMarkerAction = nullptr;

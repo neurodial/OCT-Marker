@@ -65,7 +65,7 @@ public:
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;
 
 	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGLayerSeg; }
-	virtual QWidget* getSloLegendWidget()    override;
+	virtual WidgetOverlayLegend* getSloLegendWidget() override;
 
 	virtual void newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& ptree) override;
 
@@ -95,7 +95,8 @@ private:
 	void resetMarkers(const OctData::Series* series);
 
 	QWidget* widgetPtr2WGLayerSeg = nullptr;
-	ThicknessmapLegend* legendWG = nullptr;
+	ThicknessmapLegend*  thicknessMapLegend = nullptr;
+	WidgetOverlayLegend* legendWG = nullptr;
 
 
 	EditBase  * actEditMethod    = nullptr;
