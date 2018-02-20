@@ -56,6 +56,15 @@ namespace
 			formlayout->addRow(labelText, label);
 		}
 	}
+	void addInformation(QFormLayout* formlayout, const QString& labelText, const double value, QWidget* parent)
+	{
+		if(!std::isnan(value))
+		{
+			QLabel* label = new QLabel(QString("%1").arg(value), parent);
+			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			formlayout->addRow(labelText, label);
+		}
+	}
 
 	class LayoutFiller
 	{
@@ -301,8 +310,10 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 	if(slo.hasImage())
 	{
 		OctData::ScaleFactor sf = slo.getScaleFactor();
-		addInformation(seriesInformations, tr("Slo width (pixel)" ), createSizeString(sf.getX(), slo.getWidth ()), this);
+		addInformation(seriesInformations, tr("Slo scale X"       ), sf.getX(), this);
+		addInformation(seriesInformations, tr("Slo scale Y"       ), sf.getY(), this);
 		addInformation(seriesInformations, tr("Slo height (pixel)"), createSizeString(sf.getY(), slo.getHeight()), this);
+		addInformation(seriesInformations, tr("Slo width (pixel)" ), createSizeString(sf.getX(), slo.getWidth ()), this);
 	}
 }
 
