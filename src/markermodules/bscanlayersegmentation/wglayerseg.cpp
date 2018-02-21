@@ -17,6 +17,7 @@
 #include<widgets/numberpushbutton.h>
 
 #include"thicknessmaptemplates.h"
+#include <data_structure/programoptions.h>
 
 
 WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
@@ -184,6 +185,7 @@ void WGLayerSeg::addThicknessMapControls(QLayout& layout)
 	QToolButton* buttonUpdateThicknessmap = createActionToolButton(this, actionUpdateThicknessmap);
 	layoutTools->addWidget(buttonUpdateThicknessmap);
 
+	layoutTools->addWidget(createActionToolButton(this, ProgramOptions::layerSegThicknessmapBlend.getAction()));
 
 	layout.addWidget(widgetTools);
 }

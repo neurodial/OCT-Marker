@@ -86,7 +86,7 @@ if(BUILD_QT_PROGRAMM)
 	QT5_ADD_TRANSLATION(TRANSLATIONS ${LANG})
 
 
-	add_executable(octmarker src/main.cpp ${octmarker_SRCS}
+	add_executable(octmarker src/main.cpp src/prepareprogrammoptions.cpp ${octmarker_SRCS}
 		${ui_files_headers}
 		${TRANSLATIONS}
 		${octmarker_RESOURCES_RCC} octmarker.rc)

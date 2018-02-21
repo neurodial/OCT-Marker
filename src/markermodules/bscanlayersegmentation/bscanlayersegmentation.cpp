@@ -66,6 +66,8 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 	thicknessMapLegend   = new ThicknessmapLegend;
 	legendWG             = new WidgetOverlayLegend(thicknessMapLegend);
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
+
+	connect(&ProgramOptions::layerSegThicknessmapBlend, &OptionBool::valueChanged, this, &BScanLayerSegmentation::generateThicknessmap);
 }
 
 BScanLayerSegmentation::~BScanLayerSegmentation()

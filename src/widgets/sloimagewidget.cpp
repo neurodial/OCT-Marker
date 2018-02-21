@@ -70,9 +70,10 @@ SLOImageWidget::SLOImageWidget(QWidget* parent)
 	connect(&markerManger  , &OctMarkerManager::sloOverlayChanged , this, &SLOImageWidget::updateMarkerOverlayImage);
 	connect(&markerManger  , &OctMarkerManager::bscanMarkerChanged, this, &SLOImageWidget::updateMarkerOverlayImage);
 
-	connect(&ProgramOptions::sloShowsBScansPos, &OptionInt::valueChanged, this, &SLOImageWidget::setBScanVisibility);
-
-	connect(&ProgramOptions::sloShowGrid, &OptionBool::valueChanged, this, static_cast<void (SLOImageWidget::*)(void)>(&SLOImageWidget::update));
+	connect(&ProgramOptions::sloShowsBScansPos, &OptionInt   ::valueChanged, this, &SLOImageWidget::setBScanVisibility);
+	connect(&ProgramOptions::sloShowGrid      , &OptionBool  ::valueChanged, this, static_cast<void (SLOImageWidget::*)(void)>(&SLOImageWidget::update));
+	connect(&ProgramOptions::sloShowOverlay   , &OptionBool  ::valueChanged, this, &SLOImageWidget::updateMarkerOverlayImage);
+	connect(&ProgramOptions::sloOverlayAlpha  , &OptionDouble::valueChanged, this, &SLOImageWidget::updateMarkerOverlayImage);
 
 	setBScanVisibility(ProgramOptions::sloShowsBScansPos());
 
@@ -360,24 +361,19 @@ void SLOImageWidget::updateMarkerOverlayImage()
 
 	bool showPureSloImage = true;
 
-	BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
-	if(actMarker)
+	if(ProgramOptions::sloShowOverlay())
 	{
-		cv::Mat outImage;
-		bool overlayCreated = actMarker->drawSLOOverlayImage(sloPixture, outImage, overlayImageAlpha);
-		if(overlayCreated && !outImage.empty())
+		BscanMarkerBase* actMarker = markerManger.getActBscanMarker();
+		if(actMarker)
 		{
-			showPureSloImage = false;
-			showImage(outImage);
+			cv::Mat outImage;
+			bool overlayCreated = actMarker->drawSLOOverlayImage(sloPixture, outImage, ProgramOptions::sloOverlayAlpha());
+			if(overlayCreated && !outImage.empty())
+			{
+				showPureSloImage = false;
+				showImage(outImage);
+			}
 		}
-// 		showPureSloImage = !overlayCreated;
-// 		if(!showPureSloImage)
-// 		{
-// 			if(outImage.empty())
-// 				showPureSloImage = true;
-// 			else
-// 				showImage(outImage);
-// 		}
 	}
 
 	if(showPureSloImage)
@@ -679,7 +675,7 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 
 	stream << "\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};\n";
 	if(overlayCreated)
-		stream << "\n\t\t\\node[anchor=south west, inner sep=0, scale=1, opacity=0.7] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};\n";
+		stream << "\n\t\t\\node[anchor=south west, inner sep=0, scale=1, opacity=" << ProgramOptions::sloOverlayAlpha() << "] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};\n";
 
 	if(overlayLegendWidget)
 		stream << "\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (legend) at (" << imgWidth*1.04 << "cm,0) {\\includegraphics[height=" << imgHeight << "cm]{" << imageOverlayLegendFilename << "}};";

@@ -268,24 +268,12 @@ void OCTMarkerMainWindow::setupMenu()
 	QMenu* optionsMenu = new QMenu(this);
 	optionsMenu->setTitle(tr("Options"));
 
-	QAction* fillEpmtyPixelWhite = ProgramOptions::fillEmptyPixelWhite.getAction();
-	QAction* registerBScans      = ProgramOptions::registerBScans     .getAction();
-	QAction* loadRotateSlo       = ProgramOptions::loadRotateSlo      .getAction();
-	QAction* holdOCTRawData      = ProgramOptions::holdOCTRawData     .getAction();
-	QAction* readBScans          = ProgramOptions::readBScans         .getAction();
-	QAction* saveOctBinFlat      = ProgramOptions::saveOctBinFlat     .getAction();
-	fillEpmtyPixelWhite->setText(tr("Fill empty pixels white"));
-	registerBScans     ->setText(tr("register BScans"));
-	loadRotateSlo      ->setText(tr("rotate SLO"));
-	holdOCTRawData     ->setText(tr("hold OCT raw data"));
-	readBScans         ->setText(tr("read BScans from OCT data"));
-	saveOctBinFlat     ->setText(tr("save in octbin flat format"));
-	optionsMenu->addAction(fillEpmtyPixelWhite);
-	optionsMenu->addAction(registerBScans);
-	optionsMenu->addAction(loadRotateSlo );
-	optionsMenu->addAction(holdOCTRawData);
-	optionsMenu->addAction(readBScans);
-	optionsMenu->addAction(saveOctBinFlat);
+	optionsMenu->addAction(ProgramOptions::fillEmptyPixelWhite.getAction());
+	optionsMenu->addAction(ProgramOptions::registerBScans     .getAction());
+	optionsMenu->addAction(ProgramOptions::loadRotateSlo      .getAction());
+	optionsMenu->addAction(ProgramOptions::holdOCTRawData     .getAction());
+	optionsMenu->addAction(ProgramOptions::readBScans         .getAction());
+	optionsMenu->addAction(ProgramOptions::saveOctBinFlat     .getAction());
 
 	QMenu* optionsMenuE2E = new QMenu(this);
 	optionsMenuE2E->setTitle(tr("E2E Gray"));
@@ -298,14 +286,12 @@ void OCTMarkerMainWindow::setupMenu()
 	addMenuProgramOptionGroup(tr("Xml emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayXml  , e2eGrayTransformGroup, this);
 	static SendInt e2eGrayVol   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::vol));
 	addMenuProgramOptionGroup(tr("Vol emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayVol  , e2eGrayTransformGroup, this);
+	static SendInt e2eGrayU16   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::u16));
+	addMenuProgramOptionGroup(tr("Vol emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayU16  , e2eGrayTransformGroup, this);
 
 	optionsMenu->addSeparator();
 
-
-
-	QAction* autoSaveOctMarkers       = ProgramOptions::autoSaveOctMarkers.getAction();
-	autoSaveOctMarkers->setText(tr("Autosave markers"));
-	optionsMenu->addAction(autoSaveOctMarkers);
+	optionsMenu->addAction(ProgramOptions::autoSaveOctMarkers.getAction());
 
 
 	QMenu* optionsMenuMarkersFileFormat = new QMenu(this);
@@ -328,9 +314,7 @@ void OCTMarkerMainWindow::setupMenu()
 	layerSegmentMenu->setTitle(tr("Layer segmentation"));
 	layerSegmentMenu->addAction(createColorOptionAction(ProgramOptions::layerSegActiveLineColor, tr("Active line color")));
 	layerSegmentMenu->addAction(createColorOptionAction(ProgramOptions::layerSegPassivLineColor, tr("Passiv line color")));
-	QAction* layerSegBlendThicknessmapAction = ProgramOptions::layerSegThicknessmapBlend.getAction();
-	layerSegBlendThicknessmapAction->setText(tr("Blend Thicknessmap Color"));
-	layerSegmentMenu->addAction(layerSegBlendThicknessmapAction);
+	layerSegmentMenu->addAction(ProgramOptions::layerSegThicknessmapBlend.getAction());
 
 
 	QMenu* viewMenu = new QMenu(this);
@@ -437,17 +421,9 @@ void OCTMarkerMainWindow::setupMenu()
 	previousBScan->setShortcut(Qt::LeftArrow);
 	connect(previousBScan, SIGNAL(triggered(bool)), &markerManager, SLOT(previousBScan()));
 
-	QAction* extraSegLine = ProgramOptions::bscanShowExtraSegmentationslines.getAction();
-	extraSegLine->setText(tr("show extra segmentationslines"));
-	extraSegLine->setIcon(QIcon(":/icons/chart_curve.png"));
-
-	QAction* showSeglines = ProgramOptions::bscansShowSegmentationslines.getAction();
-	showSeglines->setText(tr("show segmentationslines"));
-	showSeglines->setIcon(QIcon(":/icons/chart_curve.png"));
-
+	QAction* extraSegLine        = ProgramOptions::bscanShowExtraSegmentationslines.getAction();
+	QAction* showSeglines        = ProgramOptions::bscansShowSegmentationslines.getAction();
 	QAction* showWithAspectRatio = ProgramOptions::bscanRespectAspectRatio.getAction();
-	showWithAspectRatio->setText(tr("Aspect ratio"));
-	showWithAspectRatio->setIcon(QIcon(":/icons/typicons/equals-outline.svg"));
 
 	QSpinBox* paintsizeSegLines = new QSpinBox(this);
 	paintsizeSegLines->setMinimum(1);

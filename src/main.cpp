@@ -16,6 +16,7 @@
 #include <QFileInfo>
 #include <qlibraryinfo.h>
 #include <QCommandLineParser>
+#include "prepareprogrammoptions.h"
 
 
 bool loadMarkerTranslatorFile(QTranslator& translator, const QString& dir)
@@ -100,6 +101,7 @@ int main(int argc, char **argv)
 	qDebug("Compiler Version: %s", BuildConstants::compilerVersion);
 
 
+	PrepareProgrammOptions::prepareProgrammOptions();
 
 	bool stupidSplineGui = parser.isSet("i-want-stupid-spline-gui");
 	if(stupidSplineGui)

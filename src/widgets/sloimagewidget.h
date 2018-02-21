@@ -48,8 +48,6 @@ class SLOImageWidget : public CVImageWidget
 // 	void createIntervallColors();
 // 	void deleteIntervallColors();
 
-	double overlayImageAlpha = 0.7;
-
 	int getBScanNearPos(int x, int y, double tol);
 
 	void updateGraphicsViewSize();

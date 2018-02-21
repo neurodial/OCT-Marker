@@ -15,6 +15,8 @@
 #include<manager/octdatamanager.h>
 #include<manager/octmarkermanager.h>
 
+#include<widgets/doubleslider.h>
+
 namespace
 {
 	void addIntAction(QToolBar* toolbar, OptionInt& intOption, int value, const QIcon& icon, const QString& text, WgSloImage* parent, QActionGroup* actionGroup = nullptr)
@@ -41,15 +43,8 @@ WgSloImage::WgSloImage(QWidget* parent)
 
 	QToolBar* bar = new QToolBar(this);
 
-	QAction* showGrid = ProgramOptions::sloShowGrid.getAction();
-	showGrid->setText(tr("show grid"));
-	showGrid->setIcon(QIcon(":/icons/grid.png"));
-	bar->addAction(showGrid);
-
-	QAction* showBScanMousePos = ProgramOptions::sloShowBScanMousePos.getAction();
-	showBScanMousePos->setText(tr("show mouse pos"));
-	showBScanMousePos->setIcon(QIcon(":/icons/cross.png"));
-	bar->addAction(showBScanMousePos);
+	bar->addAction(ProgramOptions::sloShowGrid.getAction());
+	bar->addAction(ProgramOptions::sloShowBScanMousePos.getAction());
 
 	bar->addSeparator();
 
@@ -58,6 +53,17 @@ WgSloImage::WgSloImage(QWidget* parent)
 	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 0, QIcon(":/icons/image.png" ), tr("show no bscans"         ), this, actionGroupBscan);
 	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 1, QIcon(":/icons/layer.png" ), tr("show only actual bscans"), this, actionGroupBscan);
 	addIntAction(bar, ProgramOptions::sloShowsBScansPos, 2, QIcon(":/icons/layers.png"), tr("show bscans"            ), this, actionGroupBscan);
+
+	bar->addSeparator();
+	bar->addAction(ProgramOptions::sloShowOverlay.getAction());
+
+	DoubleSlider* overlayAlpha = new DoubleSlider(255, this);
+	overlayAlpha->setRange(0., 1.);
+	overlayAlpha->setOrientation(Qt::Horizontal);
+	overlayAlpha->setValue(ProgramOptions::sloOverlayAlpha());
+	bar->addWidget(overlayAlpha);
+	connect(&ProgramOptions::sloOverlayAlpha, &OptionDouble::valueChanged, overlayAlpha                    , &DoubleSlider::setValue);
+	connect(overlayAlpha                    , &DoubleSlider::valueChanged, &ProgramOptions::sloOverlayAlpha, &OptionDouble::setValue);
 
 
 	setContextMenuPolicy(Qt::NoContextMenu);
