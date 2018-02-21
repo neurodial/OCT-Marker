@@ -6,6 +6,7 @@
 #include "../bscanmarkerbase.h"
 
 #include<data_structure/point2d.h>
+#include<array>
 
 class QWidget;
 
@@ -42,6 +43,8 @@ public:
 		void setYellowColor();
 		void setHSVColor();
 	};
+
+	static const std::array<OctData::Segmentationlines::SegmentlineType, 10> keySeglines;
 
 	enum class SegMethod { None, Pen, Spline };
 
@@ -116,9 +119,6 @@ private:
 
 	void copySegLinesFromOctData();
 	void copySegLinesFromOctData(std::size_t bscan);
-
-
-	void changeSeglineId(std::size_t index);
 
 	std::size_t getMaxBscanWidth() const;
 signals:

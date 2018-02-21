@@ -56,13 +56,21 @@ void WGLayerSeg::addLayerButtons(QLayout& layout)
 	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
 	seglineButtons.resize(numSegLines);
 
-	std::size_t id = 0;
 	const OctData::Segmentationlines::SegmentlineType actType = parent->getActEditSeglineType();
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 	{
-		QPushButton* button = new NumberPushButton(id++, this);
+		const auto keyListIt = std::find(BScanLayerSegmentation::keySeglines.begin(), BScanLayerSegmentation::keySeglines.end(), type);
+
+		QPushButton* button;
+		if(keyListIt != BScanLayerSegmentation::keySeglines.end())
+		{
+			const int pos = keyListIt - BScanLayerSegmentation::keySeglines.begin();
+			button = new NumberPushButton(pos, this);
+		}
+		else
+			button = new QPushButton(this);
+
 		button->setText(OctData::Segmentationlines::getSegmentlineName(type));
-// 		QPushButton* button = new QPushButton(OctData::Segmentationlines::getSegmentlineName(type));
 		button->setCheckable(true);
 
         connect(button, &QPushButton::clicked, signalMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));

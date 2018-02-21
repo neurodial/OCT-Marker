@@ -38,6 +38,19 @@
 #include "colormaphsv.h"
 
 
+const std::array<OctData::Segmentationlines::SegmentlineType, 10> BScanLayerSegmentation::keySeglines = {{
+	  OctData::Segmentationlines::SegmentlineType::RPE
+	, OctData::Segmentationlines::SegmentlineType::ILM
+	, OctData::Segmentationlines::SegmentlineType::BM
+	, OctData::Segmentationlines::SegmentlineType::RNFL
+	, OctData::Segmentationlines::SegmentlineType::GCL
+	, OctData::Segmentationlines::SegmentlineType::IPL
+	, OctData::Segmentationlines::SegmentlineType::INL
+	, OctData::Segmentationlines::SegmentlineType::OPL
+	, OctData::Segmentationlines::SegmentlineType::ELM
+	, OctData::Segmentationlines::SegmentlineType::PR1
+}};
+
 BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , editMethodSpline(new EditSpline(this))
@@ -191,7 +204,7 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 	int key = event->key();
 	if(key >= Qt::Key_0 && key <= Qt::Key_9)
 	{
-		changeSeglineId(key-Qt::Key_0);
+		setActEditLinetype(keySeglines[key-Qt::Key_0]);
 	}
 	else
 	{
@@ -459,14 +472,5 @@ void BScanLayerSegmentation::ThicknessmapConfig::setUpperColorLimit(double thick
 	if(colormap)
 		colormap->setMaxValue(thickness);
 }
-
-
-void BScanLayerSegmentation::changeSeglineId(std::size_t index)
-{
-	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
-	if(index < numSegLines)
-		setActEditLinetype(OctData::Segmentationlines::getSegmentlineTypes().at(index));
-}
-
 
 
