@@ -3,6 +3,8 @@
 
 #include<octdata/datastruct/segmentationlines.h>
 
+#include<array>
+
 #include "../bscanmarkerbase.h"
 
 #include<data_structure/point2d.h>
@@ -27,7 +29,9 @@ class BScanLayerSegmentation : public BscanMarkerBase
 public:
 	struct BScanSegData
 	{
+		typedef std::vector<bool> ModifedVec;
 		OctData::Segmentationlines lines;
+		std::array<ModifedVec, std::tuple_size<OctData::Segmentationlines::SegLinesTypeList>::value> isModifed;
 		bool filled = false;
 	};
 

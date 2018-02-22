@@ -18,14 +18,21 @@ class EditPen : public EditBase
 	};
 
 	SegPoint lastPoint;
+	std::size_t actPaintMinX;
+	std::size_t actPaintMaxX;
+
 	bool paintSegLine = false;
 
 	OctData::Segmentationlines::Segmentline* segLine = nullptr;
 
 	void setLinePoint2Point(const SegPoint& p1, const SegPoint& p2, OctData::Segmentationlines::Segmentline& segLine);
 	QRect getWidgetPaintSize(const SegPoint& p1, const SegPoint& p2, const ScaleFactor& scaleFactor);
+	QRect getWidgetPaintSize(std::size_t x1, std::size_t x2, const ScaleFactor& scaleFactor);
 
 	SegPoint calcPoint(int x, int y, const ScaleFactor& scaleFactor, int bscanWidth);
+
+	void updateMinMaxX(const SegPoint& p);
+	BscanMarkerBase::RedrawRequest smoothMinMaxIntervall(const ScaleFactor& scaleFactor);
 
 public:
 	EditPen(BScanLayerSegmentation* base) : EditBase(base) {}

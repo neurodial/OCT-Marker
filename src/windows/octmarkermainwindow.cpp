@@ -721,18 +721,11 @@ void OCTMarkerMainWindow::dropEvent(QDropEvent* event)
 	// check for our needed mime type, here a file or a list of files
 	if(mimeData->hasUrls())
 	{
-		QStringList pathList;
-		QList<QUrl> urlList = mimeData->urls();
-		if(urlList.size() == 1)
+		const QList<QUrl> urlList = mimeData->urls();
+		const bool loadFile = (urlList.size() == 1);
+		for(const QUrl& url : urlList)
 		{
-			handleOpenUrl(urlList.at(0), true);
-		}
-		else
-		{
-			for(const QUrl& url : urlList)
-			{
-				handleOpenUrl(url, false);
-			}
+			handleOpenUrl(url, loadFile);
 		}
 	}
 }
@@ -822,29 +815,6 @@ std::size_t OCTMarkerMainWindow::loadFolder(const QString& foldername, int numMa
 }
 
 
-
-
-
-
-
-/*
-
-void OCTMarkerMainWindow::showAddMarkersDialog()
-{
-	QFileDialog fd;
-	fd.setWindowTitle(tr("Choose a file to add markers"));
-	fd.setAcceptMode(QFileDialog::AcceptOpen);
-
-	fd.setNameFilter(tr("OCT Markers file (*_markers.xml)"));
-	fd.setFileMode(QFileDialog::ExistingFile);
-
-	if(fd.exec())
-	{
-		QStringList filenames = fd.selectedFiles();
-		OctDataManager::getInstance().addMarkers(filenames[0], OctDataManager::Fileformat::XML);
-	}
-}
-*/
 
 void OCTMarkerMainWindow::setMarkersStringList(QStringList& filters)
 {

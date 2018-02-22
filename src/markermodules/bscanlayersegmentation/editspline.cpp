@@ -379,7 +379,7 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 
 // 	QTime t;
 // 	t.start();
-	FindSupportingPoints::Config conf = getFindSupportingPointsConfig();
+	FindSupportingPoints::Config conf; // = getFindSupportingPointsConfig();
 	FindSupportingPoints alg(*segLine);
 	alg.setConfig(conf);
 	alg.calculateSupportingPoints();

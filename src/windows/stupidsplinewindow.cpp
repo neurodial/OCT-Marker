@@ -140,6 +140,7 @@ StupidSplineWindow::StupidSplineWindow()
 	dwSloImage->setFeatures(0);
 	dwSloImage->setObjectName("StupidDWSloImage");
 	dwSloImage->setTitleBarWidget(new QWidget());
+// 	dwSloImage->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
 	connect(bscanMarkerWidget, &BScanMarkerWidget::mousePosOnBScan, sloImageWidget->getImageWidget(), &SLOImageWidget::showPosOnBScan);
 
