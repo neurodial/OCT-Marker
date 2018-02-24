@@ -99,15 +99,18 @@ void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* wi
 	penNormal.setWidth(ProgramOptions::layerSegPassivLineSize ());
 
 
+	painter.setPen(penNormal);
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 	{
 		if(type == actEditType)
-			painter.setPen(penEdit);
-		else
-			painter.setPen(penNormal);
+			continue;
 
 		BScanMarkerWidget::paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].lines.getSegmentLine(type), scaleFactor);
 	}
+
+	painter.setPen(penEdit);
+	BScanMarkerWidget::paintSegmentationLine(painter, bScanHeight, tempLine, scaleFactor);
+
 
 	if(actEditMethod)
 		actEditMethod->drawMarker(painter, widget, rec, scaleFactor);
@@ -171,15 +174,38 @@ void BScanLayerSegmentation::resetMarkers(const OctData::Series* series)
 	lines.clear();
 	lines.resize(numBscans);
 
-	for(std::size_t i = 0; i<numBscans; ++i)
-	{
-		const int bscanWidth = series->getBScan(i)->getWidth();
+	for(std::size_t bscanNr = 0; bscanNr<numBscans; ++bscanNr)
+		resetMarkers(bscanNr);
 
-		for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
-			lines[i].lines.getSegmentLine(type).resize(bscanWidth);
-	}
-
+	updateEditLine();
 }
+
+void BScanLayerSegmentation::resetMarkers(std::size_t bscanNr)
+{
+	BScanSegData& segData = lines.at(bscanNr);
+	const OctData::BScan* bscan = getBScan(bscanNr);
+	if(!bscan)
+		return;
+
+	const std::size_t bscanWidth = static_cast<std::size_t>(bscan->getWidth());
+
+	segData.lines  = bscan->getSegmentLines();
+	segData.filled = true;
+
+	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
+	{
+		std::size_t typeId = static_cast<std::size_t>(type);
+		segData.lineModified[typeId] = false;
+		segData.lineLoaded  [typeId] = false;
+
+		OctData::Segmentationlines::Segmentline& segline = segData.lines.getSegmentLine(type);
+		std::size_t seglineSize = segline.size();
+		segline.resize(bscanWidth);
+		for(std::size_t i = seglineSize; i < bscanWidth; ++i)
+			segline[i] = std::numeric_limits<double>::quiet_NaN();
+	}
+}
+
 
 
 void BScanLayerSegmentation::setActEditLinetype(OctData::Segmentationlines::SegmentlineType type)
@@ -189,16 +215,30 @@ void BScanLayerSegmentation::setActEditLinetype(OctData::Segmentationlines::Segm
 
 	actEditType = type;
 
-
+	updateEditLine();
 	if(actEditMethod)
-	{
-		actEditMethod->segLineChanged(&lines[getActBScanNr()].lines.getSegmentLine(actEditType));
-
 		emit(segLineIdChanged(static_cast<int>(type)));
-	}
 
 	requestFullUpdate();
 }
+
+void BScanLayerSegmentation::rangeModified(std::size_t ascanBegin, std::size_t ascanEnd)
+{
+	const std::size_t bscanNr = getActBScanNr();
+	if(lines.size() <= bscanNr)
+		return;
+
+	lines[bscanNr].lineModified[static_cast<std::size_t>(actEditType)] = true;
+
+	OctData::Segmentationlines::Segmentline& line = lines[bscanNr].lines.getSegmentLine(actEditType);
+
+	const std::size_t endPos = std::min(std::min(ascanEnd, line.size()), line.size());
+
+	for(std::size_t i = ascanBegin; i < endPos; ++i)
+		line[i] = tempLine[i];
+
+}
+
 
 
 bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* widget)
@@ -292,32 +332,15 @@ void BScanLayerSegmentation::copySegLinesFromOctData() { copySegLinesFromOctData
 
 void BScanLayerSegmentation::copySegLinesFromOctData(const std::size_t bScanNr)
 {
-	if(actEditMethod && bScanNr == getActBScanNr())
-		actEditMethod->segLineChanged(nullptr);
-
 	const OctData::BScan* bscan = getBScan(bScanNr);
 	if(!bscan)
 		return;
 
-
-	BScanSegData& segData = lines[bScanNr];
-	segData.lines  = bscan->getSegmentLines();
-	segData.filled = true;
-
-	const std::size_t bscanWidth = static_cast<std::size_t>(bscan->getWidth());
-	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
-	{
-		OctData::Segmentationlines::Segmentline& segline = segData.lines.getSegmentLine(type);
-		std::size_t seglineSize = segline.size();
-		segline.resize(bscanWidth);
-		for(std::size_t i = seglineSize; i < bscanWidth; ++i)
-			segline[i] = std::numeric_limits<double>::quiet_NaN();
-	}
+	resetMarkers(bScanNr);
 
 	if(bScanNr == getActBScanNr())
 	{
-		if(actEditMethod)
-			actEditMethod->segLineChanged(&segData.lines.getSegmentLine(actEditType));
+		updateEditLine();
 
 		requestFullUpdate();
 	}
@@ -327,9 +350,6 @@ void BScanLayerSegmentation::setSegMethod(BScanLayerSegmentation::SegMethod meth
 {
 	if(getSegMethod() == method)
 		return;
-
-	if(actEditMethod)
-		actEditMethod->segLineChanged(nullptr);
 
 	switch(method)
 	{
@@ -344,8 +364,7 @@ void BScanLayerSegmentation::setSegMethod(BScanLayerSegmentation::SegMethod meth
 			break;
 	}
 
-	if(actEditMethod)
-		actEditMethod->segLineChanged(&lines[getActBScanNr()].lines.getSegmentLine(actEditType));
+	updateEditLine();
 
 	emit(segMethodChanged());
 
@@ -376,14 +395,18 @@ void BScanLayerSegmentation::copySegLinesFromOctDataWhenNotFilled(std::size_t bs
 
 
 
-void BScanLayerSegmentation::setActBScan(std::size_t bscan)
+void BScanLayerSegmentation::setActBScan(std::size_t /*bscan*/)
 {
+	updateEditLine();
+	/*
 	if(isActivated)
 		copySegLinesFromOctDataWhenNotFilled(bscan);
+
 
 	BScanSegData& segData = lines[bscan];
 	if(actEditMethod)
 		actEditMethod->segLineChanged(&segData.lines.getSegmentLine(actEditType));
+	*/
 }
 
 void BScanLayerSegmentation::loadState(boost::property_tree::ptree& markerTree)
@@ -473,6 +496,19 @@ void BScanLayerSegmentation::ThicknessmapConfig::setUpperColorLimit(double thick
 {
 	if(colormap)
 		colormap->setMaxValue(thickness);
+}
+
+void BScanLayerSegmentation::updateEditLine()
+{
+	const std::size_t bscanNr = getActBScanNr();
+	if(lines.size() <= bscanNr)
+		return;
+
+	OctData::Segmentationlines::Segmentline& line = lines[bscanNr].lines.getSegmentLine(actEditType);
+	tempLine = line;
+
+	if(actEditMethod)
+		actEditMethod->segLineChanged(&tempLine);
 }
 
 

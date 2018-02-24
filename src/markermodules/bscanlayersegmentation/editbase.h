@@ -36,6 +36,7 @@ protected:
 	int getBScanHight() const;
 	void requestFullUpdate();
 
+	void rangeModified(std::size_t ascanBegin, std::size_t ascanEnd);
 };
 
 #endif // EDITBASE_H

@@ -32,12 +32,16 @@ class EditSpline : public EditBase
 	bool testInsertPoint(const Point2D& p, const ScaleFactor& scaleFactor);
 
 	bool deleteSelectedPoints();
+	BscanMarkerBase::RedrawRequest deletePoints(PointIterator begin, PointIterator end);
 
 	void resetEditPoints();
 	void reduceMarkedPoints();
+	PointIterator reducePoints(PointIterator begin, PointIterator end, double factor);
+	void reducePoints();
 
 	std::tuple<PointIterator, double> findNextPoint(const Point2D& clickPoint);
 
+	double reduceFactor = 1;
 public:
 	EditSpline(BScanLayerSegmentation* base);
 	virtual ~EditSpline() {}

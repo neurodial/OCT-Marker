@@ -63,28 +63,13 @@ BscanMarkerBase::RedrawRequest EditPen::mouseReleaseEvent(QMouseEvent* event, BS
 
 // 	smoothMinMaxIntervall();
 // 	smoothMinMaxIntervall();
+	BscanMarkerBase::RedrawRequest redraw = smoothMinMaxIntervall(widget->getImageScaleFactor());
+
+	rangeModified(actPaintMinX, actPaintMaxX);
 	paintSegLine = false;
-	return smoothMinMaxIntervall(widget->getImageScaleFactor());
+	return redraw;
 }
 
-// void EditPen::smoothMinMaxIntervall()
-// {
-// 	const std::size_t minPos = std::max(static_cast<std::size_t>(1), actPaintMinX  );
-// 	const std::size_t endPos = std::min(segLine->size()-2          , actPaintMaxX+1);
-//
-// 	std::vector<double> temp(endPos - minPos);
-// 	std::vector<double>::iterator it = temp.begin();
-//
-// 	for(std::size_t x = minPos; x < endPos; ++x)
-// 	{
-// 		*it = 0.25*(*segLine)[x-1]
-// 		    + 0.5 *(*segLine)[x  ]
-// 		    + 0.25*(*segLine)[x+1];
-// 		++it;
-// 	}
-//
-// 	std::copy(temp.begin(), temp.end(), segLine->begin() + minPos);
-// }
 
 namespace
 {

@@ -73,6 +73,12 @@ void BScanLayerSegPTree::fillPTree(boost::property_tree::ptree& ptree, const BSc
 
 		for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 		{
+			bool isLoaded  = bscanData.lineLoaded  [static_cast<std::size_t>(type)];
+			bool isModifed = bscanData.lineModified[static_cast<std::size_t>(type)];
+
+			if(!isLoaded && !isModifed)
+				continue;
+
 			const OctData::Segmentationlines::Segmentline& line = lines.getSegmentLine(type);
 			const char* name = lines.getSegmentlineName(type);
 
@@ -137,7 +143,7 @@ bool BScanLayerSegPTree::parsePTree(const boost::property_tree::ptree& ptree, BS
 			}
 
 			bscanData.lines.getSegmentLine(actType) = fillToVector<double>(segLinesNodePair.second);
-			bscanData.filled = true;
+			bscanData.lineLoaded[static_cast<std::size_t>(actType)] = true;
 		}
 	}
 

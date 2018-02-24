@@ -18,3 +18,7 @@ void EditBase::requestFullUpdate()
 	parent->requestFullUpdate();
 }
 
+void EditBase::rangeModified(std::size_t ascanBegin, std::size_t ascanEnd)
+{
+	parent->rangeModified(ascanBegin, ascanEnd);
+}

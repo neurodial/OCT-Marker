@@ -29,9 +29,9 @@ class BScanLayerSegmentation : public BscanMarkerBase
 public:
 	struct BScanSegData
 	{
-		typedef std::vector<bool> ModifedVec;
 		OctData::Segmentationlines lines;
-		std::array<ModifedVec, std::tuple_size<OctData::Segmentationlines::SegLinesTypeList>::value> isModifed;
+		std::array<bool, std::tuple_size<OctData::Segmentationlines::SegLinesTypeList>::value> lineModified;
+		std::array<bool, std::tuple_size<OctData::Segmentationlines::SegLinesTypeList>::value> lineLoaded;
 		bool filled = false;
 	};
 
@@ -96,10 +96,12 @@ public:
 	ThicknessmapConfig& getThicknessmapConfig()                     { return thicknessmapConfig; }
 
 private:
+	OctData::Segmentationlines::Segmentline tempLine;
 	std::vector<BScanSegData> lines;
 	OctData::Segmentationlines::SegmentlineType actEditType = OctData::Segmentationlines::SegmentlineType::ILM;
 
 	void resetMarkers(const OctData::Series* series);
+	void resetMarkers(std::size_t bscanNr);
 
 	QWidget* widgetPtr2WGLayerSeg = nullptr;
 	ThicknessmapLegend*  thicknessMapLegend = nullptr;
@@ -125,6 +127,9 @@ private:
 	void copySegLinesFromOctData(std::size_t bscan);
 
 	std::size_t getMaxBscanWidth() const;
+
+	void rangeModified(std::size_t ascanBegin, std::size_t ascanEnd);
+	void updateEditLine();
 signals:
 	void segMethodChanged();
 	void segLineIdChanged(std::size_t id);

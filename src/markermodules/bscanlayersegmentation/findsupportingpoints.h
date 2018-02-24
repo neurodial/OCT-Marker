@@ -24,9 +24,9 @@ public:
 
 	struct Config
 	{
-		double insertTol   = 0.2 ;
-		double removeTol   = 0.3 ;
-		double maxAbsError = 0.5;
+		double insertTol   = 0.2;
+		double removeTol   = 0.4;
+		double maxAbsError = 0.4;
 	};
 
 	typedef std::vector<Point2D> PtSource;
