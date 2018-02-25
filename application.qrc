@@ -56,6 +56,8 @@
 	<file>icons/arrow_redo.png</file>
 	<file>icons/arrow_undo.png</file>
 
+	<file>icons/speichern.svg</file>
+
 	<file>icons/typicons/oct_marker_logo.svg</file>
 	<file>icons/typicons/spline.svg</file>
 	<file>icons/typicons/pencil.svg</file>

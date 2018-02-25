@@ -19,6 +19,7 @@ class StupidSplineWindow : public QMainWindow
 	ScrollAreaPan*        bscanMarkerWidgetScrollArea = nullptr;
 	BScanMarkerWidget*    bscanMarkerWidget           = nullptr;
 
+	QSize buttonSize = QSize(50, 50);
 
 // 	QProgressBar* loadProgressBar  = nullptr;
 	QAction*      zoomInAction     = nullptr;
@@ -43,6 +44,8 @@ class StupidSplineWindow : public QMainWindow
 	bool setIconsInMarkerWidget();
 
 	bool hasDataChange();
+
+	QDockWidget* createStupidControls();
 
 	void updateWindowTitle();
 

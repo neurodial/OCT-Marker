@@ -78,7 +78,7 @@ StupidSplineWindow::StupidSplineWindow()
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);
 
-
+/*
 	QHBoxLayout* layoutZoomControl = new QHBoxLayout;
 
 	QSize buttonSize(50, 50);
@@ -130,6 +130,9 @@ StupidSplineWindow::StupidSplineWindow()
 	dwZoomControl->setTitleBarWidget(new QWidget());
 	addDockWidget(Qt::LeftDockWidgetArea, dwZoomControl);
 
+	*/
+
+	addDockWidget(Qt::TopDockWidgetArea, createStupidControls());
 
 
 	SloWithLegendWidget* sloImageWidget = new SloWithLegendWidget(this);
@@ -155,7 +158,7 @@ StupidSplineWindow::StupidSplineWindow()
 	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
 
 
-
+/*
 	QDockWidget* dwSaveAndClose = new QDockWidget(this);
 	QWidget* widgetSaveAndClose = new QWidget(dwSaveAndClose);
 	dwSaveAndClose->setFeatures(0);
@@ -179,7 +182,7 @@ StupidSplineWindow::StupidSplineWindow()
 	dwSaveAndClose->setWidget(widgetSaveAndClose);
 	dwSaveAndClose->setTitleBarWidget(new QWidget());
 	addDockWidget(Qt::LeftDockWidgetArea, dwSaveAndClose);
-
+*/
 
 
 	// General Config
@@ -363,4 +366,81 @@ void StupidSplineWindow::saveAndClose()
 		QMessageBox::critical(this, tr("Error on save"), tr("Internal error in saveLayerSegmentation()"));
 	else
 		close();
+}
+
+
+QDockWidget* StupidSplineWindow::createStupidControls()
+{
+	QHBoxLayout* layoutStupidControls = new QHBoxLayout;
+
+	zoomInAction = new QAction(this);
+	zoomInAction->setText(tr("Zoom +"));
+	zoomInAction->setIcon(QIcon::fromTheme("zoom-in",  QIcon(":/icons/typicons/zoom-in-outline.svg")));
+	connect(zoomInAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
+	QToolButton* buttonZoomIn = new QToolButton(this);
+	buttonZoomIn->setDefaultAction(zoomInAction);
+	buttonZoomIn->setIconSize(buttonSize);
+	layoutStupidControls->addWidget(buttonZoomIn);
+
+	zoomOutAction = new QAction(this);
+	zoomOutAction->setText(tr("Zoom -"));
+	zoomOutAction->setIcon(QIcon::fromTheme("zoom-out",  QIcon(":/icons/typicons/zoom-out-outline.svg")));
+	connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
+	QToolButton* buttonZoomOut = new QToolButton(this);
+	buttonZoomOut->setDefaultAction(zoomOutAction);
+	buttonZoomOut->setIconSize(buttonSize);
+	layoutStupidControls->addWidget(buttonZoomOut);
+
+	zoomFitAction = new QAction(this);
+	zoomFitAction->setText(tr("fit image"));
+	zoomFitAction->setIcon(QIcon::fromTheme("zoom-fit-best",  QIcon(":/icons/typicons/arrow-maximise-outline.svg")));
+	connect(zoomFitAction, &QAction::triggered, this, &StupidSplineWindow::fitBScanImage2Widget);
+	QToolButton* buttonZoomFit = new QToolButton(this);
+	buttonZoomFit->setDefaultAction(zoomFitAction);
+	buttonZoomFit->setIconSize(buttonSize);
+	layoutStupidControls->addWidget(buttonZoomFit);
+
+	layoutStupidControls->addStretch();
+
+
+
+	QToolButton* buttonSaveAndClose = new QToolButton(this);
+	buttonSaveAndClose->setText(tr("Save and Close"));
+
+	buttonSaveAndClose->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/speichern.svg")));
+	buttonSaveAndClose->setFont(QFont("Times", 24, QFont::Bold));
+	buttonSaveAndClose->setIconSize(buttonSize);
+	connect(buttonSaveAndClose, &QAbstractButton::clicked, this, &StupidSplineWindow::saveAndClose);
+	layoutStupidControls->addWidget(buttonSaveAndClose);
+
+	QToolButton* buttonClose = new QToolButton(this);
+	buttonClose->setIcon(QIcon::fromTheme("application-exit")); // QIcon(":/icons/speichern.svg"));
+	buttonClose->setText(tr("Quit"));
+	buttonClose->setFont(QFont("Times", 24, QFont::Bold));
+	buttonClose->setIconSize(buttonSize);
+	connect(buttonClose, &QAbstractButton::clicked, this, &StupidSplineWindow::close);
+	layoutStupidControls->addWidget(buttonClose);
+
+
+	QToolButton* infoButton = new QToolButton(this);
+	infoButton->setIcon(QIcon::fromTheme("dialog-information",  QIcon(":/icons/typicons/info-large-outline.svg")));
+	infoButton->setIconSize(buttonSize);
+	infoButton->setToolTip(tr("About"));
+	connect(infoButton, &QToolButton::clicked, this, &StupidSplineWindow::showAboutDialog);
+	layoutStupidControls->addWidget(infoButton);
+
+
+
+
+	QWidget* widgetZoomControl = new QWidget();
+	widgetZoomControl->setLayout(layoutStupidControls);
+
+	QDockWidget* dwZoomControl = new QDockWidget(this);
+	dwZoomControl->setWindowTitle("Buttons");
+	dwZoomControl->setWidget(widgetZoomControl);
+	dwZoomControl->setFeatures(0);
+	dwZoomControl->setObjectName("dwZoomControl");
+	dwZoomControl->setTitleBarWidget(new QWidget());
+
+	return dwZoomControl;
 }
