@@ -250,13 +250,25 @@ bool StupidSplineWindow::setIconsInMarkerWidget()
 	return true;
 }
 
+bool StupidSplineWindow::hasDataChange()
+{
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
+	BscanMarkerBase* markerModul = markerManager.getActBscanMarker();
+
+	assert(markerModul != nullptr);
+	if(!markerModul)
+		return true; // TODO: release mode: internal program error
+
+	return markerModul->hasChangedSinceLastSave();
+}
+
+
 
 void StupidSplineWindow::closeEvent(QCloseEvent* e)
 {
-	if(!saved)
+	if(!saved && hasDataChange())
 	{
 		int ret = QMessageBox::warning(this, tr("Data not saved"), tr("You have unsaved changes, what will you do?"), QMessageBox::Discard | QMessageBox::Cancel | QMessageBox::Save);
-// 		int ret = QMessageBox::warning(this, tr("Data not saved"), tr("Data not saved!<br />Quit program?"), QMessageBox::Discard | QMessageBox::Cancel | QMessageBox::Save);
 		if(ret == QMessageBox::Cancel)
 			return e->ignore();
 		if(ret == QMessageBox::Save)

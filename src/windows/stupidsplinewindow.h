@@ -42,6 +42,8 @@ class StupidSplineWindow : public QMainWindow
 	bool copyLayerSegmentationFromOCTData();
 	bool setIconsInMarkerWidget();
 
+	bool hasDataChange();
+
 	void updateWindowTitle();
 
 	BScanLayerSegmentation* getLayerSegmentationModul();
