@@ -512,3 +512,13 @@ void BScanLayerSegmentation::updateEditLine()
 }
 
 
+bool BScanLayerSegmentation::hasChangedSinceLastSave() const
+{
+	for(const BScanSegData& data : lines)
+	{
+		for(bool modified : data.lineModified)
+			if(modified)
+				return true;
+	}
+	return false;
+}

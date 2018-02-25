@@ -68,6 +68,7 @@ public:
 
 
 	virtual void setActBScan(std::size_t bscan) override;
+	virtual bool hasChangedSinceLastSave() const override;
 
 	virtual bool keyPressEvent    (QKeyEvent*  , BScanMarkerWidget*) override;
 
