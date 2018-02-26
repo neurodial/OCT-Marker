@@ -8,7 +8,7 @@ void InfoDialogs::showAboutDialog(QWidget* parent)
 {
 	QString text("<h1><b>Info &#252;ber OCT-Marker</b></h1>");
 
-	// text += "<br />Dieses Programm entstand im Rahmen der Masterarbeit &#8222;Aktive-Konturen-Methoden zur Segmentierung von OCT-Aufnahmen&#8220;";
+	text += "<br /><center><b>nicht für den klinischen Gebrauch bestimmt<br />not for clinical usage</b></center>";
 	text += "<br /><br />Author: Kay Gawlik";
 	text += "<br /><br />Icons von <a href=\"http://www.famfamfam.com/lab/icons/silk/\">FamFamFam</a>";
 	text += " und <a href=\"http://s-ings.com/typicons/\">Typicons</a>";
