@@ -43,6 +43,9 @@ public:
 
 	const ExtraImageData* getExtraImageData() const;
 
+	std::size_t numUndoSteps() const;
+	std::size_t numRedoSteps() const;
+
 private:
 	OctMarkerManager();
 	virtual ~OctMarkerManager();
@@ -74,6 +77,8 @@ private slots:
 
 	void handleSloRedrawAfterMarkerChange();
 
+	void updateUndoRedowState();
+
 public slots:
 	virtual void chooseBScan(int bscan);
 	virtual void inkrementBScan(int inkrement)                      { chooseBScan(actBScan + inkrement); }
@@ -95,6 +100,7 @@ signals:
 	void bscanMarkerChanged(BscanMarkerBase* marker);
 	void sloMarkerChanged  (SloMarkerBase  * marker);
 	void sloOverlayChanged ();
+	void undoRedoStateChange();
 
 private:
 	Q_OBJECT

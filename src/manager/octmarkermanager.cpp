@@ -58,6 +58,7 @@ OctMarkerManager::OctMarkerManager()
 		connect(obj, &BscanMarkerBase::requestFullUpdate      , this, &OctMarkerManager::udateFromMarkerModul            );
 		connect(obj, &BscanMarkerBase::sloViewHasChanged      , this, &OctMarkerManager::handleSloRedrawAfterMarkerChange);
 		connect(obj, &BscanMarkerBase::requestSloOverlayUpdate, this, &OctMarkerManager::sloOverlayUpdateFromMarkerModul );
+		connect(obj, &BscanMarkerBase::undoRedoChanged        , this, &OctMarkerManager::updateUndoRedowState            );
 	}
 
 
@@ -183,6 +184,7 @@ void OctMarkerManager::setBscanMarker(int id)
 		actBscanMarker = newMarker;
 		emit(bscanChanged(actBScan));
 		emit(bscanMarkerChanged(actBscanMarker));
+		emit(undoRedoStateChange());
 		ProgramOptions::bscanMarkerToolId.setValue(actBscanMarkerId);
 	}
 }
@@ -278,6 +280,15 @@ void OctMarkerManager::udateFromMarkerModul()
 	 }
 }
 
+void OctMarkerManager::updateUndoRedowState()
+{
+	 QObject* obj = sender();
+	 if(obj == actBscanMarker)
+	 {
+		 emit(undoRedoStateChange());
+	 }
+}
+
 
 
 bool OctMarkerManager::hasActMarkerChanged() const
@@ -309,4 +320,18 @@ const OctData::BScan* OctMarkerManager::getActBScan() const
 const ExtraImageData* OctMarkerManager::getExtraImageData() const
 {
 	return extraSeriesData->getBScanExtraData(actBScan);
+}
+
+std::size_t OctMarkerManager::numRedoSteps() const
+{
+	if(!actBscanMarker)
+		return 0;
+	return actBscanMarker->numRedoSteps();
+}
+
+std::size_t OctMarkerManager::numUndoSteps() const
+{
+	if(!actBscanMarker)
+		return 0;
+	return actBscanMarker->numUndoSteps();
 }

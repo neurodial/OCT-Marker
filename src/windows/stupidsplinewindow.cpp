@@ -43,6 +43,9 @@
 
 #include<windows/infodialogs.h>
 #include <markermodules/bscanlayersegmentation/bscanlayersegmentation.h>
+#include <QSpinBox>
+
+#include<QDesktopWidget>
 
 
 StupidSplineWindow::StupidSplineWindow()
@@ -53,7 +56,6 @@ StupidSplineWindow::StupidSplineWindow()
 	ProgramOptions::bscansShowSegmentationslines.setValue(false);
 	setMinimumWidth(1000);
 // 	setMinimumHeight(600);
-
 
 	pmm = new PaintMarker();
 	bscanMarkerWidget->setPaintMarker(pmm);
@@ -70,6 +72,9 @@ StupidSplineWindow::StupidSplineWindow()
 
 	updateWindowTitle();
 
+	OctMarkerManager& marker = OctMarkerManager::getInstance();
+	marker.setBscanMarkerTextID(QString("LayerSegmentation"));
+	connect(&marker, &OctMarkerManager::undoRedoStateChange, this, &StupidSplineWindow::updateRedoUndoButtons);
 
 	QSettings& settings = ProgramOptions::getSettings();
 	restoreGeometry(settings.value("stupidMainWindowGeometry").toByteArray());
@@ -78,59 +83,6 @@ StupidSplineWindow::StupidSplineWindow()
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);
 
-/*
-	QHBoxLayout* layoutZoomControl = new QHBoxLayout;
-
-	QSize buttonSize(50, 50);
-
-	QToolButton* infoButton = new QToolButton(this);
-	infoButton->setIcon(QIcon(":/icons/typicons/info-large-outline.svg"));
-	infoButton->setIconSize(buttonSize);
-	infoButton->setToolTip(tr("About"));
-	connect(infoButton, &QToolButton::clicked, this, &StupidSplineWindow::showAboutDialog);
-	layoutZoomControl->addWidget(infoButton);
-
-
-	zoomInAction = new QAction(this);
-	zoomInAction->setText(tr("Zoom +"));
-	zoomInAction->setIcon(QIcon(":/icons/typicons/zoom-in-outline.svg"));
-	connect(zoomInAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
-	QToolButton* buttonZoomIn = new QToolButton(this);
-	buttonZoomIn->setDefaultAction(zoomInAction);
-	buttonZoomIn->setIconSize(buttonSize);
-	layoutZoomControl->addWidget(buttonZoomIn);
-
-	zoomOutAction = new QAction(this);
-	zoomOutAction->setText(tr("Zoom -"));
-	zoomOutAction->setIcon(QIcon(":/icons/typicons/zoom-out-outline.svg"));
-	connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
-	QToolButton* buttonZoomOut = new QToolButton(this);
-	buttonZoomOut->setDefaultAction(zoomOutAction);
-	buttonZoomOut->setIconSize(buttonSize);
-	layoutZoomControl->addWidget(buttonZoomOut);
-
-	zoomFitAction = new QAction(this);
-	zoomFitAction->setText(tr("fit image"));
-	zoomFitAction->setIcon(QIcon(":/icons/typicons/arrow-maximise-outline.svg"));
-	connect(zoomFitAction, &QAction::triggered, this, &StupidSplineWindow::fitBScanImage2Widget);
-	QToolButton* buttonZoomFit = new QToolButton(this);
-	buttonZoomFit->setDefaultAction(zoomFitAction);
-	buttonZoomFit->setIconSize(buttonSize);
-	layoutZoomControl->addWidget(buttonZoomFit);
-
-
-	QWidget* widgetZoomControl = new QWidget();
-	widgetZoomControl->setLayout(layoutZoomControl);
-
-	QDockWidget* dwZoomControl = new QDockWidget(this);
-	dwZoomControl->setWindowTitle("Buttons");
-	dwZoomControl->setWidget(widgetZoomControl);
-	dwZoomControl->setFeatures(0);
-	dwZoomControl->setObjectName("dwZoomControl");
-	dwZoomControl->setTitleBarWidget(new QWidget());
-	addDockWidget(Qt::LeftDockWidgetArea, dwZoomControl);
-
-	*/
 
 	addDockWidget(Qt::TopDockWidgetArea, createStupidControls());
 
@@ -143,46 +95,17 @@ StupidSplineWindow::StupidSplineWindow()
 	dwSloImage->setFeatures(0);
 	dwSloImage->setObjectName("StupidDWSloImage");
 	dwSloImage->setTitleBarWidget(new QWidget());
-// 	dwSloImage->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
 	connect(bscanMarkerWidget, &BScanMarkerWidget::mousePosOnBScan, sloImageWidget->getImageWidget(), &SLOImageWidget::showPosOnBScan);
 
 
-	OctMarkerManager& marker = OctMarkerManager::getInstance();
-	marker.setBscanMarkerTextID(QString("LayerSegmentation"));
 
 	DWMarkerWidgets* dwmarkerwidgets = new DWMarkerWidgets(this);
 	dwmarkerwidgets->setObjectName("DwMarkerWidgets");
 	dwmarkerwidgets->setFeatures(0);
 	dwmarkerwidgets->setTitleBarWidget(new QWidget());
+	dwmarkerwidgets->setFixedSize(dwmarkerwidgets->minimumSizeHint());
 	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
-
-
-/*
-	QDockWidget* dwSaveAndClose = new QDockWidget(this);
-	QWidget* widgetSaveAndClose = new QWidget(dwSaveAndClose);
-	dwSaveAndClose->setFeatures(0);
-	dwSaveAndClose->setWindowTitle(tr("Quit"));
-	dwSaveAndClose->setObjectName("dwSaveAndClose");
-	QVBoxLayout* dcSaveAndCloseLayout = new QVBoxLayout(widgetSaveAndClose);
-
-	QPushButton* buttonSaveAndClose = new QPushButton(this);
-	buttonSaveAndClose->setText(tr("Save and Close"));
-	buttonSaveAndClose->setFont(QFont("Times", 24, QFont::Bold));
-	connect(buttonSaveAndClose, &QAbstractButton::clicked, this, &StupidSplineWindow::saveAndClose);
-	dcSaveAndCloseLayout->addWidget(buttonSaveAndClose);
-
-	QPushButton* buttonClose = new QPushButton(this);
-	buttonClose->setText(tr("Quit"));
-	 buttonClose->setFont(QFont("Times", 24, QFont::Bold));
-	connect(buttonClose, &QAbstractButton::clicked, this, &StupidSplineWindow::close);
-	dcSaveAndCloseLayout->addWidget(buttonClose);
-
-	widgetSaveAndClose->setLayout(dcSaveAndCloseLayout);
-	dwSaveAndClose->setWidget(widgetSaveAndClose);
-	dwSaveAndClose->setTitleBarWidget(new QWidget());
-	addDockWidget(Qt::LeftDockWidgetArea, dwSaveAndClose);
-*/
 
 
 	// General Config
@@ -249,7 +172,7 @@ bool StupidSplineWindow::setIconsInMarkerWidget()
 	if(!layerSegmentationModul)
 		return false;
 
-	layerSegmentationModul->setIconsToSimple(40);
+	layerSegmentationModul->setIconsToSimple(32);
 	return true;
 }
 
@@ -368,10 +291,48 @@ void StupidSplineWindow::saveAndClose()
 		close();
 }
 
+namespace
+{
+	void addLayoutVLine(QLayout* layout)
+	{
+		layout->setSpacing(10);
+
+		QFrame* line = new QFrame();
+		// line->setGeometry(QRect(10,30));
+		line->setFrameShape(QFrame::VLine); // Replace by VLine for vertical line
+		line->setFrameShadow(QFrame::Sunken);
+		layout->addWidget(line);
+
+		layout->setSpacing(10);
+	}
+}
+
 
 QDockWidget* StupidSplineWindow::createStupidControls()
 {
 	QHBoxLayout* layoutStupidControls = new QHBoxLayout;
+	QFont textFont = QFont("Times", 24, QFont::Bold);
+
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
+	BScanLayerSegmentation* layerSeg = getLayerSegmentationModul();
+
+	bscanChooser = new QSpinBox(this);
+	bscanChooser->setFont(textFont);
+	connect(bscanChooser, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), &markerManager, &OctMarkerManager::chooseBScan);
+// 	connect(bscanChooser, SIGNAL(valueChanged(int)), &markerManager, SLOT(chooseBScan(int)));
+	connect(&markerManager, &OctMarkerManager::bscanChanged, bscanChooser, &QSpinBox::setValue);
+	connect(&markerManager, &OctMarkerManager::newSeriesShowed, this, &StupidSplineWindow::updateBScanChooser);
+
+	labelMaxBscan = new QLabel(this);
+	labelMaxBscan->setFont(textFont);
+	labelMaxBscan->setText("/0");
+
+	layoutStupidControls->addWidget(bscanChooser);
+	layoutStupidControls->addWidget(labelMaxBscan);
+
+	// ----------------------
+	addLayoutVLine(layoutStupidControls);
+
 
 	zoomInAction = new QAction(this);
 	zoomInAction->setText(tr("Zoom +"));
@@ -400,13 +361,38 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	buttonZoomFit->setIconSize(buttonSize);
 	layoutStupidControls->addWidget(buttonZoomFit);
 
+	// ----------------------
+	addLayoutVLine(layoutStupidControls);
+
+
+	buttonUndo = new QToolButton(this);
+	buttonUndo->setText(tr("undo"));
+	buttonUndo->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/undo.svg")));
+	buttonUndo->setFont(QFont("Times", 24, QFont::Bold));
+	buttonUndo->setIconSize(buttonSize);
+	buttonUndo->setEnabled(false);
+	connect(buttonUndo, &QAbstractButton::clicked, layerSeg, &BscanMarkerBase::callUndoStep);
+	layoutStupidControls->addWidget(buttonUndo);
+
+
+	buttonRedo = new QToolButton(this);
+	buttonRedo->setText(tr("redo"));
+	buttonRedo->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/redo.svg")));
+	buttonRedo->setFont(QFont("Times", 24, QFont::Bold));
+	buttonRedo->setIconSize(buttonSize);
+	buttonRedo->setEnabled(false);
+	connect(buttonRedo, &QAbstractButton::clicked, layerSeg, &BscanMarkerBase::callRedoStep);
+	layoutStupidControls->addWidget(buttonRedo);
+
+
+	// ----------------------
 	layoutStupidControls->addStretch();
+	// ----------------------
 
 
 
 	QToolButton* buttonSaveAndClose = new QToolButton(this);
 	buttonSaveAndClose->setText(tr("Save and Close"));
-
 	buttonSaveAndClose->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/speichern.svg")));
 	buttonSaveAndClose->setFont(QFont("Times", 24, QFont::Bold));
 	buttonSaveAndClose->setIconSize(buttonSize);
@@ -421,6 +407,8 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	connect(buttonClose, &QAbstractButton::clicked, this, &StupidSplineWindow::close);
 	layoutStupidControls->addWidget(buttonClose);
 
+	// ----------------------
+	addLayoutVLine(layoutStupidControls);
 
 	QToolButton* infoButton = new QToolButton(this);
 	infoButton->setIcon(QIcon::fromTheme("dialog-information",  QIcon(":/icons/typicons/info-large-outline.svg")));
@@ -443,4 +431,33 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	dwZoomControl->setTitleBarWidget(new QWidget());
 
 	return dwZoomControl;
+}
+
+
+void StupidSplineWindow::updateBScanChooser()
+{
+	const OctData::Series* series = OctDataManager::getInstance().getSeries();
+
+	std::size_t maxBscan = 0;
+	if(series)
+	{
+		maxBscan = series->bscanCount();
+		if(maxBscan > 0)
+			--maxBscan;
+	}
+
+	bscanChooser->setMaximum(static_cast<int>(maxBscan));
+	bscanChooser->setValue(OctMarkerManager::getInstance().getActBScanNum());
+
+	labelMaxBscan->setText(QString("/%1").arg(maxBscan));
+}
+
+void StupidSplineWindow::updateRedoUndoButtons()
+{
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
+
+	if(buttonUndo)
+		buttonUndo->setEnabled(markerManager.numUndoSteps() > 0);
+	if(buttonRedo)
+		buttonRedo->setEnabled(markerManager.numRedoSteps() > 0);
 }

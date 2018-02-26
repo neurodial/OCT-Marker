@@ -9,6 +9,7 @@
 #include<opencv/cv.hpp>
 
 #include <manager/octmarkermanager.h>
+#include<data_structure/markercommand.h>
 
 std::size_t BscanMarkerBase::getActBScanNr() const
 {
@@ -126,3 +127,61 @@ bool BscanMarkerBase::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outS
 	}
 	return false;
 }
+
+
+// Undo redo functions
+
+void BscanMarkerBase::addUndoCommand(MarkerCommand* command)
+{
+	clearRedo();
+	undoList.push_back(command);
+
+	undoRedoChanged();
+}
+
+void BscanMarkerBase::callRedoStep()
+{
+	if(redoList.size() == 0)
+		return;
+
+	MarkerCommand* command = redoList.back();
+	redoList.pop_back();
+
+	undoList.push_back(command);
+
+	command->redo();
+	undoRedoChanged();
+}
+
+void BscanMarkerBase::callUndoStep()
+{
+	if(undoList.size() == 0)
+		return;
+
+	MarkerCommand* command = undoList.back();
+	undoList.pop_back();
+
+	redoList.push_back(command);
+
+	command->undo();
+	undoRedoChanged();
+}
+
+void BscanMarkerBase::clearUndoRedo()
+{
+	clearRedo();
+	for(MarkerCommand* command : undoList)
+		delete command;
+	undoList.clear();
+
+	undoRedoChanged();
+}
+
+void BscanMarkerBase::clearRedo()
+{
+	for(MarkerCommand* command : redoList)
+		delete command;
+	redoList.clear();
+}
+
+

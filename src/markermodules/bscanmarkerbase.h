@@ -1,5 +1,6 @@
 #pragma once
 
+#include<vector>
 
 #include <QObject>
 #include <QIcon>
@@ -19,6 +20,8 @@ class QGraphicsScene;
 class OctMarkerManager;
 class SLOImageWidget;
 class WidgetOverlayLegend;
+
+class MarkerCommand;
 
 
 namespace OctData
@@ -47,7 +50,7 @@ public:
 
 
 	BscanMarkerBase(OctMarkerManager* markerManager) : markerManager(markerManager) {}
-	virtual ~BscanMarkerBase()                                      {}
+	virtual ~BscanMarkerBase()                                      { clearUndoRedo(); }
 	
 	virtual bool drawingBScanOnSLO() const                          { return false; }
 	virtual void drawBScanSLOLine  (QPainter&, std::size_t /*bscanNr*/, const OctData::CoordSLOpx& /*start_px*/, const OctData::CoordSLOpx& /*end_px*/   , SLOImageWidget*) const
@@ -85,17 +88,26 @@ public:
 	
 	virtual void activate(bool);
 	virtual void saveState(boost::property_tree::ptree&)            {}
-	virtual void loadState(boost::property_tree::ptree&)            {}
+	virtual void loadState(boost::property_tree::ptree&)            { clearUndoRedo(); }
 	
 	virtual void newSeriesLoaded(const OctData::Series*, boost::property_tree::ptree&)
-	                                                                {}
+	                                                                { clearUndoRedo(); }
+
+	std::size_t numUndoSteps()                                const { return undoList.size(); }
+	std::size_t numRedoSteps()                                const { return redoList.size(); }
+
 
 	std::size_t getActBScanNr() const;
+
+public slots:
+	void callRedoStep();
+	void callUndoStep();
 signals:
 	void enabledToolbar(bool b);
 	void requestFullUpdate();
 	void requestSloOverlayUpdate();
 	void sloViewHasChanged();
+	void undoRedoChanged();
 	
 	
 protected:
@@ -111,6 +123,9 @@ protected:
 	const OctData::BScan * getBScan(std::size_t nr) const;
 
 	bool drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha, const cv::Mat& sloOverlay) const;
+
+	void addUndoCommand(MarkerCommand* command);
+	void clearUndoRedo();
 	
 	QString name;
 	QString id;
@@ -118,5 +133,10 @@ protected:
 	bool isActivated  = false;
 	bool markerActive = true;
 	
+	std::vector<MarkerCommand*> undoList;
+	std::vector<MarkerCommand*> redoList;
+
+private:
+	void clearRedo();
 };
 

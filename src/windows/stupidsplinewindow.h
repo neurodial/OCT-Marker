@@ -3,6 +3,9 @@
 #include <QMainWindow>
 
 class QAction;
+class QSpinBox;
+class QLabel;
+class QToolButton;
 
 class BScanMarkerWidget;
 class ScrollAreaPan;
@@ -19,7 +22,7 @@ class StupidSplineWindow : public QMainWindow
 	ScrollAreaPan*        bscanMarkerWidgetScrollArea = nullptr;
 	BScanMarkerWidget*    bscanMarkerWidget           = nullptr;
 
-	QSize buttonSize = QSize(50, 50);
+	QSize buttonSize = QSize(40, 40);
 
 // 	QProgressBar* loadProgressBar  = nullptr;
 	QAction*      zoomInAction     = nullptr;
@@ -27,6 +30,13 @@ class StupidSplineWindow : public QMainWindow
 	QAction*      zoomFitAction    = nullptr;
 
 	QProgressDialog* progressDialog = nullptr;
+
+	QSpinBox*     bscanChooser     = nullptr;
+	QLabel*       labelMaxBscan    = nullptr;
+
+
+	QToolButton* buttonUndo = nullptr;
+	QToolButton* buttonRedo = nullptr;
 
 	PaintMarker* pmm = nullptr;
 
@@ -71,5 +81,7 @@ private slots:
 	void loadFileProgress(double frac);
 
 	void fitBScanImage2Widget();
+	void updateBScanChooser();
+	void updateRedoUndoButtons();
 };
 
