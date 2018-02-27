@@ -74,6 +74,7 @@ StupidSplineWindow::StupidSplineWindow()
 
 	OctMarkerManager& marker = OctMarkerManager::getInstance();
 	marker.setBscanMarkerTextID(QString("LayerSegmentation"));
+	setIconsInMarkerWidget();
 	connect(&marker, &OctMarkerManager::undoRedoStateChange, this, &StupidSplineWindow::updateRedoUndoButtons);
 
 	QSettings& settings = ProgramOptions::getSettings();
@@ -92,7 +93,7 @@ StupidSplineWindow::StupidSplineWindow()
 	sloImageWidget->setMinimumHeight(250);
 	dwSloImage->setWindowTitle("SLO");
 	dwSloImage->setWidget(sloImageWidget);
-	dwSloImage->setFeatures(0);
+	dwSloImage->setFeatures(QDockWidget::NoDockWidgetFeatures);
 	dwSloImage->setObjectName("StupidDWSloImage");
 	dwSloImage->setTitleBarWidget(new QWidget());
 	addDockWidget(Qt::LeftDockWidgetArea, dwSloImage);
@@ -102,9 +103,9 @@ StupidSplineWindow::StupidSplineWindow()
 
 	DWMarkerWidgets* dwmarkerwidgets = new DWMarkerWidgets(this);
 	dwmarkerwidgets->setObjectName("DwMarkerWidgets");
-	dwmarkerwidgets->setFeatures(0);
+	dwmarkerwidgets->setFeatures(QDockWidget::NoDockWidgetFeatures);
 	dwmarkerwidgets->setTitleBarWidget(new QWidget());
-// 	dwmarkerwidgets->setFixedSize(dwmarkerwidgets->minimumSizeHint());
+// 	dwmarkerwidgets->setFixedHeight(dwmarkerwidgets->minimumSizeHint().height());
 	dwmarkerwidgets->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
 
@@ -115,7 +116,6 @@ StupidSplineWindow::StupidSplineWindow()
 	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &StupidSplineWindow::zoomChanged);
 	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged, this, &StupidSplineWindow::fitBScanImage2Widget);
 
-	setIconsInMarkerWidget();
 }
 
 StupidSplineWindow::~StupidSplineWindow()
@@ -355,7 +355,7 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 
 	zoomFitAction = new QAction(this);
 	zoomFitAction->setText(tr("fit image"));
-	zoomFitAction->setIcon(QIcon::fromTheme("zoom-fit-best",  QIcon(":/icons/typicons/arrow-maximise-outline.svg")));
+	zoomFitAction->setIcon(QIcon::fromTheme("zoom-fit-best",  QIcon(":/icons/tango/actions/view-fullscreen.svgz")));
 	connect(zoomFitAction, &QAction::triggered, this, &StupidSplineWindow::fitBScanImage2Widget);
 	QToolButton* buttonZoomFit = new QToolButton(this);
 	buttonZoomFit->setDefaultAction(zoomFitAction);
@@ -368,7 +368,8 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 
 	buttonUndo = new QToolButton(this);
 	buttonUndo->setText(tr("undo"));
-	buttonUndo->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/undo.svg")));
+	buttonUndo->setToolTip(tr("undo"));
+	buttonUndo->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/actions/edit-undo.svgz")));
 	buttonUndo->setFont(QFont("Times", 24, QFont::Bold));
 	buttonUndo->setIconSize(buttonSize);
 	buttonUndo->setEnabled(false);
@@ -378,7 +379,8 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 
 	buttonRedo = new QToolButton(this);
 	buttonRedo->setText(tr("redo"));
-	buttonRedo->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/redo.svg")));
+	buttonRedo->setToolTip(tr("redo"));
+	buttonRedo->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/actions/edit-redo.svgz")));
 	buttonRedo->setFont(QFont("Times", 24, QFont::Bold));
 	buttonRedo->setIconSize(buttonSize);
 	buttonRedo->setEnabled(false);
@@ -394,15 +396,17 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 
 	QToolButton* buttonSaveAndClose = new QToolButton(this);
 	buttonSaveAndClose->setText(tr("Save and Close"));
-	buttonSaveAndClose->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/speichern.svg")));
+	buttonSaveAndClose->setToolTip(tr("Save and Close"));
+	buttonSaveAndClose->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/actions/document-save.svgz")));
 	buttonSaveAndClose->setFont(QFont("Times", 24, QFont::Bold));
 	buttonSaveAndClose->setIconSize(buttonSize);
 	connect(buttonSaveAndClose, &QAbstractButton::clicked, this, &StupidSplineWindow::saveAndClose);
 	layoutStupidControls->addWidget(buttonSaveAndClose);
 
 	QToolButton* buttonClose = new QToolButton(this);
-	buttonClose->setIcon(QIcon::fromTheme("application-exit")); // QIcon(":/icons/speichern.svg"));
+	buttonClose->setIcon(QIcon::fromTheme("application-exit", QIcon(":/icons/tango/actions/system-log-out.svgz")));
 	buttonClose->setText(tr("Quit"));
+	buttonClose->setToolTip(tr("Quit"));
 	buttonClose->setFont(QFont("Times", 24, QFont::Bold));
 	buttonClose->setIconSize(buttonSize);
 	connect(buttonClose, &QAbstractButton::clicked, this, &StupidSplineWindow::close);
@@ -412,7 +416,7 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	addLayoutVLine(layoutStupidControls);
 
 	QToolButton* infoButton = new QToolButton(this);
-	infoButton->setIcon(QIcon::fromTheme("dialog-information",  QIcon(":/icons/typicons/info-large-outline.svg")));
+	infoButton->setIcon(QIcon::fromTheme("dialog-information",  QIcon(":/icons/tango/apps/help-browser.svgz")));
 	infoButton->setIconSize(buttonSize);
 	infoButton->setToolTip(tr("About"));
 	connect(infoButton, &QToolButton::clicked, this, &StupidSplineWindow::showAboutDialog);

@@ -208,11 +208,9 @@ void WGLayerSeg::markerMethodChanged()
 void WGLayerSeg::setIconsToSimple(int size)
 {
 	QSize iconSize(size, size);
-	buttonMarkerMethodPen->setIconSize(iconSize);
-
+	buttonMarkerMethodPen   ->setIconSize(iconSize);
 	buttonMarkerMethodSpline->setIconSize(iconSize);
-
-	buttonShowSeglines->setIconSize(iconSize);
+	buttonShowSeglines      ->setIconSize(iconSize);
 }
 
 void WGLayerSeg::thicknessmapTemplateChanged(int indexInt)

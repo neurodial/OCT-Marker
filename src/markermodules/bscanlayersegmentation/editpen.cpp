@@ -94,6 +94,9 @@ BscanMarkerBase::RedrawRequest EditPen::smoothMinMaxIntervall(const ScaleFactor&
 	const std::size_t minPos = std::max(static_cast<std::size_t>(2), actPaintMinX  );
 	const std::size_t endPos = std::min(segLine->size()-3          , actPaintMaxX+1);
 
+	if(minPos > endPos)
+		return BscanMarkerBase::RedrawRequest();
+
 	std::vector<double> temp(endPos - minPos);
 	std::vector<double>::iterator it = temp.begin();
 
