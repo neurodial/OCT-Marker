@@ -6,13 +6,13 @@
 #include <QtGui>
 
 #include <QProgressDialog>
-#include <QLabel>
 
 #include <widgets/slowithlegendwidget.h>
 #include <widgets/sloimagewidget.h>
 #include <widgets/bscanmarkerwidget.h>
 #include <widgets/dwmarkerwidgets.h>
 #include <widgets/scrollareapan.h>
+#include <widgets/bscanchooserspinbox.h>
 
 #include <data_structure/programoptions.h>
 
@@ -25,27 +25,16 @@
 #include <model/octfilesmodel.h>
 #include <model/octdatamodel.h>
 
-#include <octdata/datastruct/sloimage.h>
-#include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/series.h>
-
-#include <octdata/octfileread.h>
-#include <octdata/filereadoptions.h>
 
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
-
-#include <globaldefinitions.h>
 
 #include <QPushButton>
 #include <widgets/dwimagecoloradjustments.h>
 #include <QToolButton>
 
-#include<windows/infodialogs.h>
 #include <markermodules/bscanlayersegmentation/bscanlayersegmentation.h>
-#include <QSpinBox>
-
-#include<QDesktopWidget>
 
 
 StupidSplineWindow::StupidSplineWindow()
@@ -256,12 +245,6 @@ bool StupidSplineWindow::loadFile(const QString& filename)
 	return OctFilesModel::getInstance().loadFile(filename);
 }
 
-void StupidSplineWindow::showAboutDialog()
-{
-	InfoDialogs::showAboutDialog(this);
-}
-
-
 void StupidSplineWindow::updateWindowTitle()
 {
 	const QString& filename = OctDataManager::getInstance().getLoadedFilename();
@@ -309,22 +292,9 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	QHBoxLayout* layoutStupidControls = new QHBoxLayout;
 	QFont textFont = QFont("Times", 20, QFont::Bold);
 
-	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
-// 	BScanLayerSegmentation* layerSeg = getLayerSegmentationModul();
-
-	bscanChooser = new QSpinBox(this);
+	BScanChooserSpinBox* bscanChooser = new BScanChooserSpinBox(this);
 	bscanChooser->setFont(textFont);
-	connect(bscanChooser, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), &markerManager, &OctMarkerManager::chooseBScan);
-// 	connect(bscanChooser, SIGNAL(valueChanged(int)), &markerManager, SLOT(chooseBScan(int)));
-	connect(&markerManager, &OctMarkerManager::bscanChanged, bscanChooser, &QSpinBox::setValue);
-	connect(&markerManager, &OctMarkerManager::newSeriesShowed, this, &StupidSplineWindow::updateBScanChooser);
-
-	labelMaxBscan = new QLabel(this);
-	labelMaxBscan->setFont(textFont);
-	labelMaxBscan->setText("/0");
-
 	layoutStupidControls->addWidget(bscanChooser);
-	layoutStupidControls->addWidget(labelMaxBscan);
 
 	// ----------------------
 	addLayoutVLine(layoutStupidControls);
@@ -333,15 +303,6 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomInAction ()));
 	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomOutAction()));
 	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomFitAction()));
-
-// 	zoomFitAction = new QAction(this);
-// 	zoomFitAction->setText(tr("fit image"));
-// 	zoomFitAction->setIcon(QIcon::fromTheme("zoom-fit-best",  QIcon(":/icons/tango/actions/view-fullscreen.svgz")));
-// 	connect(zoomFitAction, &QAction::triggered, this, &StupidSplineWindow::fitBScanImage2Widget);
-// 	QToolButton* buttonZoomFit = new QToolButton(this);
-// 	buttonZoomFit->setDefaultAction(zoomFitAction);
-// 	buttonZoomFit->setIconSize(buttonSize);
-// 	layoutStupidControls->addWidget(buttonZoomFit);
 
 	// ----------------------
 	addLayoutVLine(layoutStupidControls);
@@ -360,7 +321,7 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	buttonSaveAndClose->setText(tr("Save and Close"));
 	buttonSaveAndClose->setToolTip(tr("Save and Close"));
 	buttonSaveAndClose->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/actions/document-save.svgz")));
-	buttonSaveAndClose->setFont(QFont("Times", 24, QFont::Bold));
+	buttonSaveAndClose->setFont(textFont);
 	buttonSaveAndClose->setIconSize(buttonSize);
 	connect(buttonSaveAndClose, &QAbstractButton::clicked, this, &StupidSplineWindow::saveAndClose);
 	layoutStupidControls->addWidget(buttonSaveAndClose);
@@ -369,7 +330,7 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	buttonClose->setIcon(QIcon::fromTheme("application-exit", QIcon(":/icons/tango/actions/system-log-out.svgz")));
 	buttonClose->setText(tr("Quit"));
 	buttonClose->setToolTip(tr("Quit"));
-	buttonClose->setFont(QFont("Times", 24, QFont::Bold));
+	buttonClose->setFont(textFont);
 	buttonClose->setIconSize(buttonSize);
 	connect(buttonClose, &QAbstractButton::clicked, this, &StupidSplineWindow::close);
 	layoutStupidControls->addWidget(buttonClose);
@@ -377,12 +338,9 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	// ----------------------
 	addLayoutVLine(layoutStupidControls);
 
-	QToolButton* infoButton = new QToolButton(this);
-	infoButton->setIcon(QIcon::fromTheme("dialog-information",  QIcon(":/icons/tango/apps/help-browser.svgz")));
-	infoButton->setIconSize(buttonSize);
-	infoButton->setToolTip(tr("About"));
-	connect(infoButton, &QToolButton::clicked, this, &StupidSplineWindow::showAboutDialog);
-	layoutStupidControls->addWidget(infoButton);
+
+	markerActions.getAboutDialogAction()->setIcon(QIcon::fromTheme("dialog-information",  QIcon(":/icons/tango/apps/help-browser.svgz")));
+	layoutStupidControls->addWidget(genToolButton(markerActions.getAboutDialogAction()));
 
 
 
@@ -399,23 +357,4 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	dwZoomControl->setFixedHeight(dwZoomControl->minimumSizeHint().height());
 
 	return dwZoomControl;
-}
-
-
-void StupidSplineWindow::updateBScanChooser()
-{
-	const OctData::Series* series = OctDataManager::getInstance().getSeries();
-
-	std::size_t maxBscan = 0;
-	if(series)
-	{
-		maxBscan = series->bscanCount();
-		if(maxBscan > 0)
-			--maxBscan;
-	}
-
-	bscanChooser->setMaximum(static_cast<int>(maxBscan));
-	bscanChooser->setValue(OctMarkerManager::getInstance().getActBScanNum());
-
-	labelMaxBscan->setText(QString("/%1").arg(maxBscan));
 }

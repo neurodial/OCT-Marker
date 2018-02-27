@@ -28,30 +28,14 @@ class StupidSplineWindow : public QMainWindow
 
 	OctMarkerActions markerActions;
 
-// 	QProgressBar* loadProgressBar  = nullptr;
-// 	QAction*      zoomInAction     = nullptr;
-// 	QAction*      zoomOutAction    = nullptr;
-	QAction*      zoomFitAction    = nullptr;
 
 	QProgressDialog* progressDialog = nullptr;
-
-	QSpinBox*     bscanChooser     = nullptr;
-	QLabel*       labelMaxBscan    = nullptr;
-
-
-// 	QToolButton* buttonUndo = nullptr;
-// 	QToolButton* buttonRedo = nullptr;
-
 	PaintMarker* pmm = nullptr;
 
 	bool saved = false;
 
-// 	bool addFile(const QString& filename);
-// 	std::size_t loadFolder(const QString& foldername, int numMaxRecursiv = 10);
-
 	virtual void closeEvent(QCloseEvent* e);
 
-// 	void handleOpenUrl(const QUrl& url, bool singleInput);
 
 	bool saveLayerSegmentation();
 	bool copyLayerSegmentationFromOCTData();
@@ -71,20 +55,13 @@ public:
 	~StupidSplineWindow();
 
 	bool loadFile(const QString& filename);
-	
-// 	static void setMarkersStringList(QStringList& filters);
-
 signals:
 	void loadLastFile();
 
 private slots:
-	void showAboutDialog();
-
 	void saveAndClose();
 
 	void loadFileStatusSlot(bool loading);
 	void loadFileProgress(double frac);
-
-	void updateBScanChooser();
 };
 

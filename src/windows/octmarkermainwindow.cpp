@@ -10,10 +10,9 @@
 #include <QtGui>
 
 #include <QActionGroup>
-#include <QSpinBox>
 #include <QProgressBar>
-#include <QLabel>
 #include <QStatusBar>
+#include <QPushButton>
 
 #include <widgets/wgsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
@@ -24,6 +23,7 @@
 #include <widgets/mousecoordstatus.h>
 #include <widgets/dwdebugoutput.h>
 #include <widgets/sloimagewidget.h>
+#include <widgets/bscanchooserspinbox.h>
 
 #include <data_structure/intervalmarker.h>
 #include <data_structure/programoptions.h>
@@ -37,10 +37,7 @@
 #include <model/octdatamodel.h>
 #include <model/paintmarkermodel.h>
 
-#include <octdata/datastruct/sloimage.h>
-#include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/series.h>
-
 #include <octdata/octfileread.h>
 #include <octdata/filereadoptions.h>
 
@@ -52,15 +49,9 @@
 #include <cpp_framework/cvmat/treestructbin.h>
 
 #include <globaldefinitions.h>
-#include <buildconstants.h>
-#include <QWidgetAction>
 
-
-#include <QPushButton>
 #include <widgets/dwimagecoloradjustments.h>
 
-#include<windows/infodialogs.h>
-#include <helper/actionclasses.h>
 #include <widgets/wgoctmarkers.h>
 #include <manager/paintmarker.h>
 
@@ -192,8 +183,6 @@ namespace
 
 void OCTMarkerMainWindow::setupMenu()
 {
-	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
-
 	// ----------
 	// fileMenu
 	// ----------
@@ -359,11 +348,8 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	helpMenu->addAction(aboutQtAct);
 
-	QAction* actionAboutDialog = new QAction(this);
-	actionAboutDialog->setText(tr("About"));
-	actionAboutDialog->setIcon(QIcon(":/icons/typicons/oct_marker_logo.svg"));
-	connect(actionAboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
-	helpMenu->addAction(actionAboutDialog);
+
+	helpMenu->addAction(markerActions.getAboutDialogAction());
 
 
 
@@ -391,28 +377,6 @@ void OCTMarkerMainWindow::setupMenu()
 	connect(nextOctScan, &QAction::triggered, &(OctFilesModel::getInstance()), &OctFilesModel::loadNextFile);
 
 
-
-	QAction* nextBScan = new QAction(this);
-	nextBScan->setText(tr("next bscan"));
-	nextBScan->setIcon(QIcon(":/icons/arrow_right.png"));
-	nextBScan->setShortcut(Qt::RightArrow);
-	connect(nextBScan, SIGNAL(triggered()), &markerManager, SLOT(nextBScan()));
-
-	bscanChooser = new QSpinBox(this);
-	connect(bscanChooser, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), &markerManager, &OctMarkerManager::chooseBScan);
-// 	connect(bscanChooser, SIGNAL(valueChanged(int)), &markerManager, SLOT(chooseBScan(int)));
-	connect(&markerManager, SIGNAL(bscanChanged(int)), bscanChooser, SLOT(setValue(int)));
-
-	labelMaxBscan = new QLabel(this);
-	labelMaxBscan->setText("/0");
-
-
-	QAction* previousBScan = new QAction(this);
-	previousBScan->setText(tr("previous bscan"));
-	previousBScan->setIcon(QIcon(":/icons/arrow_left.png"));
-	previousBScan->setShortcut(Qt::LeftArrow);
-	connect(previousBScan, SIGNAL(triggered(bool)), &markerManager, SLOT(previousBScan()));
-
 	QAction* extraSegLine        = ProgramOptions::bscanShowExtraSegmentationslines.getAction();
 	QAction* showSeglines        = ProgramOptions::bscansShowSegmentationslines.getAction();
 	QAction* showWithAspectRatio = ProgramOptions::bscanRespectAspectRatio.getAction();
@@ -429,11 +393,8 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addAction(previousOctScan);
 	toolBar->addAction(nextOctScan);
 	toolBar->addSeparator();
-	toolBar->addAction(previousBScan);
-	toolBar->addAction(nextBScan);
-// 	toolBar->addSeparator();
-	toolBar->addWidget(bscanChooser);
-	toolBar->addWidget(labelMaxBscan);
+	toolBar->addWidget(new BScanChooserSpinBox(this));
+// 	toolBar->addWidget(labelMaxBscan);
 	toolBar->addSeparator();
 	toolBar->addAction(showWithAspectRatio);
 	toolBar->addAction(extraSegLine);
@@ -529,13 +490,6 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), &markerManager, &OctMarkerManager::setBscanMarker);
 	
 	addToolBar(toolBar);
-}
-
-
-
-void OCTMarkerMainWindow::showAboutDialog()
-{
-	InfoDialogs::showAboutDialog(this);
 }
 
 
@@ -859,25 +813,6 @@ void OCTMarkerMainWindow::showSaveOctScanDialog()
 void OCTMarkerMainWindow::newCscanLoaded()
 {
 	setWindowTitle(tr("OCT-Marker - %1").arg(OctDataManager::getInstance().getLoadedFilename()));
-	configBscanChooser();
-}
-
-void OCTMarkerMainWindow::configBscanChooser()
-{
-	const OctData::Series* series = OctDataManager::getInstance().getSeries();
-	
-	std::size_t maxBscan = 0;
-	if(series)
-	{
-		maxBscan = series->bscanCount();
-		if(maxBscan > 0)
-			--maxBscan;
-	}
-	
-	bscanChooser->setMaximum(static_cast<int>(maxBscan));
-	bscanChooser->setValue(OctMarkerManager::getInstance().getActBScanNum());
-
-	labelMaxBscan->setText(QString("/%1").arg(maxBscan));
 }
 
 void OCTMarkerMainWindow::saveMatlabBinCode()
@@ -933,15 +868,11 @@ void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
 	}
 
 
-
 	// save programoptions
 	ProgramOptions::loadOctdataAtStart.setValue(OctDataManager::getInstance().getLoadedFilename());
-	
 	ProgramOptions::writeAllOptions();
 
 	QSettings& settings = ProgramOptions::getSettings();
-	
-
 	settings.setValue("mainWindowGeometry", saveGeometry());
 	settings.setValue("mainWindowState"   , saveState()   );
 

@@ -6,6 +6,7 @@
 
 #include<manager/octmarkermanager.h>
 #include<widgets/bscanmarkerwidget.h>
+#include<windows/infodialogs.h>
 #include<helper/actionclasses.h>
 
 OctMarkerActions::OctMarkerActions(BScanMarkerWidget* bscanMarkerWidget)
@@ -93,8 +94,8 @@ QAction* OctMarkerActions::getZoomFitHeightAction()
 	if(!zoomFitHeightAction)
 	{
 		zoomFitHeightAction = new QAction(this);
-		zoomFitHeightAction->setText(tr("Adjust image in width"));
-		zoomFitHeightAction->setIcon(QIcon(":/icons/stretch_width.png"));
+		zoomFitHeightAction->setText(tr("Adjust image in height"));
+		zoomFitHeightAction->setIcon(QIcon(":/icons/stretch_height.png"));
 		connect(zoomFitHeightAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::fitImage2ParentHeight);
 	}
 	return zoomFitHeightAction;
@@ -105,8 +106,8 @@ QAction* OctMarkerActions::getZoomFitWidthAction()
 	if(!zoomFitWidthAction)
 	{
 		zoomFitWidthAction = new QAction(this);
-		zoomFitWidthAction->setText(tr("Adjust image in height"));
-		zoomFitWidthAction->setIcon(QIcon(":/icons/stretch_height.png"));
+		zoomFitWidthAction->setText(tr("Adjust image in width"));
+		zoomFitWidthAction->setIcon(QIcon(":/icons/stretch_width.png"));
 		connect(zoomFitWidthAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::fitImage2ParentWidth);
 	}
 	return zoomFitWidthAction;
@@ -132,7 +133,7 @@ QAction* OctMarkerActions::getRedoAction()
 	return redoAction;
 }
 
-QAction * OctMarkerActions::getUndoAction()
+QAction* OctMarkerActions::getUndoAction()
 {
 	if(!undoAction)
 	{
@@ -148,6 +149,25 @@ QAction * OctMarkerActions::getUndoAction()
 	return undoAction;
 }
 
+
+
+
+QAction* OctMarkerActions::getAboutDialogAction()
+{
+	if(!aboutDialogAction)
+	{
+		aboutDialogAction = new QAction(this);
+		aboutDialogAction->setText(tr("About OCT-Marker"));
+		aboutDialogAction->setIcon(QIcon(":/icons/typicons/oct_marker_logo.svg"));
+		connect(aboutDialogAction, &QAction::triggered, this, &OctMarkerActions::showAboutDialog);
+	}
+	return aboutDialogAction;
+}
+
+
+
+
+
 void OctMarkerActions::updateRedoUndo()
 {
 	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
@@ -157,7 +177,6 @@ void OctMarkerActions::updateRedoUndo()
 	if(redoAction)
 		redoAction->setEnabled(markerManager.numRedoSteps() > 0);
 }
-
 
 
 
@@ -178,4 +197,10 @@ void OctMarkerActions::updateZoom(double zoom)
 
 		zoomMenu->menuAction()->setIcon(QIcon(pixmap));
 	}
+}
+
+
+void OctMarkerActions::showAboutDialog()
+{
+	InfoDialogs::showAboutDialog(bscanMarkerWidget); // TODO: parent
 }

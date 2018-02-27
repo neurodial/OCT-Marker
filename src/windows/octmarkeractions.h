@@ -22,9 +22,10 @@ class OctMarkerActions : public QObject
 	QAction* zoomFitHeightAction = nullptr;
 	QAction* zoomFitWidthAction  = nullptr;
 
-	QAction* undoAction    = nullptr;
-	QAction* redoAction    = nullptr;
+	QAction* undoAction          = nullptr;
+	QAction* redoAction          = nullptr;
 
+	QAction* aboutDialogAction   = nullptr;
 
 
 
@@ -43,10 +44,13 @@ public:
 	QAction* getUndoAction();
 	QAction* getRedoAction();
 
+	QAction* getAboutDialogAction  ();
+
 private slots:
 	void updateRedoUndo();
 	void updateZoom(double zoom);
 
+	void showAboutDialog();
 };
 
 #endif // OCTMARKERACTIONS_H

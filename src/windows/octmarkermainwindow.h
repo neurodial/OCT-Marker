@@ -8,7 +8,6 @@
 #include"octmarkeractions.h"
 
 class QLabel;
-class QSpinBox;
 class QAction;
 class QFileDialog;
 class QProgressBar;
@@ -46,18 +45,11 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	PaintMarker* pmm = nullptr;
 
-
-	QSpinBox*     bscanChooser     = nullptr;
-	QLabel*       labelMaxBscan    = nullptr;
 	QProgressBar* loadProgressBar  = nullptr;
 
 	OctMarkerActions markerActions;
 
-	// void setActionToggel();
-	void configBscanChooser();
-
 	static void setMarkersFilters(QFileDialog& fd);
-
 
 	virtual void closeEvent(QCloseEvent* e);
 
@@ -91,12 +83,9 @@ private slots:
 	void loadFileProgress(double frac);
 
 public slots:
-
-	virtual void showAboutDialog();
 	virtual void showLoadImageDialog();
 	virtual void showImportFromFolderDialog();
 
-	// virtual void showAddMarkersDialog();
 	virtual void showLoadMarkersDialog();
 	virtual void showSaveMarkersDialog();
 
