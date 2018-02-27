@@ -76,7 +76,7 @@ StupidSplineWindow::StupidSplineWindow()
 	OctMarkerManager& marker = OctMarkerManager::getInstance();
 	marker.setBscanMarkerTextID(QString("LayerSegmentation"));
 	setIconsInMarkerWidget();
-	connect(&marker, &OctMarkerManager::undoRedoStateChange, this, &StupidSplineWindow::updateRedoUndoButtons);
+
 
 	QSettings& settings = ProgramOptions::getSettings();
 	restoreGeometry(settings.value("stupidMainWindowGeometry").toByteArray());
@@ -114,8 +114,7 @@ StupidSplineWindow::StupidSplineWindow()
 	// General Config
 	setWindowIcon(QIcon(":/icons/typicons/oct_marker_logo.svg"));
 
-	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &StupidSplineWindow::zoomChanged);
-	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged, this, &StupidSplineWindow::fitBScanImage2Widget);
+	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged, bscanMarkerWidget, &CVImageWidget::fitImage2Parent);
 
 }
 
@@ -124,13 +123,6 @@ StupidSplineWindow::~StupidSplineWindow()
 	delete pmm;
 }
 
-
-
-void StupidSplineWindow::zoomChanged(double zoom)
-{
-	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 8);
-	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 0.5);
-}
 
 
 BScanLayerSegmentation* StupidSplineWindow::getLayerSegmentationModul()
@@ -269,11 +261,6 @@ void StupidSplineWindow::showAboutDialog()
 	InfoDialogs::showAboutDialog(this);
 }
 
-void StupidSplineWindow::fitBScanImage2Widget()
-{
-	bscanMarkerWidget->fitImage(bscanMarkerWidgetScrollArea->width () - 2
-	                          , bscanMarkerWidgetScrollArea->height() - 2);
-}
 
 void StupidSplineWindow::updateWindowTitle()
 {
@@ -323,7 +310,7 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	QFont textFont = QFont("Times", 20, QFont::Bold);
 
 	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
-	BScanLayerSegmentation* layerSeg = getLayerSegmentationModul();
+// 	BScanLayerSegmentation* layerSeg = getLayerSegmentationModul();
 
 	bscanChooser = new QSpinBox(this);
 	bscanChooser->setFont(textFont);
@@ -345,42 +332,23 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 
 	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomInAction ()));
 	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomOutAction()));
+	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomFitAction()));
 
-
-	zoomFitAction = new QAction(this);
-	zoomFitAction->setText(tr("fit image"));
-	zoomFitAction->setIcon(QIcon::fromTheme("zoom-fit-best",  QIcon(":/icons/tango/actions/view-fullscreen.svgz")));
-	connect(zoomFitAction, &QAction::triggered, this, &StupidSplineWindow::fitBScanImage2Widget);
-	QToolButton* buttonZoomFit = new QToolButton(this);
-	buttonZoomFit->setDefaultAction(zoomFitAction);
-	buttonZoomFit->setIconSize(buttonSize);
-	layoutStupidControls->addWidget(buttonZoomFit);
+// 	zoomFitAction = new QAction(this);
+// 	zoomFitAction->setText(tr("fit image"));
+// 	zoomFitAction->setIcon(QIcon::fromTheme("zoom-fit-best",  QIcon(":/icons/tango/actions/view-fullscreen.svgz")));
+// 	connect(zoomFitAction, &QAction::triggered, this, &StupidSplineWindow::fitBScanImage2Widget);
+// 	QToolButton* buttonZoomFit = new QToolButton(this);
+// 	buttonZoomFit->setDefaultAction(zoomFitAction);
+// 	buttonZoomFit->setIconSize(buttonSize);
+// 	layoutStupidControls->addWidget(buttonZoomFit);
 
 	// ----------------------
 	addLayoutVLine(layoutStupidControls);
 
 
-	buttonUndo = new QToolButton(this);
-	buttonUndo->setText(tr("undo"));
-	buttonUndo->setToolTip(tr("undo"));
-	buttonUndo->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/actions/edit-undo.svgz")));
-	buttonUndo->setFont(QFont("Times", 24, QFont::Bold));
-	buttonUndo->setIconSize(buttonSize);
-	buttonUndo->setEnabled(false);
-	connect(buttonUndo, &QAbstractButton::clicked, layerSeg, &BscanMarkerBase::callUndoStep);
-	layoutStupidControls->addWidget(buttonUndo);
-
-
-	buttonRedo = new QToolButton(this);
-	buttonRedo->setText(tr("redo"));
-	buttonRedo->setToolTip(tr("redo"));
-	buttonRedo->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/actions/edit-redo.svgz")));
-	buttonRedo->setFont(QFont("Times", 24, QFont::Bold));
-	buttonRedo->setIconSize(buttonSize);
-	buttonRedo->setEnabled(false);
-	connect(buttonRedo, &QAbstractButton::clicked, layerSeg, &BscanMarkerBase::callRedoStep);
-	layoutStupidControls->addWidget(buttonRedo);
-
+	layoutStupidControls->addWidget(genToolButton(markerActions.getUndoAction()));
+	layoutStupidControls->addWidget(genToolButton(markerActions.getRedoAction()));
 
 	// ----------------------
 	layoutStupidControls->addStretch();
@@ -450,14 +418,4 @@ void StupidSplineWindow::updateBScanChooser()
 	bscanChooser->setValue(OctMarkerManager::getInstance().getActBScanNum());
 
 	labelMaxBscan->setText(QString("/%1").arg(maxBscan));
-}
-
-void StupidSplineWindow::updateRedoUndoButtons()
-{
-	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
-
-	if(buttonUndo)
-		buttonUndo->setEnabled(markerManager.numUndoSteps() > 0);
-	if(buttonRedo)
-		buttonRedo->setEnabled(markerManager.numRedoSteps() > 0);
 }

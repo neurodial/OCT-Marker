@@ -36,7 +36,6 @@ class OCTMarkerMainWindow : public QMainWindow
 	void setupStatusBar();
 
 	void createMarkerToolbar();
-	void addZoomAction(int zoom, CVImageWidget* bscanMarkerWidget, QMenu& menue);
 	QAction* createColorOptionAction(OptionColor& opt, const QString& text);
 
 
@@ -52,16 +51,10 @@ class OCTMarkerMainWindow : public QMainWindow
 	QLabel*       labelMaxBscan    = nullptr;
 	QProgressBar* loadProgressBar  = nullptr;
 
-// 	QAction*      undoAction       = nullptr;
-// 	QAction*      redoAction       = nullptr;
-
 	OctMarkerActions markerActions;
-
-	QMenu* zoomMenu = nullptr;
 
 	// void setActionToggel();
 	void configBscanChooser();
-// 	void createActions();
 
 	static void setMarkersFilters(QFileDialog& fd);
 
@@ -93,7 +86,6 @@ signals:
 
 private slots:
 	void newCscanLoaded();
-	void zoomChanged(double zoom);
 
 	void loadFileStatusSlot(bool loading);
 	void loadFileProgress(double frac);
@@ -111,12 +103,7 @@ public slots:
 	virtual void saveMatlabBinCode();
 	virtual void saveMatlabWriteBinCode();
 
-	virtual void strechBScanImage2MaxWidth();
-	virtual void strechBScanImage2MaxHeight();
-
 	virtual void showSaveOctScanDialog();
-
-
 	virtual void screenshot();
 };
 

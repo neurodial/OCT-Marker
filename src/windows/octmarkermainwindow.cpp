@@ -144,8 +144,6 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 	setAcceptDrops(true);
 
 	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged   , this, &OCTMarkerMainWindow::newCscanLoaded);
-	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, this, &OCTMarkerMainWindow::zoomChanged);
-
 	
 	for(BscanMarkerBase* marker : markerManager.getBscanMarker())
 	{
@@ -447,40 +445,12 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addSeparator();
 
 	toolBar->addAction(markerActions.getZoomInAction());
-
-
-	zoomMenu = new QMenu(tr("actual zoom"));
-// 	zoomMenu->menuAction()->setIcon(QIcon(":/icons/zoom.png"));
-
-	addZoomAction(1, bscanMarkerWidget, *zoomMenu);
-	addZoomAction(2, bscanMarkerWidget, *zoomMenu);
-	addZoomAction(3, bscanMarkerWidget, *zoomMenu);
-	addZoomAction(4, bscanMarkerWidget, *zoomMenu);
-	addZoomAction(6, bscanMarkerWidget, *zoomMenu);
-	addZoomAction(8, bscanMarkerWidget, *zoomMenu);
-// 	addZoomAction(10, bscanMarkerWidget, *zoomMenu);
-// 	addZoomAction(12, bscanMarkerWidget, *zoomMenu);
-
-	toolBar->addAction(zoomMenu->menuAction());
-
-
-
+	toolBar->addAction(markerActions.getZoomMenuAction());
 	toolBar->addAction(markerActions.getZoomOutAction());
+	toolBar->addAction(markerActions.getZoomFitAction());
 
-
-	QAction* actionStrechBScanImage2MaxWidth = new QAction(this);
-	actionStrechBScanImage2MaxWidth->setText(tr("Adjust image in width"));
-	actionStrechBScanImage2MaxWidth->setIcon(QIcon(":/icons/stretch_width.png"));
-	connect(actionStrechBScanImage2MaxWidth, &QAction::triggered, this, &OCTMarkerMainWindow::strechBScanImage2MaxWidth);
-	toolBar->addAction(actionStrechBScanImage2MaxWidth);
-
-	QAction* actionStrechBScanImage2MaxHeight = new QAction(this);
-	actionStrechBScanImage2MaxHeight->setText(tr("Adjust image in height"));
-	actionStrechBScanImage2MaxHeight->setIcon(QIcon(":/icons/stretch_height.png"));
-	connect(actionStrechBScanImage2MaxHeight, &QAction::triggered, this, &OCTMarkerMainWindow::strechBScanImage2MaxHeight);
-	toolBar->addAction(actionStrechBScanImage2MaxHeight);
-
-	zoomChanged(bscanMarkerWidget->getScaleFactor());
+	toolBar->addAction(markerActions.getZoomFitHeightAction());
+	toolBar->addAction(markerActions.getZoomFitWidthAction());
 
 	toolBar->addSeparator();
 	toolBar->addAction(markerActions.getUndoAction());
@@ -489,7 +459,7 @@ void OCTMarkerMainWindow::setupMenu()
 	addToolBar(toolBar);
 }
 
-QAction * OCTMarkerMainWindow::createColorOptionAction(OptionColor& opt, const QString& text)
+QAction* OCTMarkerMainWindow::createColorOptionAction(OptionColor& opt, const QString& text)
 {
 	QAction* colorAction = new QAction(this);
 	colorAction->setText(text);
@@ -499,15 +469,6 @@ QAction * OCTMarkerMainWindow::createColorOptionAction(OptionColor& opt, const Q
 }
 
 
-void OCTMarkerMainWindow::addZoomAction(int zoom, CVImageWidget* bscanMarkerWidget, QMenu& menue)
-{
-	IntValueAction* actionZoom = new IntValueAction(zoom, this, true);
-	actionZoom->setText(tr("Zoom %1").arg(zoom));
-	actionZoom->setIcon(QIcon(":/icons/zoom.png"));
-	menue.addAction(actionZoom);
-	connect(actionZoom       , &IntValueAction::triggered , bscanMarkerWidget, &CVImageWidget::setZoom      );
-	connect(bscanMarkerWidget, &CVImageWidget::zoomChanged, actionZoom       , &IntValueAction::valueChanged);
-}
 
 void OCTMarkerMainWindow::setupStatusBar()
 {
@@ -526,41 +487,7 @@ void OCTMarkerMainWindow::setupStatusBar()
 
 // 	MouseCoordStatus* mouseStatus = new MouseCoordStatus(bscanMarkerWidget);
 // 	statusBar()->addPermanentWidget(mouseStatus);
-
 }
-
-
-
-
-void OCTMarkerMainWindow::zoomChanged(double zoom)
-{
-// 	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 8);
-// 	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 0.5);
-
-	if(zoomMenu)
-	{
-		QPixmap pixmap(24, 16);
-		pixmap.fill(Qt::transparent);
-		QPainter painter(&pixmap);
-		QString string = QString::number(zoom, 'f', 1 );
-		painter.drawText(0, 0, 24, 16, Qt::AlignHCenter | Qt::AlignVCenter, string);
-
-
-		zoomMenu->menuAction()->setIcon(QIcon(pixmap));
-	}
-}
-
-void OCTMarkerMainWindow::strechBScanImage2MaxWidth()
-{
-	bscanMarkerWidget->fitImage2Width(bscanMarkerWidgetScrollArea->width () - bscanMarkerWidgetScrollArea->getVScrollbarWidth () - 2);
-}
-void OCTMarkerMainWindow::strechBScanImage2MaxHeight()
-{
-	bscanMarkerWidget->fitImage2Height(bscanMarkerWidgetScrollArea->height() - bscanMarkerWidgetScrollArea->getHScrollbarHeight() - 2);
-}
-
-
-
 
 void OCTMarkerMainWindow::createMarkerToolbar()
 {
@@ -1076,27 +1003,3 @@ void OCTMarkerMainWindow::screenshot()
 
 }
 
-/*
-void OCTMarkerMainWindow::createActions()
-{
-	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
-
-	undoAction = new QAction(this);
-	undoAction->setText(tr("undo"));
-	undoAction->setShortcut(Qt::CTRL | Qt::Key_Z);
-	undoAction->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/actions/edit-undo.svgz")));
-	undoAction->setEnabled(false);
-	connect(undoAction, &QAction::triggered, &markerManager, &OctMarkerManager::callUndoStep);
-
-
-	redoAction = new QAction(this);
-	redoAction->setText(tr("redo"));
-	redoAction->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/actions/edit-redo.svgz")));
-	undoAction->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_Z);
-	redoAction->setEnabled(false);
-	connect(redoAction, &QAction::triggered, &markerManager, &OctMarkerManager::callRedoStep);
-
-	connect(&markerManager, &OctMarkerManager::undoRedoStateChange, this, &OCTMarkerMainWindow::updateRedoUndo);
-}
-
-*/

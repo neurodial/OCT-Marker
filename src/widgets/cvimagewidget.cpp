@@ -166,28 +166,52 @@ void CVImageWidget::updateScaleFactorXY()
 	scaleFactor.setFactor(scaleFactorConfig);
 }
 
-
-
-void CVImageWidget::fitImage2Width(int width)
+void CVImageWidget::fitImage2Parent()
 {
-	if(cvImage.cols > 0)
-		setZoom(static_cast<double>(width)/cvImage.cols/scaleFactor.getPureFactorX());
-}
+	QWidget* parent = parentWidget();
+	if(!parent)
+		return;
 
-void CVImageWidget::fitImage2Height(int heigth)
-{
-	if(cvImage.rows > 0)
-		setZoom(static_cast<double>(heigth)/cvImage.rows/scaleFactor.getPureFactorY());
-}
-
-void CVImageWidget::fitImage(int width, int heigth)
-{
 	if(cvImage.cols > 0 && cvImage.rows > 0)
 	{
+		QSize size = parent->size();
+		int width  = size.width();
+		int height = size.height();
+
 		double scale1 = static_cast<double>(width )/cvImage.cols/scaleFactor.getPureFactorX();
-		double scale2 = static_cast<double>(heigth)/cvImage.rows/scaleFactor.getPureFactorY();
+		double scale2 = static_cast<double>(height)/cvImage.rows/scaleFactor.getPureFactorY();
 
 		setZoom(std::min(scale1, scale2));
+	}
+}
+
+void CVImageWidget::fitImage2ParentHeight()
+{
+	QWidget* parent = parentWidget();
+	if(!parent)
+		return;
+
+	if(cvImage.rows > 0)
+	{
+		QSize size = parent->size();
+		int height = size.height();
+
+		setZoom(static_cast<double>(height)/cvImage.rows/scaleFactor.getPureFactorY());
+	}
+}
+
+void CVImageWidget::fitImage2ParentWidth()
+{
+	QWidget* parent = parentWidget();
+	if(!parent)
+		return;
+
+	if(cvImage.cols > 0)
+	{
+		QSize size = parent->size();
+		int width  = size.width();
+
+		setZoom(static_cast<double>(width)/cvImage.cols/scaleFactor.getPureFactorX());
 	}
 }
 

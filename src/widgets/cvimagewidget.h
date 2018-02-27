@@ -98,9 +98,9 @@ public slots:
 
 	void setZoom(double factor)                                  { if(scaleFactorConfig != factor && factor <= 8 && factor > 0) { scaleFactorConfig = factor; updateScaleFactorXY(); cvImage2qtImage(); zoomChanged(factor); } }
 
-	void fitImage2Width (int width );
-	void fitImage2Height(int heigth);
-	void fitImage(int width, int height);
+	void fitImage2Parent();
+	void fitImage2ParentWidth ();
+	void fitImage2ParentHeight();
 
 	void zoom_in()                                               { setZoom(scaleFactorConfig+0.5); }
 	void zoom_out()                                              { setZoom(scaleFactorConfig-0.5); }

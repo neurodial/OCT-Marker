@@ -29,8 +29,8 @@ class StupidSplineWindow : public QMainWindow
 	OctMarkerActions markerActions;
 
 // 	QProgressBar* loadProgressBar  = nullptr;
-	QAction*      zoomInAction     = nullptr;
-	QAction*      zoomOutAction    = nullptr;
+// 	QAction*      zoomInAction     = nullptr;
+// 	QAction*      zoomOutAction    = nullptr;
 	QAction*      zoomFitAction    = nullptr;
 
 	QProgressDialog* progressDialog = nullptr;
@@ -39,8 +39,8 @@ class StupidSplineWindow : public QMainWindow
 	QLabel*       labelMaxBscan    = nullptr;
 
 
-	QToolButton* buttonUndo = nullptr;
-	QToolButton* buttonRedo = nullptr;
+// 	QToolButton* buttonUndo = nullptr;
+// 	QToolButton* buttonRedo = nullptr;
 
 	PaintMarker* pmm = nullptr;
 
@@ -78,7 +78,6 @@ signals:
 	void loadLastFile();
 
 private slots:
-	void zoomChanged(double zoom);
 	void showAboutDialog();
 
 	void saveAndClose();
@@ -86,8 +85,6 @@ private slots:
 	void loadFileStatusSlot(bool loading);
 	void loadFileProgress(double frac);
 
-	void fitBScanImage2Widget();
 	void updateBScanChooser();
-	void updateRedoUndoButtons();
 };
 
