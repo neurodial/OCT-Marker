@@ -101,6 +101,8 @@ int main(int argc, char **argv)
 	qDebug("Compiler Version: %s", BuildConstants::compilerVersion);
 
 
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
 	PrepareProgrammOptions::prepareProgrammOptions();
 
 	bool stupidSplineGui = parser.isSet("i-want-stupid-spline-gui");

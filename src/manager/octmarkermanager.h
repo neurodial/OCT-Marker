@@ -46,6 +46,9 @@ public:
 	std::size_t numUndoSteps() const;
 	std::size_t numRedoSteps() const;
 
+	void callUndoStep();
+	void callRedoStep();
+
 private:
 	OctMarkerManager();
 	virtual ~OctMarkerManager();

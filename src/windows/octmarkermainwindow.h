@@ -51,10 +51,14 @@ class OCTMarkerMainWindow : public QMainWindow
 	QAction*      zoomInAction     = nullptr;
 	QAction*      zoomOutAction    = nullptr;
 
+	QAction*      undoAction       = nullptr;
+	QAction*      redoAction       = nullptr;
+
 	QMenu* zoomMenu = nullptr;
 
 	// void setActionToggel();
 	void configBscanChooser();
+	void createActions();
 
 	static void setMarkersFilters(QFileDialog& fd);
 
@@ -108,6 +112,8 @@ public slots:
 	virtual void strechBScanImage2MaxHeight();
 
 	virtual void showSaveOctScanDialog();
+
+	void updateRedoUndo();
 
 	virtual void screenshot();
 };

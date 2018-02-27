@@ -335,3 +335,15 @@ std::size_t OctMarkerManager::numUndoSteps() const
 		return 0;
 	return actBscanMarker->numUndoSteps();
 }
+
+void OctMarkerManager::callRedoStep()
+{
+	if(actBscanMarker)
+		actBscanMarker->callRedoStep();
+}
+
+void OctMarkerManager::callUndoStep()
+{
+	if(actBscanMarker)
+		actBscanMarker->callUndoStep();
+}

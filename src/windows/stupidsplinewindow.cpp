@@ -312,7 +312,7 @@ namespace
 QDockWidget* StupidSplineWindow::createStupidControls()
 {
 	QHBoxLayout* layoutStupidControls = new QHBoxLayout;
-	QFont textFont = QFont("Times", 24, QFont::Bold);
+	QFont textFont = QFont("Times", 20, QFont::Bold);
 
 	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
 	BScanLayerSegmentation* layerSeg = getLayerSegmentationModul();

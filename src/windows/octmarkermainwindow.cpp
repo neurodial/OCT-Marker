@@ -63,6 +63,7 @@
 #include <helper/actionclasses.h>
 #include <widgets/wgoctmarkers.h>
 #include <manager/paintmarker.h>
+#include <manager/octmarkermanager.h>
 
 DWDebugOutput* OCTMarkerMainWindow::dwDebugOutput = nullptr;
 
@@ -86,6 +87,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);
 
+	createActions();
 	setupMenu();
 	setupStatusBar();
 	createMarkerToolbar();
@@ -203,14 +205,14 @@ void OCTMarkerMainWindow::setupMenu()
 	QAction* actionLoadImage = new QAction(this);
 	actionLoadImage->setText(tr("Load OCT scan"));
 	actionLoadImage->setShortcut(Qt::CTRL | Qt::Key_O);
-	actionLoadImage->setIcon(QIcon(":/icons/folder_image.png"));
+	actionLoadImage->setIcon(QIcon::fromTheme("document-open", QIcon(":/icons/folder_image.png")));
 	connect(actionLoadImage, &QAction::triggered, this, &OCTMarkerMainWindow::showLoadImageDialog);
 	fileMenu->addAction(actionLoadImage);
 
 	QAction* actionImportFolder = new QAction(this);
 	actionImportFolder->setText(tr("Add OCT scans from folder"));
 	actionImportFolder->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_O);
-	actionImportFolder->setIcon(QIcon(":/icons/folder_add.png"));
+	actionImportFolder->setIcon(QIcon::fromTheme("folder-open", QIcon(":/icons/folder_add.png")));
 	connect(actionImportFolder, &QAction::triggered, this, &OCTMarkerMainWindow::showImportFromFolderDialog);
 	fileMenu->addAction(actionImportFolder);
 
@@ -218,27 +220,19 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* loadMarkersAction = new QAction(this);
 	loadMarkersAction->setText(tr("load markers"));
-	loadMarkersAction->setIcon(QIcon(":/icons/folder.png"));
+	loadMarkersAction->setIcon(QIcon::fromTheme("document-open", QIcon(":/icons/folder.png")));
 	connect(loadMarkersAction, &QAction::triggered, this, &OCTMarkerMainWindow::showLoadMarkersDialog);
 	fileMenu->addAction(loadMarkersAction);
 
-/*
-	QAction* addMarkersAction = new QAction(this);
-	addMarkersAction->setText(tr("add markers"));
-	addMarkersAction->setIcon(QIcon(":/icons/folder_add.png"));
-	connect(addMarkersAction, SIGNAL(triggered()), SLOT(showAddMarkersDialog()));
-	fileMenu->addAction(addMarkersAction);
-*/
-
 	QAction* saveMarkersAction = new QAction(this);
 	saveMarkersAction->setText(tr("save markers"));
-	saveMarkersAction->setIcon(QIcon(":/icons/disk.png"));
+	saveMarkersAction->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/disk.png")));
 	connect(saveMarkersAction, &QAction::triggered, this, &OCTMarkerMainWindow::showSaveMarkersDialog);
 	fileMenu->addAction(saveMarkersAction);
 
 	QAction* saveMarkersDefaultAction = new QAction(this);
 	saveMarkersDefaultAction->setText(tr("trigger auto save markers"));
-	saveMarkersDefaultAction->setIcon(QIcon(":/icons/disk.png"));
+	saveMarkersDefaultAction->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/speichern.svg")));
 	saveMarkersDefaultAction->setShortcut(Qt::CTRL | Qt::Key_S);
 	connect(saveMarkersDefaultAction, &QAction::triggered, &(OctDataManager::getInstance()), &OctDataManager::triggerSaveMarkersDefault);
 	fileMenu->addAction(saveMarkersDefaultAction);
@@ -248,7 +242,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* saveOctScanAction = new QAction(this);
 	saveOctScanAction->setText(tr("save oct scan"));
-	saveOctScanAction->setIcon(QIcon(":/icons/disk.png"));
+	saveOctScanAction->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/actions/document-save.svgz")));
 	connect(saveOctScanAction, &QAction::triggered, this, &OCTMarkerMainWindow::showSaveOctScanDialog);
 	fileMenu->addAction(saveOctScanAction);
 
@@ -257,7 +251,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* actionQuit = new QAction(this);
 	actionQuit->setText(tr("Quit"));
-	actionQuit->setIcon(QIcon(":/icons/door_in.png"));
+	actionQuit->setIcon(QIcon::fromTheme("application-exit", QIcon(":/icons/tango/actions/system-log-out.svgz")));
 	connect(actionQuit, &QAction::triggered, this, &OCTMarkerMainWindow::close);
 	fileMenu->addAction(actionQuit);
 
@@ -337,20 +331,20 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* actionSaveMatlabBinCode = new QAction(this);
 	actionSaveMatlabBinCode->setText(tr("Save Matlab Bin Code"));
-	actionSaveMatlabBinCode->setIcon(QIcon(":/icons/disk.png"));
+	actionSaveMatlabBinCode->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/actions/document-save.svgz")));
 	connect(actionSaveMatlabBinCode, &QAction::triggered, this, &OCTMarkerMainWindow::saveMatlabBinCode);
 	extrisMenu->addAction(actionSaveMatlabBinCode);
 
 	QAction* actionSaveMatlabWriteBinCode = new QAction(this);
 	actionSaveMatlabWriteBinCode->setText(tr("Save Matlab Write Bin Code"));
-	actionSaveMatlabWriteBinCode->setIcon(QIcon(":/icons/disk.png"));
+	actionSaveMatlabWriteBinCode->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/actions/document-save.svgz")));
 	connect(actionSaveMatlabWriteBinCode, &QAction::triggered, this, &OCTMarkerMainWindow::saveMatlabWriteBinCode);
 	extrisMenu->addAction(actionSaveMatlabWriteBinCode);
 
 
 	QAction* actionSaveScreenshot = new QAction(this);
 	actionSaveScreenshot->setText(tr("create screenshot"));
-	actionSaveScreenshot->setIcon(QIcon(":/icons/disk.png"));
+	actionSaveScreenshot->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/actions/document-save.svgz")));
 	connect(actionSaveScreenshot, &QAction::triggered, this, &OCTMarkerMainWindow::screenshot);
 	extrisMenu->addAction(actionSaveScreenshot);
 	// ----------
@@ -363,7 +357,7 @@ void OCTMarkerMainWindow::setupMenu()
 	QAction* aboutQtAct = new QAction(this);
 	aboutQtAct->setText(tr("About Qt"));
     aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
-	aboutQtAct->setIcon(QIcon(":/icons/help.png"));
+	aboutQtAct->setIcon(QIcon::fromTheme("dialog-information",  QIcon(":/icons/tango/apps/help-browser.svgz")));
 	connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	helpMenu->addAction(aboutQtAct);
 
@@ -388,13 +382,13 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* previousOctScan = new QAction(this);
 	previousOctScan->setText(tr("previous octScan"));
-	previousOctScan->setIcon(QIcon(":/icons/resultset_previous.png"));
+	previousOctScan->setIcon(QIcon::fromTheme("go-previous", QIcon(":/icons/resultset_previous.png")));
 	previousOctScan->setShortcut(Qt::CTRL + Qt::LeftArrow);
 	connect(previousOctScan, &QAction::triggered, &(OctFilesModel::getInstance()), &OctFilesModel::loadPreviousFile);
 
 	QAction* nextOctScan = new QAction(this);
 	nextOctScan->setText(tr("next octScan"));
-	nextOctScan->setIcon(QIcon(":/icons/resultset_next.png"));
+	nextOctScan->setIcon(QIcon::fromTheme("go-next", QIcon(":/icons/resultset_next.png")));
 	nextOctScan->setShortcut(Qt::CTRL + Qt::RightArrow);
 	connect(nextOctScan, &QAction::triggered, &(OctFilesModel::getInstance()), &OctFilesModel::loadNextFile);
 
@@ -439,7 +433,7 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addSeparator();
 	toolBar->addAction(previousBScan);
 	toolBar->addAction(nextBScan);
-	toolBar->addSeparator();
+// 	toolBar->addSeparator();
 	toolBar->addWidget(bscanChooser);
 	toolBar->addWidget(labelMaxBscan);
 	toolBar->addSeparator();
@@ -453,7 +447,7 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addSeparator();
 	zoomInAction = new QAction(this);
 	zoomInAction->setText(tr("Zoom +"));
-	zoomInAction->setIcon(QIcon(":/icons/zoom_in.png"));
+	zoomInAction->setIcon(QIcon::fromTheme("zoom-in", QIcon(":/icons/zoom_in.png")));
 	connect(zoomInAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
 	toolBar->addAction(zoomInAction);
 
@@ -477,7 +471,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	zoomOutAction = new QAction(this);
 	zoomOutAction->setText(tr("Zoom -"));
-	zoomOutAction->setIcon(QIcon(":/icons/zoom_out.png"));
+	zoomOutAction->setIcon(QIcon::fromTheme("zoom-out", QIcon(":/icons/zoom_out.png")));
 	connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
 	toolBar->addAction(zoomOutAction);
 
@@ -496,6 +490,9 @@ void OCTMarkerMainWindow::setupMenu()
 
 	zoomChanged(bscanMarkerWidget->getScaleFactor());
 
+	toolBar->addSeparator();
+	toolBar->addAction(undoAction);
+	toolBar->addAction(redoAction);
 
 	addToolBar(toolBar);
 }
@@ -1085,4 +1082,37 @@ void OCTMarkerMainWindow::screenshot()
 // 				const QPoint &targetOffset = QPoint(), const QRegion &sourceRegion = QRegion(), RenderFlags renderFlags = RenderFlags( DrawWindowBackground | DrawChildren ))
 	painter.end();
 
+}
+
+void OCTMarkerMainWindow::createActions()
+{
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
+
+	undoAction = new QAction(this);
+	undoAction->setText(tr("undo"));
+	undoAction->setShortcut(Qt::CTRL | Qt::Key_Z);
+	undoAction->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/actions/edit-undo.svgz")));
+	undoAction->setEnabled(false);
+	connect(undoAction, &QAction::triggered, &markerManager, &OctMarkerManager::callUndoStep);
+
+
+	redoAction = new QAction(this);
+	redoAction->setText(tr("redo"));
+	redoAction->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/actions/edit-redo.svgz")));
+	undoAction->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_Z);
+	redoAction->setEnabled(false);
+	connect(redoAction, &QAction::triggered, &markerManager, &OctMarkerManager::callRedoStep);
+
+	connect(&markerManager, &OctMarkerManager::undoRedoStateChange, this, &OCTMarkerMainWindow::updateRedoUndo);
+}
+
+
+void OCTMarkerMainWindow::updateRedoUndo()
+{
+	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
+
+	if(undoAction)
+		undoAction->setEnabled(markerManager.numUndoSteps() > 0);
+	if(redoAction)
+		redoAction->setEnabled(markerManager.numRedoSteps() > 0);
 }
