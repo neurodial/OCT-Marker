@@ -104,7 +104,8 @@ StupidSplineWindow::StupidSplineWindow()
 	dwmarkerwidgets->setObjectName("DwMarkerWidgets");
 	dwmarkerwidgets->setFeatures(0);
 	dwmarkerwidgets->setTitleBarWidget(new QWidget());
-	dwmarkerwidgets->setFixedSize(dwmarkerwidgets->minimumSizeHint());
+// 	dwmarkerwidgets->setFixedSize(dwmarkerwidgets->minimumSizeHint());
+	dwmarkerwidgets->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
 
 
@@ -429,6 +430,7 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	dwZoomControl->setFeatures(0);
 	dwZoomControl->setObjectName("dwZoomControl");
 	dwZoomControl->setTitleBarWidget(new QWidget());
+	dwZoomControl->setFixedHeight(dwZoomControl->minimumSizeHint().height());
 
 	return dwZoomControl;
 }
