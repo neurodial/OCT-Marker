@@ -52,6 +52,7 @@ StupidSplineWindow::StupidSplineWindow()
 : QMainWindow()
 , dwSloImage         (new QDockWidget(this))
 , bscanMarkerWidget  (new BScanMarkerWidget)
+, markerActions      (bscanMarkerWidget)
 {
 	ProgramOptions::bscansShowSegmentationslines.setValue(false);
 	setMinimumWidth(1000);
@@ -308,6 +309,13 @@ namespace
 	}
 }
 
+QToolButton* StupidSplineWindow::genToolButton(QAction* action)
+{
+	QToolButton* button = new QToolButton(this);
+	button->setDefaultAction(action);
+	button->setIconSize(buttonSize);
+	return button;
+}
 
 QDockWidget* StupidSplineWindow::createStupidControls()
 {
@@ -335,23 +343,9 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	addLayoutVLine(layoutStupidControls);
 
 
-	zoomInAction = new QAction(this);
-	zoomInAction->setText(tr("Zoom +"));
-	zoomInAction->setIcon(QIcon::fromTheme("zoom-in",  QIcon(":/icons/typicons/zoom-in-outline.svg")));
-	connect(zoomInAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
-	QToolButton* buttonZoomIn = new QToolButton(this);
-	buttonZoomIn->setDefaultAction(zoomInAction);
-	buttonZoomIn->setIconSize(buttonSize);
-	layoutStupidControls->addWidget(buttonZoomIn);
+	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomInAction ()));
+	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomOutAction()));
 
-	zoomOutAction = new QAction(this);
-	zoomOutAction->setText(tr("Zoom -"));
-	zoomOutAction->setIcon(QIcon::fromTheme("zoom-out",  QIcon(":/icons/typicons/zoom-out-outline.svg")));
-	connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
-	QToolButton* buttonZoomOut = new QToolButton(this);
-	buttonZoomOut->setDefaultAction(zoomOutAction);
-	buttonZoomOut->setIconSize(buttonSize);
-	layoutStupidControls->addWidget(buttonZoomOut);
 
 	zoomFitAction = new QAction(this);
 	zoomFitAction->setText(tr("fit image"));

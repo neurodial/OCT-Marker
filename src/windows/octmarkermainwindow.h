@@ -1,8 +1,11 @@
 #ifndef OCTMARKERMAINWINDOW_H
 #define OCTMARKERMAINWINDOW_H
 
-#include <QMainWindow>
 #include<functional>
+
+#include<QMainWindow>
+
+#include"octmarkeractions.h"
 
 class QLabel;
 class QSpinBox;
@@ -48,17 +51,17 @@ class OCTMarkerMainWindow : public QMainWindow
 	QSpinBox*     bscanChooser     = nullptr;
 	QLabel*       labelMaxBscan    = nullptr;
 	QProgressBar* loadProgressBar  = nullptr;
-	QAction*      zoomInAction     = nullptr;
-	QAction*      zoomOutAction    = nullptr;
 
-	QAction*      undoAction       = nullptr;
-	QAction*      redoAction       = nullptr;
+// 	QAction*      undoAction       = nullptr;
+// 	QAction*      redoAction       = nullptr;
+
+	OctMarkerActions markerActions;
 
 	QMenu* zoomMenu = nullptr;
 
 	// void setActionToggel();
 	void configBscanChooser();
-	void createActions();
+// 	void createActions();
 
 	static void setMarkersFilters(QFileDialog& fd);
 
@@ -113,7 +116,6 @@ public slots:
 
 	virtual void showSaveOctScanDialog();
 
-	void updateRedoUndo();
 
 	virtual void screenshot();
 };

@@ -14,6 +14,8 @@ class QProgressDialog;
 class BScanLayerSegmentation;
 class PaintMarker;
 
+#include"octmarkeractions.h"
+
 class StupidSplineWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -23,6 +25,8 @@ class StupidSplineWindow : public QMainWindow
 	BScanMarkerWidget*    bscanMarkerWidget           = nullptr;
 
 	QSize buttonSize = QSize(40, 40);
+
+	OctMarkerActions markerActions;
 
 // 	QProgressBar* loadProgressBar  = nullptr;
 	QAction*      zoomInAction     = nullptr;
@@ -58,6 +62,8 @@ class StupidSplineWindow : public QMainWindow
 	QDockWidget* createStupidControls();
 
 	void updateWindowTitle();
+
+	QToolButton* genToolButton(QAction* action);
 
 	BScanLayerSegmentation* getLayerSegmentationModul();
 public:

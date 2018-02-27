@@ -63,7 +63,6 @@
 #include <helper/actionclasses.h>
 #include <widgets/wgoctmarkers.h>
 #include <manager/paintmarker.h>
-#include <manager/octmarkermanager.h>
 
 DWDebugOutput* OCTMarkerMainWindow::dwDebugOutput = nullptr;
 
@@ -71,8 +70,9 @@ DWDebugOutput* OCTMarkerMainWindow::dwDebugOutput = nullptr;
 
 OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 : QMainWindow()
-, dwSloImage         (new QDockWidget(this))
-, bscanMarkerWidget  (new BScanMarkerWidget)
+, dwSloImage       (new QDockWidget(this))
+, bscanMarkerWidget(new BScanMarkerWidget)
+, markerActions    (bscanMarkerWidget    )
 {
 	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
 	QSettings& settings = ProgramOptions::getSettings();
@@ -87,7 +87,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);
 
-	createActions();
+// 	createActions();
 	setupMenu();
 	setupStatusBar();
 	createMarkerToolbar();
@@ -445,11 +445,8 @@ void OCTMarkerMainWindow::setupMenu()
 
 
 	toolBar->addSeparator();
-	zoomInAction = new QAction(this);
-	zoomInAction->setText(tr("Zoom +"));
-	zoomInAction->setIcon(QIcon::fromTheme("zoom-in", QIcon(":/icons/zoom_in.png")));
-	connect(zoomInAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
-	toolBar->addAction(zoomInAction);
+
+	toolBar->addAction(markerActions.getZoomInAction());
 
 
 	zoomMenu = new QMenu(tr("actual zoom"));
@@ -468,12 +465,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 
 
-
-	zoomOutAction = new QAction(this);
-	zoomOutAction->setText(tr("Zoom -"));
-	zoomOutAction->setIcon(QIcon::fromTheme("zoom-out", QIcon(":/icons/zoom_out.png")));
-	connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
-	toolBar->addAction(zoomOutAction);
+	toolBar->addAction(markerActions.getZoomOutAction());
 
 
 	QAction* actionStrechBScanImage2MaxWidth = new QAction(this);
@@ -491,8 +483,8 @@ void OCTMarkerMainWindow::setupMenu()
 	zoomChanged(bscanMarkerWidget->getScaleFactor());
 
 	toolBar->addSeparator();
-	toolBar->addAction(undoAction);
-	toolBar->addAction(redoAction);
+	toolBar->addAction(markerActions.getUndoAction());
+	toolBar->addAction(markerActions.getRedoAction());
 
 	addToolBar(toolBar);
 }
@@ -542,8 +534,8 @@ void OCTMarkerMainWindow::setupStatusBar()
 
 void OCTMarkerMainWindow::zoomChanged(double zoom)
 {
-	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 8);
-	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 0.5);
+// 	if(zoomInAction ) zoomInAction ->setEnabled(zoom < 8);
+// 	if(zoomOutAction) zoomOutAction->setEnabled(zoom > 0.5);
 
 	if(zoomMenu)
 	{
@@ -1084,6 +1076,7 @@ void OCTMarkerMainWindow::screenshot()
 
 }
 
+/*
 void OCTMarkerMainWindow::createActions()
 {
 	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
@@ -1106,13 +1099,4 @@ void OCTMarkerMainWindow::createActions()
 	connect(&markerManager, &OctMarkerManager::undoRedoStateChange, this, &OCTMarkerMainWindow::updateRedoUndo);
 }
 
-
-void OCTMarkerMainWindow::updateRedoUndo()
-{
-	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
-
-	if(undoAction)
-		undoAction->setEnabled(markerManager.numUndoSteps() > 0);
-	if(redoAction)
-		redoAction->setEnabled(markerManager.numRedoSteps() > 0);
-}
+*/

@@ -108,6 +108,7 @@ signals:
 	void requestSloOverlayUpdate();
 	void sloViewHasChanged();
 	void undoRedoChanged();
+	void requestChangeBscan(int bscan);
 	
 	
 protected:
@@ -138,5 +139,6 @@ protected:
 
 private:
 	void clearRedo();
+	bool checkBScan(MarkerCommand* command);
 };
 

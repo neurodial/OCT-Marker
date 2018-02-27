@@ -11,7 +11,7 @@ LayerSegCommand::LayerSegCommand(BScanLayerSegmentation* parent, std::size_t sta
 , oldPart(std::move(oldPart))
 , startPos(start)
 {
-
+	MarkerCommand::bscan = static_cast<int>(bscanNr);
 }
 
 

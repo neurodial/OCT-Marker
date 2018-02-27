@@ -76,6 +76,7 @@ private slots:
 	virtual void reloadMarkerStateSlot()                            { loadMarkerStateSlot(series); }
 
 	virtual void udateFromMarkerModul();
+	void bscanChangeRequestFromMarkerModul(int bscan);
 	void sloOverlayUpdateFromMarkerModul();
 
 	void handleSloRedrawAfterMarkerChange();

@@ -55,10 +55,11 @@ OctMarkerManager::OctMarkerManager()
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
 		obj->activate(false);
-		connect(obj, &BscanMarkerBase::requestFullUpdate      , this, &OctMarkerManager::udateFromMarkerModul            );
-		connect(obj, &BscanMarkerBase::sloViewHasChanged      , this, &OctMarkerManager::handleSloRedrawAfterMarkerChange);
-		connect(obj, &BscanMarkerBase::requestSloOverlayUpdate, this, &OctMarkerManager::sloOverlayUpdateFromMarkerModul );
-		connect(obj, &BscanMarkerBase::undoRedoChanged        , this, &OctMarkerManager::updateUndoRedowState            );
+		connect(obj, &BscanMarkerBase::requestFullUpdate      , this, &OctMarkerManager::udateFromMarkerModul             );
+		connect(obj, &BscanMarkerBase::sloViewHasChanged      , this, &OctMarkerManager::handleSloRedrawAfterMarkerChange );
+		connect(obj, &BscanMarkerBase::requestSloOverlayUpdate, this, &OctMarkerManager::sloOverlayUpdateFromMarkerModul  );
+		connect(obj, &BscanMarkerBase::undoRedoChanged        , this, &OctMarkerManager::updateUndoRedowState             );
+		connect(obj, &BscanMarkerBase::requestChangeBscan     , this, &OctMarkerManager::bscanChangeRequestFromMarkerModul);
 	}
 
 
@@ -288,6 +289,16 @@ void OctMarkerManager::updateUndoRedowState()
 		 emit(undoRedoStateChange());
 	 }
 }
+
+void OctMarkerManager::bscanChangeRequestFromMarkerModul(int bscan)
+{
+	 QObject* obj = sender();
+	 if(obj == actBscanMarker)
+	 {
+		chooseBScan(bscan);
+	 }
+}
+
 
 
 
