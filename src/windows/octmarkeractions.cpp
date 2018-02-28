@@ -36,7 +36,7 @@ QAction* OctMarkerActions::getZoomInAction()
 	{
 		zoomInAction = new QAction(this);
 		zoomInAction->setText(tr("Zoom +"));
-		zoomInAction->setIcon(QIcon::fromTheme("zoom-in",  QIcon(":/icons/typicons/zoom-in-outline.svg")));
+		zoomInAction->setIcon(QIcon::fromTheme("zoom-in",  QIcon(":/icons/tango/actions/zoom-in.svgz")));
 		connect(zoomInAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_in);
 	}
 	return zoomInAction;
@@ -48,7 +48,7 @@ QAction* OctMarkerActions::getZoomOutAction()
 	{
 		zoomOutAction = new QAction(this);
 		zoomOutAction->setText(tr("Zoom -"));
-		zoomOutAction->setIcon(QIcon::fromTheme("zoom-out",  QIcon(":/icons/typicons/zoom-out-outline.svg")));
+		zoomOutAction->setIcon(QIcon::fromTheme("zoom-out",  QIcon(":/icons/tango/actions/zoom-out.svgz")));
 		connect(zoomOutAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::zoom_out);
 	}
 	return zoomOutAction;
@@ -112,8 +112,6 @@ QAction* OctMarkerActions::getZoomFitWidthAction()
 	}
 	return zoomFitWidthAction;
 }
-
-
 
 
 QAction* OctMarkerActions::getRedoAction()

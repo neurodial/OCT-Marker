@@ -79,6 +79,9 @@
 	<file>icons/own/plain_retina.svg</file>
 	<file>icons/own/seglines.svg</file>
 
+	<file>icons/tango/actions/zoom-in.svgz</file>
+	<file>icons/tango/actions/zoom-out.svgz</file>
+
 	<file>icons/tango/actions/edit-redo.svgz</file>
 	<file>icons/tango/actions/edit-undo.svgz</file>
 	<file>icons/tango/actions/system-log-out.svgz</file>
