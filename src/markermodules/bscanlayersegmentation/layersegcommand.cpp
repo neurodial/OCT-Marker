@@ -19,17 +19,34 @@ LayerSegCommand::~LayerSegCommand()
 {
 }
 
+bool LayerSegCommand::testAndChangeSegline()
+{
+	if(parent->getActEditSeglineType() == type)
+		return true;
+
+	parent->setActEditLinetype(type);
+	return false;
+}
+
 
 void LayerSegCommand::apply()
 {
 }
 
-void LayerSegCommand::undo()
+bool LayerSegCommand::undo()
 {
+	if(!testAndChangeSegline())
+		return false;
+
 	parent->modifiedSegPart(bscanNr, type, startPos, oldPart);
+	return true;
 }
 
-void LayerSegCommand::redo()
+bool LayerSegCommand::redo()
 {
+	if(!testAndChangeSegline())
+		return false;
+
 	parent->modifiedSegPart(bscanNr, type, startPos, newPart);
+	return true;
 }

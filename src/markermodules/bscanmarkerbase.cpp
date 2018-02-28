@@ -148,10 +148,12 @@ void BscanMarkerBase::callRedoStep()
 	if(!checkBScan(command))
 		return;
 
+	if(!command->redo())
+		return;
+
 	undoList.push_back(command);
 	redoList.pop_back();
 
-	command->redo();
 	undoRedoChanged();
 }
 
@@ -164,10 +166,12 @@ void BscanMarkerBase::callUndoStep()
 	if(!checkBScan(command))
 		return;
 
+	if(!command->undo())
+		return;
+
 	redoList.push_back(command);
 	undoList.pop_back();
 
-	command->undo();
 	undoRedoChanged();
 }
 

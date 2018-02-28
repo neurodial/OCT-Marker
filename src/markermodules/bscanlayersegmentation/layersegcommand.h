@@ -15,6 +15,8 @@ class LayerSegCommand : public MarkerCommand
 	std::vector<double> newPart;
 	std::vector<double> oldPart;
 	std::size_t startPos;
+
+	bool testAndChangeSegline();
 public:
 	LayerSegCommand(BScanLayerSegmentation* parent, std::size_t start, std::vector<double>&& newPart, std::vector<double>&& oldPart);
 	~LayerSegCommand();
@@ -23,9 +25,9 @@ public:
 	LayerSegCommand& operator=(const LayerSegCommand& other) = delete;
 
 
-	virtual void apply();
-	virtual void undo() ;
-	virtual void redo() ;
+	virtual void apply() override;
+	virtual bool undo()  override;
+	virtual bool redo()  override;
 };
 
 #endif // LAYERSEGCOMMAND_H
