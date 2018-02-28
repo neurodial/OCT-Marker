@@ -8,6 +8,7 @@
 #include"octmarkeractions.h"
 
 class QLabel;
+class QString;
 class QAction;
 class QFileDialog;
 class QProgressBar;
@@ -55,7 +56,8 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	void handleOpenUrl(const QUrl& url, bool singleInput);
 
-	bool catchSaveError(std::function<void ()>& saveObj, std::string& errorStr);
+	bool catchSaveError(std::function<void ()>& saveObj, std::string& errorStr, const QString& unknownErrorMessage);
+	void showErrorDialog(bool isError, const std::string& errorMessage);
 
 protected:
 	virtual void dropEvent     (QDropEvent     * event);

@@ -161,6 +161,8 @@ void OCTMarkerMainWindow::messageOutput(QtMsgType type, const QMessageLogContext
 {
 	if(dwDebugOutput)
 		dwDebugOutput->printMessages(type, context, msg);
+	else
+		std::cout << msg.toStdString() << std::endl;
 }
 
 
@@ -721,7 +723,7 @@ namespace
 	}
 }
 
-bool OCTMarkerMainWindow::catchSaveError(std::function<void ()>& saveObj, std::string& errorStr)
+bool OCTMarkerMainWindow::catchSaveError(std::function<void ()>& saveObj, std::string& errorStr, const QString& unknownErrorMessage = tr("Unknown error on save"))
 {
 	bool saveSuccessful = true;
 	try
@@ -746,10 +748,17 @@ bool OCTMarkerMainWindow::catchSaveError(std::function<void ()>& saveObj, std::s
 	catch(...)
 	{
 		saveSuccessful = false;
-		errorStr = tr("Unknown error on save").toStdString();
+		errorStr = unknownErrorMessage.toStdString();
 	}
 	return saveSuccessful;
 }
+
+void OCTMarkerMainWindow::showErrorDialog(bool isError, const std::string& errorMessage)
+{
+	if(isError)
+		QMessageBox::critical(this, tr("Error on save"), tr("Save fail with message: %1").arg(errorMessage.c_str()), QMessageBox::Ok);
+}
+
 
 
 void OCTMarkerMainWindow::setMarkersFilters(QFileDialog& fd)
@@ -787,14 +796,14 @@ void OCTMarkerMainWindow::showSaveMarkersDialog()
 
 	if(fd.exec())
 	{
-		std::string errorStr;
 		QStringList filenames = fd.selectedFiles();
-// 		OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter()));
-		std::function<void ()> saveFun = [&]() { OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter())); };
-
-		bool saveResult = catchSaveError(saveFun, errorStr);
-		if(!saveResult)
-			QMessageBox::critical(this, tr("Error on save"), tr("Save fail with message: %1").arg(errorStr.c_str()), QMessageBox::Ok);
+		if(filenames.size() > 0)
+		{
+			std::string errorStr;
+			std::function<void ()> saveFun = [&]() { OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter())); };
+			bool saveResult = catchSaveError(saveFun, errorStr);
+			showErrorDialog(saveResult, errorStr);
+		}
 	}
 }
 
@@ -806,7 +815,11 @@ void OCTMarkerMainWindow::showSaveOctScanDialog()
 	QString filename = QFileDialog::getSaveFileName(this, tr("Choose a filename to save oct scan"), fileinfo.baseName()+".octbin", "*.octbin");
 	if(!filename.isEmpty())
 	{
-		OctDataManager::getInstance().saveOctScan(filename);
+		std::string errorStr;
+		std::function<void ()> saveFun = [&]() { OctDataManager::getInstance().saveOctScan(filename); };
+		bool saveResult = catchSaveError(saveFun, errorStr);
+		showErrorDialog(saveResult, errorStr);
+
 	}
 }
 
@@ -819,47 +832,38 @@ void OCTMarkerMainWindow::saveMatlabBinCode()
 {
 	QString filename = QFileDialog::getSaveFileName(this, tr("Save Matlab Bin Code"), QString("readbin.m"), "Matlab (*.m)");
 	if(!filename.isEmpty())
-		CppFW::CVMatTreeStructBin::writeMatlabReadCode(filename.toStdString().c_str());
+	{
+		std::string errorStr;
+		std::function<void ()> saveFun = [&]() { CppFW::CVMatTreeStructBin::writeMatlabReadCode(filename.toStdString().c_str()); };
+		bool saveResult = catchSaveError(saveFun, errorStr);
+		showErrorDialog(saveResult, errorStr);
+	}
 }
 
 void OCTMarkerMainWindow::saveMatlabWriteBinCode()
 {
 	QString filename = QFileDialog::getSaveFileName(this, tr("Save Matlab Write Bin Code"), QString("writebin.m"), "Matlab (*.m)");
 	if(!filename.isEmpty())
-		CppFW::CVMatTreeStructBin::writeMatlabWriteCode(filename.toStdString().c_str());
+	{
+		std::string errorStr;
+		std::function<void ()> saveFun = [&]() { CppFW::CVMatTreeStructBin::writeMatlabWriteCode(filename.toStdString().c_str()); };
+		bool saveResult = catchSaveError(saveFun, errorStr);
+		showErrorDialog(saveResult, errorStr);
+	}
 }
 
 void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
 {
 	// save Markers
-	bool saveSuccessful = true;
-	std::string errorStr;
-	try
+	std::function<void ()> saveFun = [&]()
 	{
 		OctDataManager::getInstance().saveMarkersDefault();
 		if(!OctDataManager::getInstance().checkAndAskSaveBeforContinue())
 			return e->ignore();
-	}
-	catch(boost::exception& e)
-	{
-		saveSuccessful = false;
-		errorStr = boost::diagnostic_information(e);
-	}
-	catch(std::exception& e)
-	{
-		saveSuccessful = false;
-		errorStr = e.what();
-	}
-	catch(const char* str)
-	{
-		saveSuccessful = false;
-		errorStr = str;
-	}
-	catch(...)
-	{
-		saveSuccessful = false;
-		errorStr = tr("Unknown error on autosave").toStdString();
-	}
+	};
+
+	std::string errorStr;
+	bool saveSuccessful = catchSaveError(saveFun, errorStr, tr("Unknown error on autosave"));
 	if(!saveSuccessful)
 	{
 		int ret = QMessageBox::critical(this, tr("Error on autosave"), tr("Autosave fail with message: %1 <br />Quit program?").arg(errorStr.c_str()), QMessageBox::Yes | QMessageBox::No);
