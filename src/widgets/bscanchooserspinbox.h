@@ -11,6 +11,9 @@ public:
 
 private slots:
 	void configBscanChooser();
+
+	void chooserChanged(int value);
+	void bscanChanged(int value);
 };
 
 #endif // BSCANCHOOSERSPINBOX_H
