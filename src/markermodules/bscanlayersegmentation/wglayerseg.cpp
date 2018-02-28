@@ -173,6 +173,9 @@ void WGLayerSeg::addThicknessMapControls(QLayout& layout)
 		                                      .arg(OctData::Segmentationlines::getSegmentlineName(config.getLine2()));
 		thicknessmapTemplates->addItem(text, QVariant::fromValue(const_cast<void*>(static_cast<const void*>(&config))));
 	}
+	int width = thicknessmapTemplates->minimumSizeHint().width();
+	thicknessmapTemplates->setMinimumWidth(width/2);
+
 	layoutTools->addWidget(thicknessmapTemplates);
 
 	layoutTools->addStretch();

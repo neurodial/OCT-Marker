@@ -77,6 +77,7 @@ namespace
 
 		static void addPoints2Rec(QRect& rec, std::vector<Point2D>::const_iterator p, const std::vector<Point2D>& vec, const int addPos = 0)
 		{
+			addPointPrivat(rec, *p);
 			if(addPos > 0)
 			{
 				for(int pos = 0; pos < addPos; ++pos)
@@ -309,13 +310,6 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 		{
 			redraw = deletePoints(minDistPoint, minDistPoint);
 			repaintRect = redraw.rect;
-// 			RecPointAdder::addPoints2Rec(repaintRect, minDistPoint, supportingPoints, pointDrawPos);
-// 			RecPointAdder::addPoints2Rec(repaintRect, minDistPoint, supportingPoints, pointDrawNeg);
-// 			redraw.redraw = true;
-//
-// 			supportingPoints.erase(minDistPoint);
-// 			resetEditPoints();
-// 			recalcInterpolation();
 		}
 	}
 	else
@@ -357,6 +351,7 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 			}
 
 			baseEditPoint = firstEditPoint;
+			startMovePosX = baseEditPoint->getX();
 			redraw.redraw = true; // TODO
 		}
 	}
@@ -384,7 +379,8 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseReleaseEvent(QMouseEvent*, BScan
 		QRect repaintRect = createRec(*lastEditPoint, *lastEditPoint);
 		RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawPos);
 		RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawNeg);
-		rangeModified(repaintRect.left(), repaintRect.right());
+		RecPointAdder::addPoint(repaintRect, Point2D(startMovePosX, 0));
+		rangeModified(repaintRect.left(), repaintRect.right()+1);
 	}
 	movePoint = false;
 	return BscanMarkerBase::RedrawRequest();
@@ -472,7 +468,7 @@ BscanMarkerBase::RedrawRequest EditSpline::deletePoints(PointIterator begin, Poi
 		redraw.redraw = true;
 
 
-		rangeModified(redraw.rect.left(), redraw.rect.right());
+		rangeModified(redraw.rect.left(), redraw.rect.right()+1);
 	}
 	return redraw;
 }

@@ -21,6 +21,7 @@ class EditSpline : public EditBase
 
 	void recalcInterpolation();
 
+	std::size_t startMovePosX = 0;
 	bool movePoint = false;
 	PointIterator  baseEditPoint;
 	PointIterator firstEditPoint;
