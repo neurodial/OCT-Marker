@@ -2,6 +2,8 @@
 
 #include<ostream>
 
+class ScaleFactor;
+
 template<typename T>
 class Point2DBase
 {
@@ -22,6 +24,7 @@ public:
 	void setY(const T& v) { y = v; }
 
 	double euklidDist(const Point2DBase<T>& p) const;
+	double euklidDist(const Point2DBase<T>& p, const ScaleFactor& scale) const;
 
 
 	Point2DBase operator-(const Point2DBase& o) const              { return Point2DBase(x-o.x, y-o.y); }

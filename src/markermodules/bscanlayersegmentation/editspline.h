@@ -40,7 +40,7 @@ class EditSpline : public EditBase
 	PointIterator reducePoints(PointIterator begin, PointIterator end, double factor);
 	void reducePoints();
 
-	std::tuple<PointIterator, double> findNextPoint(const Point2D& clickPoint);
+	std::tuple<PointIterator, double> findNextPoint(const Point2D& clickPoint, const ScaleFactor& scaleFactor);
 
 	double reduceFactor = 1;
 public:

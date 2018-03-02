@@ -687,7 +687,7 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 	const OctData::Series::BScanSLOCoordList& hull = series->getConvexHull();
 	if(hull.size() >= 3)
 	{
-		ScaleFactor tikzScale(tikzFactorX, tikzFactorY, 1.);
+		ScaleFactor tikzScale(tikzFactorX, tikzFactorY);
 		SloCoordTranslator transform(*series, tikzScale);
 
 		stream << "\n\t\t\t\\definecolor{convexHullColor}{rgb}{0.5,1.0,0.5}";

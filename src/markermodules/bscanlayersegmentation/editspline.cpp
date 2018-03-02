@@ -269,13 +269,13 @@ bool EditSpline::testInsertPoint(const Point2D& insertPoint, const ScaleFactor& 
 }
 
 
-std::tuple<std::vector<Point2D>::iterator, double> EditSpline::findNextPoint(const Point2D& clickPoint)
+std::tuple<std::vector<Point2D>::iterator, double> EditSpline::findNextPoint(const Point2D& clickPoint, const ScaleFactor& scaleFactor)
 {
 	double minDist = std::numeric_limits<double>::infinity();
 	std::vector<Point2D>::iterator minDistPoint = supportingPoints.end();
 	for(std::vector<Point2D>::iterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
 	{
-		double dist = p->euklidDist(clickPoint);
+		double dist = p->euklidDist(clickPoint, scaleFactor);
 		if(dist < minDist)
 		{
 			minDist = dist;
@@ -301,8 +301,8 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 
 	double minDist = 0;
 	PointIterator minDistPoint;
-	std::tie(minDistPoint, minDist) = findNextPoint(clickPoint);
-	bool clickOnPoint = minDist < 10/scaleFactor.getFactorView();
+	std::tie(minDistPoint, minDist) = findNextPoint(clickPoint, scaleFactor);
+	bool clickOnPoint = minDist < 10;
 
 	if(event->button() == Qt::RightButton)
 	{
