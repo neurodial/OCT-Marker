@@ -74,6 +74,7 @@ SLOImageWidget::SLOImageWidget(QWidget* parent)
 	connect(&ProgramOptions::sloShowGrid      , &OptionBool  ::valueChanged, this, static_cast<void (SLOImageWidget::*)(void)>(&SLOImageWidget::update));
 	connect(&ProgramOptions::sloShowOverlay   , &OptionBool  ::valueChanged, this, &SLOImageWidget::updateMarkerOverlayImage);
 	connect(&ProgramOptions::sloOverlayAlpha  , &OptionDouble::valueChanged, this, &SLOImageWidget::updateMarkerOverlayImage);
+	connect(&ProgramOptions::sloClipScanArea  , &OptionBool  ::valueChanged, this, &SLOImageWidget::reladSLOImage           );
 
 	setBScanVisibility(ProgramOptions::sloShowsBScansPos());
 
@@ -154,6 +155,7 @@ void SLOImageWidget::paintConvexHull(QPainter& painter, const OctData::Series* s
 	painter.setPen(pen);
 
 	SloCoordTranslator sct(*series, getImageScaleFactor());
+	sct.setClipShift(OctData::CoordSLOpx(clipX1, clipY1));
 
 	for(std::size_t i = 1; i < hull.size(); ++i)
 	{
@@ -186,6 +188,7 @@ void SLOImageWidget::paintBScans(QPainter& painter, const OctData::Series* serie
 	std::size_t activBScan                  = static_cast<std::size_t>(markerManger.getActBScanNum());
 
 	SloCoordTranslator coordTranslator(*series, getImageScaleFactor());
+	coordTranslator.setClipShift(OctData::CoordSLOpx(clipX1, clipY1));
 
 	// std::cout << cscan.getSloImage()->getShift() << " * " << (getImageScaleFactor()) << " = " << shift << std::endl;
 
@@ -305,13 +308,14 @@ void SLOImageWidget::paintAnalyseGrid(QPainter& painter, const OctData::Series* 
 		return;
 
 	SloCoordTranslator sct(*series, getImageScaleFactor());
+	sct.setClipShift(OctData::CoordSLOpx(clipX1, clipY1));
 
 	const OctData::CoordSLOpx centerPx = sct(grid.getCenter());
 
 	for(double d : diameters)
 	{
 		double r = d/2.;
-		OctData::CoordSLOpx radius = sct(OctData::CoordSLOmm(r, r));
+		OctData::CoordSLOpx radius = sct.transformWithoutShift(OctData::CoordSLOmm(r, r));
 		painter.drawEllipse(QPointF(centerPx.getXf(), centerPx.getYf()), radius.getXf(), radius.getYf());
 	}
 }
@@ -338,6 +342,7 @@ void SLOImageWidget::showPosOnBScan(double t)
 	if(series)
 	{
 		SloCoordTranslator sct(*series, getImageScaleFactor());
+		sct.setClipShift(OctData::CoordSLOpx(clipX1, clipY1));
 		OctData::CoordSLOmm point = actBScan->getStart()*(1-t) + actBScan->getEnd()*(t); // TODO falsche Richtung?
 		const OctData::CoordSLOpx markPx = sct(point);
 
@@ -350,15 +355,61 @@ void SLOImageWidget::showPosOnBScan(double t)
 }
 
 
+void SLOImageWidget::clipAndShowImage(const cv::Mat& img)
+{
+	if(ProgramOptions::sloClipScanArea())
+	{
+		const OctData::Series* series = OctDataManager::getInstance().getSeries();
+		if(series)
+		{
+			OctData::CoordSLOmm p1 = series->getLeftUpperCoord();
+			OctData::CoordSLOmm p2 = series->getRightLowerCoord();
+			SloCoordTranslator sct(*series, ScaleFactor());
+
+			OctData::CoordSLOpx p1px = sct(p1);
+			OctData::CoordSLOpx p2px = sct(p2);
+
+			clipX1 = p1px.getX();
+			clipY1 = p1px.getY();
+			int clipX2 = p2px.getX();
+			int clipY2 = p2px.getY();
+
+			if(clipX1 < 0) clipX1 = 0;
+			if(clipY1 < 0) clipY1 = 0;
+			if(clipX2 >= img.cols) clipX2 = img.cols - 1;
+			if(clipY2 >= img.rows) clipY2 = img.rows - 1;
+
+			cv::Rect roi;
+			roi.x = clipX1;
+			roi.y = clipY1;
+			roi.width  = clipX2 - clipX1;
+			roi.height = clipY2 - clipY1;
+
+			if(roi.width > 10 && roi.height > 10)
+			{
+				showImage(img(roi));
+				return;
+			}
+		}
+	}
+
+
+	clipX1 = 0;
+	clipY1 = 0;
+
+	showImage(img);
+}
+
+
+
 void SLOImageWidget::updateMarkerOverlayImage()
 {
 	const OctData::Series* series = OctDataManager::getInstance().getSeries();
 	if(!series)
 		return;
+
 	const OctData::SloImage& sloImage = series->getSloImage();
-
 	const cv::Mat& sloPixture = sloImage.getImage();
-
 	bool showPureSloImage = true;
 
 	if(ProgramOptions::sloShowOverlay())
@@ -371,13 +422,13 @@ void SLOImageWidget::updateMarkerOverlayImage()
 			if(overlayCreated && !outImage.empty())
 			{
 				showPureSloImage = false;
-				showImage(outImage);
+				clipAndShowImage(outImage);
 			}
 		}
 	}
 
 	if(showPureSloImage)
-		showImage(sloPixture);
+		clipAndShowImage(sloPixture);
 
 	singelBScanScan = (series->bscanCount() == 1);
 }
@@ -501,6 +552,7 @@ int SLOImageWidget::getBScanNearPos(int x, int y, double tol)
 	const OctData::Series::BScanList bscans  = series->getBScans();
 
 	SloCoordTranslator transform(*series, getImageScaleFactor());
+	transform.setClipShift(OctData::CoordSLOpx(clipX1, clipY1));
 	const OctData::CoordSLOpx clickPos(x,y);
 
 	int    nearstScan = 0;

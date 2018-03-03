@@ -45,6 +45,7 @@ WgSloImage::WgSloImage(QWidget* parent)
 
 	bar->addAction(ProgramOptions::sloShowGrid.getAction());
 	bar->addAction(ProgramOptions::sloShowBScanMousePos.getAction());
+	bar->addAction(ProgramOptions::sloClipScanArea.getAction());
 
 	bar->addSeparator();
 

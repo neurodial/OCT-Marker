@@ -40,6 +40,7 @@ OptionBool ProgramOptions::sloShowBScanMousePos(true , "sloShowBScanMousePos", "
 OptionInt  ProgramOptions::sloShowsBScansPos   (1    , "sloShowsBScansPos"   , "ProgramOptions"); // 0 nothing, 1 act BScan, 2 all BScans
 OptionBool   ProgramOptions::sloShowOverlay    (true , "sloShowOverlay"      , "ProgramOptions");
 OptionDouble ProgramOptions::sloOverlayAlpha   (0.7  , "sloOverlayAlpha"     , "ProgramOptions");
+OptionBool   ProgramOptions::sloClipScanArea   (false, "sloClipScanArea"      , "ProgramOptions");
 
 
 OptionString ProgramOptions::octDirectory      (".", "octDirectory"      , "ProgramOptions");

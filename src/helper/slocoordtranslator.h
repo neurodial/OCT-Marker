@@ -20,18 +20,35 @@ class SloCoordTranslator
 
 	const OctData::SloImage&       sloImage  ;
 	const OctData::ScaleFactor     factor    ;
+	const ScaleFactor              imgFactor ;
 	const OctData::CoordSLOpx      shift     ;
 	const OctData::CoordTransform& cTransform;
+
+	OctData::CoordSLOpx totalShift;
+
 
 public:
 	SloCoordTranslator(const OctData::Series& series, const ScaleFactor scaleFactor = ScaleFactor())
 	: sloImage  (series.getSloImage())
 	, factor    (divide(sloImage.getScaleFactor(), scaleFactor))
+	, imgFactor (scaleFactor)
 	, shift     (mult  (sloImage.getShift()      , scaleFactor))
 	, cTransform(sloImage.getTransform()                )
+	, totalShift(shift)
 	{}
 
+	void setClipShift(const OctData::CoordSLOpx& clipShift)
+	{
+		totalShift = shift - mult(clipShift, imgFactor); // OctData::CoordSLOpx(clipShift.getXf()*factor.getX(), clipShift.getYf()*factor.getY());
+	}
+
 	OctData::CoordSLOpx operator()(const OctData::CoordSLOmm& in) const
-	                                                               { return (cTransform * in)*factor + shift; }
+	                                                               { return (cTransform * in)*factor + totalShift; }
+
+
+
+	OctData::CoordSLOpx transformWithoutShift(const OctData::CoordSLOmm& in) const
+	                                                               { return (cTransform * in)*factor; }
+
 };
 

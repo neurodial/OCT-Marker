@@ -53,4 +53,8 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	QAction* showBScanMousePos = ProgramOptions::sloShowBScanMousePos.getAction();
 	showBScanMousePos->setText(tr("show mouse pos"));
 	showBScanMousePos->setIcon(QIcon(":/icons/typicons/times-outline.svg"));
+
+	QAction* sloClipScanArea = ProgramOptions::sloClipScanArea.getAction();
+	sloClipScanArea->setText(tr("clip to scan area"));
+	sloClipScanArea->setIcon(QIcon(":/icons/chart_curve.png")); // TODO: icon wählen
 }

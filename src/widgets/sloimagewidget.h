@@ -38,6 +38,9 @@ class SLOImageWidget : public CVImageWidget
 	OctMarkerManager& markerManger;
 	QGraphicsView*  gv    = nullptr;
 	QGraphicsScene* scene = nullptr;
+
+	int clipX1 = 0;
+	int clipY1 = 0;
 	
 	// std::vector<QColor*> intervallColors;
 	bool drawBScans       = true;
@@ -51,6 +54,7 @@ class SLOImageWidget : public CVImageWidget
 	int getBScanNearPos(int x, int y, double tol);
 
 	void updateGraphicsViewSize();
+	void clipAndShowImage(const cv::Mat& img);
 
 public:
 	explicit SLOImageWidget(QWidget* parent = 0);

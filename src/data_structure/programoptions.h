@@ -53,6 +53,7 @@ public:
 	static OptionInt    sloShowsBScansPos;
 	static OptionBool   sloShowOverlay ;
 	static OptionDouble sloOverlayAlpha;
+	static OptionBool   sloClipScanArea;
 	
 	static OptionString octDirectory;
 	static OptionString loadOctdataAtStart;
