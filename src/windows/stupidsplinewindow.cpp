@@ -4,8 +4,11 @@
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QtGui>
-
+#include <QPushButton>
+#include <QToolButton>
 #include <QProgressDialog>
+
+#include <octdata/datastruct/series.h>
 
 #include <widgets/slowithlegendwidget.h>
 #include <widgets/sloimagewidget.h>
@@ -20,21 +23,15 @@
 #include <manager/octdatamanager.h>
 #include <manager/octmarkerio.h>
 #include <manager/paintmarker.h>
+
 #include <markermodules/bscanmarkerbase.h>
+#include <markermodules/bscanlayersegmentation/bscanlayersegmentation.h>
 
 #include <model/octfilesmodel.h>
 #include <model/octdatamodel.h>
 
-#include <octdata/datastruct/series.h>
-
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
-
-#include <QPushButton>
-#include <widgets/dwimagecoloradjustments.h>
-#include <QToolButton>
-
-#include <markermodules/bscanlayersegmentation/bscanlayersegmentation.h>
 
 
 StupidSplineWindow::StupidSplineWindow()
@@ -270,7 +267,6 @@ namespace
 		layout->setSpacing(10);
 
 		QFrame* line = new QFrame();
-		// line->setGeometry(QRect(10,30));
 		line->setFrameShape(QFrame::VLine); // Replace by VLine for vertical line
 		line->setFrameShadow(QFrame::Sunken);
 		layout->addWidget(line);
@@ -310,6 +306,9 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 
 	layoutStupidControls->addWidget(genToolButton(markerActions.getUndoAction()));
 	layoutStupidControls->addWidget(genToolButton(markerActions.getRedoAction()));
+
+	addLayoutVLine(layoutStupidControls);
+	layoutStupidControls->addWidget(genToolButton(ProgramOptions::sloClipScanArea.getAction()));
 
 	// ----------------------
 	layoutStupidControls->addStretch();
