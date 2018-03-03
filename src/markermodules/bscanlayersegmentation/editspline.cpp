@@ -451,14 +451,9 @@ BscanMarkerBase::RedrawRequest EditSpline::deletePoints(PointIterator begin, Poi
 	BscanMarkerBase::RedrawRequest redraw;
 	if(begin != supportingPoints.end() && last != supportingPoints.end())
 	{
-
+		redraw.rect = createRec(*begin);
 		RecPointAdder::addPoints2Rec(redraw.rect, begin, supportingPoints, pointDrawNeg);
 		RecPointAdder::addPoints2Rec(redraw.rect, last , supportingPoints, pointDrawPos);
-
-// 		bool singlePoint = (begin == last);
-		// if(!singlePoint)
-			// TODO: rechteck in höhe maximieren
-
 
 		++last;
 		supportingPoints.erase(begin, last);

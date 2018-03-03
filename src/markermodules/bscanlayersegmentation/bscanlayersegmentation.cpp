@@ -246,27 +246,14 @@ void BScanLayerSegmentation::rangeModified(std::size_t ascanBegin, std::size_t a
 	if(lines.size() <= bscanNr)
 		return;
 
+// 	qDebug("%lu : %lu", ascanBegin, ascanEnd);
 
 	OctData::Segmentationlines::Segmentline& line = lines[bscanNr].lines.getSegmentLine(actEditType);
 
-// 	LayerSegCommand(BScanLayerSegmentation* parent, std::size_t start, std::vector<double>&& newPart, std::vector<double>&& oldPart);
 	LayerSegCommand* command = new LayerSegCommand(this, ascanBegin, getSegPart(tempLine, ascanBegin, ascanEnd), getSegPart(line, ascanBegin, ascanEnd));
 	addUndoCommand(command);
 
 	modifiedSegPart(bscanNr, actEditType, ascanBegin, ascanEnd-ascanBegin, tempLine.data() + ascanBegin, false);
-
-
-
-	/*
-	lines[bscanNr].lineModified[static_cast<std::size_t>(actEditType)] = true;
-
-	OctData::Segmentationlines::Segmentline& line = lines[bscanNr].lines.getSegmentLine(actEditType);
-
-	const std::size_t endPos = std::min(std::min(ascanEnd, line.size()), line.size());
-
-	for(std::size_t i = ascanBegin; i < endPos; ++i)
-		line[i] = tempLine[i];
-	*/
 }
 
 void BScanLayerSegmentation::modifiedSegPart(std::size_t bscan, OctData::Segmentationlines::SegmentlineType segLine, std::size_t start, std::size_t length, const double* segPart, bool updateMethode)

@@ -16,7 +16,7 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	actionShowOverlay->setIcon(QIcon(":/icons/typicons/brush.svg"));
 
 
-	QAction* autoSaveOctMarkers       = ProgramOptions::autoSaveOctMarkers.getAction();
+	QAction* autoSaveOctMarkers = ProgramOptions::autoSaveOctMarkers.getAction();
 	autoSaveOctMarkers->setText(tr("Autosave markers"));
 
 
@@ -56,5 +56,5 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 
 	QAction* sloClipScanArea = ProgramOptions::sloClipScanArea.getAction();
 	sloClipScanArea->setText(tr("clip to scan area"));
-	sloClipScanArea->setIcon(QIcon(":/icons/chart_curve.png")); // TODO: icon wählen
+	sloClipScanArea->setIcon(QIcon::fromTheme("view-fullscreen", QIcon(":/icons/tango/actions/view-fullscreen.svgz")));
 }
