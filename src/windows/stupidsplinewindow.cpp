@@ -207,7 +207,7 @@ void StupidSplineWindow::loadFileStatusSlot(bool loading)
 	if(loading)
 	{
 		if(!progressDialog)
-			progressDialog = new QProgressDialog("Opening file ...", "Abort", 0, 100, this);
+			progressDialog = new QProgressDialog(tr("Opening file ..."), tr("Abort"), 0, 100, this);
 
 		progressDialog->setCancelButtonText(nullptr);
 		progressDialog->setWindowModality(Qt::WindowModal);

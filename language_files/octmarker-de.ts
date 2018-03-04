@@ -1472,6 +1472,16 @@
         <translation>Daten konnten nicht gespeichert werden, Beenden abgebrochen</translation>
     </message>
     <message>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="210"/>
+        <source>Opening file ...</source>
+        <translation>Öffne Datei ...</translation>
+    </message>
+    <message>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="210"/>
+        <source>Abort</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
         <location filename="../src/windows/stupidsplinewindow.cpp" line="258"/>
         <source>Error on save</source>
         <translation>Fehler beim speichern</translation>
