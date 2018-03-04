@@ -56,5 +56,5 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 
 	QAction* sloClipScanArea = ProgramOptions::sloClipScanArea.getAction();
 	sloClipScanArea->setText(tr("clip to scan area"));
-	sloClipScanArea->setIcon(QIcon::fromTheme("view-fullscreen", QIcon(":/icons/tango/actions/view-fullscreen.svgz")));
+	sloClipScanArea->setIcon(QIcon::fromTheme("view-fullscreen", QIcon(":/icons/tango/actions/system-search.svgz")));
 }

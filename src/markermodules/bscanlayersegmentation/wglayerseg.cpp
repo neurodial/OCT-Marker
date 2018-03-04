@@ -10,7 +10,8 @@
 #include<QAction>
 #include<QToolButton>
 #include<QComboBox>
-#include <QLabel>
+#include<QLabel>
+#include<QDesktopWidget>
 
 #include<octdata/datastruct/segmentationlines.h>
 
@@ -18,6 +19,46 @@
 
 #include"thicknessmaptemplates.h"
 #include <data_structure/programoptions.h>
+
+namespace
+{
+	class LayoutAdder
+	{
+		QLayout* basisLayout;
+		QGridLayout* gridLayout = nullptr;
+		QWidget* layoutWidget = nullptr;
+		int numWidgets = 0;
+	public:
+		LayoutAdder(QLayout* layout, QWidget* parent)
+		: basisLayout(layout)
+		{
+			QDesktopWidget desktop;
+			QRect rect = desktop.availableGeometry();
+			if(rect.height() < 1000)
+			{
+				layoutWidget = new QWidget(parent);
+				gridLayout = new QGridLayout(layoutWidget);
+			}
+		}
+
+		~LayoutAdder()
+		{
+			if(layoutWidget)
+				basisLayout->addWidget(layoutWidget);
+		}
+
+		void addWidget(QWidget* widget)
+		{
+			if(gridLayout)
+			{
+				gridLayout->addWidget(widget, numWidgets/2, numWidgets % 2);
+				++numWidgets;
+			}
+			else
+				basisLayout->addWidget(widget);
+		}
+	};
+}
 
 
 WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
@@ -51,6 +92,8 @@ WGLayerSeg::~WGLayerSeg()
 
 void WGLayerSeg::addLayerButtons(QLayout& layout)
 {
+	LayoutAdder layoutAdder(&layout, this);
+
 	layerButtons = new QButtonGroup(this);
 	QSignalMapper* signalMapper = new QSignalMapper(this);
 
@@ -65,7 +108,7 @@ void WGLayerSeg::addLayerButtons(QLayout& layout)
 		QPushButton* button;
 		if(keyListIt != BScanLayerSegmentation::keySeglines.end())
 		{
-			const int pos = keyListIt - BScanLayerSegmentation::keySeglines.begin();
+			const int pos = static_cast<int>(keyListIt - BScanLayerSegmentation::keySeglines.begin());
 			button = new NumberPushButton(pos, this);
 		}
 		else
@@ -81,10 +124,9 @@ void WGLayerSeg::addLayerButtons(QLayout& layout)
 			button->setChecked(true);
 
 		layerButtons->addButton(button);
-		layout.addWidget(button);
+		layoutAdder.addWidget(button);
 		seglineButtons[static_cast<std::size_t>(type)] = button;
 	}
-
     connect(signalMapper, static_cast<void (QSignalMapper::*)(int)>(&QSignalMapper::mapped), this, &WGLayerSeg::changeSeglineId);
 }
 
@@ -183,7 +225,6 @@ void WGLayerSeg::addThicknessMapControls(QLayout& layout)
 	QAction* actionUpdateThicknessmap = new QAction(this);
 	actionUpdateThicknessmap->setText(tr("update thicknessmap"));
 	actionUpdateThicknessmap->setIcon(QIcon(":/icons/typicons/arrow-sync-outline.svg"));
-// 	actionUpdateThicknessmap->setIcon(QIcon(":/icons/vector.png"));
 	connect(actionUpdateThicknessmap, &QAction::triggered, parent, &BScanLayerSegmentation::generateThicknessmap);
 	QToolButton* buttonUpdateThicknessmap = createActionToolButton(this, actionUpdateThicknessmap);
 	layoutTools->addWidget(buttonUpdateThicknessmap);

@@ -33,25 +33,17 @@
 	<file>icons/arrow_inout.png</file>
 
 	<file>icons/zoom.png</file>
-	<file>icons/zoom_in.png</file>
-	<file>icons/zoom_out.png</file>
 	<file>icons/stretch_width.png</file>
 	<file>icons/stretch_height.png</file>
 	
 	<file>icons/image.png</file>
 	<file>icons/wand.png</file>
 	<file>icons/vector.png</file>
-	<file>icons/segline_edit.png</file>
-	<file>icons/seglinelayer_edit.png</file>
-	<file>icons/intervall_edit.png</file>
 	<file>icons/paint_disc.png</file>
 	<file>icons/paint_quadrat.png</file>
 	<file>icons/pen.png</file>
 	<file>icons/cut_red.png</file>
 	<file>icons/tag.png</file>
-
-	<file>icons/resultset_next.png</file>
-	<file>icons/resultset_previous.png</file>
 
 	<file>icons/arrow_redo.png</file>
 	<file>icons/arrow_undo.png</file>
@@ -81,6 +73,10 @@
 
 	<file>icons/tango/actions/zoom-in.svgz</file>
 	<file>icons/tango/actions/zoom-out.svgz</file>
+
+	<file>icons/tango/actions/go-next.svgz</file>
+	<file>icons/tango/actions/go-previous.svgz</file>
+	<file>icons/tango/actions/system-search.svgz</file>
 
 	<file>icons/tango/actions/edit-redo.svgz</file>
 	<file>icons/tango/actions/edit-undo.svgz</file>

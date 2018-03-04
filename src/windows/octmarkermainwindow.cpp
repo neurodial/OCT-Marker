@@ -368,13 +368,13 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* previousOctScan = new QAction(this);
 	previousOctScan->setText(tr("previous octScan"));
-	previousOctScan->setIcon(QIcon::fromTheme("go-previous", QIcon(":/icons/resultset_previous.png")));
+	previousOctScan->setIcon(QIcon::fromTheme("go-previous", QIcon(":/icons/tango/actions/go-previous.svgz")));
 	previousOctScan->setShortcut(Qt::CTRL + Qt::LeftArrow);
 	connect(previousOctScan, &QAction::triggered, &(OctFilesModel::getInstance()), &OctFilesModel::loadPreviousFile);
 
 	QAction* nextOctScan = new QAction(this);
 	nextOctScan->setText(tr("next octScan"));
-	nextOctScan->setIcon(QIcon::fromTheme("go-next", QIcon(":/icons/resultset_next.png")));
+	nextOctScan->setIcon(QIcon::fromTheme("go-next", QIcon(":/icons/tango/actions/go-next.svgz")));
 	nextOctScan->setShortcut(Qt::CTRL + Qt::RightArrow);
 	connect(nextOctScan, &QAction::triggered, &(OctFilesModel::getInstance()), &OctFilesModel::loadNextFile);
 
