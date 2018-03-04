@@ -38,7 +38,6 @@ class OCTMarkerMainWindow : public QMainWindow
 	void createMarkerToolbar();
 	QAction* createColorOptionAction(OptionColor& opt, const QString& text);
 
-
 	QDockWidget*          dwSloImage                  = nullptr;
 	ScrollAreaPan*        bscanMarkerWidgetScrollArea = nullptr;
 	BScanMarkerWidget*    bscanMarkerWidget           = nullptr;
@@ -48,7 +47,9 @@ class OCTMarkerMainWindow : public QMainWindow
 
 	QProgressBar* loadProgressBar  = nullptr;
 
-	OctMarkerActions markerActions;
+	OctMarkerActions generalMarkerActions;
+	QList<QAction*> markerActions;
+	void generateMarkerActions();
 
 	static void setMarkersFilters(QFileDialog& fd);
 

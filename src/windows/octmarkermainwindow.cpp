@@ -63,7 +63,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 : QMainWindow()
 , dwSloImage       (new QDockWidget(this))
 , bscanMarkerWidget(new BScanMarkerWidget)
-, markerActions    (bscanMarkerWidget    )
+, generalMarkerActions    (bscanMarkerWidget    )
 {
 	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
 	QSettings& settings = ProgramOptions::getSettings();
@@ -74,6 +74,7 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 	bscanMarkerWidgetScrollArea->setWidget(bscanMarkerWidget);
 	connect(bscanMarkerWidget, &CVImageWidget::needScrollTo, bscanMarkerWidgetScrollArea, &ScrollAreaPan::scrollTo);
 
+	generateMarkerActions();
 
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);
@@ -246,50 +247,6 @@ void OCTMarkerMainWindow::setupMenu()
 
 
 	// ----------
-	// Options
-	// ----------
-	QMenu* optionsMenu = new QMenu(this);
-	optionsMenu->setTitle(tr("Options"));
-
-	optionsMenu->addAction(ProgramOptions::fillEmptyPixelWhite.getAction());
-	optionsMenu->addAction(ProgramOptions::registerBScans     .getAction());
-	optionsMenu->addAction(ProgramOptions::loadRotateSlo      .getAction());
-	optionsMenu->addAction(ProgramOptions::holdOCTRawData     .getAction());
-	optionsMenu->addAction(ProgramOptions::readBScans         .getAction());
-	optionsMenu->addAction(ProgramOptions::saveOctBinFlat     .getAction());
-
-	QMenu* optionsMenuE2E = new QMenu(this);
-	optionsMenuE2E->setTitle(tr("E2E Gray"));
-	optionsMenu->addMenu(optionsMenuE2E);
-
-	QActionGroup* e2eGrayTransformGroup = new QActionGroup(this);
-	static SendInt e2eGrayNativ(static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::nativ));
-	addMenuProgramOptionGroup(tr("E2E nativ"    ), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayNativ, e2eGrayTransformGroup, this);
-	static SendInt e2eGrayXml   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::xml));
-	addMenuProgramOptionGroup(tr("Xml emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayXml  , e2eGrayTransformGroup, this);
-	static SendInt e2eGrayVol   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::vol));
-	addMenuProgramOptionGroup(tr("Vol emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayVol  , e2eGrayTransformGroup, this);
-	static SendInt e2eGrayU16   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::u16));
-	addMenuProgramOptionGroup(tr("Vol emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayU16  , e2eGrayTransformGroup, this);
-
-	optionsMenu->addSeparator();
-
-	optionsMenu->addAction(ProgramOptions::autoSaveOctMarkers.getAction());
-
-
-	QMenu* optionsMenuMarkersFileFormat = new QMenu(this);
-	optionsMenuMarkersFileFormat->setTitle(tr("Default filetype"));
-	optionsMenu->addMenu(optionsMenuMarkersFileFormat);
-
-	QActionGroup* markersFileFormatGroup = new QActionGroup(this);
-	static SendInt markerFFxml(OctMarkerIO::fileformat2Int(OctMarkerFileformat::XML));
-	addMenuProgramOptionGroup(tr("XML" ), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFxml, markersFileFormatGroup, this);
-	static SendInt markerFFjsom(OctMarkerIO::fileformat2Int(OctMarkerFileformat::Json));
-	addMenuProgramOptionGroup(tr("JSOM"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFjsom  , markersFileFormatGroup, this);
-	static SendInt markerFFinfo(OctMarkerIO::fileformat2Int(OctMarkerFileformat::INFO));
-	addMenuProgramOptionGroup(tr("INFO"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFinfo  , markersFileFormatGroup, this);
-
-	// ----------
 	// View
 	// ----------
 
@@ -314,28 +271,92 @@ void OCTMarkerMainWindow::setupMenu()
 	// ----------
 	// Extras
 	// ----------
+	QMenu* markerMenu = new QMenu(this);
+	markerMenu->setTitle(tr("Marker"));
 
-	QMenu* extrisMenu = new QMenu(this);
-	extrisMenu->setTitle(tr("Extras"));
+	for(QAction* markerAction : markerActions)
+		markerMenu->addAction(markerAction);
+
+
+
+	// ----------
+	// Extras
+	// ----------
+
+	QMenu* extrasMenu = new QMenu(this);
+	extrasMenu->setTitle(tr("Extras"));
 
 	QAction* actionSaveMatlabBinCode = new QAction(this);
 	actionSaveMatlabBinCode->setText(tr("Save Matlab Bin Code"));
 	actionSaveMatlabBinCode->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/actions/document-save.svgz")));
 	connect(actionSaveMatlabBinCode, &QAction::triggered, this, &OCTMarkerMainWindow::saveMatlabBinCode);
-	extrisMenu->addAction(actionSaveMatlabBinCode);
+	extrasMenu->addAction(actionSaveMatlabBinCode);
 
 	QAction* actionSaveMatlabWriteBinCode = new QAction(this);
 	actionSaveMatlabWriteBinCode->setText(tr("Save Matlab Write Bin Code"));
 	actionSaveMatlabWriteBinCode->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/actions/document-save.svgz")));
 	connect(actionSaveMatlabWriteBinCode, &QAction::triggered, this, &OCTMarkerMainWindow::saveMatlabWriteBinCode);
-	extrisMenu->addAction(actionSaveMatlabWriteBinCode);
+	extrasMenu->addAction(actionSaveMatlabWriteBinCode);
 
 
 	QAction* actionSaveScreenshot = new QAction(this);
 	actionSaveScreenshot->setText(tr("create screenshot"));
 	actionSaveScreenshot->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/actions/document-save.svgz")));
 	connect(actionSaveScreenshot, &QAction::triggered, this, &OCTMarkerMainWindow::screenshot);
-	extrisMenu->addAction(actionSaveScreenshot);
+	extrasMenu->addAction(actionSaveScreenshot);
+
+
+	// ----------
+	// Options
+	// ----------
+	QMenu* optionsMenu = new QMenu(this);
+	optionsMenu->setTitle(tr("Options"));
+
+
+	QMenu* optionsLoadOctMenu = new QMenu(this);
+	optionsLoadOctMenu->setTitle(tr("Load options"));
+	optionsMenu->addMenu(optionsLoadOctMenu);
+
+	optionsLoadOctMenu->addAction(ProgramOptions::fillEmptyPixelWhite.getAction());
+	optionsLoadOctMenu->addAction(ProgramOptions::registerBScans     .getAction());
+	optionsLoadOctMenu->addAction(ProgramOptions::readBScans         .getAction());
+	optionsLoadOctMenu->addAction(ProgramOptions::loadRotateSlo      .getAction());
+	optionsLoadOctMenu->addAction(ProgramOptions::holdOCTRawData     .getAction());
+
+	QMenu* optionsMenuE2E = new QMenu(this);
+	optionsMenuE2E->setTitle(tr("E2E Gray"));
+	optionsLoadOctMenu->addMenu(optionsMenuE2E);
+
+	QActionGroup* e2eGrayTransformGroup = new QActionGroup(this);
+	static SendInt e2eGrayNativ(static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::nativ));
+	addMenuProgramOptionGroup(tr("E2E nativ"    ), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayNativ, e2eGrayTransformGroup, this);
+	static SendInt e2eGrayXml   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::xml));
+	addMenuProgramOptionGroup(tr("Xml emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayXml  , e2eGrayTransformGroup, this);
+	static SendInt e2eGrayVol   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::vol));
+	addMenuProgramOptionGroup(tr("Vol emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayVol  , e2eGrayTransformGroup, this);
+	static SendInt e2eGrayU16   (static_cast<int>(OctData::FileReadOptions::E2eGrayTransform::u16));
+	addMenuProgramOptionGroup(tr("Vol emulation"), ProgramOptions::e2eGrayTransform, optionsMenuE2E, e2eGrayU16  , e2eGrayTransformGroup, this);
+
+
+	optionsMenu->addAction(ProgramOptions::saveOctBinFlat     .getAction());
+	optionsMenu->addSeparator();
+
+	optionsMenu->addAction(ProgramOptions::autoSaveOctMarkers.getAction());
+
+
+	QMenu* optionsMenuMarkersFileFormat = new QMenu(this);
+	optionsMenuMarkersFileFormat->setTitle(tr("Default filetype"));
+	optionsMenu->addMenu(optionsMenuMarkersFileFormat);
+
+	QActionGroup* markersFileFormatGroup = new QActionGroup(this);
+	static SendInt markerFFxml(OctMarkerIO::fileformat2Int(OctMarkerFileformat::XML));
+	addMenuProgramOptionGroup(tr("XML" ), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFxml, markersFileFormatGroup, this);
+	static SendInt markerFFjsom(OctMarkerIO::fileformat2Int(OctMarkerFileformat::Json));
+	addMenuProgramOptionGroup(tr("JSOM"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFjsom  , markersFileFormatGroup, this);
+	static SendInt markerFFinfo(OctMarkerIO::fileformat2Int(OctMarkerFileformat::INFO));
+	addMenuProgramOptionGroup(tr("INFO"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFinfo  , markersFileFormatGroup, this);
+
+
 	// ----------
 	// Help Menu
 	// ----------
@@ -351,14 +372,15 @@ void OCTMarkerMainWindow::setupMenu()
 	helpMenu->addAction(aboutQtAct);
 
 
-	helpMenu->addAction(markerActions.getAboutDialogAction());
+	helpMenu->addAction(generalMarkerActions.getAboutDialogAction());
 
 
 
 	menuBar()->addMenu(fileMenu);
-	menuBar()->addMenu(optionsMenu);
+	menuBar()->addMenu(markerMenu);
 	menuBar()->addMenu(viewMenu);
-	menuBar()->addMenu(extrisMenu);
+	menuBar()->addMenu(extrasMenu);
+	menuBar()->addMenu(optionsMenu);
 	menuBar()->addMenu(helpMenu);
 
 
@@ -407,17 +429,17 @@ void OCTMarkerMainWindow::setupMenu()
 
 	toolBar->addSeparator();
 
-	toolBar->addAction(markerActions.getZoomInAction());
-	toolBar->addAction(markerActions.getZoomMenuAction());
-	toolBar->addAction(markerActions.getZoomOutAction());
-	toolBar->addAction(markerActions.getZoomFitAction());
+	toolBar->addAction(generalMarkerActions.getZoomInAction());
+	toolBar->addAction(generalMarkerActions.getZoomMenuAction());
+	toolBar->addAction(generalMarkerActions.getZoomOutAction());
+	toolBar->addAction(generalMarkerActions.getZoomFitAction());
 
-	toolBar->addAction(markerActions.getZoomFitHeightAction());
-	toolBar->addAction(markerActions.getZoomFitWidthAction());
+	toolBar->addAction(generalMarkerActions.getZoomFitHeightAction());
+	toolBar->addAction(generalMarkerActions.getZoomFitWidthAction());
 
 	toolBar->addSeparator();
-	toolBar->addAction(markerActions.getUndoAction());
-	toolBar->addAction(markerActions.getRedoAction());
+	toolBar->addAction(generalMarkerActions.getUndoAction());
+	toolBar->addAction(generalMarkerActions.getRedoAction());
 
 	addToolBar(toolBar);
 }
@@ -452,17 +474,13 @@ void OCTMarkerMainWindow::setupStatusBar()
 // 	statusBar()->addPermanentWidget(mouseStatus);
 }
 
-void OCTMarkerMainWindow::createMarkerToolbar()
+void OCTMarkerMainWindow::generateMarkerActions()
 {
 	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
 	const std::vector<BscanMarkerBase*>& markers = markerManager.getBscanMarker();
-	
-	QToolBar*      toolBar            = new QToolBar(tr("Marker"));
+
 	QActionGroup*  actionGroupMarker  = new QActionGroup(this);
 	QSignalMapper* signalMapperMarker = new QSignalMapper(this);
-	
-	toolBar->setObjectName("ToolBarMarkerChoose");
-// 	toolBar->setIconSize(QSize(60,60));
 
 	QAction* markerAction = new QAction(this);
 	markerAction->setCheckable(true);
@@ -472,8 +490,8 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 	connect(markerAction, &QAction::triggered, signalMapperMarker, static_cast<void(QSignalMapper::*)()>(&QSignalMapper::map));
 	signalMapperMarker->setMapping(markerAction, -1);
 	actionGroupMarker->addAction(markerAction);
-	toolBar->addAction(markerAction);
-	
+	markerActions.push_back(markerAction);
+
 	int id = 0;
 	for(BscanMarkerBase* marker : markers)
 	{
@@ -486,11 +504,20 @@ void OCTMarkerMainWindow::createMarkerToolbar()
 		signalMapperMarker->setMapping(markerAction, id);
 
 		actionGroupMarker->addAction(markerAction);
-		toolBar->addAction(markerAction);
+		markerActions.push_back(markerAction);
 		++id;
 	}
 	connect(signalMapperMarker, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), &markerManager, &OctMarkerManager::setBscanMarker);
-	
+}
+
+
+void OCTMarkerMainWindow::createMarkerToolbar()
+{
+	QToolBar* toolBar = new QToolBar(tr("Marker"));
+
+	for(QAction* markerAction : markerActions)
+		toolBar->addAction(markerAction);
+
 	addToolBar(toolBar);
 }
 
