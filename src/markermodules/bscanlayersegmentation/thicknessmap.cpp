@@ -48,7 +48,7 @@ void ThicknessMap::createMap(const SloBScanDistanceMap& distMap
                            , double scaleFactor
                            , const Colormap& colormap)
 {
-	SloBScanDistanceMap::PreCalcDataMatrix* distMatrix = distMap.getDataMatrix();
+	const SloBScanDistanceMap::PreCalcDataMatrix* distMatrix = distMap.getDataMatrix();
 
 	if(!distMatrix)
 		return;
@@ -60,12 +60,12 @@ void ThicknessMap::createMap(const SloBScanDistanceMap& distMap
 
 	fillLineVec(lines, t1, t2);
 
-	thicknessMap->create(static_cast<int>(sizeX), static_cast<int>(sizeY), CV_8UC4);
+	thicknessMap->create(static_cast<int>(sizeY), static_cast<int>(sizeX), CV_8UC4);
 
-	for(std::size_t y = 0; y < sizeX; ++y)
+	for(std::size_t y = 0; y < sizeY; ++y)
 	{
 		uint8_t* destPtr = thicknessMap->ptr<uint8_t>(static_cast<int>(y));
-		SloBScanDistanceMap::PreCalcDataMatrix::value_type* srcPtr = distMatrix->scanLine(y);
+		const SloBScanDistanceMap::PreCalcDataMatrix::value_type* srcPtr = distMatrix->scanLine(y);
 
 		for(std::size_t x = 0; x < sizeX; ++x)
 		{

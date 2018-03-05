@@ -37,7 +37,7 @@ public:
 	void createData(const OctData::Series* series);
 
 
-	PreCalcDataMatrix* getDataMatrix() const { return preCalcDataMatrix; }
+	const PreCalcDataMatrix* getDataMatrix() const { return preCalcDataMatrix; }
 
 private:
 	PreCalcDataMatrix* preCalcDataMatrix = nullptr;

@@ -23,7 +23,7 @@ SloIntervallMap::~SloIntervallMap()
 
 void SloIntervallMap::createMap(const SloBScanDistanceMap& distanceMap, const std::vector<BScanIntervalMarker::MarkerMap>& lines, const OctData::Series* series)
 {
-	SloBScanDistanceMap::PreCalcDataMatrix* distMatrix = distanceMap.getDataMatrix();
+	const SloBScanDistanceMap::PreCalcDataMatrix* distMatrix = distanceMap.getDataMatrix();
 
 	if(!distMatrix)
 		return;
@@ -35,10 +35,10 @@ void SloIntervallMap::createMap(const SloBScanDistanceMap& distanceMap, const st
 
 	sloMap->create(static_cast<int>(sizeX), static_cast<int>(sizeY), CV_8UC4);
 
-	for(std::size_t y = 0; y < sizeX; ++y)
+	for(std::size_t y = 0; y < sizeY; ++y)
 	{
 		uint8_t* destPtr = sloMap->ptr<uint8_t>(static_cast<int>(y));
-		SloBScanDistanceMap::PreCalcDataMatrix::value_type* srcPtr = distMatrix->scanLine(y);
+		const SloBScanDistanceMap::PreCalcDataMatrix::value_type* srcPtr = distMatrix->scanLine(y);
 
 		for(std::size_t x = 0; x < sizeX; ++x)
 		{

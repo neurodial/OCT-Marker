@@ -85,20 +85,12 @@ bool BscanMarkerBase::setMarkerActive(bool active, BScanMarkerWidget*)
 	return result;
 }
 
-bool BscanMarkerBase::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha, const cv::Mat& sloOverlay) const
+
+namespace
 {
-	if(alpha == -1.)
+	template<int channels>
+	bool drawSLOOverlayImage4Datatype(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha, const cv::Mat& sloOverlay)
 	{
-		outSloImage = sloOverlay;
-		return true;
-	}
-
-	if(sloOverlay.cols == sloImage.cols && sloOverlay.rows == sloImage.rows)
-	{
-// 		std::cout << sloImage.type() << " != " << CV_8U << " || " << thicknesMapImage->type() << " != " << CV_8UC4 << std::endl;
-		if(sloImage.type() != CV_8U || sloOverlay.type() != CV_8UC4)
-			return false;
-
 		outSloImage.create(sloImage.size(), CV_8UC3);
 		const std::size_t length = static_cast<std::size_t>(sloImage.cols*sloImage.rows);
 
@@ -113,17 +105,47 @@ bool BscanMarkerBase::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outS
 			{
 				double blend = static_cast<double>(alphaThicknes)/255. * alpha;
 				for(int k = 0; k<3; ++k)
-					dest[k] = static_cast<uint8_t>(src[0]*(1-blend) + thi[k]*blend);
+					dest[k] = static_cast<uint8_t>(src[k % channels]*(1-blend) + thi[k]*blend);
 			}
 			else
 				for(int k = 0; k<3; ++k)
-					dest[k] = src[0];
+					dest[k] = src[k % channels];
 
 			thi  += 4;
 			dest += 3;
-			++src;
+			src += channels;
 		}
 		return true;
+	}
+}
+
+bool BscanMarkerBase::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& outSloImage, double alpha, const cv::Mat& sloOverlay) const
+{
+	if(alpha == -1.)
+	{
+		outSloImage = sloOverlay;
+		return true;
+	}
+
+	if(sloOverlay.cols == sloImage.cols && sloOverlay.rows == sloImage.rows)
+	{
+		if(sloImage.depth() != cv::DataType<uint8_t>::type || sloOverlay.type() != CV_8UC4)
+		{
+			qDebug("%d != %d || %d != %d", sloImage.depth(), cv::DataType<uint8_t>::type, sloOverlay.type(), CV_8UC4);
+			return false;
+		}
+		switch(sloImage.channels())
+		{
+			case 1:
+				drawSLOOverlayImage4Datatype<1>(sloImage, outSloImage, alpha, sloOverlay);
+				return true;
+			case 3:
+				drawSLOOverlayImage4Datatype<3>(sloImage, outSloImage, alpha, sloOverlay);
+				return true;
+			default:
+				qDebug("Unsupported number of channels: %d", sloImage.channels());
+				return false;
+		}
 	}
 	return false;
 }
