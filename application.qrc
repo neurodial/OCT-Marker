@@ -84,5 +84,6 @@
 	<file>icons/tango/actions/document-save.svgz</file>
 	<file>icons/tango/actions/view-fullscreen.svgz</file>
 	<file>icons/tango/apps/help-browser.svgz</file>
+	<file>icons/tango/apps/accessories-text-editor.svgz</file>
 </qresource>
 </RCC>

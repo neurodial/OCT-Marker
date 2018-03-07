@@ -45,7 +45,7 @@ class OptionBool : public Option
 		action.setCheckable(true);
 		action.setChecked(v);
 		connect(&action, &QAction::triggered      , this   , &OptionBool::setValue);
-		connect(this   , &OptionBool::valueChanged, &action, &QAction::setChecked );
+// 		connect(this   , &OptionBool::valueChanged, &action, &QAction::setChecked );
 	}
 	OptionBool(const OptionBool&) = delete;
 	OptionBool& operator=(const OptionBool&) = delete;
@@ -55,6 +55,7 @@ class OptionBool : public Option
 		if(v!=value)
 		{
 			value = v;
+			action.setChecked(v);
 			emit(valueChanged(v));
 			if(v)
 				emit(trueSignal());

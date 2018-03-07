@@ -732,9 +732,9 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 	if(overlayLegendWidget)
 		stream << "\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (legend) at (" << imgWidth*1.04 << "cm,0) {\\includegraphics[height=" << imgHeight << "cm]{" << imageOverlayLegendFilename << "}};";
 
-	stream << "\n\t\t\\begin{scope}[xscale=" << imgWidth << ",yscale=" << imgWidth << "]\n";
 
-
+	const double scale = std::min(imgWidth, imgHeight);
+	stream << "\n\t\t\\begin{scope}[xscale=" << scale << ",yscale=" << scale << "]\n";
 
 	const OctData::Series::BScanSLOCoordList& hull = series->getConvexHull();
 	if(hull.size() >= 3)

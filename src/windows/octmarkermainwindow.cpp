@@ -97,10 +97,12 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 	addDockWidget(Qt::LeftDockWidgetArea, dwImageColorAdjustments);
 	bscanMarkerWidget->setImageFilter(dwImageColorAdjustments->getImageFilter());
 
-// 	if(!dwDebugOutput)
-// 		dwDebugOutput = new DWDebugOutput(this);
-// 	dwDebugOutput->setObjectName("DWDebugOutput");
-// 	addDockWidget(Qt::RightDockWidgetArea, dwDebugOutput);
+#ifdef NDEBUG
+	if(!dwDebugOutput)
+		dwDebugOutput = new DWDebugOutput(this);
+	dwDebugOutput->setObjectName("DWDebugOutput");
+	addDockWidget(Qt::RightDockWidgetArea, dwDebugOutput);
+#endif
 
 
 	WGOctDataTree* tree = new WGOctDataTree();
@@ -351,8 +353,8 @@ void OCTMarkerMainWindow::setupMenu()
 	QActionGroup* markersFileFormatGroup = new QActionGroup(this);
 	static SendInt markerFFxml(OctMarkerIO::fileformat2Int(OctMarkerFileformat::XML));
 	addMenuProgramOptionGroup(tr("XML" ), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFxml, markersFileFormatGroup, this);
-	static SendInt markerFFjsom(OctMarkerIO::fileformat2Int(OctMarkerFileformat::Json));
-	addMenuProgramOptionGroup(tr("JSOM"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFjsom  , markersFileFormatGroup, this);
+	static SendInt markerFFjson(OctMarkerIO::fileformat2Int(OctMarkerFileformat::Json));
+	addMenuProgramOptionGroup(tr("JSON"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFjson  , markersFileFormatGroup, this);
 	static SendInt markerFFinfo(OctMarkerIO::fileformat2Int(OctMarkerFileformat::INFO));
 	addMenuProgramOptionGroup(tr("INFO"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFinfo  , markersFileFormatGroup, this);
 
