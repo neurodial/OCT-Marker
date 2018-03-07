@@ -4,11 +4,10 @@
 
 #include "../bscanmarkerbase.h"
 
-
 class ScanClassifier : public BscanMarkerBase
 {
+	Q_OBJECT
 public:
-
 	ScanClassifier(OctMarkerManager* markerManager);
 	~ScanClassifier();
 

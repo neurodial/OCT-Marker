@@ -1594,19 +1594,24 @@
 <context>
     <name>WGIntervalMarker</name>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="97"/>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="220"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="79"/>
+        <source>alpha channel</source>
+        <translation>Alphakanal</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="109"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="232"/>
         <source>Export marker to bin file</source>
         <translation>Marker in Bin-Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="103"/>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="210"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="115"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="222"/>
         <source>Import marker from bin file</source>
         <translation>Marker aus Bin-Datei importieren</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="132"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="144"/>
         <source>remove mark</source>
         <translation>Markierung entfernen</translation>
     </message>

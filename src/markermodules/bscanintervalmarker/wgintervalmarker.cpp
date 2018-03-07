@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <QFileDialog>
 #include <QSlider>
+#include <QLabel>
 
 namespace
 {
@@ -54,8 +55,8 @@ WGIntervalMarker::WGIntervalMarker(BScanIntervalMarker* parent)
 
 	QVBoxLayout* layout = new QVBoxLayout();
 	layout->addWidget(createMarkerToolButtons());
+	layout->addWidget(createTransparencySlider());
 	layout->addWidget(toolboxCollections);
-	layout->addWidget(getTransparencySlider(parent));
 	setLayout(layout);
 
 	connect(toolboxCollections, &QToolBox::currentChanged, this, &WGIntervalMarker::changeIntervalCollection);
@@ -68,6 +69,17 @@ WGIntervalMarker::WGIntervalMarker(BScanIntervalMarker* parent)
 
 WGIntervalMarker::~WGIntervalMarker()
 {
+}
+
+
+QWidget* WGIntervalMarker::createTransparencySlider()
+{
+	QWidget* widget = new QWidget(this);
+	QHBoxLayout* layout = new QHBoxLayout();
+	layout->addWidget(new QLabel(tr("alpha channel")));
+	layout->addWidget(getTransparencySlider(parent));
+	widget->setLayout(layout);
+	return widget;
 }
 
 

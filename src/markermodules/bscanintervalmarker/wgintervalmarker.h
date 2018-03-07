@@ -24,6 +24,7 @@ class WGIntervalMarker : public QWidget
 
 	void addMarkerCollection(const IntervalMarker& markers);
 	QWidget* createMarkerToolButtons();
+	QWidget* createTransparencySlider();
 
 public:
 	WGIntervalMarker(BScanIntervalMarker* parent);
