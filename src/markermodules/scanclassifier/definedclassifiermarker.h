@@ -1,0 +1,9 @@
+#ifndef DEFINEDCLASSIFIERMARKER_H
+#define DEFINEDCLASSIFIERMARKER_H
+
+class DefinedClassifierMarker
+{
+
+};
+
+#endif // DEFINEDCLASSIFIERMARKER_H
