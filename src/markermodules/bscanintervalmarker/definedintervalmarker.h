@@ -7,7 +7,7 @@
 
 #include <QObject>
 
-class DefinedIntervalMarker : public QObject
+class DefinedIntervalMarker : QObject
 {
 	Q_OBJECT
 public:
@@ -23,6 +23,7 @@ private:
 	IntervallMarkerMap intervallMarkerMap;
 
 	DefinedIntervalMarker();
+	void addMarker(IntervalMarker&& marker);
 };
 
 #endif // DEFINEDINTERVALLMARKER_H

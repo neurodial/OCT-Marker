@@ -1,6 +1,5 @@
 #include "definedintervalmarker.h"
 
-
 DefinedIntervalMarker::DefinedIntervalMarker()
 {
 /*
@@ -19,8 +18,7 @@ DefinedIntervalMarker::DefinedIntervalMarker()
 	objectZones.addMarker(IntervalMarker::Marker("edge"          , tr("edge"                    ).toStdString(), 255, 255,   0));
 	objectZones.addMarker(IntervalMarker::Marker("bloodVessel"   , tr("blood vesel"             ).toStdString(), 255,   0,   0));
 
-	intervallMarkerMap.emplace("objectZones", objectZones);
-
+	addMarker(std::move(objectZones));
 
 
 
@@ -33,7 +31,8 @@ DefinedIntervalMarker::DefinedIntervalMarker()
 	qualityFailures.addMarker(IntervalMarker::Marker("BM_lower"      , tr("BM lower"                ).toStdString(), 255, 200,   0));
 	qualityFailures.addMarker(IntervalMarker::Marker("MultiError"    , tr("multi error"             ).toStdString(), 138,  43, 226));
 
-	intervallMarkerMap.emplace("qualityFailures", qualityFailures);
+	addMarker(std::move(qualityFailures));
+
 
 
 	IntervalMarker segmentationFailures("segmentationFailures", tr("segmentation failures").toStdString());
@@ -44,7 +43,7 @@ DefinedIntervalMarker::DefinedIntervalMarker()
 	segmentationFailures.addMarker(IntervalMarker::Marker("SegBMmissing"  , tr("missing BM segmentation" ).toStdString(),   0, 140, 140));
 	segmentationFailures.addMarker(IntervalMarker::Marker("MultiError"    , tr("multi error"             ).toStdString(), 138,  43, 226));
 
-	intervallMarkerMap.emplace("segmentationFailures", segmentationFailures);
+	addMarker(std::move(segmentationFailures));
 
 
 
@@ -57,7 +56,12 @@ DefinedIntervalMarker::DefinedIntervalMarker()
 	qualityGrading.addMarker(IntervalMarker::Marker("bad_illumination", tr("bad_illumination"        ).toStdString(),   0, 255, 255));
 	qualityGrading.addMarker(IntervalMarker::Marker("MultiError"      , tr("multi error"             ).toStdString(), 138,  43, 226));
 
-	intervallMarkerMap.emplace("qualityGrading", qualityGrading);
+	addMarker(std::move(qualityGrading));
 }
 
+
+void DefinedIntervalMarker::addMarker(IntervalMarker&& marker)
+{
+	intervallMarkerMap.emplace(marker.getInternalName(), marker);
+}
 
