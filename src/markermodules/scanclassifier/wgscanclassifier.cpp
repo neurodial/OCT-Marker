@@ -1,25 +1,45 @@
 #include "wgscanclassifier.h"
 
 #include <QVBoxLayout>
+#include <QGroupBox>
 #include <QToolBox>
 #include <QPushButton>
+#include <QToolButton>
 
-
+#include"scanclassifier.h"
+#include"classifiermarkerproxy.h"
 
 
 WGScanClassifier::WGScanClassifier(ScanClassifier* parent)
 : parent(parent)
-, toolboxCollections(new QToolBox(this))
 {
 	QVBoxLayout* layout = new QVBoxLayout();
-	layout->addWidget(toolboxCollections);
+	for(ClassifierMarkerProxy* proxy : parent->getScanClassifierProxys())
+	{
+		if(!proxy)
+			continue;
+
+		QGroupBox  * classifierGroup       = new QGroupBox(QString::fromStdString(proxy->getClassifierMarker().getViewName()), this);
+		QVBoxLayout* classifierGroupLayout = new QVBoxLayout();
+
+		for(QAction* action : proxy->getMarkerActions())
+			classifierGroupLayout->addWidget(genButton(action));
+
+		classifierGroup->setLayout(classifierGroupLayout);
+		layout->addWidget(classifierGroup);
+	}
+
+	layout->addStretch();
 	setLayout(layout);
-
-
-	toolboxCollections->addItem(new QPushButton("test"), "bla");
-	toolboxCollections->addItem(new QPushButton("test2"), "bla2");
 }
 
 WGScanClassifier::~WGScanClassifier()
 {
+}
+
+QAbstractButton * WGScanClassifier::genButton(QAction* action)
+{
+	QToolButton* button = new QToolButton(this);
+	button->setDefaultAction(action);
+	return button;
 }

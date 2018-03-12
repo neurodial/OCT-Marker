@@ -18,12 +18,14 @@ public:
 	}
 signals:
 	void triggered(int v);
+	void triggeredBool(int v, bool bv);
 
 private slots:
 	void onTriggered(bool v)
 	{
 		if(v || !isCheckable())
 			emit(triggered(valTrue));
+		emit(triggeredBool(valTrue, v));
 	}
 public slots:
 	void valueChanged(int v)

@@ -9,16 +9,18 @@ class DefinedClassifierMarker : QObject
 {
 	Q_OBJECT
 public:
-	typedef std::map<std::string, ClassifierMarker> ClassifierMarkerMap;
+	typedef std::vector<ClassifierMarker> ClassifierMarkerMap;
 
 	static DefinedClassifierMarker& getInstance()                   { static DefinedClassifierMarker instance; return instance; }
 
+	const ClassifierMarkerMap& getVolumeMarkers()             const { return volumeMarkers; }
+	const ClassifierMarkerMap& getBscanMarkers ()             const { return bscanMarkers ; }
 
 private:
 	DefinedClassifierMarker();
 
 	ClassifierMarkerMap volumeMarkers;
-	ClassifierMarkerMap bscanMarkers;
+	ClassifierMarkerMap bscanMarkers ;
 
 	void addMarker(ClassifierMarkerMap& map, ClassifierMarker&& marker);
 };

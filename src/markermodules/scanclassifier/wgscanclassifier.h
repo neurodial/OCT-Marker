@@ -3,18 +3,21 @@
 
 #include <QWidget>
 
-class QToolBox;
+class QAction;
+class QAbstractButton;
 
 class ScanClassifier;
 
 class WGScanClassifier : public QWidget
 {
 	ScanClassifier* parent;
-	QToolBox* toolboxCollections = nullptr;
 
 public:
 	WGScanClassifier(ScanClassifier* parent);
 	~WGScanClassifier();
+
+
+	QAbstractButton* genButton(QAction* action);
 };
 
 #endif // WGSCANCLASSIFIER_H

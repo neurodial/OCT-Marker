@@ -51,6 +51,9 @@ public:
 	ClassifierMarkerList::const_iterator begin()              const { return markerList.begin(); }
 	ClassifierMarkerList::const_iterator end()                const { return markerList.end(); }
 
+
+	ClassifierChoiceType getclassifierChoiceType()            const { return classifierChoiceType; }
+
 	void addMarker(const Marker& marker);
 private:
 	ClassifierMarkerList markerList     ;

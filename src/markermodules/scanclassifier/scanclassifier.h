@@ -1,6 +1,8 @@
 #ifndef SCANCLASSIFIER_H
 #define SCANCLASSIFIER_H
 
+#include"classifiermarkerstate.h"
+#include"classifiermarkerproxy.h"
 
 #include "../bscanmarkerbase.h"
 
@@ -18,10 +20,15 @@ public:
 
 	virtual bool hasChangedSinceLastSave() const override           { return stateChangedSinceLastSave; }
 
+	std::vector<ClassifierMarkerProxy*>& getScanClassifierProxys()  { return scanClassifierProxys; }
+
 private:
 
 	bool     stateChangedSinceLastSave  = false;
 	QWidget* widgetPtr2WGScanClassifier = nullptr;
+
+	std::vector<ClassifierMarkerState*> scanClassifierStates;
+	std::vector<ClassifierMarkerProxy*> scanClassifierProxys;
 };
 
 #endif // SCANCLASSIFIER_H
