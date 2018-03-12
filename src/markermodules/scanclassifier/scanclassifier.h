@@ -15,8 +15,8 @@ public:
 
 	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGScanClassifier; }
 
-	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
-	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
+	virtual void saveState(boost::property_tree::ptree& markerTree) override;
+	virtual void loadState(boost::property_tree::ptree& markerTree) override;
 
 	virtual bool hasChangedSinceLastSave() const override           { return stateChangedSinceLastSave; }
 
@@ -29,6 +29,9 @@ private:
 
 	std::vector<ClassifierMarkerState*> scanClassifierStates;
 	std::vector<ClassifierMarkerProxy*> scanClassifierProxys;
+
+	std::vector<std::vector<ClassifierMarkerState*>> slidesClassifierStates;
+	std::vector<ClassifierMarkerProxy*> slideClassifierProxys;
 };
 
 #endif // SCANCLASSIFIER_H

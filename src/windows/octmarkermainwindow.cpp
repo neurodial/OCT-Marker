@@ -516,6 +516,7 @@ void OCTMarkerMainWindow::generateMarkerActions()
 void OCTMarkerMainWindow::createMarkerToolbar()
 {
 	QToolBar* toolBar = new QToolBar(tr("Marker"));
+	toolBar->setObjectName("markerToolbar");
 
 	for(QAction* markerAction : markerActions)
 		toolBar->addAction(markerAction);
