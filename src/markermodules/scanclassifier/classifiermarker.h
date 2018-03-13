@@ -13,13 +13,14 @@ public:
 	{
 		friend class ClassifierMarker;
 
-		static std::size_t markerCounter;
+// 		static std::size_t markerCounter;
 
 		std::string internalName;
 		std::string name;
+		std::size_t id = 0;
 	public:
-		Marker();
 		Marker(const std::string& internalName, const std::string& name);
+		Marker();
 
 		const std::string getInternalName()  const                     { return internalName; }
 		const std::string getName()          const                     { return name;         }
@@ -29,7 +30,8 @@ public:
 
 		bool operator==(const std::string& internalName) const         { return internalName == this->internalName; }
 
-		static std::size_t getMaxInternalId()                          { return markerCounter; }
+// 		static std::size_t getMaxInternalId()                          { return markerCounter; }
+		std::size_t getId() const { return id; }
 	};
 
 	typedef std::vector<Marker> ClassifierMarkerList;
@@ -43,6 +45,7 @@ public:
 	std::size_t size() const                                        { return markerList.size(); }
 
 	const Marker* getMarkerFromString(const std::string&)     const;
+	const Marker* getMarkerIDFromString(const std::string&)     const;
 	const Marker& getMarkerFromID    (int id) const;
 
 	const std::string& getViewName    ()                      const { return viewName    ;}

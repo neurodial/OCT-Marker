@@ -21,6 +21,9 @@ class ScanClassifier : public BscanMarkerBase
 		ClassifierMarkerState& getState(std::size_t id)                { return states.at(id); }
 		std::size_t size()                                       const { return states.size(); }
 
+		void saveState(      boost::property_tree::ptree& markerTree) const;
+		void loadState(const boost::property_tree::ptree& markerTree);
+
 		void reset();
 	};
 
@@ -60,7 +63,11 @@ public:
 
 private:
 
+
+	void loadBScansState(const boost::property_tree::ptree& markerTree);
+
 	void resetStates();
+	void updateStateProxys();
 
 	bool     stateChangedSinceLastSave  = false;
 	QWidget* widgetPtr2WGScanClassifier = nullptr;

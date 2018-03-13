@@ -27,7 +27,10 @@ namespace
 				continue;
 
 			const bpt::ptree& bscanNode = bscanPair.second;
-			int bscanId = bscanNode.get_child("ID").get_value<int>(-1);
+			boost::optional<const bpt::ptree&> idNodeOpt = bscanNode.get_child_optional("ID");
+			if(!idNodeOpt)
+				continue;
+			int bscanId = idNodeOpt->get_value<int>(-1);
 			if(bscanId == -1)
 				continue;
 

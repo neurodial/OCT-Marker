@@ -21,7 +21,7 @@ public:
 	bool getStatusId(std::size_t id)                          const { return markerStatus.at(id); }
 
 	bool parsePTree(const boost::property_tree::ptree& ptree);
-	void fillPTree (      boost::property_tree::ptree& ptree);
+	void fillPTree (      boost::property_tree::ptree& ptree) const;
 };
 
 #endif // CLASSIFIERMARKERSTATE_H
