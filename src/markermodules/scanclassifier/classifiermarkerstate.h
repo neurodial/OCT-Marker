@@ -8,7 +8,7 @@
 
 class ClassifierMarkerState
 {
-	const ClassifierMarker& cassifierMarker;
+	const ClassifierMarker* cassifierMarker;
 
 	std::vector<bool> markerStatus;
 

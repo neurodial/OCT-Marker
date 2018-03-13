@@ -1,7 +1,7 @@
 #include "classifiermarkerstate.h"
 
 ClassifierMarkerState::ClassifierMarkerState(const ClassifierMarker& marker)
-: cassifierMarker(marker)
+: cassifierMarker(&marker)
 {
 // 	if(marker.getclassifierChoiceType() == ClassifierMarker::ClassifierChoiceType::Multible)
 		markerStatus.resize(marker.size());

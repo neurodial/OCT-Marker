@@ -1,16 +1,21 @@
 #ifndef WGSCANCLASSIFIER_H
 #define WGSCANCLASSIFIER_H
 
-#include <QWidget>
+#include<QWidget>
+
+#include<vector>
 
 class QAction;
 class QAbstractButton;
 
 class ScanClassifier;
 
+class QLayout;
+class ClassifierMarkerProxy;
+
 class WGScanClassifier : public QWidget
 {
-	ScanClassifier* parent;
+	void addProxys2Layout(std::vector<ClassifierMarkerProxy*> proxyList, QLayout& layout);
 
 public:
 	WGScanClassifier(ScanClassifier* parent);

@@ -65,7 +65,7 @@ if(BUILD_QT_PROGRAMM)
 	endif()
 
 
-	set(srcs_directories data_structure algos widgets windows manager markermodules model markerobjects helper imagefilter)
+	set(srcs_directories data_structure algos widgets windows manager markermodules model markerobjects helper imagefilter qt)
 
 	foreach(loop_var ${srcs_directories})
 		file(GLOB sources_base "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")

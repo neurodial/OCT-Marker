@@ -13,6 +13,7 @@ ClassifierMarkerProxy::ClassifierMarkerProxy(const ClassifierMarker& marker)
 	{
 		IntValueAction* itemAction = new IntValueAction(id, this);
 		itemAction->setText(item.getName().c_str());
+		itemAction->setEnabled(false);
 		connect(itemAction, &IntValueAction::triggeredBool, this, &ClassifierMarkerProxy::markerStateChanged);
 
 		markerActions.push_back(itemAction);
@@ -30,6 +31,11 @@ ClassifierMarkerProxy::ClassifierMarkerProxy(const ClassifierMarker& marker)
 
 void ClassifierMarkerProxy::setMarkerState(ClassifierMarkerState* marker)
 {
+	bool activate = marker != nullptr;
+
+	for(QAction* action : markerActions)
+		action->setEnabled(activate);
+
 	actMarkerState = marker;
 	updateActionStates();
 }
