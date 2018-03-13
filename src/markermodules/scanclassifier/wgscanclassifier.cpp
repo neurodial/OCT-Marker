@@ -6,7 +6,6 @@
 #include <QPushButton>
 #include <QToolButton>
 
-#include"scanclassifier.h"
 #include"classifiermarkerproxy.h"
 
 #include<qt/flowlayout.h>
@@ -33,7 +32,7 @@ QAbstractButton * WGScanClassifier::genButton(QAction* action)
 	return button;
 }
 
-void WGScanClassifier::addProxys2Layout(std::vector<ClassifierMarkerProxy*> proxyList, QLayout& layout)
+void WGScanClassifier::addProxys2Layout(ScanClassifier::ClassifierProxys& proxyList, QLayout& layout)
 {
 	for(ClassifierMarkerProxy* proxy : proxyList)
 	{

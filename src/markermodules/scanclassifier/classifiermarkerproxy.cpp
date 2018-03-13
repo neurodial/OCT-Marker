@@ -61,7 +61,7 @@ void ClassifierMarkerProxy::markerStateChanged(int id, bool value)
 {
 	if(actMarkerState)
 	{
-		qDebug("marker id %d in marker %s set to %d", id, marker.getInternalName().c_str(), (int)value);
+// 		qDebug("marker id %d in marker %s set to %d", id, marker.getInternalName().c_str(), (int)value);
 		try
 		{
 			actMarkerState->setStatusId(static_cast<std::size_t>(id), value);

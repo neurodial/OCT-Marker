@@ -9,18 +9,38 @@
 
 class ScanClassifier : public BscanMarkerBase
 {
-	class ScanClassifierStates
+	Q_OBJECT
+
+	class ClassifierStates
 	{
 		std::vector<ClassifierMarkerState> states;
 	public:
-		ScanClassifierStates(const DefinedClassifierMarker::ClassifierMarkerMap& classifierMap);
-		~ScanClassifierStates();
+		ClassifierStates(const DefinedClassifierMarker::ClassifierMarkerMap& classifierMap);
+		~ClassifierStates();
+
+		ClassifierMarkerState& getState(std::size_t id)                { return states.at(id); }
+		std::size_t size()                                       const { return states.size(); }
 
 		void reset();
 	};
 
-	Q_OBJECT
 public:
+	class ClassifierProxys
+	{
+	public:
+		typedef std::vector<ClassifierMarkerProxy*> ProxyList;
+
+		ClassifierProxys(const DefinedClassifierMarker::ClassifierMarkerMap& classifierMap);
+		~ClassifierProxys();
+
+		void setClassifierStates(ClassifierStates* states);
+
+		ProxyList::iterator begin()                                    { return proxys.begin(); }
+		ProxyList::iterator end()                                      { return proxys.end(); }
+	private:
+		ProxyList proxys;
+	};
+
 	ScanClassifier(OctMarkerManager* markerManager);
 	~ScanClassifier();
 
@@ -32,8 +52,8 @@ public:
 
 	virtual bool hasChangedSinceLastSave() const override           { return stateChangedSinceLastSave; }
 
-	std::vector<ClassifierMarkerProxy*>& getScanClassifierProxys()  { return scanClassifierProxys; }
-	std::vector<ClassifierMarkerProxy*>& getBScanClassifierProxys() { return slideClassifierProxys; }
+	ClassifierProxys& getScanClassifierProxys()  { return scanClassifierProxys; }
+	ClassifierProxys& getBScanClassifierProxys() { return slideClassifierProxys; }
 
 
 	virtual void setActBScan(std::size_t bscan) override;
@@ -45,11 +65,11 @@ private:
 	bool     stateChangedSinceLastSave  = false;
 	QWidget* widgetPtr2WGScanClassifier = nullptr;
 
-	ScanClassifierStates scanClassifierStates;
-	std::vector<ClassifierMarkerProxy*> scanClassifierProxys;
+	ClassifierStates scanClassifierStates;
+	ClassifierProxys scanClassifierProxys;
 
-	std::vector<ScanClassifierStates> slidesClassifierStates;
-	std::vector<ClassifierMarkerProxy*> slideClassifierProxys;
+	std::vector<ClassifierStates> slidesClassifierStates;
+	ClassifierProxys slideClassifierProxys;
 };
 
 #endif // SCANCLASSIFIER_H
