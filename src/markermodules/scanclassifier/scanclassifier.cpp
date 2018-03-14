@@ -81,8 +81,8 @@ void ScanClassifier::saveState(boost::property_tree::ptree& markerTree)
 	{
 		bpt::ptree& bscanNode = PTreeHelper::getNodeWithId(bscansTree, "BScan", static_cast<int>(bscan));
 		slidesClassifierStates[bscan].saveState(bscanNode);
-		if(bscanNode.size() == 1) // only ID
-			bscanNode.clear();	// TODO: richtig löschen
+// 		if(bscanNode.size() == 1) // only ID
+// 			bscanNode.clear();	// TODO: richtig löschen
 // 			bscansTree.erase(bscanNode);
 	}
 }
