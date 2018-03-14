@@ -50,7 +50,8 @@ bool ClassifierMarkerState::parsePTree(const boost::property_tree::ptree& ptree)
 	if(node)
 	{
 		boost::char_separator<char> sep(";");
-		boost::tokenizer<boost::char_separator<char>> tokens(node->get<std::string>(""), sep);
+		std::string tokenString = node->get<std::string>(""); // copy is needed
+		boost::tokenizer<boost::char_separator<char>> tokens(tokenString, sep);
 
 		for(const std::string& token : tokens)
 		{
