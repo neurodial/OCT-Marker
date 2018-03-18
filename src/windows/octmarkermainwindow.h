@@ -85,6 +85,8 @@ private slots:
 	void loadFileStatusSlot(bool loading);
 	void loadFileProgress(double frac);
 
+	void triggerSaveMarkersDefaultCatchErrors();
+
 public slots:
 	virtual void showLoadImageDialog();
 	virtual void showImportFromFolderDialog();

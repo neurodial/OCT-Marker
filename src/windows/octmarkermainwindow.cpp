@@ -226,7 +226,7 @@ void OCTMarkerMainWindow::setupMenu()
 	saveMarkersDefaultAction->setText(tr("trigger auto save markers"));
 	saveMarkersDefaultAction->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/speichern.svg")));
 	saveMarkersDefaultAction->setShortcut(Qt::CTRL | Qt::Key_S);
-	connect(saveMarkersDefaultAction, &QAction::triggered, &(OctDataManager::getInstance()), &OctDataManager::triggerSaveMarkersDefault);
+	connect(saveMarkersDefaultAction, &QAction::triggered, this, &OCTMarkerMainWindow::triggerSaveMarkersDefaultCatchErrors);
 	fileMenu->addAction(saveMarkersDefaultAction);
 
 
@@ -968,3 +968,10 @@ void OCTMarkerMainWindow::screenshot()
 
 }
 
+void OCTMarkerMainWindow::triggerSaveMarkersDefaultCatchErrors()
+{
+	std::string errorStr;
+	std::function<void ()> saveFun = [&]() { OctDataManager::getInstance().triggerSaveMarkersDefault(); };
+	bool saveResult = catchSaveError(saveFun, errorStr);
+	showErrorDialog(saveResult, errorStr);
+}

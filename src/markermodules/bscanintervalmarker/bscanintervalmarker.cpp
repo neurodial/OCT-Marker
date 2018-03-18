@@ -41,17 +41,6 @@
 #include"slointervallmap.h"
 #include <manager/octdatamanager.h>
 
-// namespace
-// {
-// 	QIcon createColorIcon(const QColor& color)
-// 	{
-// 		QPixmap pixmap(15, 15);
-// 		pixmap.fill(color);
-// 		return QIcon(pixmap);
-// 	}
-// }
-//
-
 BScanIntervalMarker::BScanIntervalMarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , sloOverlayImage(new cv::Mat)
