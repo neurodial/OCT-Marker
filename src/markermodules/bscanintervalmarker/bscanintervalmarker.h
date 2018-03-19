@@ -170,6 +170,7 @@ private:
 	void resetMarkers(const OctData::Series* series);
 
 	void generateSloMap();
+	void autoGenerateSloMap();
 };
 
 #endif // BSCANQUALITYMARKER_H

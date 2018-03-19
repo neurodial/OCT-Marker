@@ -550,6 +550,7 @@ bool BScanIntervalMarker::setMarkerCollection(const std::string& internalName)
 	if(it != markersCollectionsData.end())
 	{
 		actCollection = it;
+		autoGenerateSloMap();
 		markerCollectionChanged(internalName);
 		requestFullUpdate();
 		return true;
@@ -663,7 +664,13 @@ bool BScanIntervalMarker::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& 
 void BScanIntervalMarker::setActBScan(std::size_t bscan)
 {
 	BscanMarkerBase::setActBScan(bscan);
-	if(stateChangedInActBScan && ProgramOptions::intervallMarkSloMapAuteGenerate())
-		generateSloMap();
+	if(stateChangedInActBScan)
+		autoGenerateSloMap();
 	stateChangedInActBScan = false;
+}
+
+void BScanIntervalMarker::autoGenerateSloMap()
+{
+	if(ProgramOptions::intervallMarkSloMapAuteGenerate())
+		generateSloMap();
 }
