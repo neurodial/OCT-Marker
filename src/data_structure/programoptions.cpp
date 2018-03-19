@@ -66,6 +66,9 @@ OptionInt    ProgramOptions::layerSegSplinePointSize     (       8, "SplinePoint
 OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true    , "ThicknessmapBlend", "LayerSeg");
 
 
+OptionBool   ProgramOptions::intervallMarkSloMapAuteGenerate(true    , "SloMapAuteGenerate", "IntervallMark");
+
+
 ProgramOptions::ProgramOptions()
 : settings(new QSettings("becrf", "oct-marker"))
 {

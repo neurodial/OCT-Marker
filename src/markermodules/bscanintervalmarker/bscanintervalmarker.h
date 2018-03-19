@@ -81,6 +81,8 @@ public:
 	
 	virtual void saveState(boost::property_tree::ptree& markerTree)  override;
 	virtual void loadState(boost::property_tree::ptree& markerTree)  override;
+
+	void setActBScan(std::size_t bscan) override;
 	
 	const IntervalMarker* getMarkersList(const MarkerCollectionWork& collection) const
 	                                                                { if(collection.actCollection == markersCollectionsData.end()) return nullptr; return collection.actCollection->second.markerCollection; }
@@ -136,6 +138,7 @@ private:
 	
 	Marker           actMarker;
 	bool             stateChangedSinceLastSave = false;
+	bool             stateChangedInActBScan    = false;
 	uint8_t          transparency = 60;
 
 	QWidget* widgetPtr2WGIntevalMarker = nullptr;
@@ -165,6 +168,8 @@ private:
 	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, const ScaleFactor& factor, const QPoint* p3 = nullptr);
 // 	void addMarkerCollection2Toolbar(const IntervalMarker& markers, QToolBar& markerToolbar, QActionGroup& actionGroupMarker, std::vector<QAction*>& actionList, QObject* parent);
 	void resetMarkers(const OctData::Series* series);
+
+	void generateSloMap();
 };
 
 #endif // BSCANQUALITYMARKER_H

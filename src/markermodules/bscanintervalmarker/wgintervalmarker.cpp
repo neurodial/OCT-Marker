@@ -1,11 +1,18 @@
 #include "wgintervalmarker.h"
 
+#include <algorithm>
+
 #include <QPushButton>
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <QToolBox>
 #include <QButtonGroup>
 #include <QSignalMapper>
+#include <QFileDialog>
+#include <QSlider>
+#include <QLabel>
+
+#include<data_structure/programoptions.h>
 
 #include <helper/actionclasses.h>
 #include <widgets/numberpushbutton.h>
@@ -14,10 +21,6 @@
 #include "definedintervalmarker.h"
 
 
-#include <algorithm>
-#include <QFileDialog>
-#include <QSlider>
-#include <QLabel>
 
 namespace
 {
@@ -104,6 +107,7 @@ QWidget* WGIntervalMarker::createMarkerToolButtons()
 
 	layout->addStretch();
 
+	layout->addWidget(createActionToolButton(this, ProgramOptions::intervallMarkSloMapAuteGenerate.getAction()));
 
 	QAction* exportMarkerToBin = new QAction(this);
 	exportMarkerToBin->setText(tr("Export marker to bin file"));

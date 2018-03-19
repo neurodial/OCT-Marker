@@ -41,6 +41,8 @@
 #include"slointervallmap.h"
 #include <manager/octdatamanager.h>
 
+#include<data_structure/programoptions.h>
+
 BScanIntervalMarker::BScanIntervalMarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , sloOverlayImage(new cv::Mat)
@@ -226,6 +228,7 @@ void BScanIntervalMarker::setMarker(int x1, int x2, const Marker& type, std::siz
 
 	collection->second.markers[bscan].set(std::make_pair(boost::icl::discrete_interval<int>::closed(x1, x2), type));
 	stateChangedSinceLastSave = true;
+	stateChangedInActBScan    = true;
 	sloViewHasChanged();
 }
 
@@ -250,6 +253,7 @@ void BScanIntervalMarker::fillMarker(int x, const Marker& type)
 	{
 		map.set(std::make_pair(boost::icl::discrete_interval<int>::closed(intervall.lower(), intervall.upper()), type));
 		stateChangedSinceLastSave = true;
+		stateChangedInActBScan    = true;
 		requestFullUpdate();
 // 		sloViewHasChanged(); // handled by requestFullUpdate
 	}
@@ -302,29 +306,34 @@ bool BScanIntervalMarker::keyPressEvent(QKeyEvent* e ,BScanMarkerWidget*)
 				chooseMethodID(Method::Fill);
 				return true;
 			case Qt::Key_T:
-			{
-				QElapsedTimer timer;
-				timer.start();
-
-				OctDataManager& manager = OctDataManager::getInstance();
-				const SloBScanDistanceMap* distMap = manager.getSeriesSLODistanceMap();
-				if(distMap && actCollectionValid())
-				{
-					SloIntervallMap tm;
-
-					tm.createMap(*distMap, actCollection->second.markers, getSeries());
-// 					tm.createMap(*distMap, lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM, factor, *thicknessmapColor);
-					*sloOverlayImage = tm.getSloMap();
-					requestSloOverlayUpdate();
-
-					std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
-				}
+				generateSloMap();
 				return true;
-			}
 		}
 	}
 	return false;
 }
+
+
+void BScanIntervalMarker::generateSloMap()
+{
+	QElapsedTimer timer;
+	timer.start();
+
+	OctDataManager& manager = OctDataManager::getInstance();
+	const SloBScanDistanceMap* distMap = manager.getSeriesSLODistanceMap();
+	if(distMap && actCollectionValid())
+	{
+		SloIntervallMap tm;
+
+		tm.createMap(*distMap, actCollection->second.markers, getSeries());
+// 					tm.createMap(*distMap, lines, OctData::Segmentationlines::SegmentlineType::ILM, OctData::Segmentationlines::SegmentlineType::BM, factor, *thicknessmapColor);
+		*sloOverlayImage = tm.getSloMap();
+		requestSloOverlayUpdate();
+
+		std::cout << "Creating slomap took " << timer.elapsed() << " milliseconds" << std::endl;
+	}
+}
+
 
 bool BScanIntervalMarker::leaveWidgetEvent(QEvent* ,BScanMarkerWidget*)
 {
@@ -491,6 +500,7 @@ void BScanIntervalMarker::newSeriesLoaded(const OctData::Series* series, boost::
 	resetMarkers(series);
 	BScanIntervalPTree::parsePTree(markerTree, this);
 	stateChangedSinceLastSave = false;
+	stateChangedInActBScan    = false;
 }
 
 
@@ -506,6 +516,7 @@ void BScanIntervalMarker::loadState(boost::property_tree::ptree& markerTree)
 	resetMarkers(getSeries());
 	BScanIntervalPTree::parsePTree(markerTree, this);
 	stateChangedSinceLastSave = false;
+	stateChangedInActBScan    = true;
 }
 
 
@@ -649,3 +660,10 @@ bool BScanIntervalMarker::drawSLOOverlayImage(const cv::Mat& sloImage, cv::Mat& 
 	return false;
 }
 
+void BScanIntervalMarker::setActBScan(std::size_t bscan)
+{
+	BscanMarkerBase::setActBScan(bscan);
+	if(stateChangedInActBScan && ProgramOptions::intervallMarkSloMapAuteGenerate())
+		generateSloMap();
+	stateChangedInActBScan = false;
+}

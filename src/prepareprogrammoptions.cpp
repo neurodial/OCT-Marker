@@ -57,4 +57,8 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	QAction* sloClipScanArea = ProgramOptions::sloClipScanArea.getAction();
 	sloClipScanArea->setText(tr("clip to scan area"));
 	sloClipScanArea->setIcon(QIcon::fromTheme("view-fullscreen", QIcon(":/icons/tango/actions/system-search.svgz")));
+
+	QAction* intervallMarkSloMapAuteGenerate = ProgramOptions::intervallMarkSloMapAuteGenerate.getAction();
+	intervallMarkSloMapAuteGenerate->setText(tr("Generate SLO map"));
+	intervallMarkSloMapAuteGenerate->setIcon(QIcon(":/icons/chart_curve.png"));
 }

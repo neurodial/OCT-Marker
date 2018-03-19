@@ -76,6 +76,8 @@ public:
 	static OptionInt    layerSegSplinePointSize;
 
 	static OptionBool   layerSegThicknessmapBlend;
+
+	static OptionBool   intervallMarkSloMapAuteGenerate;
 	
 	static std::vector<Option*>& getAllOptions()                    { return getAllOptionsPrivate().allConfig; }
 	
