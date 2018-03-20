@@ -181,3 +181,22 @@ void ScanClassifier::ClassifierStates::saveState(boost::property_tree::ptree& ma
 	for(const ClassifierMarkerState& state: states)
 		state.fillPTree(markerTree);
 }
+
+bool ScanClassifier::ClassifierProxys::hasChanges() const
+{
+	for(const ClassifierMarkerProxy* proxy : proxys)
+	{
+		if(proxy && proxy->hasChanges())
+			return true;
+	}
+	return false;
+}
+
+void ScanClassifier::ClassifierProxys::resetChanges()
+{
+	for(ClassifierMarkerProxy* proxy : proxys)
+	{
+		if(proxy)
+			proxy->resetChanges();
+	}
+}

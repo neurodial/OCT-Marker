@@ -64,7 +64,11 @@ void ClassifierMarkerProxy::markerStateChanged(int id, bool value)
 // 		qDebug("marker id %d in marker %s set to %d", id, marker.getInternalName().c_str(), (int)value);
 		try
 		{
-			actMarkerState->setStatusId(static_cast<std::size_t>(id), value);
+			if(actMarkerState->getStatusId(static_cast<std::size_t>(id)) != value)
+			{
+				actMarkerState->setStatusId(static_cast<std::size_t>(id), value);
+				changes = true;
+			}
 		}
 		catch(...) // TODO: error handling, when a exception is throw, than it is a programming bug
 		{

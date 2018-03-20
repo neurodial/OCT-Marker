@@ -19,6 +19,8 @@ class ClassifierMarkerProxy : public QObject
 
 	QActionGroup* actionGroup = nullptr;
 
+	bool changes = false;
+
 public:
 	ClassifierMarkerProxy(const ClassifierMarker& marker);
 
@@ -26,6 +28,9 @@ public:
 
 	std::vector<QAction*> getMarkerActions()                        { return markerActions; }
 	const ClassifierMarker& getClassifierMarker()             const { return marker; }
+
+	void resetChanges()                                             { changes = false; }
+	bool hasChanges()                                         const { return changes;  }
 
 private slots:
 	void markerStateChanged(int id, bool value);

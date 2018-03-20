@@ -95,6 +95,8 @@ void BScanIntervalMarker::createMarkerMethodActions()
 	connect(this            , &BScanIntervalMarker::markerMethodChanged, fillMarkerAction, &IntValueAction::valueChanged        );
 	actionGroupMethod->addAction(fillMarkerAction);
 	markerMethodActions.push_back(fillMarkerAction);
+
+	connect(&ProgramOptions::intervallMarkSloMapAuteGenerate, &OptionBool::trueSignal, this, &BScanIntervalMarker::generateSloMap);
 }
 
 

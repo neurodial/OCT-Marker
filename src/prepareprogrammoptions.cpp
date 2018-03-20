@@ -60,5 +60,5 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 
 	QAction* intervallMarkSloMapAuteGenerate = ProgramOptions::intervallMarkSloMapAuteGenerate.getAction();
 	intervallMarkSloMapAuteGenerate->setText(tr("Generate SLO map"));
-	intervallMarkSloMapAuteGenerate->setIcon(QIcon(":/icons/chart_curve.png"));
+	intervallMarkSloMapAuteGenerate->setIcon(QIcon(":/icons/map.png"));
 }

@@ -898,8 +898,10 @@ void OCTMarkerMainWindow::closeEvent(QCloseEvent* e)
 	{
 		int ret = QMessageBox::critical(this, tr("Error on autosave"), tr("Autosave fail with message: %1 <br />Quit program?").arg(errorStr.c_str()), QMessageBox::Yes | QMessageBox::No);
 		if(ret == QMessageBox::No)
-			return e->ignore();
+			e->ignore();
 	}
+	if(!e->isAccepted())
+		return;
 
 
 	// save programoptions

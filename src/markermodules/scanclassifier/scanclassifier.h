@@ -40,6 +40,9 @@ public:
 
 		ProxyList::iterator begin()                                    { return proxys.begin(); }
 		ProxyList::iterator end()                                      { return proxys.end(); }
+
+		bool hasChanges() const;
+		void resetChanges();
 	private:
 		ProxyList proxys;
 	};
@@ -53,7 +56,7 @@ public:
 	virtual void loadState(boost::property_tree::ptree& markerTree) override;
 	virtual void newSeriesLoaded(const OctData::Series*, boost::property_tree::ptree&) override;
 
-	virtual bool hasChangedSinceLastSave() const override           { return stateChangedSinceLastSave; }
+	virtual bool hasChangedSinceLastSave() const override           { return scanClassifierProxys.hasChanges() || slideClassifierProxys.hasChanges(); }
 
 	ClassifierProxys& getScanClassifierProxys()  { return scanClassifierProxys; }
 	ClassifierProxys& getBScanClassifierProxys() { return slideClassifierProxys; }
@@ -62,8 +65,6 @@ public:
 	virtual void setActBScan(std::size_t bscan) override;
 
 private:
-
-
 	void loadBScansState(const boost::property_tree::ptree& markerTree);
 
 	void resetStates();
