@@ -66,7 +66,7 @@ OptionInt    ProgramOptions::layerSegSplinePointSize     (       8, "SplinePoint
 OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true    , "ThicknessmapBlend", "LayerSeg");
 
 
-OptionBool   ProgramOptions::intervallMarkSloMapAuteGenerate(true    , "SloMapAuteGenerate", "IntervallMark");
+OptionBool   ProgramOptions::intervallMarkSloMapAuteGenerate(false    , "SloMapAuteGenerate", "IntervallMark");
 
 
 ProgramOptions::ProgramOptions()

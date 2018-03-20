@@ -4,18 +4,18 @@
 <context>
     <name>BScanIntervalMarker</name>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="60"/>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="114"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="51"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="105"/>
         <source>Interval marker</source>
         <translation>Intervallmarkierung</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="90"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="81"/>
         <source>paint marker</source>
         <translation>Zeichne Intervall</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="100"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="91"/>
         <source>fill marker</source>
         <translation>Fülle Intervall</translation>
     </message>
@@ -1406,6 +1406,11 @@
         <source>clip to scan area</source>
         <translation>auf Scanbereich stutzen</translation>
     </message>
+    <message>
+        <location filename="../src/prepareprogrammoptions.cpp" line="62"/>
+        <source>Generate SLO map</source>
+        <translation type="unfinished">SLO-Karte erstellen</translation>
+    </message>
 </context>
 <context>
     <name>SLOImageWidget</name>
@@ -1612,24 +1617,24 @@
 <context>
     <name>WGIntervalMarker</name>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="79"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="82"/>
         <source>alpha channel</source>
         <translation>Alphakanal</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="109"/>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="232"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="113"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="236"/>
         <source>Export marker to bin file</source>
         <translation>Marker in Bin-Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="115"/>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="222"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="119"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="226"/>
         <source>Import marker from bin file</source>
         <translation>Marker aus Bin-Datei importieren</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="144"/>
+        <location filename="../src/markermodules/bscanintervalmarker/wgintervalmarker.cpp" line="148"/>
         <source>remove mark</source>
         <translation>Markierung entfernen</translation>
     </message>
