@@ -708,9 +708,10 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 	double imgWidth  = height/30.;
 	double imgHeight = width /30.;
 
-	double aspectRatio = static_cast<double>(height)/static_cast<double>(width);
-	double tikzFactorX = 1./static_cast<double>(width)             ;
-	double tikzFactorY = 1./static_cast<double>(height)*aspectRatio;
+	double aspectRatio = height/width;
+	double tikzFactorX = 1./width             ;
+	double tikzFactorY = 1./height*aspectRatio;
+	const double scale = std::min(imgWidth, imgHeight);
 
 
 	stream << "\\documentclass{standalone}\n\\usepackage{tikz}\n\n";
@@ -729,7 +730,19 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 	stream << "\n\t\t\\definecolor{convexHullColor}{rgb}{0.5,1.0,0.5}";
 	stream << "\n\t\t\\definecolor{actBScanColor}{rgb}{0.5,0.75,1.0}";
 
-	stream << "\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};\n";
+
+
+	OctData::CoordSLOmm p1 = series->getLeftUpperCoord();
+	OctData::CoordSLOmm p2 = series->getRightLowerCoord();
+	SloCoordTranslator sct(*series, ScaleFactor(scale*tikzFactorX, scale*tikzFactorY));
+	OctData::CoordSLOpx p1px = sct(p1);
+	OctData::CoordSLOpx p2px = sct(p2);
+	stream << "\n\n% clip to scan area\n";
+	if(!ProgramOptions::sloClipScanArea())
+		stream << "%";
+	stream << "\t\t\\clip (" << p1px.getXf() << ", " << (imgHeight - p1px.getYf()) << ") rectangle (" << p2px.getXf() << ", " << (imgHeight - p2px.getYf()) << ");";
+
+	stream << "\n\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};\n";
 	if(overlayCreated)
 		stream << "\n\t\t\\node[anchor=south west, inner sep=0, scale=1, opacity=" << ProgramOptions::sloOverlayAlpha() << "] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};\n";
 
@@ -737,15 +750,13 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 		stream << "\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (legend) at (" << imgWidth*1.04 << "cm,0) {\\includegraphics[height=" << imgHeight << "cm]{" << imageOverlayLegendFilename << "}};";
 
 
-	const double scale = std::min(imgWidth, imgHeight);
 	stream << "\n\t\t\\begin{scope}[xscale=" << scale << ",yscale=" << scale << "]\n";
 
 	const OctData::Series::BScanSLOCoordList& hull = series->getConvexHull();
 	if(hull.size() >= 3)
 	{
-		ScaleFactor tikzScale(tikzFactorX, tikzFactorY);
-		SloCoordTranslator transform(*series, tikzScale);
-
+		const ScaleFactor tikzScale(tikzFactorX, tikzFactorY);
+		const SloCoordTranslator transform(*series, tikzScale);
 
 		stream << "\n\n\t\t\t\\draw[convexHullColor, line width=\\hulllinewidth] ";
 		bool firstVal = true;
