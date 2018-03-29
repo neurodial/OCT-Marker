@@ -832,7 +832,7 @@ void OCTMarkerMainWindow::showSaveMarkersDialog()
 			std::string errorStr;
 			std::function<void ()> saveFun = [&]() { OctDataManager::getInstance().saveMarkers(filenames[0], getMarkerFileFormat(fd.selectedNameFilter())); };
 			bool saveResult = catchSaveError(saveFun, errorStr);
-			showErrorDialog(saveResult, errorStr);
+			showErrorDialog(!saveResult, errorStr);
 		}
 	}
 }
@@ -848,7 +848,7 @@ void OCTMarkerMainWindow::showSaveOctScanDialog()
 		std::string errorStr;
 		std::function<void ()> saveFun = [&]() { OctDataManager::getInstance().saveOctScan(filename); };
 		bool saveResult = catchSaveError(saveFun, errorStr);
-		showErrorDialog(saveResult, errorStr);
+		showErrorDialog(!saveResult, errorStr);
 
 	}
 }
@@ -866,7 +866,7 @@ void OCTMarkerMainWindow::saveMatlabBinCode()
 		std::string errorStr;
 		std::function<void ()> saveFun = [&]() { CppFW::CVMatTreeStructBin::writeMatlabReadCode(filename.toStdString().c_str()); };
 		bool saveResult = catchSaveError(saveFun, errorStr);
-		showErrorDialog(saveResult, errorStr);
+		showErrorDialog(!saveResult, errorStr);
 	}
 }
 
@@ -878,7 +878,7 @@ void OCTMarkerMainWindow::saveMatlabWriteBinCode()
 		std::string errorStr;
 		std::function<void ()> saveFun = [&]() { CppFW::CVMatTreeStructBin::writeMatlabWriteCode(filename.toStdString().c_str()); };
 		bool saveResult = catchSaveError(saveFun, errorStr);
-		showErrorDialog(saveResult, errorStr);
+		showErrorDialog(!saveResult, errorStr);
 	}
 }
 
@@ -975,5 +975,5 @@ void OCTMarkerMainWindow::triggerSaveMarkersDefaultCatchErrors()
 	std::string errorStr;
 	std::function<void ()> saveFun = [&]() { OctDataManager::getInstance().triggerSaveMarkersDefault(); };
 	bool saveResult = catchSaveError(saveFun, errorStr);
-	showErrorDialog(saveResult, errorStr);
+	showErrorDialog(!saveResult, errorStr);
 }
