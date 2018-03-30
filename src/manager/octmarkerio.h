@@ -15,6 +15,7 @@ class OctMarkerIO
 	static OctMarkerFileformat getDefaultFileFormat();
 
 	OctMarkerFileformat defaultLoadedFormat = OctMarkerFileformat::Json;
+	std::string loadedDefaultFilename;
 	
 	boost::property_tree::ptree* markerstree = nullptr;
 

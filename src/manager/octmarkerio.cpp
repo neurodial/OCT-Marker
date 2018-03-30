@@ -155,6 +155,7 @@ std::string OctMarkerIO::addMarkerExtension(const std::string& file, OctMarkerFi
 
 bool OctMarkerIO::loadDefaultMarker(const std::string& octFilename)
 {
+	loadedDefaultFilename.clear();
 	OctMarkerFileformat formats[] = { OctMarkerFileformat::Json,
 	                                  OctMarkerFileformat::XML,
 	                                  OctMarkerFileformat::INFO };
@@ -165,9 +166,14 @@ bool OctMarkerIO::loadDefaultMarker(const std::string& octFilename)
 		if(bfs::exists(markersFile))
 		{
 			defaultLoadedFormat = formats[i];
+			loadedDefaultFilename = markersFile.generic_string();
 			return loadMarkers(markersFile, defaultLoadedFormat);
 		}
 	}
+
+
+	if(octFilename.substr(octFilename.size()-3, 3) == ".gz")
+		return loadDefaultMarker(octFilename.substr(0, octFilename.size()-3));
 
 	defaultLoadedFormat = getDefaultFileFormat();
 	return false;
@@ -176,7 +182,10 @@ bool OctMarkerIO::loadDefaultMarker(const std::string& octFilename)
 
 bool OctMarkerIO::saveDefaultMarker(const std::string& octFilename)
 {
-	return saveMarkers(addMarkerExtension(octFilename, defaultLoadedFormat), defaultLoadedFormat);
+	if(loadedDefaultFilename.empty())
+		return saveMarkers(addMarkerExtension(octFilename, defaultLoadedFormat), defaultLoadedFormat);
+	else
+		return saveMarkers(loadedDefaultFilename, defaultLoadedFormat);
 }
 
 bool OctMarkerIO::loadMarkers(const boost::filesystem::path& markersPath, OctMarkerFileformat format)
