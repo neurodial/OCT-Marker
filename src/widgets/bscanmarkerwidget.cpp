@@ -91,20 +91,27 @@ BScanMarkerWidget::BScanMarkerWidget()
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);
 
+
+	saveRawImageAction = new QAction(this);
+	saveRawImageAction->setText(tr("Save LaTeX image"));
+	saveRawImageAction->setIcon(QIcon(":/icons/disk.png"));
+	contextMenu->addAction(saveRawImageAction);
+	connect(saveRawImageAction, &QAction::triggered, this, &BScanMarkerWidget::saveLatexImage);
+
 	contextMenu->addSeparator();
 
 	saveRawImageAction = new QAction(this);
 	saveRawImageAction->setText(tr("Save Raw Image"));
 	saveRawImageAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveRawImageAction);
-	connect(saveRawImageAction, SIGNAL(triggered(bool)), this, SLOT(saveRawImage()));
+	connect(saveRawImageAction, &QAction::triggered, this, &BScanMarkerWidget::saveRawImage);
 
 
 	saveRawMatAction = new QAction(this);
 	saveRawMatAction->setText(tr("Save raw data as matrix"));
 	saveRawMatAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveRawMatAction);
-	connect(saveRawMatAction, SIGNAL(triggered(bool)), this, SLOT(saveRawMat()));
+	connect(saveRawMatAction, &QAction::triggered, this, &BScanMarkerWidget::saveRawMat);
 
 
 	contextMenu->addSeparator();
@@ -113,13 +120,13 @@ BScanMarkerWidget::BScanMarkerWidget()
 	saveRawBinAction->setText(tr("Save raw data as bin"));
 	saveRawBinAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveRawBinAction);
-	connect(saveRawBinAction, SIGNAL(triggered(bool)), this, SLOT(saveRawBin()));
+	connect(saveRawBinAction, &QAction::triggered, this, &BScanMarkerWidget::saveRawBin);
 
 	saveImageBinAction = new QAction(this);
 	saveImageBinAction->setText(tr("Save image data as bin"));
 	saveImageBinAction->setIcon(QIcon(":/icons/disk.png"));
 	contextMenu->addAction(saveImageBinAction);
-	connect(saveImageBinAction, SIGNAL(triggered(bool)), this, SLOT(saveImageBin()));
+	connect(saveImageBinAction, &QAction::triggered, this, &BScanMarkerWidget::saveImageBin);
 
 	gv = new GraphicsView(this);
 	gv->setStyleSheet("QGraphicsView { border-style: none; background: transparent;}" );
@@ -161,26 +168,15 @@ void BScanMarkerWidget::paintSegmentationLine(QPainter& segPainter, int bScanHei
 }
 
 
-
-void BScanMarkerWidget::paintEvent(QPaintEvent* event)
+void BScanMarkerWidget::paintSegmentations(QPainter& segPainter, const ScaleFactor& scaleFactor) const
 {
-	CVImageWidget::paintEvent(event);
+	const OctData::BScan * actBScan = markerManger.getActBScan();
 
-	
-	OctDataManager& octdataManager = OctDataManager::getInstance();
-	const OctData::Series* series   = octdataManager.getSeries();
-	const OctData::BScan * actBScan = markerManger  .getActBScan();
-	
-	if(!series || !actBScan)
-		return;
-
-	QPainter segPainter(this);
 	QPen pen;
 	pen.setColor(ProgramOptions::bscanSegmetationLineColor());
 	pen.setWidth(ProgramOptions::bscanSegmetationLineThicknes());
 	segPainter.setPen(pen);
 	int bScanHeight = actBScan->getHeight();
-	const ScaleFactor& scaleFactor = getImageScaleFactor();
 
 	if(ProgramOptions::bscansShowSegmentationslines())
 	{
@@ -201,13 +197,30 @@ void BScanMarkerWidget::paintEvent(QPaintEvent* event)
 		if(ProgramOptions::bscanShowExtraSegmentationslines())
 			paintConture(segPainter, extraData->getContourSegments());
 	}
+}
+
+
+
+void BScanMarkerWidget::paintEvent(QPaintEvent* event)
+{
+	CVImageWidget::paintEvent(event);
+
+	
+	OctDataManager& octdataManager = OctDataManager::getInstance();
+	const OctData::Series* series   = octdataManager.getSeries();
+	const OctData::BScan * actBScan = markerManger  .getActBScan();
+	
+	if(!series || !actBScan)
+		return;
+
+	QPainter segPainter(this);
+	paintSegmentations(segPainter, getImageScaleFactor());
 	
 	if(paintMarker)
 		paintMarker->paintMarker(event, this);
-// 	markerManger.paintMarker(event, this);
 }
 
-void BScanMarkerWidget::paintConture(QPainter& painter, const std::vector<ContureSegment>& contours)
+void BScanMarkerWidget::paintConture(QPainter& painter, const std::vector<ContureSegment>& contours) const
 {
 	const ScaleFactor& scaleFactor = getImageScaleFactor();
 
@@ -649,4 +662,48 @@ void BScanMarkerWidget::setPaintMarker(const PaintMarker* pm)
 
 	if(paintMarker)
 		connect(paintMarker, &PaintMarker::viewChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
+}
+
+void BScanMarkerWidget::saveLatexImage()
+{
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save image as LaTeX"), "", "LaTeX (*.tex)");
+	if(!filename.isEmpty())
+	{
+		QFileInfo file(filename);
+		QString basename = file.baseName();
+
+		QString imageFilename        = basename + "_base.jpg";
+		QString imageOverlayFilename = basename + "_overlay.png";
+
+		QImage imageTmp;
+		cvImage2qtImage(outputImage, imageTmp);
+		imageTmp.save(file.path() + '/' + imageFilename);
+
+		QImage overlay(imageTmp.size(), QImage::Format_ARGB32_Premultiplied);
+		overlay.fill(qRgba(0, 0, 0, 0));
+		QPainter segPainter(&overlay);
+		paintSegmentations(segPainter, ScaleFactor());
+		segPainter.end();
+
+		BScanMarkerWidget fakeWidget;
+		fakeWidget.resize(imageTmp.size());
+		QPainter p(&overlay);
+		if(paintMarker)
+			paintMarker->paintMarker(p, &fakeWidget, imageTmp.rect());
+		overlay.save(file.path() + '/' + imageOverlayFilename);
+
+
+
+		std::ofstream stream(filename.toStdString());
+		if(!stream.good())
+			return;
+
+		stream << "\\documentclass{standalone}\n\\usepackage{tikz}\n\n";
+		stream << "\n\\begin{document}";
+		stream << "\n\n\n\t\\begin{tikzpicture}";
+		stream << "\n\n\t\t\\node[inner sep=0,scale=1] at (0,0) {\\includegraphics{" << imageFilename.toStdString() << "}};\n";
+		stream << "\n\t\t\\node[inner sep=0, scale=1] at (0,0) {\\includegraphics{" << imageOverlayFilename.toStdString() << "}};\n";
+		stream << "\n\t\\end{tikzpicture}";
+		stream << "\n\\end{document}\n";
+	}
 }

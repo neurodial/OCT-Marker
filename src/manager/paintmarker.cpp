@@ -20,11 +20,15 @@ PaintMarker::PaintMarker()
 
 void PaintMarker::paintMarker(QPaintEvent* event, BScanMarkerWidget* widget) const
 {
+	QPainter painter(widget);
+	paintMarker(painter, widget, event->rect());
+	painter.end();
+}
 
+void PaintMarker::paintMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& rect) const
+{
 	OctMarkerManager& manager = OctMarkerManager::getInstance();
 	BscanMarkerBase* actBscanMarker = manager.getActBscanMarker();
-
-	QPainter painter(widget);
 
 	for(const PaintMarkerItem& pmi : model.getMarkers())
 	{
@@ -33,14 +37,11 @@ void PaintMarker::paintMarker(QPaintEvent* event, BScanMarkerWidget* widget) con
 			const BscanMarkerBase* marker = pmi.getMarker();
 			if(marker != actBscanMarker && marker)
 			{
-				marker->drawMarker(painter, widget, event->rect());
+				marker->drawMarker(painter, widget, rect);
 			}
 		}
-
 	}
 
 	if(actBscanMarker)
-		actBscanMarker->drawMarker(painter, widget, event->rect());
-
-	painter.end();
+		actBscanMarker->drawMarker(painter, widget, rect);
 }

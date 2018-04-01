@@ -5,7 +5,7 @@
     <name>BScanIntervalMarker</name>
     <message>
         <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="51"/>
-        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="105"/>
+        <location filename="../src/markermodules/bscanintervalmarker/bscanintervalmarker.cpp" line="107"/>
         <source>Interval marker</source>
         <translation>Intervallmarkierung</translation>
     </message>
@@ -31,32 +31,42 @@
 <context>
     <name>BScanMarkerWidget</name>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="97"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="96"/>
+        <source>Save LaTeX image</source>
+        <translation>Latex-Bild speichern</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="104"/>
         <source>Save Raw Image</source>
         <translation>Rohdaten als Bild speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="104"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="568"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="111"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="581"/>
         <source>Save raw data as matrix</source>
         <translation>Rohdaten als openCV-Matrix speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="113"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="583"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="120"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="596"/>
         <source>Save raw data as bin</source>
         <translation>Rohdaten im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="119"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="596"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="126"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="609"/>
         <source>Save image data as bin</source>
         <translation>Bild im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="608"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="621"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="669"/>
+        <source>Save image as LaTeX</source>
+        <translation>Bild als Latex speichern</translation>
     </message>
 </context>
 <context>
@@ -1010,12 +1020,12 @@
         <translation>Segmentierungslinenfarbe ändern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="951"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="953"/>
         <source>save filename</source>
         <translation>Dateiname</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="956"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="958"/>
         <source>overlay legend</source>
         <translation>Legende</translation>
     </message>
@@ -1409,7 +1419,7 @@
     <message>
         <location filename="../src/prepareprogrammoptions.cpp" line="62"/>
         <source>Generate SLO map</source>
-        <translation type="unfinished">SLO-Karte erstellen</translation>
+        <translation>SLO-Karte erstellen</translation>
     </message>
 </context>
 <context>

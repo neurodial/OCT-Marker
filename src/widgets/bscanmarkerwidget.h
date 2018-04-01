@@ -46,7 +46,8 @@ class BScanMarkerWidget : public CVImageWidget
 	bool checkControlUsed(QKeyEvent  * event);
 	bool checkControlUsed(bool modPressed);
 
-	void paintConture(QPainter& painter, const std::vector<ContureSegment>& contours);
+	void paintConture(QPainter& painter, const std::vector<ContureSegment>& contours) const;
+	void paintSegmentations(QPainter& segPainter, const ScaleFactor& scaleFactor) const;
 
 
 	void transformCoordWidget2Img(int xWidget, int yWidget, int& xImg, int& yImg)
@@ -96,6 +97,8 @@ public slots:
 	virtual void saveRawMat  ();
 	virtual void saveRawBin  ();
 	virtual void saveImageBin();
+
+	virtual void saveLatexImage();
 
 	virtual void showImage(const cv::Mat& image) override;
 	
