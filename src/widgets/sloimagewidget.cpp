@@ -716,17 +716,14 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 
 	stream << "\\documentclass{standalone}\n\\usepackage{tikz}\n\n";
 	stream << "\n\\begin{document}";
-	stream << "\n\t\\begin{minipage}[c]{.66\\linewidth}";
-	stream << "\n\t\\resizebox{\\linewidth}{!}{%";
-	stream << "\n\n\n\t\\begin{tikzpicture}";
-// 		stream << "\\def\\skal{ 1 }\t% Skalierungsfaktor\n\n";
-	stream << "\n\t\t\\def\\hulllinewidth{1.75mm}\n\n";
+
+	if(!overlayLatexString.isEmpty())
+		stream << "\n\t\\begin{minipage}[c]{.66\\linewidth}";
+
+	stream << "\n\n\t\\begin{tikzpicture}";
+	stream << "\n\t\t\\def\\hulllinewidth{1.75mm}";
 	stream << "\n\t\t\\def\\actbscanlinewidth{1.25mm}\n\n";
 
-	stream << "\t\t\\definecolor{colorA}{rgb}{0.000000,1.000000,0.000000}\n";
-	stream << "\t\t\\definecolor{colorB}{rgb}{1.000000,0.000000,0.000000}\n";
-	stream << "\t\t\\definecolor{DeviceSegColor}{rgb}{0.000000,0.666666,1.000000}\n";
-	stream << "\t\t\\definecolor{CVSegColor}{rgb}{1.000000,0.000000,0.000000}\n";
 	stream << "\n\t\t\\definecolor{convexHullColor}{rgb}{0.5,1.0,0.5}";
 	stream << "\n\t\t\\definecolor{actBScanColor}{rgb}{0.5,0.75,1.0}";
 
@@ -742,15 +739,15 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 		stream << "%";
 	stream << "\t\t\\clip (" << p1px.getXf() << ", " << (imgHeight - p1px.getYf()) << ") rectangle (" << p2px.getXf() << ", " << (imgHeight - p2px.getYf()) << ");";
 
-	stream << "\n\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};\n";
+	stream << "\n\n\t\t\\node[anchor=south west, inner sep=0, scale=1] (Bild) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageFilename << "}};";
 	if(overlayCreated)
-		stream << "\n\t\t\\node[anchor=south west, inner sep=0, scale=1, opacity=" << ProgramOptions::sloOverlayAlpha() << "] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};\n";
+		stream << "\n\t\t\\node[anchor=south west, inner sep=0, scale=1, opacity=" << ProgramOptions::sloOverlayAlpha() << "] (Overlay) at (0,0) {\\includegraphics[width=" << imgWidth << "cm,height=" << imgHeight << "cm]{" << imageOverlayFilename << "}};";
 
 	if(overlayLegendWidget)
 		stream << "\n\t\t\\node[anchor=south west,inner sep=0,scale=1] (legend) at (" << imgWidth*1.04 << "cm,0) {\\includegraphics[height=" << imgHeight << "cm]{" << imageOverlayLegendFilename << "}};";
 
 
-	stream << "\n\t\t\\begin{scope}[xscale=" << scale << ",yscale=" << scale << "]\n";
+	stream << "\n\n\t\t\\begin{scope}[xscale=" << scale << ",yscale=" << scale << "]";
 
 	const OctData::Series::BScanSLOCoordList& hull = series->getConvexHull();
 	if(hull.size() >= 3)
@@ -758,32 +755,34 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 		const ScaleFactor tikzScale(tikzFactorX, tikzFactorY);
 		const SloCoordTranslator transform(*series, tikzScale);
 
-		stream << "\n\n\t\t\t\\draw[convexHullColor, line width=\\hulllinewidth] ";
+		stream << "\n\t\t\t\\draw[convexHullColor, line width=\\hulllinewidth] ";
 		bool firstVal = true;
 		std::size_t pos = 0;
 
 		for(std::size_t i = 0; i < hull.size(); ++i)
 		{
-			if(pos % 5 == 0)
-				stream << "\n";
 			if(firstVal)
 				firstVal = false;
 			else
+			{
+				if(pos % 5 == 0)
+					stream << "\n\t\t\t";
 				stream << " -- ";
+			}
 
 			const OctData::CoordSLOpx pointPx = transform(hull[i]);
 			stream << "(" << (pointPx.getXf()) << ", " << (aspectRatio - pointPx.getYf()) << ")";
 			++pos;
 		}
 
-		stream <<  " -- cycle;\n\n";
+		stream <<  " -- cycle;";
 
 		const OctData::BScan* bscan = markerManger.getActBScan();
 		if(bscan)
 		{
 			if(bscan->getBScanType() == OctData::BScan::BScanType::Line)
 			{
-				stream << "\n\n\t\t\t\\draw[actBScanColor, line width=\\actbscanlinewidth, ->] ";
+				stream << "\n\t\t\t\\draw[actBScanColor, line width=\\actbscanlinewidth, ->] ";
 				const OctData::CoordSLOpx pointPxStart = transform(bscan->getStart());
 				const OctData::CoordSLOpx pointPxEnd   = transform(bscan->getEnd()  );
 				stream << "(" << (pointPxStart.getXf()) << ", " << (aspectRatio - pointPxStart.getYf()) << ") -- ";
@@ -795,12 +794,12 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 
 
 	stream << "\n\t\t\\end{scope}";
-	stream << "\n\t\\end{tikzpicture}%";
-	stream << "\n\t}";
+	stream << "\n\t\\end{tikzpicture}";
 
-	stream << "\n\\end{minipage}";
 	if(!overlayLatexString.isEmpty())
 	{
+		stream << "\n\\end{minipage}";
+
 		stream << "\n\\begin{minipage}[c]{.32\\linewidth}";
 		stream << "\n" << overlayLatexString.toStdString();
 		stream << "\n\\end{minipage}";
