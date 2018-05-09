@@ -33,6 +33,10 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	readBScans         ->setText(tr("read BScans from OCT data"));
 	saveOctBinFlat     ->setText(tr("save in octbin flat format"));
 
+	QAction* bscanAutoFitImage = ProgramOptions::bscanAutoFitImage.getAction();
+	bscanAutoFitImage->setText(tr("B-scan auto fit"));
+	bscanAutoFitImage->setIcon(QIcon::fromTheme("zoom-fit-best",  QIcon(":/icons/tango/actions/view-fullscreen.svgz")));;
+
 	QAction* extraSegLine = ProgramOptions::bscanShowExtraSegmentationslines.getAction();
 	extraSegLine->setText(tr("show extra segmentationslines"));
 	extraSegLine->setIcon(QIcon(":/icons/chart_curve.png"));

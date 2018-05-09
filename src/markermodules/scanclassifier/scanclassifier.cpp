@@ -109,6 +109,9 @@ void ScanClassifier::resetStates()
 	scanClassifierStates.reset();
 	for(auto& itemList : slidesClassifierStates)
 		itemList.reset();
+
+	scanClassifierProxys.resetChanges();
+	slideClassifierProxys.resetChanges();
 }
 
 void ScanClassifier::updateStateProxys()

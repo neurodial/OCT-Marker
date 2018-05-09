@@ -17,6 +17,7 @@ OptionBool  ProgramOptions::bscansShowSegmentationslines(true   , "bscansShowSeg
 OptionColor ProgramOptions::bscanSegmetationLineColor   (Qt::red, "bscanSegmetationLineColor"   , "ProgramOptions");
 OptionInt   ProgramOptions::bscanSegmetationLineThicknes(1      , "bscanSegmetationLineThicknes", "ProgramOptions");
 OptionBool  ProgramOptions::bscanRespectAspectRatio     (false  , "bscanRespectAspectRatio"     , "ProgramOptions");
+OptionBool  ProgramOptions::bscanAutoFitImage           (false  , "bscanAutoFitImage"           , "ProgramOptions");
 
 OptionBool  ProgramOptions::bscanShowExtraSegmentationslines(true, "bscanShowExtraSegmentationslines", "ExtraData");
 

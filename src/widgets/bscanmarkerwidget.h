@@ -82,6 +82,9 @@ protected:
 	virtual void leaveEvent       (QEvent*     ) override;
 	virtual void wheelEvent       (QWheelEvent*) override;
 
+	virtual void resizeEvent      (QResizeEvent* e) override { CVImageWidget::resizeEvent(e); triggerAutoImageFit(); }
+
+
 private slots:
 	void imageChanged();
 	void cscanLoaded();
@@ -91,6 +94,7 @@ private slots:
 
 	void markersMethodChanged(BscanMarkerBase* marker);
 	
+	void triggerAutoImageFit();
 
 public slots:
 	virtual void saveRawImage();
@@ -101,6 +105,7 @@ public slots:
 	virtual void saveLatexImage();
 
 	virtual void showImage(const cv::Mat& image) override;
+	virtual void setZoom(double factor) override;
 	
 signals:
 	void bscanChangeInkrement(int delta);

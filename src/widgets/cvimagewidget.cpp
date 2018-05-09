@@ -166,11 +166,11 @@ void CVImageWidget::updateScaleFactorXY()
 	scaleFactor.setFactor(scaleFactorConfig);
 }
 
-void CVImageWidget::fitImage2Parent()
+double CVImageWidget::getFactorFitImage2Parent()
 {
 	QWidget* parent = parentWidget();
 	if(!parent)
-		return;
+		return -1;
 
 	if(cvImage.cols > 0 && cvImage.rows > 0)
 	{
@@ -181,8 +181,9 @@ void CVImageWidget::fitImage2Parent()
 		double scale1 = static_cast<double>(width )/cvImage.cols/scaleFactor.getPureFactorX();
 		double scale2 = static_cast<double>(height)/cvImage.rows/scaleFactor.getPureFactorY();
 
-		setZoom(std::min(scale1, scale2));
+		return std::min(scale1, scale2);
 	}
+	return -1;
 }
 
 void CVImageWidget::fitImage2ParentHeight()

@@ -31,40 +31,40 @@
 <context>
     <name>BScanMarkerWidget</name>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="96"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="97"/>
         <source>Save LaTeX image</source>
         <translation>Latex-Bild speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="104"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="105"/>
         <source>Save Raw Image</source>
         <translation>Rohdaten als Bild speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="111"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="581"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="112"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="582"/>
         <source>Save raw data as matrix</source>
         <translation>Rohdaten als openCV-Matrix speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="120"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="596"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="121"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="597"/>
         <source>Save raw data as bin</source>
         <translation>Rohdaten im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="126"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="609"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="127"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="610"/>
         <source>Save image data as bin</source>
         <translation>Bild im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="621"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="622"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="669"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="687"/>
         <source>Save image as LaTeX</source>
         <translation>Bild als Latex speichern</translation>
     </message>
@@ -440,47 +440,47 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="370"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="371"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="400"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="401"/>
         <source>BMP - Windows Bitmap</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="402"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="403"/>
         <source>JPG - Joint Photographic Experts Group</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="404"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="405"/>
         <source>PNG - Portable Network Graphics</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="406"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="407"/>
         <source>PPM - Portable Pixmap</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="408"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="409"/>
         <source>TIFF - Tagged Image File Format</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="410"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="411"/>
         <source>XBM - X11 Bitmap</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="412"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="413"/>
         <source>XPM - X11 Pixmap</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="414"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="415"/>
         <source>%1 File</source>
         <translation>%1-Datei</translation>
     </message>
@@ -545,6 +545,26 @@
         <location filename="../src/markermodules/scanclassifier/definedclassifiermarker.cpp" line="10"/>
         <source>onh</source>
         <translation>ONH</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/scanclassifier/definedclassifiermarker.cpp" line="15"/>
+        <source>scan usable</source>
+        <translation>Scanbrauchbarkeit</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/scanclassifier/definedclassifiermarker.cpp" line="17"/>
+        <source>usable</source>
+        <translation>Brauchbar</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/scanclassifier/definedclassifiermarker.cpp" line="18"/>
+        <source>ambiguous</source>
+        <translation>Unklar</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/scanclassifier/definedclassifiermarker.cpp" line="19"/>
+        <source>unusable</source>
+        <translation>Unbrauchbar</translation>
     </message>
 </context>
 <context>
@@ -1020,12 +1040,12 @@
         <translation>Segmentierungslinenfarbe ändern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="953"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="955"/>
         <source>save filename</source>
         <translation>Dateiname</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="958"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="960"/>
         <source>overlay legend</source>
         <translation>Legende</translation>
     </message>
@@ -1054,13 +1074,13 @@
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="292"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="863"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="865"/>
         <source>Save Matlab Bin Code</source>
         <translation>Matlab-Code für Bin-Format speichern</translation>
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="298"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="875"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="877"/>
         <source>Save Matlab Write Bin Code</source>
         <translation>Matlab-Schreibcode für Bin-Format speichern</translation>
     </message>
@@ -1130,101 +1150,102 @@
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="277"/>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="518"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="520"/>
         <source>Marker</source>
         <translation>Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="489"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="491"/>
         <source>no marker</source>
         <translation>Keine Markierungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="533"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="535"/>
         <source>Choose a folder to load Files</source>
         <translation>Ordner für das Einlesen auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="727"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="729"/>
         <source>OCT Markers</source>
         <translation>OCT-Marker</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="728"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="730"/>
         <source>OCT Markers Json file</source>
         <translation>OCT-Marker-Json-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="729"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="731"/>
         <source>OCT Markers XML file</source>
         <translation>OCT-Marker-XML-Datei</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="730"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="732"/>
         <source>OCT Markers INFO file</source>
         <translation>OCT-Marker-Info-Datei</translation>
     </message>
     <message>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="758"/>
         <source>Unknown error on save</source>
-        <translation type="vanished">Unbekannter Fehler beim Speichern</translation>
+        <translation>Unbekannter Fehler beim Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="789"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="791"/>
         <source>Error on save</source>
         <translation>Fehler beim speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="789"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="791"/>
         <source>Save fail with message: %1</source>
         <translation>Speichern fehlgeschlagen mit Meldung:&lt;br /&gt;%1&lt;br /&gt;</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="845"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="847"/>
         <source>Choose a filename to save oct scan</source>
         <translation>Dateiname für OCT-Scan zum Speichern auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="896"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="898"/>
         <source>Unknown error on autosave</source>
         <translation>Unbekannter Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="899"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="901"/>
         <source>Error on autosave</source>
         <translation>Fehler beim automatischen Speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="899"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="901"/>
         <source>Autosave fail with message: %1 &lt;br /&gt;Quit program?</source>
         <translation>Automatisches Speichern mit Meldung:&lt;br /&gt;%1&lt;br /&gt;fehlgeschlagen.&lt;br /&gt;Programm beenden?</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="548"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="550"/>
         <source>Choose a filename to load a File</source>
         <translation>Dateinamen zum Laden wählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="581"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="583"/>
         <source>All readabel (%1)</source>
         <translation>Alle lesbaren (%1)</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="582"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="584"/>
         <source>All files (* *.*)</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="805"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="807"/>
         <source>Choose a file to load markers</source>
         <translation>Markierungsdatei zum Laden auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="821"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="823"/>
         <source>Choose a filename to save markers</source>
         <translation>Markierungsdatei zum Speichern auswählen</translation>
     </message>
     <message>
-        <location filename="../src/windows/octmarkermainwindow.cpp" line="858"/>
+        <location filename="../src/windows/octmarkermainwindow.cpp" line="860"/>
         <source>OCT-Marker - %1</source>
         <translation>OCT-Marker - %1</translation>
     </message>
@@ -1388,36 +1409,41 @@
     </message>
     <message>
         <location filename="../src/prepareprogrammoptions.cpp" line="37"/>
+        <source>B-scan auto fit</source>
+        <translation>B-Scan automatisch einpassen</translation>
+    </message>
+    <message>
+        <location filename="../src/prepareprogrammoptions.cpp" line="41"/>
         <source>show extra segmentationslines</source>
         <translation>Zeige Extrasegmentierungslinien</translation>
     </message>
     <message>
-        <location filename="../src/prepareprogrammoptions.cpp" line="41"/>
+        <location filename="../src/prepareprogrammoptions.cpp" line="45"/>
         <source>show segmentationslines</source>
         <translation>Segmentierungslinien anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/prepareprogrammoptions.cpp" line="45"/>
+        <location filename="../src/prepareprogrammoptions.cpp" line="49"/>
         <source>Aspect ratio</source>
         <translation>Seitenverhältnis</translation>
     </message>
     <message>
-        <location filename="../src/prepareprogrammoptions.cpp" line="50"/>
+        <location filename="../src/prepareprogrammoptions.cpp" line="54"/>
         <source>show grid</source>
         <translation>Zeige Grid</translation>
     </message>
     <message>
-        <location filename="../src/prepareprogrammoptions.cpp" line="54"/>
+        <location filename="../src/prepareprogrammoptions.cpp" line="58"/>
         <source>show mouse pos</source>
         <translation>Zeige Mausposition</translation>
     </message>
     <message>
-        <location filename="../src/prepareprogrammoptions.cpp" line="58"/>
+        <location filename="../src/prepareprogrammoptions.cpp" line="62"/>
         <source>clip to scan area</source>
         <translation>auf Scanbereich stutzen</translation>
     </message>
     <message>
-        <location filename="../src/prepareprogrammoptions.cpp" line="62"/>
+        <location filename="../src/prepareprogrammoptions.cpp" line="66"/>
         <source>Generate SLO map</source>
         <translation>SLO-Karte erstellen</translation>
     </message>

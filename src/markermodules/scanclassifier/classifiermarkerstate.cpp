@@ -19,7 +19,7 @@ void ClassifierMarkerState::reset()
 {
 	std::size_t vSize = markerStatus.size();
 	markerStatus.clear();
-	markerStatus.resize(vSize);
+	markerStatus.resize(vSize, false);
 }
 
 

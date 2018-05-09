@@ -1,31 +1,30 @@
 #include "bscanmarkerwidget.h"
 
-#include <manager/octmarkermanager.h>
-#include <manager/octdatamanager.h>
-#include <manager/paintmarker.h>
+#include<fstream>
+#include<cmath>
 
-#include <markermodules/bscanmarkerbase.h>
+#include<QWheelEvent>
+#include<QPainter>
+#include<QMenu>
+#include<QMessageBox>
+#include<QFileDialog>
+#include<QGraphicsView>
 
-#include <data_structure/intervalmarker.h>
-#include <data_structure/programoptions.h>
+#include<cpp_framework/cvmat/treestructbin.h>
+
+#include<octdata/datastruct/series.h>
+#include<octdata/datastruct/bscan.h>
+
+#include<manager/octmarkermanager.h>
+#include<manager/octdatamanager.h>
+#include<manager/paintmarker.h>
+
+#include<markermodules/bscanmarkerbase.h>
+
+#include<data_structure/intervalmarker.h>
+#include<data_structure/programoptions.h>
 #include<data_structure/extraseriesdata.h>
 #include<data_structure/conturesegment.h>
-
-#include <octdata/datastruct/series.h>
-#include <octdata/datastruct/bscan.h>
-
-#include <cpp_framework/cvmat/treestructbin.h>
-
-#include <cmath>
-
-#include <QWheelEvent>
-#include <QPainter>
-#include <QMenu>
-#include <QMessageBox>
-#include <QFileDialog>
-
-
-#include <QGraphicsView>
 
 
 namespace
@@ -84,6 +83,7 @@ BScanMarkerWidget::BScanMarkerWidget()
 	connect(&ProgramOptions::bscanShowExtraSegmentationslines, &OptionBool ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 
 	connect(&ProgramOptions::bscanRespectAspectRatio         , &OptionBool ::valueChanged, this, &CVImageWidget    ::setUseAspectRatio     );
+	connect(&ProgramOptions::bscanAutoFitImage               , &OptionBool ::trueSignal  , this, &BScanMarkerWidget::triggerAutoImageFit   );
 
 	setUseAspectRatio(ProgramOptions::bscanRespectAspectRatio());
 
@@ -646,6 +646,8 @@ void BScanMarkerWidget::showImage(const cv::Mat& image)
 {
 	CVImageWidget::showImage(image);
 
+	triggerAutoImageFit();
+
 	GraphicsView* gvConvert = dynamic_cast<GraphicsView*>(gv);
 	if(gvConvert)
 		gvConvert->setImageSize(image.cols, image.rows);
@@ -663,6 +665,21 @@ void BScanMarkerWidget::setPaintMarker(const PaintMarker* pm)
 	if(paintMarker)
 		connect(paintMarker, &PaintMarker::viewChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 }
+
+void BScanMarkerWidget::triggerAutoImageFit()
+{
+	if(ProgramOptions::bscanAutoFitImage())
+		setZoomInternal(getFactorFitImage2Parent());
+}
+
+void BScanMarkerWidget::setZoom(double factor)
+{
+	ProgramOptions::bscanAutoFitImage.setValue(false);
+	CVImageWidget::setZoom(factor);
+}
+
+
+
 
 void BScanMarkerWidget::saveLatexImage()
 {
@@ -707,3 +724,4 @@ void BScanMarkerWidget::saveLatexImage()
 		stream << "\n\\end{document}\n";
 	}
 }
+

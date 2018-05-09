@@ -12,6 +12,14 @@ DefinedClassifierMarker::DefinedClassifierMarker()
 	addMarker(volumeMarkers, std::move(scanArea));
 
 
+	ClassifierMarker scanUsable("scanUsable", tr("scan usable").toStdString(), ClassifierMarker::ClassifierChoiceType::Single);
+
+	scanUsable.addMarker(ClassifierMarker::Marker("usable"   , tr("usable"   ).toStdString()));
+	scanUsable.addMarker(ClassifierMarker::Marker("ambiguous", tr("ambiguous").toStdString()));
+	scanUsable.addMarker(ClassifierMarker::Marker("unusable" , tr("unusable" ).toStdString()));
+
+	addMarker(volumeMarkers, std::move(scanUsable));
+
 	// ------------------------
 
 	ClassifierMarker scanAttributes("scanAttributes", "scan attributes", ClassifierMarker::ClassifierChoiceType::Multible);

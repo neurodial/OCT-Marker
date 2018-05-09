@@ -90,15 +90,18 @@ protected:
 	void cvImage2qtImage();
 	void updateScaleFactor();
 	static void cvImage2qtImage(const cv::Mat& cvImage, QImage& qimage);
-	
+
+	void setZoomInternal(double factor)                          { if(scaleFactorConfig != factor && factor <= 8 && factor > 0) { scaleFactorConfig = factor; updateScaleFactorXY(); cvImage2qtImage(); zoomChanged(factor); } }
+	double getFactorFitImage2Parent();
+
 public slots:
 	virtual void saveImage();
 	virtual void saveBaseImage();
 	virtual void showImage(const cv::Mat& image);
 
-	void setZoom(double factor)                                  { if(scaleFactorConfig != factor && factor <= 8 && factor > 0) { scaleFactorConfig = factor; updateScaleFactorXY(); cvImage2qtImage(); zoomChanged(factor); } }
+	virtual void setZoom(double factor)                          { setZoomInternal(factor); }
 
-	void fitImage2Parent();
+	void fitImage2Parent()                                       { setZoom(getFactorFitImage2Parent()); }
 	void fitImage2ParentWidth ();
 	void fitImage2ParentHeight();
 

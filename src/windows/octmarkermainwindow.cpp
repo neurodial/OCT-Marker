@@ -434,7 +434,9 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addAction(generalMarkerActions.getZoomInAction());
 	toolBar->addAction(generalMarkerActions.getZoomMenuAction());
 	toolBar->addAction(generalMarkerActions.getZoomOutAction());
-	toolBar->addAction(generalMarkerActions.getZoomFitAction());
+// 	toolBar->addAction(generalMarkerActions.getZoomFitAction());
+
+	toolBar->addAction(ProgramOptions::bscanAutoFitImage.getAction());
 
 	toolBar->addAction(generalMarkerActions.getZoomFitHeightAction());
 	toolBar->addAction(generalMarkerActions.getZoomFitWidthAction());
@@ -753,7 +755,7 @@ namespace
 	}
 }
 
-bool OCTMarkerMainWindow::catchSaveError(std::function<void ()>& saveObj, std::string& errorStr, const QString& unknownErrorMessage = tr("Unknown error on save"))
+bool OCTMarkerMainWindow::catchSaveError(std::function<void ()>& saveObj, std::string& errorStr, const QString& unknownErrorMessage = OCTMarkerMainWindow::tr("Unknown error on save"))
 {
 	bool saveSuccessful = true;
 	try
