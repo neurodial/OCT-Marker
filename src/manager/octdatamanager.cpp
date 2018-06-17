@@ -1,15 +1,20 @@
 #include "octdatamanager.h"
-#include <data_structure/programoptions.h>
-#include <data_structure/slobscandistancemap.h>
 
 #include <iostream>
 
-#include <QString>
-#include <QTime>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+#include <boost/filesystem.hpp>
 
-#include "octmarkerio.h"
-#include "octmarkermanager.h"
-
+#include<QString>
+#include<QTime>
+#include<QMessageBox>
+#include<QApplication>
+#include<QFileInfo>
+#include<QDir>
 
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
@@ -19,16 +24,11 @@
 #include <octdata/filewriteoptions.h>
 
 #include <helper/ptreehelper.h>
+#include <data_structure/programoptions.h>
+#include <data_structure/slobscandistancemap.h>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
-#include <boost/lexical_cast.hpp>
-
-#include <boost/exception/diagnostic_information.hpp>
-#include <boost/filesystem.hpp>
-#include <QMessageBox>
+#include "octmarkerio.h"
+#include "octmarkermanager.h"
 
 namespace bpt = boost::property_tree;
 namespace bfs = boost::filesystem;
@@ -78,6 +78,8 @@ void OctDataManagerThread::run()
 
 	try
 	{
+		QFileInfo octmarkerPath(QApplication::applicationFilePath());
+
 		OctData::FileReadOptions octOptions;
 		octOptions.e2eGray             = static_cast<OctData::FileReadOptions::E2eGrayTransform>(ProgramOptions::e2eGrayTransform());
 		octOptions.registerBScanns     = ProgramOptions::registerBScans();
@@ -85,6 +87,7 @@ void OctDataManagerThread::run()
 		octOptions.holdRawData         = ProgramOptions::holdOCTRawData();
 		octOptions.readBScans          = ProgramOptions::readBScans();
 		octOptions.rotateSlo           = ProgramOptions::loadRotateSlo();
+		octOptions.libPath             = octmarkerPath.dir().absolutePath().toStdString(); // QApplication::applicationFilePath().toStdString();
 
 		*oct = OctData::OctFileRead::openFile(filename.toStdString(), octOptions, this);
 	}
