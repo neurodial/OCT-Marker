@@ -338,8 +338,8 @@ void SLOImageWidget::showPosOnBScan(double t)
 		}
 	}
 
-	const OctData::Series* series            = OctDataManager::getInstance().getSeries();
-	if(series)
+	const OctData::Series* series = OctDataManager::getInstance().getSeries();
+	if(series && actBScan)
 	{
 		SloCoordTranslator sct(*series, getImageScaleFactor());
 		sct.setClipShift(OctData::CoordSLOpx(clipX1, clipY1));
