@@ -844,7 +844,7 @@ void OCTMarkerMainWindow::showSaveOctScanDialog()
 {
 	const QString& loadedFilename = OctDataManager::getInstance().getLoadedFilename();
 	QFileInfo fileinfo(loadedFilename);
-	QString filename = QFileDialog::getSaveFileName(this, tr("Choose a filename to save oct scan"), fileinfo.baseName()+".octbin", "*.octbin");
+	QString filename = QFileDialog::getSaveFileName(this, tr("Choose a filename to save oct scan"), fileinfo.baseName()+".xoct", "*.xoct;;*.octbin");
 	if(!filename.isEmpty())
 	{
 		std::string errorStr;
