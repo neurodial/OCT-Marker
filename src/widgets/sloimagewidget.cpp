@@ -653,7 +653,7 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 	QFileInfo fileinfo(filename);
 	std::string cleanFilename = fileinfo.fileName().toStdString();
 	std::string path = fileinfo.path().toStdString();
-	std::transform(cleanFilename.begin(), cleanFilename.end(), cleanFilename.begin(), [](char c) -> char { return c=='.'?'_':c; });
+	std::transform(cleanFilename.begin(), cleanFilename.end(), cleanFilename.begin(), [](char c) -> char { return c=='.'||c==' '?'_':c; });
 	std::string imageFilename = cleanFilename + "_base.jpg";
 	std::string imageOverlayFilename = cleanFilename + "_overlay.png";
 	std::string imageOverlayLegendFilename = cleanFilename + "_legend.pdf";
@@ -718,9 +718,12 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 	stream << "\n\\begin{document}";
 
 	if(!overlayLatexString.isEmpty())
+	{
 		stream << "\n\t\\begin{minipage}[c]{.66\\linewidth}";
+		stream << "\n\n\t\\resizebox{\\linewidth}{!}{";
+	}
 
-	stream << "\n\n\t\\begin{tikzpicture}";
+	stream << "\n\t\\begin{tikzpicture}";
 	stream << "\n\t\t\\def\\hulllinewidth{1.75mm}";
 	stream << "\n\t\t\\def\\actbscanlinewidth{1.25mm}\n\n";
 
@@ -798,6 +801,7 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 
 	if(!overlayLatexString.isEmpty())
 	{
+		stream << "}";
 		stream << "\n\\end{minipage}";
 
 		stream << "\n\\begin{minipage}[c]{.32\\linewidth}";
