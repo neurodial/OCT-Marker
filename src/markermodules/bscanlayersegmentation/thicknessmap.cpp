@@ -86,7 +86,7 @@ void ThicknessMap::createMap(const SloBScanDistanceMap& distMap
 				{
 					double mixThickness = value*scaleFactor;
 
-					colormap.getColor(mixThickness, destPtr[0], destPtr[1], destPtr[2]);
+					colormap.getColor(mixThickness, destPtr[2], destPtr[1], destPtr[0]);
 					destPtr[3] = 255;
 				}
 

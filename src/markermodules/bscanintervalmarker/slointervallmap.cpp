@@ -46,9 +46,9 @@ void SloIntervallMap::createMap(const SloBScanDistanceMap& distanceMap, const st
 			{
 				const Color& c = getColor(srcPtr->bscan1.bscan, srcPtr->bscan1.ascan);
 
-				destPtr[0] = c.r;
+				destPtr[0] = c.b;
 				destPtr[1] = c.g;
-				destPtr[2] = c.b;
+				destPtr[2] = c.r;
 				destPtr[3] = c.a;
 			}
 			else

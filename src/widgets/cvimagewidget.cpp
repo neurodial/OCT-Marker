@@ -84,8 +84,7 @@ void CVImageWidget::showImage(const cv::Mat& image)
 				grayCvImage = true;
 				break;
 			case CV_8UC3:
-// 				cvtColor(image, cvImage, CV_BGR2RGB);
-				cvImage = image.clone();
+				cvtColor(image, cvImage, CV_BGR2RGB);
 				grayCvImage = false;
 				break;
 			case CV_32FC1:

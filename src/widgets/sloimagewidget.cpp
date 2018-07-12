@@ -670,7 +670,6 @@ void SLOImageWidget::saveLatexImage(const QString& filename) const
 		overlayCreated = actMarker->drawSLOOverlayImage(cvImage, outImage, -1);
 		if(overlayCreated && !outImage.empty())
 		{
-			cvtColor(outImage, outImage, CV_BGRA2RGBA);
 			cv::imwrite(path + "/" + imageOverlayFilename, outImage);
 
 			WidgetOverlayLegend* overlayLegend = actMarker->getSloLegendWidget();
