@@ -31,40 +31,40 @@
 <context>
     <name>BScanMarkerWidget</name>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="97"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="96"/>
         <source>Save LaTeX image</source>
         <translation>Latex-Bild speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="105"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="104"/>
         <source>Save Raw Image</source>
         <translation>Rohdaten als Bild speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="112"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="582"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="111"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="581"/>
         <source>Save raw data as matrix</source>
         <translation>Rohdaten als openCV-Matrix speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="121"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="597"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="120"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="596"/>
         <source>Save raw data as bin</source>
         <translation>Rohdaten im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="127"/>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="610"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="126"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="609"/>
         <source>Save image data as bin</source>
         <translation>Bild im Bin-Format speichern</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="622"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="621"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="687"/>
+        <location filename="../src/widgets/bscanmarkerwidget.cpp" line="686"/>
         <source>Save image as LaTeX</source>
         <translation>Bild als Latex speichern</translation>
     </message>
@@ -440,47 +440,47 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="371"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="370"/>
         <source>Choose a filename to save under</source>
         <translation>Dateinamen zum Speichern wählen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="401"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="400"/>
         <source>BMP - Windows Bitmap</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="403"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="402"/>
         <source>JPG - Joint Photographic Experts Group</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="405"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="404"/>
         <source>PNG - Portable Network Graphics</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="407"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="406"/>
         <source>PPM - Portable Pixmap</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="409"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="408"/>
         <source>TIFF - Tagged Image File Format</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="411"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="410"/>
         <source>XBM - X11 Bitmap</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="413"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="412"/>
         <source>XPM - X11 Pixmap</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/cvimagewidget.cpp" line="415"/>
+        <location filename="../src/widgets/cvimagewidget.cpp" line="414"/>
         <source>%1 File</source>
         <translation>%1-Datei</translation>
     </message>
@@ -1261,12 +1261,12 @@
 <context>
     <name>OctDataManager</name>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="117"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="120"/>
         <source>Unsaved changes</source>
         <translation>Ungespeicherte Änderungen</translation>
     </message>
     <message>
-        <location filename="../src/manager/octdatamanager.cpp" line="117"/>
+        <location filename="../src/manager/octdatamanager.cpp" line="120"/>
         <source>You have unsaved changes, what will you do?</source>
         <translation>Es gibt ungespeicherte Änderungen, was wollen Sie tun?</translation>
     </message>
@@ -1461,7 +1461,7 @@
         <translation>Basisname für den LaTeX-Export angeben</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sloimagewidget.cpp" line="692"/>
+        <location filename="../src/widgets/sloimagewidget.cpp" line="691"/>
         <source>overlay legend</source>
         <translation>Legende</translation>
     </message>
@@ -1578,36 +1578,41 @@
     </message>
     <message>
         <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="10"/>
+        <source>combined GCL and IPL (GCIPL)</source>
+        <translation>Kombinierte GCL und IPL (GCIPL)</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="11"/>
         <source>Inner Plexiform Layer</source>
         <translation>Innere plexiforme Schicht</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="11"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="12"/>
         <source>Inner Nuclear Layer</source>
         <translation>Innere Körnerschicht</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="12"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="13"/>
         <source>Outer Plexiform Layer</source>
         <translation>Äußere plexiforme Schicht</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="13"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="14"/>
         <source>Outer Nuclear Layer</source>
         <translation>Äuqere Körnerschicht</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="14"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="15"/>
         <source>Retinal Pigment Epithelium</source>
         <translation>Retinales Pigmentepithel</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="15"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="16"/>
         <source>Inner Retinal Layers</source>
         <translation>Innere Netzhautschichten</translation>
     </message>
     <message>
-        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="16"/>
+        <location filename="../src/markermodules/bscanlayersegmentation/thicknessmaptemplates.cpp" line="17"/>
         <source>Photoreceptors</source>
         <translation>Fotorezeptoren</translation>
     </message>

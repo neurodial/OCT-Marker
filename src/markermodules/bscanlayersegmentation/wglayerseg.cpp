@@ -284,6 +284,7 @@ void WGLayerSeg::thicknessmapTemplateChanged(int indexInt)
 				break;
 		}
 		thicknessmapConfig.setUpperColorLimit(config.getMaxValue());
+		thicknessmapConfig.setLowerColorLimit(config.getMinValue());
 		thicknessmapConfig.upperLayer = config.getLine1();
 		thicknessmapConfig.lowerLayer = config.getLine2();
 

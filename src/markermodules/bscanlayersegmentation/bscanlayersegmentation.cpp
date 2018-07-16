@@ -537,6 +537,12 @@ void BScanLayerSegmentation::ThicknessmapConfig::setUpperColorLimit(double thick
 		colormap->setMaxValue(thickness);
 }
 
+void BScanLayerSegmentation::ThicknessmapConfig::setLowerColorLimit(double thickness)
+{
+	if(colormap)
+		colormap->setMinValue(thickness);
+}
+
 void BScanLayerSegmentation::updateEditLine()
 {
 	const std::size_t bscanNr = getActBScanNr();

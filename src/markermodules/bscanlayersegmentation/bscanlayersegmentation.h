@@ -44,6 +44,7 @@ public:
 		OctData::Segmentationlines::SegmentlineType lowerLayer;
 
 		void setUpperColorLimit(double thickness);
+		void setLowerColorLimit(double thickness);
 		void setYellowColor();
 		void setHSVColor();
 	};

@@ -7,19 +7,23 @@
 
 class Colormap
 {
+protected:
+	double minValue = 100;
+	double maxValue = 500;
 public:
 	virtual ~Colormap() = default;
 
-
-	virtual void setMaxValue(double value) = 0;
-	virtual double getMaxValue() const = 0;
 	virtual void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const = 0;
+
+	virtual void   setMaxValue(double value)                        { maxValue = value; }
+	virtual double getMaxValue() const                              { return maxValue; }
+
+	virtual void   setMinValue(double value)                        { minValue = value; }
+	virtual double getMinValue() const                              { return minValue; }
 };
 
 class ColormapHSV : public Colormap
 {
-	double minValue = 100;
-	double maxValue = 500;
 	double fadeIn  = 0.15;
 	double fadeOut = 0.35;
 
@@ -28,9 +32,6 @@ class ColormapHSV : public Colormap
 	const double fadeInHue = 0;
 	const double fadeOutHue = 260;
 public:
-
-	void   setMaxValue(double value) override { maxValue = value; }
-	double getMaxValue() const override { return maxValue; }
 
 	void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const override
 	{
@@ -82,12 +83,8 @@ public:
 
 class ColormapYellow : public Colormap
 {
-	double minValue = 0;
-	double maxValue = 500;
 public:
 
-	void   setMaxValue(double value) override                       { maxValue = value; }
-	double getMaxValue() const override                             { return maxValue; }
 
 
 	void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const override
