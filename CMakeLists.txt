@@ -8,8 +8,8 @@ set( CMAKE_CXX_STANDARD 11 )
 find_package(Boost 1.40 COMPONENTS filesystem serialization system iostreams REQUIRED)
 # find_package (Threads REQUIRED)
 find_package(OpenCV REQUIRED)
-find_package(LibOctData REQUIRED)
-find_package(CppFramework REQUIRED)
+find_package(LibOctData 1 CONFIG REQUIRED)
+find_package(OctCppFramework REQUIRED)
 
 
 option(BUILD_WITH_SEGMENTATION_ML    "build with support for NN"     OFF)
@@ -44,8 +44,6 @@ if(BUILD_QT_PROGRAMM)
 	include_directories(SYSTEM ${QT_INCLUDES} ${CMAKE_BINARY_DIR})
 	include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 	include_directories(${CMAKE_SOURCE_DIR}/src/)
-	include_directories(${LibOctData_INCLUDE_DIRS})
-	include_directories(${CppFramework_INCLUDE_DIRS})
 	include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 
 
@@ -97,8 +95,8 @@ if(BUILD_QT_PROGRAMM)
 	endif()
 
 	target_link_libraries(octmarker Qt5::Core Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
-	target_link_libraries(octmarker ${LibOctData_LIBRARIES})
-	target_link_libraries(octmarker ${CppFramework_LIBRARIES})
+	target_link_libraries(octmarker LibOctData::octdata)
+	target_link_libraries(octmarker OctCppFramework::oct_cpp_framework)
 	target_link_libraries(octmarker ${FANN_LIBRARY})
 
 	install(TARGETS octmarker RUNTIME DESTINATION bin)
@@ -116,6 +114,7 @@ if(BUILD_MATLAB_MEX_FUNCTIONS)
 	endif()
 
 	target_include_directories(read_seg SYSTEM PRIVATE ${Matlab_INCLUDE_DIRS} PUBLIC ${CMAKE_SOURCE_DIR}/src/)
+	target_link_libraries(read_seg OctCppFramework::oct_cpp_framework)
 endif()
 
 
@@ -128,5 +127,6 @@ if(BUILD_OCTAVE_MEX_FUNCTIONS)
 # 		set_target_properties(oct_read_seg PROPERTIES LINK_FLAGS "-static-libstdc++")
 # 	endif()
 	target_include_directories(oct_read_seg SYSTEM PRIVATE ${OCTAVE_INCLUDE_DIRS} PUBLIC ${CMAKE_SOURCE_DIR}/src/)
+	target_link_libraries(oct_read_seg OctCppFramework::oct_cpp_framework)
 
 endif()

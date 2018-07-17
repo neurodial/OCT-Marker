@@ -10,7 +10,7 @@
 #include<QFileDialog>
 #include<QGraphicsView>
 
-#include<cpp_framework/cvmat/treestructbin.h>
+#include<oct_cpp_framework/cvmat/treestructbin.h>
 
 #include<octdata/datastruct/series.h>
 #include<octdata/datastruct/bscan.h>

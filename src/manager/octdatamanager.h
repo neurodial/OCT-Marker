@@ -12,7 +12,7 @@
 
 #include <globaldefinitions.h>
 
-#include <cpp_framework/callback.h>
+#include <oct_cpp_framework/callback.h>
 
 
 class QString;

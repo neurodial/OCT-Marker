@@ -24,8 +24,8 @@
 #include"bscanlayersegptree.h"
 #include <manager/octmarkermanager.h>
 
-#include <cpp_framework/cvmat/cvmattreestruct.h>
-#include <cpp_framework/cvmat/treestructbin.h>
+#include <oct_cpp_framework/cvmat/cvmattreestruct.h>
+#include <oct_cpp_framework/cvmat/treestructbin.h>
 #include "layersegmentationio.h"
 
 #include"thicknessmap.h"

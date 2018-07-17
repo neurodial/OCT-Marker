@@ -46,7 +46,7 @@
 
 #include <boost/algorithm/string/join.hpp>
 
-#include <cpp_framework/cvmat/treestructbin.h>
+#include <oct_cpp_framework/cvmat/treestructbin.h>
 
 #include <globaldefinitions.h>
 

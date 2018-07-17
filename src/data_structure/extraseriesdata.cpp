@@ -2,9 +2,9 @@
 
 #include <manager/octdatamanager.h>
 
-#include <cpp_framework/cvmat/treestructbin.h>
-#include <cpp_framework/cvmat/cvmattreestruct.h>
-#include <cpp_framework/cvmat/cvmattreestructextra.h>
+#include <oct_cpp_framework/cvmat/treestructbin.h>
+#include <oct_cpp_framework/cvmat/cvmattreestruct.h>
+#include <oct_cpp_framework/cvmat/cvmattreestructextra.h>
 
 #include <QFileInfo>
 

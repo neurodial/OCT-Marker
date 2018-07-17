@@ -2,8 +2,8 @@
 
 #include"bscanlayersegmentation.h"
 
-#include <cpp_framework/cvmat/cvmattreestruct.h>
-#include <cpp_framework/cvmat/treestructbin.h>
+#include <oct_cpp_framework/cvmat/cvmattreestruct.h>
+#include <oct_cpp_framework/cvmat/treestructbin.h>
 
 #include<opencv/cv.h>
 

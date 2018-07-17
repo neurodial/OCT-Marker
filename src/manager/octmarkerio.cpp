@@ -5,7 +5,7 @@
 #endif
 
 #include <helper/ptreehelper.h>
-#include <cpp_framework/platform_helper/filename_unicode.h>
+#include <oct_cpp_framework/platform_helper/filename_unicode.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
