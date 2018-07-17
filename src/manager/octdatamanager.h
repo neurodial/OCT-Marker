@@ -63,7 +63,6 @@ public slots:
 	
 	
 	virtual bool loadMarkers(QString filename, OctMarkerFileformat format);
-	// virtual bool addMarkers (QString filename, Fileformat format);
 	virtual void saveMarkers(QString filename, OctMarkerFileformat format);
 	
 	void triggerSaveMarkersDefault();
@@ -117,6 +116,7 @@ class OctDataManagerThread : public QThread, public CppFW::Callback
 
 	bool breakLoading = false;
 	bool loadSuccess  = true;
+	bool loadError    = false;
 
 	OctData::OCT* oct = nullptr;
 
@@ -131,6 +131,7 @@ public:
 	bool success()                                           const  { return loadSuccess; }
 	const QString& getError()                                const  { return error; }
 	const QString& getFilename()                             const  { return filename; }
+	bool hasLoadError()                                      const  { return loadError; }
 
 protected:
 	void run();

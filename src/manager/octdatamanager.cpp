@@ -95,21 +95,25 @@ void OctDataManagerThread::run()
 	{
 		error = QString::fromStdString(boost::diagnostic_information(e));
 		loadSuccess = false;
+		loadError   = true;
 	}
 	catch(std::exception& e)
 	{
 		error = QString::fromStdString(e.what());
 		loadSuccess = false;
+		loadError   = true;
 	}
 	catch(const char* str)
 	{
 		error = str;
 		loadSuccess = false;
+		loadError   = true;
 	}
 	catch(...)
 	{
 		error = QString("Unknow error in file %1 line %2").arg(__FILE__).arg(__LINE__);
 		loadSuccess = false;
+		loadError   = true;
 	}
 }
 
@@ -174,28 +178,11 @@ void OctDataManager::loadOctDataThreadFinish()
 		}
 		else
 		{
-			delete octData;
-			octData = octData4Loading;
-			octData4Loading = nullptr;
-
-			actPatient = octData->begin()->second;
-			if(actPatient->size() > 0)
-			{
-				actStudy = actPatient->begin()->second;
-
-				if(actStudy->size() > 0)
-				{
-					actSeries = actStudy->begin()->second;
-				}
-			}
-
-			actFilename = loadThread->getFilename();
-
 			QString error;
 			try
 			{
 				markerstree->clear();
-				markerIO->loadDefaultMarker(actFilename.toStdString());
+				markerIO->loadDefaultMarker(loadThread->getFilename().toStdString());
 			}
 			catch(boost::exception& e)
 			{
@@ -222,6 +209,23 @@ void OctDataManager::loadOctDataThreadFinish()
 			}
 
 
+			actFilename = loadThread->getFilename();
+
+			delete octData;
+			octData = octData4Loading;
+			octData4Loading = nullptr;
+
+			actPatient = octData->begin()->second;
+			if(actPatient->size() > 0)
+			{
+				actStudy = actPatient->begin()->second;
+
+				if(actStudy->size() > 0)
+				{
+					actSeries = actStudy->begin()->second;
+				}
+			}
+
 			emit(octFileChanged(octData   ));
 			emit(patientChanged(actPatient));
 			emit(studyChanged  (actStudy  ));
@@ -234,15 +238,13 @@ void OctDataManager::loadOctDataThreadFinish()
 	}
 	else
 	{
-		const QString& loadError = loadThread->getError();
-
-		if(!loadError.isEmpty())
+		if(loadThread->hasLoadError())
 		{
+			const QString& loadError = loadThread->getError();
 			QMessageBox msgBox;
-			msgBox.setText(loadError);
+			msgBox.setText(tr("error open file: %1").arg(loadThread->getFilename()) + '\n' + loadError);
 			msgBox.setIcon(QMessageBox::Critical);
 			msgBox.exec();
-
 		}
 	}
 
@@ -309,13 +311,6 @@ boost::property_tree::ptree* OctDataManager::getMarkerTreeSeries(const OctData::
 	return &seriesNode;
 }
 
-
-/*
-bool OctDataManager::addMarkers(QString filename, OctDataManager::Fileformat format)
-{
-	return false;
-}
-*/
 
 bool OctDataManager::loadMarkers(QString filename, OctMarkerFileformat format)
 {

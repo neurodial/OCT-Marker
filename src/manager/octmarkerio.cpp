@@ -1,7 +1,10 @@
 #include "octmarkerio.h"
 
 #ifndef MEX_COMPILE
-#include <data_structure/programoptions.h>
+	#include <data_structure/programoptions.h>
+	#define DEBUG_OUT(X) qDebug(X);
+#else
+	#define DEBUG_OUT(X) std::cerr << X;
 #endif
 
 #include <helper/ptreehelper.h>
@@ -16,6 +19,8 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/filesystem.hpp>
 #include <iostream>
+
+#include<string>
 
 namespace pt = boost::property_tree;
 namespace io = boost::iostreams;
@@ -198,6 +203,9 @@ bool OctMarkerIO::loadMarkers(const boost::filesystem::path& markersPath, OctMar
 
 	if(!bfs::exists(markersPath))
 		return false;
+
+	std::string loadString = "load markers from " + markersPath.generic_string();
+	DEBUG_OUT(loadString.c_str());
 
 	bpt::ptree loadTree;
 
