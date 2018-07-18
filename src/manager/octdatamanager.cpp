@@ -154,14 +154,22 @@ void OctDataManager::openFile(const QString& filename)
 	}
 
 	loadFileSignal(true);
-	saveMarkersDefault();
+	try
+	{
+		saveMarkersDefault();
 
-	octData4Loading = new OctData::OCT;
+		octData4Loading = new OctData::OCT;
 
-	loadThread = new OctDataManagerThread(*this, filename, octData4Loading);
-	connect(loadThread, &OctDataManagerThread::stepCalulated, this, &OctDataManager::loadOctDataThreadProgress);
-	connect(loadThread, &OctDataManagerThread::finished     , this, &OctDataManager::loadOctDataThreadFinish  );
-	loadThread->start();
+		loadThread = new OctDataManagerThread(*this, filename, octData4Loading);
+		connect(loadThread, &OctDataManagerThread::stepCalulated, this, &OctDataManager::loadOctDataThreadProgress);
+		connect(loadThread, &OctDataManagerThread::finished     , this, &OctDataManager::loadOctDataThreadFinish  );
+		loadThread->start();
+	}
+	catch(...)
+	{
+		loadFileSignal(false);
+		throw;
+	}
 }
 
 
