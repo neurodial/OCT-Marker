@@ -61,10 +61,12 @@ void OctDataManager::saveMarkersDefault()
 
 void OctDataManager::triggerSaveMarkersDefault()
 {
-	saveMarkerState(actSeries);
-	markerIO->saveDefaultMarker(actFilename.toStdString());
-	OctMarkerManager::getInstance().resetChangedSinceLastSaveState();
-
+	if(!actFilename.isEmpty())
+	{
+		saveMarkerState(actSeries);
+		markerIO->saveDefaultMarker(actFilename.toStdString());
+		OctMarkerManager::getInstance().resetChangedSinceLastSaveState();
+	}
 }
 
 
