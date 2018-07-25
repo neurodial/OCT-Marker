@@ -9,6 +9,8 @@
 #include<windows/infodialogs.h>
 #include<helper/actionclasses.h>
 
+#include<data_structure/programoptions.h>
+
 OctMarkerActions::OctMarkerActions(BScanMarkerWidget* bscanMarkerWidget)
 : bscanMarkerWidget(bscanMarkerWidget)
 {
@@ -75,19 +77,6 @@ QAction* OctMarkerActions::getZoomMenuAction()
 	}
 	return zoomMenu->menuAction();
 }
-
-QAction* OctMarkerActions::getZoomFitAction()
-{
-	if(!zoomFitAction)
-	{
-		zoomFitAction = new QAction(this);
-		zoomFitAction->setText(tr("fit image"));
-		zoomFitAction->setIcon(QIcon::fromTheme("zoom-fit-best",  QIcon(":/icons/tango/actions/view-fullscreen.svgz")));
-		connect(zoomFitAction, &QAction::triggered, bscanMarkerWidget, &CVImageWidget::fitImage2Parent);
-	}
-	return zoomFitAction;
-}
-
 
 QAction* OctMarkerActions::getZoomFitHeightAction()
 {
@@ -201,4 +190,49 @@ void OctMarkerActions::updateZoom(double zoom)
 void OctMarkerActions::showAboutDialog()
 {
 	InfoDialogs::showAboutDialog(bscanMarkerWidget); // TODO: parent
+}
+
+namespace
+{
+	void prepareIntAction2ProgramOption(QObject* base, IntValueAction* action, OptionInt* option)
+	{
+		action->valueChanged(option->getValue());
+		base->connect(action, &IntValueAction::triggered, option, &OptionInt::setValue         );
+		base->connect(option, &OptionInt::valueChanged  , action, &IntValueAction::valueChanged);
+	}
+}
+
+QActionGroup* OctMarkerActions::getBscanAspectRatioActions()
+{
+
+	if(!bscanAspectRatioActions)
+	{
+		bscanAspectRatioActions = new QActionGroup(this);
+
+// 		0 fix value, 1 from bscan, 2 best fit
+		IntValueAction* aspectFix     = new IntValueAction(0, this, true);
+		IntValueAction* aspectBScan   = new IntValueAction(1, this, true);
+		IntValueAction* aspectBestFit = new IntValueAction(2, this, true);
+
+		aspectFix->setText(tr("pixel to pixel ratio"));
+		aspectFix->setIcon(QIcon(":/icons/own/ratio_px.svg"));
+		prepareIntAction2ProgramOption(this, aspectFix, &ProgramOptions::bscanAspectRatioType);
+
+
+		aspectBScan->setText(tr("μm to μm ratio"));
+		aspectBScan->setIcon(QIcon(":/icons/own/ratio_um.svg"));
+		prepareIntAction2ProgramOption(this, aspectBScan, &ProgramOptions::bscanAspectRatioType);
+
+		aspectBestFit->setText(tr("fit aspect ratio"));
+		aspectBestFit->setIcon(QIcon(":/icons/own/ratio_auto.svg"));
+		prepareIntAction2ProgramOption(this, aspectBestFit, &ProgramOptions::bscanAspectRatioType);
+
+
+
+		bscanAspectRatioActions->addAction(aspectFix    );
+		bscanAspectRatioActions->addAction(aspectBScan  );
+		bscanAspectRatioActions->addAction(aspectBestFit);
+
+	}
+	return bscanAspectRatioActions;
 }

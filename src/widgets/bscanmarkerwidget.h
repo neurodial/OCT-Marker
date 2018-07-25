@@ -36,6 +36,8 @@ class BScanMarkerWidget : public CVImageWidget
 	const PaintMarker*                      paintMarker        = nullptr;
 
 	bool controlUsed = false;
+	double bscanAspectRatio = 1.;
+	void fitAspectRatio();
 	
 	int fdSaveRaw(QString& filename);
 	void updateRawExport();
@@ -95,6 +97,8 @@ private slots:
 	void markersMethodChanged(BscanMarkerBase* marker);
 	
 	void triggerAutoImageFit();
+
+	void updateAspectRatio();
 
 public slots:
 	virtual void saveRawImage();

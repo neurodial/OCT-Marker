@@ -16,8 +16,8 @@
 OptionBool  ProgramOptions::bscansShowSegmentationslines(true   , "bscansShowSegmentationslines", "ProgramOptions");
 OptionColor ProgramOptions::bscanSegmetationLineColor   (Qt::red, "bscanSegmetationLineColor"   , "ProgramOptions");
 OptionInt   ProgramOptions::bscanSegmetationLineThicknes(1      , "bscanSegmetationLineThicknes", "ProgramOptions");
-OptionBool  ProgramOptions::bscanRespectAspectRatio     (false  , "bscanRespectAspectRatio"     , "ProgramOptions");
-OptionBool  ProgramOptions::bscanAutoFitImage           (false  , "bscanAutoFitImage"           , "ProgramOptions");
+OptionInt   ProgramOptions::bscanAspectRatioType        (0      , "bscanAspectRatioType"        , "ProgramOptions"); // 0 fix value, 1 from bscan, 2 best fit
+OptionBool  ProgramOptions::bscanAutoFitImage           (true   , "bscanAutoFitImage"           , "ProgramOptions");
 
 OptionBool  ProgramOptions::bscanShowExtraSegmentationslines(true, "bscanShowExtraSegmentationslines", "ExtraData");
 
@@ -38,7 +38,7 @@ OptionBool ProgramOptions::sloShowLabels       (false, "sloShowLabels"       , "
 OptionBool ProgramOptions::sloShowGrid         (true , "sloShowGrid"         , "ProgramOptions");
 OptionBool ProgramOptions::sloShowBScanMousePos(true , "sloShowBScanMousePos", "ProgramOptions");
 
-OptionInt  ProgramOptions::sloShowsBScansPos   (1    , "sloShowsBScansPos"   , "ProgramOptions"); // 0 nothing, 1 act BScan, 2 all BScans
+OptionInt    ProgramOptions::sloShowsBScansPos (1    , "sloShowsBScansPos"   , "ProgramOptions"); // 0 nothing, 1 act BScan, 2 all BScans
 OptionBool   ProgramOptions::sloShowOverlay    (true , "sloShowOverlay"      , "ProgramOptions");
 OptionDouble ProgramOptions::sloOverlayAlpha   (0.7  , "sloOverlayAlpha"     , "ProgramOptions");
 OptionBool   ProgramOptions::sloClipScanArea   (false, "sloClipScanArea"      , "ProgramOptions");
@@ -58,13 +58,13 @@ OptionDouble ProgramOptions::layerSegFindPointRemoveTol  (0.1 , "PointRemoveTol"
 OptionDouble ProgramOptions::layerSegFindPointMaxAbsError(0.25, "PointMaxAbsError", "LayerSeg");
 
 
-OptionColor  ProgramOptions::layerSegActiveLineColor     (Qt::red , "ActiveLineColor", "LayerSeg");
-OptionColor  ProgramOptions::layerSegPassivLineColor     (Qt::blue, "PassivLineColor", "LayerSeg");
-OptionInt    ProgramOptions::layerSegActiveLineSize      (       2, "ActiveLineSize" , "LayerSeg");
-OptionInt    ProgramOptions::layerSegPassivLineSize      (       1, "PassivLineSize" , "LayerSeg");
+OptionColor  ProgramOptions::layerSegActiveLineColor     (Qt::red   , "ActiveLineColor"  , "LayerSeg");
+OptionColor  ProgramOptions::layerSegPassivLineColor     (Qt::yellow, "PassivLineColor"  , "LayerSeg");
+OptionInt    ProgramOptions::layerSegActiveLineSize      (         2, "ActiveLineSize"   , "LayerSeg");
+OptionInt    ProgramOptions::layerSegPassivLineSize      (         1, "PassivLineSize"   , "LayerSeg");
 
-OptionInt    ProgramOptions::layerSegSplinePointSize     (       8, "SplinePointSize", "LayerSeg");
-OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true    , "ThicknessmapBlend", "LayerSeg");
+OptionInt    ProgramOptions::layerSegSplinePointSize     (         8, "SplinePointSize"  , "LayerSeg");
+OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true      , "ThicknessmapBlend", "LayerSeg");
 
 
 OptionBool   ProgramOptions::intervallMarkSloMapAuteGenerate(false    , "SloMapAuteGenerate", "IntervallMark");

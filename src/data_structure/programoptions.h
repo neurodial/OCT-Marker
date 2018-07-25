@@ -31,7 +31,7 @@ public:
 	static OptionBool  bscansShowSegmentationslines;
 	static OptionColor bscanSegmetationLineColor;
 	static OptionInt   bscanSegmetationLineThicknes;
-	static OptionBool  bscanRespectAspectRatio;
+	static OptionInt   bscanAspectRatioType;
 	static OptionBool  bscanAutoFitImage;
 	
 	static OptionBool  bscanShowExtraSegmentationslines;

@@ -45,11 +45,6 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	showSeglines->setText(tr("show segmentationslines"));
 	showSeglines->setIcon(QIcon(":/icons/chart_curve.png"));
 
-	QAction* showWithAspectRatio = ProgramOptions::bscanRespectAspectRatio.getAction();
-	showWithAspectRatio->setText(tr("Aspect ratio"));
-	showWithAspectRatio->setIcon(QIcon(":/icons/typicons/equals-outline.svg"));
-
-
 	QAction* showGrid = ProgramOptions::sloShowGrid.getAction();
 	showGrid->setText(tr("show grid"));
 	showGrid->setIcon(QIcon(":/icons/grid.png"));

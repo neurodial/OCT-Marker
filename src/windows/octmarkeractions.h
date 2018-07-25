@@ -5,6 +5,7 @@
 
 class QAction;
 class QMenu;
+class QActionGroup;
 
 class BScanMarkerWidget;
 class CVImageWidget;
@@ -18,7 +19,6 @@ class OctMarkerActions : public QObject
 	QAction* zoomInAction        = nullptr;
 	QAction* zoomOutAction       = nullptr;
 	QMenu  * zoomMenu            = nullptr;
-	QAction* zoomFitAction       = nullptr;
 	QAction* zoomFitHeightAction = nullptr;
 	QAction* zoomFitWidthAction  = nullptr;
 
@@ -26,6 +26,8 @@ class OctMarkerActions : public QObject
 	QAction* redoAction          = nullptr;
 
 	QAction* aboutDialogAction   = nullptr;
+
+	QActionGroup* bscanAspectRatioActions = nullptr;
 
 
 
@@ -37,7 +39,6 @@ public:
 	QAction* getZoomInAction       ();
 	QAction* getZoomOutAction      ();
 	QAction* getZoomMenuAction     ();
-	QAction* getZoomFitAction      ();
 	QAction* getZoomFitHeightAction();
 	QAction* getZoomFitWidthAction ();
 
@@ -45,6 +46,8 @@ public:
 	QAction* getRedoAction();
 
 	QAction* getAboutDialogAction  ();
+
+	QActionGroup* getBscanAspectRatioActions();
 
 private slots:
 	void updateRedoUndo();

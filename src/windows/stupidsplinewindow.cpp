@@ -41,6 +41,7 @@ StupidSplineWindow::StupidSplineWindow()
 , markerActions      (bscanMarkerWidget)
 {
 	ProgramOptions::bscansShowSegmentationslines.setValue(false);
+	ProgramOptions::bscanAspectRatioType.setValue(2); // best fit
 	setMinimumWidth(1000);
 // 	setMinimumHeight(600);
 
@@ -99,9 +100,6 @@ StupidSplineWindow::StupidSplineWindow()
 
 	// General Config
 	setWindowIcon(QIcon(":/icons/typicons/oct_marker_logo.svg"));
-
-	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged, bscanMarkerWidget, &CVImageWidget::fitImage2Parent);
-
 }
 
 StupidSplineWindow::~StupidSplineWindow()
@@ -298,7 +296,15 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 
 	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomInAction ()));
 	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomOutAction()));
-	layoutStupidControls->addWidget(genToolButton(markerActions.getZoomFitAction()));
+	layoutStupidControls->addWidget(genToolButton(ProgramOptions::bscanAutoFitImage.getAction()));
+
+
+	// ----------------------
+	addLayoutVLine(layoutStupidControls);
+	QActionGroup* bscanAspectRatio = markerActions.getBscanAspectRatioActions();
+	for(QAction* action : bscanAspectRatio->actions())
+		layoutStupidControls->addWidget(genToolButton(action));
+
 
 	// ----------------------
 	addLayoutVLine(layoutStupidControls);

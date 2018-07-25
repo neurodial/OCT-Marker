@@ -82,11 +82,8 @@ BScanMarkerWidget::BScanMarkerWidget()
 	connect(&ProgramOptions::bscanSegmetationLineThicknes    , &OptionInt  ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 	connect(&ProgramOptions::bscanShowExtraSegmentationslines, &OptionBool ::valueChanged, this, &BScanMarkerWidget::viewOptionsChangedSlot);
 
-	connect(&ProgramOptions::bscanRespectAspectRatio         , &OptionBool ::valueChanged, this, &CVImageWidget    ::setUseAspectRatio     );
+	connect(&ProgramOptions::bscanAspectRatioType            , &OptionInt  ::valueChanged, this, &BScanMarkerWidget::updateAspectRatio     );
 	connect(&ProgramOptions::bscanAutoFitImage               , &OptionBool ::trueSignal  , this, &BScanMarkerWidget::triggerAutoImageFit   );
-
-	setUseAspectRatio(ProgramOptions::bscanRespectAspectRatio());
-
 
 	setFocusPolicy(Qt::ClickFocus);
 	setMouseTracking(true);
@@ -147,6 +144,45 @@ BScanMarkerWidget::~BScanMarkerWidget()
 {
 }
 
+
+void BScanMarkerWidget::fitAspectRatio()
+{
+	QWidget* parent = parentWidget();
+	if(!parent)
+		return;
+
+	if(imageHight() > 0 && imageWidth() > 0)
+	{
+		QSize size = parent->size();
+		int width  = size.width();
+		int height = size.height();
+
+		double a1 = static_cast<double>(width )/imageWidth();
+		double a2 = static_cast<double>(height)/imageHight();
+
+		setAspectRatio(a2/a1);
+	}
+}
+
+
+void BScanMarkerWidget::updateAspectRatio()
+{
+	int aspectRatioType = ProgramOptions::bscanAspectRatioType();
+	switch(aspectRatioType)
+	{
+		case 1:
+			setAspectRatio(bscanAspectRatio);
+			break;
+		case 2:
+			fitAspectRatio();
+			break;
+		default:
+			setAspectRatio(1);
+			break;
+	}
+}
+
+
 void BScanMarkerWidget::paintSegmentationLine(QPainter& segPainter, int bScanHeight, const std::vector<double>& segLine, const ScaleFactor& factor)
 {
 	double lastEnt = std::numeric_limits<OctData::Segmentationlines::SegmentlineDataType>::quiet_NaN();
@@ -170,7 +206,7 @@ void BScanMarkerWidget::paintSegmentationLine(QPainter& segPainter, int bScanHei
 
 void BScanMarkerWidget::paintSegmentations(QPainter& segPainter, const ScaleFactor& scaleFactor) const
 {
-	const OctData::BScan * actBScan = markerManger.getActBScan();
+	const OctData::BScan* actBScan = markerManger.getActBScan();
 
 	QPen pen;
 	pen.setColor(ProgramOptions::bscanSegmetationLineColor());
@@ -298,14 +334,12 @@ void BScanMarkerWidget::imageChanged()
 		const OctData::ScaleFactor& sf = actBScan->getScaleFactor();
 
 		if(sf.getX() > 0 && sf.getZ() > 0)
-		{
-			const double aspectRatio = sf.getZ()/sf.getX();
-			setAspectRatio(aspectRatio);
-		}
+			bscanAspectRatio = sf.getZ()/sf.getX();
 		else
-			setAspectRatio(1.0);
+			bscanAspectRatio = 1.0;
 
 		showImage(actBScan->getImage());
+		updateAspectRatio();
 	}
 	else
 		update();

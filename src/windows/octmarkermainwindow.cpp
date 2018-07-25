@@ -405,7 +405,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QAction* extraSegLine        = ProgramOptions::bscanShowExtraSegmentationslines.getAction();
 	QAction* showSeglines        = ProgramOptions::bscansShowSegmentationslines.getAction();
-	QAction* showWithAspectRatio = ProgramOptions::bscanRespectAspectRatio.getAction();
+	QActionGroup* bscanAspectRatio = generalMarkerActions.getBscanAspectRatioActions();
 
 	QSpinBox* paintsizeSegLines = new QSpinBox(this);
 	paintsizeSegLines->setMinimum(1);
@@ -422,7 +422,8 @@ void OCTMarkerMainWindow::setupMenu()
 	toolBar->addWidget(new BScanChooserSpinBox(this));
 // 	toolBar->addWidget(labelMaxBscan);
 	toolBar->addSeparator();
-	toolBar->addAction(showWithAspectRatio);
+	toolBar->addActions(bscanAspectRatio->actions());
+	toolBar->addSeparator();
 	toolBar->addAction(extraSegLine);
 	toolBar->addAction(showSeglines);
 	toolBar->addWidget(paintsizeSegLines);
