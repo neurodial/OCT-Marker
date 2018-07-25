@@ -240,9 +240,6 @@ void OctDataManager::loadOctDataThreadFinish()
 			emit(patientChanged(actPatient));
 			emit(studyChanged  (actStudy  ));
 			emit(seriesChanged (actSeries ));
-
-			loadFileSignal(false);
-
 			OctMarkerManager::getInstance().resetChangedSinceLastSaveState();
 		}
 	}

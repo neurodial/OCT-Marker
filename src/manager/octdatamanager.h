@@ -136,7 +136,7 @@ public:
 protected:
 	void run();
 
-	virtual bool callback(double frac)
+	virtual bool callback(double frac) override
 	{
 		emit(stepCalulated(frac));
 		return !breakLoading;

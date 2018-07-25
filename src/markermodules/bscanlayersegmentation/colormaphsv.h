@@ -84,9 +84,6 @@ public:
 class ColormapYellow : public Colormap
 {
 public:
-
-
-
 	void getColor(double value, uint8_t& r, uint8_t& g, uint8_t& b) const override
 	{
 		if(value < minValue)

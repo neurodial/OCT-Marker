@@ -180,7 +180,7 @@ void OctMarkerManager::setBscanMarker(int id)
 		}
 		if(newMarker)
 		{
-			newMarker->setActBScan(actBScan);
+// 			newMarker->setActBScan(actBScan);
 			newMarker->activate(true);
 		}
 		
@@ -267,6 +267,8 @@ void OctMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 
 	for(SloMarkerBase* obj : sloMarkerObj)
 	{
+		SignalBlocker sigBlock(obj);
+
 		const QString& markerId = obj->getMarkerId();
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->loadState(subtree);
