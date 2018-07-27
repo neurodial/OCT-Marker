@@ -114,7 +114,7 @@ void Objectsmarker::newSeriesLoaded(const OctData::Series* series, boost::proper
 void Objectsmarker::removeAllItems()
 {
 	std::size_t actBScan = getActBScanNr();
-	if(actBScan > itemsList.size())
+	if(actBScan < itemsList.size())
 		graphicsScene->markersToList(itemsList.at(actBScan));
 	else
 		graphicsScene->clear();

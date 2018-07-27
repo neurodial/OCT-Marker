@@ -1,8 +1,14 @@
 #include <QApplication>
 
+#include <iostream>
+
 #include <QTranslator>
 #include <QLocale>
 #include <QFile>
+#include <QDir>
+#include <QFileInfo>
+#include <qlibraryinfo.h>
+#include <QCommandLineParser>
 
 #include <windows/octmarkermainwindow.h>
 #include <windows/stupidsplinewindow.h>
@@ -10,12 +16,6 @@
 
 #include <buildconstants.h>
 
-#include <iostream>
-
-#include <QDir>
-#include <QFileInfo>
-#include <qlibraryinfo.h>
-#include <QCommandLineParser>
 #include "prepareprogrammoptions.h"
 
 
@@ -52,7 +52,6 @@ int main(int argc, char **argv)
 	QApplication app(argc, argv);
 	QCoreApplication::setApplicationName("OCT-Marker");
 	QCoreApplication::setApplicationVersion(BuildConstants::gitSha1);
-
 
 	QTranslator translator;
 

@@ -28,6 +28,7 @@
 #include <markermodules/sloobjects/sloobjectmarker.h>
 #include <markermodules/objectsmarker/objectsmarker.h>
 #include <markermodules/scanclassifier/scanclassifier.h>
+#include <markermodules/distancemeter/distancemeter.h>
 
 #include <helper/ptreehelper.h>
 
@@ -53,6 +54,7 @@ OctMarkerManager::OctMarkerManager()
 	bscanMarkerObj.push_back(new BScanIntervalMarker(this));
 	bscanMarkerObj.push_back(new BScanLayerSegmentation(this));
 	bscanMarkerObj.push_back(new ScanClassifier(this));
+	bscanMarkerObj.push_back(new DistanceMeter(this));
 	
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
@@ -114,7 +116,6 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 	if(!markerTree)
 		return;
 
-	actBScan = 0;
 
 	if(actBscanMarker && !stateChangedSinceLastSave)
 		stateChangedSinceLastSave = actBscanMarker->hasChangedSinceLastSave();
@@ -142,8 +143,10 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 		extraSeriesData->loadExtraData(*s, *markerTree);
 
 
-	emit(newBScanShowed(series->getBScan(actBScan)));
+// 	emit(newBScanShowed(series->getBScan(actBScan)));
 	emit(newSeriesShowed(s));
+	actBScan = -1;
+	chooseBScan(0);
 }
 
 void OctMarkerManager::setBscanMarkerTextID(QString id)

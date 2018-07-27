@@ -343,7 +343,7 @@ void SLOImageWidget::showPosOnBScan(double t)
 	{
 		SloCoordTranslator sct(*series, getImageScaleFactor());
 		sct.setClipShift(OctData::CoordSLOpx(clipX1, clipY1));
-		OctData::CoordSLOmm point = actBScan->getStart()*(1-t) + actBScan->getEnd()*(t); // TODO falsche Richtung?
+		OctData::CoordSLOmm point = actBScan->getFracPos(t);
 		const OctData::CoordSLOpx markPx = sct(point);
 
 		markPos.show = true;
