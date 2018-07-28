@@ -37,7 +37,7 @@ DistanceMeter::DistanceMeter(OctMarkerManager* markerManager)
 {
 	name = tr("distance meter");
 	id   = "DistanceMeter";
-	icon = QIcon(":/icons/typicons_mod/distance_meter.svg");
+	icon = QIcon(":/icons/own/ruler.svgz");
 
 	widgetPtr2WGScanClassifier = distanceLabel;
 }

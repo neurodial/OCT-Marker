@@ -666,6 +666,14 @@
     </message>
 </context>
 <context>
+    <name>DistanceMeter</name>
+    <message>
+        <location filename="../src/markermodules/distancemeter/distancemeter.cpp" line="38"/>
+        <source>distance meter</source>
+        <translation>Distanzmesser</translation>
+    </message>
+</context>
+<context>
     <name>DwOctInformations</name>
     <message>
         <location filename="../src/widgets/dwoctinformations.cpp" line="161"/>
@@ -1791,22 +1799,22 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../src/main.cpp" line="74"/>
+        <location filename="../src/main.cpp" line="73"/>
         <source>Show stupid spline gui</source>
         <translation>Zeige dumme Spline-Oberfläche</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="76"/>
+        <location filename="../src/main.cpp" line="75"/>
         <source>use config from ini file</source>
         <translation>Benutze Konfig aus INI-Datei</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="77"/>
+        <location filename="../src/main.cpp" line="76"/>
         <source>ini file</source>
         <translation>INI-Datei</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="83"/>
+        <location filename="../src/main.cpp" line="82"/>
         <source>load this oct file at start</source>
         <translation>diese Datei beim starten laden</translation>
     </message>
