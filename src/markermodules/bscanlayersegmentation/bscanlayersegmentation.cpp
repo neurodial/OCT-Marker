@@ -39,6 +39,8 @@
 #include "layersegcommand.h"
 
 
+#include <helper/signalblocker.h>
+
 const std::array<OctData::Segmentationlines::SegmentlineType, 10> BScanLayerSegmentation::keySeglines = {{
 	  OctData::Segmentationlines::SegmentlineType::RPE
 	, OctData::Segmentationlines::SegmentlineType::ILM
@@ -448,6 +450,8 @@ void BScanLayerSegmentation::setActBScan(std::size_t bscan)
 
 void BScanLayerSegmentation::loadState(boost::property_tree::ptree& markerTree)
 {
+	SignalBlocker sb(this);
+
 	BscanMarkerBase::loadState(markerTree);
 	BScanLayerSegPTree::parsePTree(markerTree, this);
 }

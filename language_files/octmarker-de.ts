@@ -668,9 +668,27 @@
 <context>
     <name>DistanceMeter</name>
     <message>
-        <location filename="../src/markermodules/distancemeter/distancemeter.cpp" line="38"/>
+        <location filename="../src/markermodules/distancemeter/distancemeter.cpp" line="41"/>
         <source>distance meter</source>
         <translation>Distanzmesser</translation>
+    </message>
+</context>
+<context>
+    <name>DistanceMeterDistanceWidget</name>
+    <message>
+        <location filename="../src/markermodules/distancemeter/wgdistancemeter.cpp" line="138"/>
+        <source>Millimeter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/distancemeter/wgdistancemeter.cpp" line="139"/>
+        <source>Millimeter (B-Scan)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/distancemeter/wgdistancemeter.cpp" line="140"/>
+        <source>Pixel (B-Scan)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1679,6 +1697,29 @@
         <location filename="../ui/octinformations.ui" line="77"/>
         <source>BScan</source>
         <translation>B-Scan</translation>
+    </message>
+</context>
+<context>
+    <name>WGDistanceMeter</name>
+    <message>
+        <location filename="../src/markermodules/distancemeter/wgdistancemeter.cpp" line="63"/>
+        <source>set start pos</source>
+        <translation>Startposition setzen</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/distancemeter/wgdistancemeter.cpp" line="71"/>
+        <source>start pos</source>
+        <translation>Startposition</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/distancemeter/wgdistancemeter.cpp" line="72"/>
+        <source>click pos</source>
+        <translation>Klickposition</translation>
+    </message>
+    <message>
+        <location filename="../src/markermodules/distancemeter/wgdistancemeter.cpp" line="73"/>
+        <source>actual pos</source>
+        <translation>aktuelle Position</translation>
     </message>
 </context>
 <context>

@@ -34,8 +34,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-#include <helper/signalblocker.h>
-
 namespace bpt = boost::property_tree;
 
 
@@ -126,7 +124,6 @@ void OctMarkerManager::showSeries(const OctData::Series* s)
 
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
-		SignalBlocker sigBlock(obj);
 		const QString& markerId = obj->getMarkerId();
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->newSeriesLoaded(s, subtree);
@@ -261,8 +258,6 @@ void OctMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 
 	for(BscanMarkerBase* obj : bscanMarkerObj)
 	{
-		SignalBlocker sigBlock(obj);
-
 		const QString& markerId = obj->getMarkerId();
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->loadState(subtree);
@@ -270,8 +265,6 @@ void OctMarkerManager::loadMarkerStateSlot(const OctData::Series* s)
 
 	for(SloMarkerBase* obj : sloMarkerObj)
 	{
-		SignalBlocker sigBlock(obj);
-
 		const QString& markerId = obj->getMarkerId();
 		bpt::ptree& subtree = PTreeHelper::get_put(*markerTree, markerId.toStdString());
 		obj->loadState(subtree);

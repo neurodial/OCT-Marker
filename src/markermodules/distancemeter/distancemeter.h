@@ -20,33 +20,20 @@
 
 #include "../bscanmarkerbase.h"
 
-class QLabel;
+#include<limits>
+
+#include<QPointF>
+
+class WGDistanceMeter;
+class ScaleFactor;
+
+namespace OctData { class BScan; };
 
 class DistanceMeter : public BscanMarkerBase
 {
 	Q_OBJECT
 
 public:
-
-	DistanceMeter(OctMarkerManager* markerManager);
-	~DistanceMeter();
-
-	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGScanClassifier; }
-
-	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
-	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
-	virtual RedrawRequest mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*) override;
-
-	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) override;
-
-	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect&) const override;
-
-	virtual void newSeriesLoaded(const OctData::Series*, boost::property_tree::ptree&) override;
-
-
-	virtual void setActBScan(std::size_t bscan) override;
-
-private:
 	struct Position
 	{
 		bool valid = false;
@@ -57,20 +44,72 @@ private:
 
 		int x_px = 0;
 		int y_px = 0;
-		std::size_t bscan = 0;
+		std::size_t bscanNr = 0;
+
+		const OctData::BScan* bscan = nullptr;
 
 		double distance(const Position& other) const;
+		double pxDistance(const Position& other) const;
+		double bscanDistance(const Position& other) const;
 	};
 
-	Position clickPos;
+	struct Distance
+	{
+		double millimeter      = std::numeric_limits<double>::quiet_NaN();
+		double bscanMillimeter = std::numeric_limits<double>::quiet_NaN();
+		double bscanPx         = std::numeric_limits<double>::quiet_NaN();
+	};
 
-	QWidget* widgetPtr2WGScanClassifier = nullptr;
+	DistanceMeter(OctMarkerManager* markerManager);
+	~DistanceMeter();
+
+	virtual QWidget* getWidget   ()          override               { return widgetPtr2WGDistanceMeter; }
+
+	virtual RedrawRequest mouseMoveEvent   (QMouseEvent*, BScanMarkerWidget*) override;
+	virtual RedrawRequest mousePressEvent  (QMouseEvent*, BScanMarkerWidget*) override;
+
+	virtual bool leaveWidgetEvent (QEvent*     , BScanMarkerWidget*) override;
+	virtual void drawMarker(QPainter&, BScanMarkerWidget*, const QRect&) const override;
+	virtual void newSeriesLoaded(const OctData::Series*, boost::property_tree::ptree&) override;
+
+	virtual void setActBScan(std::size_t bscan) override;
+
+	bool isSetNewStartPosition() const                              { return setStartPos; }
+
+	void resetPositions();
+
+private:
+
+	Position startPos;
+	Position clickPos;
+	QPointF  lastWidgetPos;
+
+	bool setStartPos = true;
+
+	QWidget* widgetPtr2WGDistanceMeter = nullptr;
+	WGDistanceMeter* wgDistanceMeter = nullptr;
 
 	const OctData::Series* series = nullptr;
 	const OctData::BScan*  actBScan = nullptr;
 	std::size_t actBscanNr = 0;
 
-	QLabel* distanceLabel;
-
 	Position calcPosition(QMouseEvent* event, BScanMarkerWidget* widget);
+	QPointF  calcWidgetPosition(QMouseEvent* event, BScanMarkerWidget* widget);
+	Position calcPosition(const QPointF& p);
+
+	Distance calcDistance(const Position& p);
+
+	void drawPosition(QPainter& painter, const Position& pos, const ScaleFactor& sf, QColor c) const;
+
+public slots:
+	virtual void setNewStartPosition(bool b)                        { if(setStartPos != b) { setStartPos = b; emit(changeSetStartPosition(b)); } }
+
+signals:
+	void updatedStartPos(Position p);
+	void updatedActualPos(Position p);
+	void updatedClickPos(Position p);
+	void updateClickDistance(Distance d);
+	void updateMousePosDistance(Distance d);
+
+	void changeSetStartPosition(bool b);
 };
