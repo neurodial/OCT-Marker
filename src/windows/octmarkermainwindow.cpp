@@ -254,8 +254,8 @@ void OCTMarkerMainWindow::setupMenu()
 
 	QMenu* layerSegmentMenu = new QMenu(this);
 	layerSegmentMenu->setTitle(tr("Layer segmentation"));
-	layerSegmentMenu->addAction(createColorOptionAction(ProgramOptions::layerSegActiveLineColor, tr("Active line color")));
-	layerSegmentMenu->addAction(createColorOptionAction(ProgramOptions::layerSegPassivLineColor, tr("Passiv line color")));
+	layerSegmentMenu->addAction(ProgramOptions::layerSegActiveLineColor.getColorDialogAction());
+	layerSegmentMenu->addAction(ProgramOptions::layerSegPassivLineColor.getColorDialogAction());
 	layerSegmentMenu->addAction(ProgramOptions::layerSegThicknessmapBlend.getAction());
 
 
@@ -263,7 +263,7 @@ void OCTMarkerMainWindow::setupMenu()
 	viewMenu->setTitle(tr("View"));
 
 
-	viewMenu->addAction(createColorOptionAction(ProgramOptions::bscanSegmetationLineColor, tr("change segmentation line color")));
+	viewMenu->addAction(ProgramOptions::bscanSegmetationLineColor.getColorDialogAction());
 	viewMenu->addSeparator();
 	viewMenu->addMenu(layerSegmentMenu);
 	viewMenu->addSeparator();
@@ -448,17 +448,6 @@ void OCTMarkerMainWindow::setupMenu()
 
 	addToolBar(toolBar);
 }
-
-QAction* OCTMarkerMainWindow::createColorOptionAction(OptionColor& opt, const QString& text)
-{
-	QAction* colorAction = new QAction(this);
-	colorAction->setText(text);
-	colorAction->setIcon(QIcon(":/icons/color_wheel.png"));
-	connect(colorAction, &QAction::triggered, &opt, &OptionColor::showColorDialog);
-	return colorAction;
-}
-
-
 
 void OCTMarkerMainWindow::setupStatusBar()
 {

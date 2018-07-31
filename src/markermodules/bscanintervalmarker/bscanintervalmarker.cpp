@@ -42,6 +42,7 @@
 #include <manager/octdatamanager.h>
 
 #include<data_structure/programoptions.h>
+#include<helper/signalblocker.h>
 
 BScanIntervalMarker::BScanIntervalMarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
@@ -515,6 +516,7 @@ void BScanIntervalMarker::saveState(boost::property_tree::ptree& markerTree)
 
 void BScanIntervalMarker::loadState(boost::property_tree::ptree& markerTree)
 {
+	SignalBlocker sb(this);
 	resetMarkers(getSeries());
 	BScanIntervalPTree::parsePTree(markerTree, this);
 	stateChangedSinceLastSave = false;

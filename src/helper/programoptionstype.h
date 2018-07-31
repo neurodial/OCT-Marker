@@ -6,6 +6,7 @@
 #include <QColor>
 #include <sys/stat.h>
 #include <QAction>
+#include<QIcon>
 
 class ProgramOptions;
 
@@ -37,14 +38,14 @@ class OptionBool : public Option
 	bool value;
 	bool defaultValue;
 
-	QAction action;
+	QAction* action;
 
-	OptionBool(const bool v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v), action(this)
+	OptionBool(const bool v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v), action(new QAction(this))
 	{
-		action.setText(QObject::tr(name.toStdString().c_str()));
-		action.setCheckable(true);
-		action.setChecked(v);
-		connect(&action, &QAction::triggered      , this   , &OptionBool::setValue);
+		action->setText(QObject::tr(name.toStdString().c_str()));
+		action->setCheckable(true);
+		action->setChecked(v);
+		connect(action, &QAction::triggered      , this   , &OptionBool::setValue);
 // 		connect(this   , &OptionBool::valueChanged, &action, &QAction::setChecked );
 	}
 	OptionBool(const OptionBool&) = delete;
@@ -55,7 +56,7 @@ class OptionBool : public Option
 		if(v!=value)
 		{
 			value = v;
-			action.setChecked(v);
+			action->setChecked(v);
 			emit(valueChanged(v));
 			if(v)
 				emit(trueSignal());
@@ -71,7 +72,7 @@ public:
 	bool getValue()   const                                         { return value; }
 	bool operator()() const                                         { return value; }
 
-	QAction* getAction()                                            { return &action; }
+	QAction* getAction()                                            { return action; }
 	
 	virtual QVariant getVariant()                                   { return QVariant(value); }
 	virtual void setVariant(const QVariant& variant)                { setValuePrivat(variant.toBool()); }
@@ -95,7 +96,15 @@ class OptionInt : public Option
 	int value;
 	int defaultValue;
 
-	OptionInt(const int v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v) {}
+	QString dialogTitle;
+	QString dialogText;
+
+	QAction* inputDialogAction;
+
+	OptionInt(const int v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v), inputDialogAction(new QAction(this))
+	{
+		connect(inputDialogAction, &QAction::triggered, this, &OptionInt::showInputDialog);
+	}
 	OptionInt(const OptionInt&) = delete;
 	OptionInt& operator=(const OptionInt&) = delete;
 public:
@@ -103,12 +112,17 @@ public:
 
 	int getValue() const { return value; }
 	int operator()() const { return value; }
+
+	QAction* getInputDialogAction() { return inputDialogAction; }
 	
 	virtual QVariant getVariant() { return QVariant(value); }
 	virtual void setVariant(const QVariant& variant) { value = variant.toInt(); }
 
+	void setDialogTitleAndText(const QString& title, const QString& text) { dialogTitle = title; dialogText = text; }
+
 public slots:
 	void setValue(int v) { if(value!=v) { value = v; emit(valueChanged(v));} }
+	void showInputDialog();
 
 signals:
 	void valueChanged(int v);
@@ -167,7 +181,7 @@ public:
 public slots:
 	void setValue(const QString& v) { value = v; emit(valueChanged(v)); }
 
-	signals:
+signals:
 	void valueChanged(const QString& v);
 };
 
@@ -181,7 +195,13 @@ class OptionColor : public Option
 	QColor value;
 	QColor defaultValue;
 
-	OptionColor(const QColor& v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v) {}
+	QAction* colorDialogAction;
+
+	OptionColor(const QColor& v, const QString& name, const QString& optClass) : Option(name, optClass), value(v), defaultValue(v), colorDialogAction(new QAction(this))
+	{
+// 		colorDialogAction->setIcon(QIcon(":/icons/color_wheel.png"));
+		connect(colorDialogAction, &QAction::triggered, this, &OptionColor::showColorDialog);
+	}
 	OptionColor(const OptionColor&) = delete;
 	OptionColor& operator=(const OptionColor&) = delete;
 public:
@@ -189,6 +209,8 @@ public:
 
 	const QColor& getValue() const { return value; }
 	const QColor& operator()() const { return value; }
+
+	QAction* getColorDialogAction() {return colorDialogAction; }
 	
 	virtual QVariant getVariant() { return QVariant(value); }
 	virtual void setVariant(const QVariant& variant) { value = variant.value<QColor>(); }
@@ -197,7 +219,7 @@ public slots:
 	void setValue(const QColor& v) { value = v; emit(valueChanged(v)); }
 	void showColorDialog();
 
-	signals:
+signals:
 	void valueChanged(const QColor& v);
 };
 

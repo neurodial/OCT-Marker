@@ -69,6 +69,7 @@ public:
 	static OptionDouble layerSegFindPointInsertTol  ;
 	static OptionDouble layerSegFindPointRemoveTol  ;
 	static OptionDouble layerSegFindPointMaxAbsError;
+	static OptionInt    layerSegFindPointMaxPoints  ;
 
 	static OptionColor  layerSegActiveLineColor;
 	static OptionColor  layerSegPassivLineColor;

@@ -166,6 +166,7 @@ namespace
 		conf.insertTol   = ProgramOptions::layerSegFindPointInsertTol  ();
 		conf.maxAbsError = ProgramOptions::layerSegFindPointMaxAbsError();
 		conf.removeTol   = ProgramOptions::layerSegFindPointRemoveTol  ();
+		conf.maxPoints   = ProgramOptions::layerSegFindPointMaxPoints  ();
 
 		return conf;
 	}

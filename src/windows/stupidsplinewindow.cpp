@@ -343,6 +343,23 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	// ----------------------
 	addLayoutVLine(layoutStupidControls);
 
+	QMenu* settingsMenu = new QMenu(this);
+	settingsMenu->addAction(ProgramOptions::layerSegActiveLineColor.getColorDialogAction());
+	settingsMenu->addAction(ProgramOptions::layerSegPassivLineColor.getColorDialogAction());
+
+	settingsMenu->addAction(ProgramOptions::layerSegActiveLineSize.getInputDialogAction());
+	settingsMenu->addAction(ProgramOptions::layerSegPassivLineSize.getInputDialogAction());
+
+	settingsMenu->addAction(ProgramOptions::layerSegFindPointMaxPoints.getInputDialogAction());
+
+	QToolButton* buttonSettings = new QToolButton(this);
+	buttonSettings->setIcon(QIcon::fromTheme("preferences-system",  QIcon(":/icons/tango/apps/settings.svgz")));
+	buttonSettings->setText(tr("Settings"));
+	buttonSettings->setFont(textFont);
+	buttonSettings->setIconSize(buttonSize);
+	buttonSettings->setMenu(settingsMenu);
+	buttonSettings->setPopupMode(QToolButton::InstantPopup);
+	layoutStupidControls->addWidget(buttonSettings);
 
 	markerActions.getAboutDialogAction()->setIcon(QIcon::fromTheme("dialog-information",  QIcon(":/icons/tango/apps/help-browser.svgz")));
 	layoutStupidControls->addWidget(genToolButton(markerActions.getAboutDialogAction()));

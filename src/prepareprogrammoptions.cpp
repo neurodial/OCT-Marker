@@ -60,4 +60,17 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	QAction* intervallMarkSloMapAuteGenerate = ProgramOptions::intervallMarkSloMapAuteGenerate.getAction();
 	intervallMarkSloMapAuteGenerate->setText(tr("Generate SLO map"));
 	intervallMarkSloMapAuteGenerate->setIcon(QIcon(":/icons/map.png"));
+
+
+	ProgramOptions::layerSegActiveLineColor.getColorDialogAction()->setText(tr("Active line color"));
+	ProgramOptions::layerSegPassivLineColor.getColorDialogAction()->setText(tr("Passiv line color"));
+	ProgramOptions::layerSegActiveLineColor.getColorDialogAction()->setIcon(QIcon(":/icons/color_wheel.png"));
+	ProgramOptions::layerSegPassivLineColor.getColorDialogAction()->setIcon(QIcon(":/icons/color_wheel.png"));
+
+	ProgramOptions::bscanSegmetationLineColor.getColorDialogAction()->setText(tr("change segmentation line color"));
+	ProgramOptions::bscanSegmetationLineColor.getColorDialogAction()->setIcon(QIcon(":/icons/color_wheel.png"));
+
+
+	ProgramOptions::layerSegFindPointMaxPoints.setDialogTitleAndText(tr("Max interpolation points"), tr("max points for spline interpolation"));
+	ProgramOptions::layerSegFindPointMaxPoints.getInputDialogAction()->setText(tr("max interpolation points"));
 }

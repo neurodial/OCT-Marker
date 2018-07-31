@@ -27,6 +27,7 @@ public:
 		double insertTol   = 0.2;
 		double removeTol   = 0.4;
 		double maxAbsError = 0.4;
+		std::size_t maxPoints = 40;
 	};
 
 	typedef std::vector<Point2D> PtSource;

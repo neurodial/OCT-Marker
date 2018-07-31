@@ -1,5 +1,7 @@
 #include "programoptionstype.h"
-#include <QColorDialog>
+#include<QColorDialog>
+#include<QInputDialog>
+#include<QLineEdit>
 
 #include <data_structure/programoptions.h>
 
@@ -22,3 +24,11 @@ void OptionColor::showColorDialog()
 	}
 }
 
+
+void OptionInt::showInputDialog()
+{
+	bool ok;
+	int v = QInputDialog::getInt(nullptr, dialogTitle, dialogText, value, 0, 20, 1, &ok);
+	if(ok)
+		value = v;
+}

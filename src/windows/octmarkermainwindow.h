@@ -36,7 +36,6 @@ class OCTMarkerMainWindow : public QMainWindow
 	void setupStatusBar();
 
 	void createMarkerToolbar();
-	QAction* createColorOptionAction(OptionColor& opt, const QString& text);
 
 	QDockWidget*          dwSloImage                  = nullptr;
 	ScrollAreaPan*        bscanMarkerWidgetScrollArea = nullptr;

@@ -260,6 +260,11 @@ void FindSupportingPoints::removePoints()
 	bool pointRemoved;
 
 	std::size_t removedPoints = 0;
+	std::size_t minRemvePoints;
+	if(destPoints.size() < conf.maxPoints || conf.maxPoints < 4)
+		minRemvePoints = 0;
+	else
+		minRemvePoints = destPoints.size() - conf.maxPoints;
 
 	const PtIt endPoint = --(destPoints.end());
 
@@ -279,7 +284,7 @@ void FindSupportingPoints::removePoints()
 		}
 
 // 		std::cout << "minError: " << minError << " < " << conf.removeTol << std::endl;
-		if(minError < conf.removeTol)
+		if(minError < conf.removeTol || removedPoints < minRemvePoints)
 		{
 			setDirtySurrounding(minIt);
 			destPoints.erase(minIt);
@@ -306,7 +311,7 @@ void FindSupportingPoints::calcAndSetPointError(PtIt firstScope, PtIt point, PtI
 	newError.calcError(firstScope, lastScope, refValues, newInterpolated);
 	point->dirty = false;
 	if(newError.maxError > conf.maxAbsError)
-		point->error = 1000;
+		point->error = 1000. + newError.quadError;
 	else
 		point->error = newError.quadError; // - oldError.maxError;
 
