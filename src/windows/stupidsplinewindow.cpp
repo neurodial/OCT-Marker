@@ -344,16 +344,27 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	addLayoutVLine(layoutStupidControls);
 
 	QMenu* settingsMenu = new QMenu(this);
+	settingsMenu->addSection(tr("View options"));
+
 	settingsMenu->addAction(ProgramOptions::layerSegActiveLineColor.getColorDialogAction());
 	settingsMenu->addAction(ProgramOptions::layerSegPassivLineColor.getColorDialogAction());
 
-	settingsMenu->addAction(ProgramOptions::layerSegActiveLineSize.getInputDialogAction());
-	settingsMenu->addAction(ProgramOptions::layerSegPassivLineSize.getInputDialogAction());
+	settingsMenu->addAction(ProgramOptions::layerSegActiveLineSize .getInputDialogAction());
+	settingsMenu->addAction(ProgramOptions::layerSegPassivLineSize .getInputDialogAction());
+	settingsMenu->addAction(ProgramOptions::layerSegSplinePointSize.getInputDialogAction());
 
-	settingsMenu->addAction(ProgramOptions::layerSegFindPointMaxPoints.getInputDialogAction());
+	settingsMenu->addSection(tr("Spline interpolation options"));
+
+	settingsMenu->addAction(ProgramOptions::layerSegFindPointMaxPoints  .getInputDialogAction());
+	settingsMenu->addAction(ProgramOptions::layerSegFindPointMaxAbsError.getInputDialogAction());
+	settingsMenu->addAction(ProgramOptions::layerSegFindPointRemoveTol  .getInputDialogAction());
+
+	settingsMenu->addSection(tr("General"));
+	settingsMenu->addAction(ProgramOptions::getResetAction());
+
 
 	QToolButton* buttonSettings = new QToolButton(this);
-	buttonSettings->setIcon(QIcon::fromTheme("preferences-system",  QIcon(":/icons/tango/apps/settings.svgz")));
+	buttonSettings->setIcon(QIcon::fromTheme("preferences-system",  QIcon(":/icons/tango/categories/preferences-system.svgz")));
 	buttonSettings->setText(tr("Settings"));
 	buttonSettings->setFont(textFont);
 	buttonSettings->setIconSize(buttonSize);

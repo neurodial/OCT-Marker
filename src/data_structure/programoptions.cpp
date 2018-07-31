@@ -56,7 +56,7 @@ OptionInt  ProgramOptions::  sloMarkerToolId(-1,   "sloMarkerToolId", "ProgramOp
 OptionDouble ProgramOptions::layerSegFindPointInsertTol  (0.2 , "PointInsertTol"  , "LayerSeg");
 OptionDouble ProgramOptions::layerSegFindPointRemoveTol  (0.1 , "PointRemoveTol"  , "LayerSeg");
 OptionDouble ProgramOptions::layerSegFindPointMaxAbsError(0.25, "PointMaxAbsError", "LayerSeg");
-OptionInt    ProgramOptions::layerSegFindPointMaxPoints  (40  , "PointMaxPoints"  , "LayerSeg");
+OptionInt    ProgramOptions::layerSegFindPointMaxPoints  (40  , "PointMaxPoints"  , "LayerSeg", 0, 1000);
 
 
 OptionColor  ProgramOptions::layerSegActiveLineColor     (Qt::red   , "ActiveLineColor"  , "LayerSeg");
@@ -73,7 +73,12 @@ OptionBool   ProgramOptions::intervallMarkSloMapAuteGenerate(false    , "SloMapA
 
 ProgramOptions::ProgramOptions()
 : settings(new QSettings("becrf", "oct-marker"))
+, resetAction(new QAction)
 {
+	resetAction->setText(tr("reset configuration"));
+	resetAction->setToolTip(tr("set all options to default"));
+	resetAction->setIcon(QIcon(":/icons/tango/actions/edit-clear.svgz"));
+	connect(resetAction, &QAction::triggered, this, &ProgramOptions::resetAllOptionsPrivate);
 }
 
 ProgramOptions::~ProgramOptions()
@@ -160,4 +165,9 @@ void ProgramOptions::setIniFile(const QString& iniFilename)
 		instance.settings = new QSettings(iniFilename, QSettings::IniFormat);
 		delete oldSettings;
 	}
+}
+
+QAction* ProgramOptions::getResetAction()
+{
+	return getInstance().resetAction;
 }

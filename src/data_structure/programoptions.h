@@ -1,23 +1,27 @@
 #ifndef PROGRAMOPTIONS_H
 #define PROGRAMOPTIONS_H
 
+#include <vector>
+
+#include<QObject>
 
 #include <helper/programoptionstype.h>
-
-#include <vector>
 
 class ProgramOptions;
 class QSettings;
 
 
-class ProgramOptions
+class ProgramOptions : public QObject
 {
+	Q_OBJECT
+
 	ProgramOptions();
 	~ProgramOptions();
 
 	static ProgramOptions& getInstance() { static ProgramOptions instance; return instance; }
 
 	QSettings* settings = nullptr;
+	QAction*   resetAction;
 
 	struct ConfigList
 	{
@@ -89,8 +93,13 @@ public:
 
 	static QSettings& getSettings();
 	
+	static QAction* getResetAction();
 
 	static void setIniFile(const QString& iniFilename);
+
+private slots:
+	void resetAllOptionsPrivate()                                   { resetAllOptions(); }
+
 private:
 	static void registerOption(Option* option);
 	static ConfigList& getAllOptionsPrivate();

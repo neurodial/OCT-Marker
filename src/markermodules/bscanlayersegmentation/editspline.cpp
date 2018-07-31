@@ -3,7 +3,7 @@
 #include<algorithm>
 
 #include<QPainter>
-#include <QMouseEvent>
+#include<QMouseEvent>
 
 #include <widgets/bscanmarkerwidget.h>
 
@@ -186,7 +186,7 @@ EditSpline::EditSpline(BScanLayerSegmentation* base)
 
 void EditSpline::paintPoints(QPainter& painter, const ScaleFactor& factor) const
 {
-	painter.setPen(QPen(Qt::red));
+	painter.setPen(QPen(ProgramOptions::layerSegActiveLineColor()));
 	painter.setBrush(QBrush(Qt::black));
 
 	const int pointSize = ProgramOptions::layerSegSplinePointSize();
@@ -398,7 +398,7 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 
 // 	QTime t;
 // 	t.start();
-	FindSupportingPoints::Config conf; // = getFindSupportingPointsConfig();
+	FindSupportingPoints::Config conf = getFindSupportingPointsConfig();
 	FindSupportingPoints alg(*segLine);
 	alg.setConfig(conf);
 	alg.calculateSupportingPoints();

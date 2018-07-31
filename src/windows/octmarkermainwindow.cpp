@@ -256,6 +256,9 @@ void OCTMarkerMainWindow::setupMenu()
 	layerSegmentMenu->setTitle(tr("Layer segmentation"));
 	layerSegmentMenu->addAction(ProgramOptions::layerSegActiveLineColor.getColorDialogAction());
 	layerSegmentMenu->addAction(ProgramOptions::layerSegPassivLineColor.getColorDialogAction());
+	layerSegmentMenu->addAction(ProgramOptions::layerSegActiveLineSize .getInputDialogAction());
+	layerSegmentMenu->addAction(ProgramOptions::layerSegPassivLineSize .getInputDialogAction());
+	layerSegmentMenu->addAction(ProgramOptions::layerSegSplinePointSize.getInputDialogAction());
 	layerSegmentMenu->addAction(ProgramOptions::layerSegThicknessmapBlend.getAction());
 
 
@@ -315,6 +318,17 @@ void OCTMarkerMainWindow::setupMenu()
 	optionsMenu->setTitle(tr("Options"));
 
 
+	QMenu* layerSegmentOptionsMenu = new QMenu(this);
+	layerSegmentOptionsMenu->setTitle(tr("Layer segmentation"));
+
+	layerSegmentOptionsMenu->addAction(ProgramOptions::layerSegFindPointMaxPoints  .getInputDialogAction());
+	layerSegmentOptionsMenu->addAction(ProgramOptions::layerSegFindPointMaxAbsError.getInputDialogAction());
+	layerSegmentOptionsMenu->addAction(ProgramOptions::layerSegFindPointRemoveTol  .getInputDialogAction());
+
+	optionsMenu->addMenu(layerSegmentOptionsMenu);
+	optionsMenu->addSeparator();
+
+
 	QMenu* optionsLoadOctMenu = new QMenu(this);
 	optionsLoadOctMenu->setTitle(tr("Load options"));
 	optionsMenu->addMenu(optionsLoadOctMenu);
@@ -358,6 +372,8 @@ void OCTMarkerMainWindow::setupMenu()
 	static SendInt markerFFinfo(OctMarkerIO::fileformat2Int(OctMarkerFileformat::INFO));
 	addMenuProgramOptionGroup(tr("INFO"), ProgramOptions::defaultFileformatOctMarkers, optionsMenuMarkersFileFormat, markerFFinfo  , markersFileFormatGroup, this);
 
+	optionsMenu->addSeparator();
+	optionsMenu->addAction(ProgramOptions::getResetAction());
 
 	// ----------
 	// Help Menu

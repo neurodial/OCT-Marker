@@ -85,10 +85,12 @@
 
 	<file>icons/tango/actions/edit-redo.svgz</file>
 	<file>icons/tango/actions/edit-undo.svgz</file>
+	<file>icons/tango/actions/edit-clear.svgz</file>
 	<file>icons/tango/actions/system-log-out.svgz</file>
 	<file>icons/tango/actions/document-save.svgz</file>
 	<file>icons/tango/actions/view-fullscreen.svgz</file>
 	<file>icons/tango/apps/help-browser.svgz</file>
 	<file>icons/tango/apps/accessories-text-editor.svgz</file>
+	<file>icons/tango/categories/preferences-system.svgz</file>
 </qresource>
 </RCC>

@@ -71,6 +71,13 @@ BScanLayerSegmentation::BScanLayerSegmentation(OctMarkerManager* markerManager)
 	widgetPtr2WGLayerSeg = new WGLayerSeg(this);
 
 	connect(&ProgramOptions::layerSegThicknessmapBlend, &OptionBool::valueChanged, this, &BScanLayerSegmentation::generateThicknessmap);
+
+	connect(&ProgramOptions::layerSegActiveLineColor, &OptionColor::valueChanged, this, &BScanLayerSegmentation::requestFullUpdate);
+	connect(&ProgramOptions::layerSegPassivLineColor, &OptionColor::valueChanged, this, &BScanLayerSegmentation::requestFullUpdate);
+
+	connect(&ProgramOptions::layerSegActiveLineSize , &OptionInt::valueChanged  , this, &BScanLayerSegmentation::requestFullUpdate);
+	connect(&ProgramOptions::layerSegPassivLineSize , &OptionInt::valueChanged  , this, &BScanLayerSegmentation::requestFullUpdate);
+	connect(&ProgramOptions::layerSegSplinePointSize, &OptionInt::valueChanged  , this, &BScanLayerSegmentation::requestFullUpdate);
 }
 
 BScanLayerSegmentation::~BScanLayerSegmentation()

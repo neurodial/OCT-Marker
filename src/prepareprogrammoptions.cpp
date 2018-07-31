@@ -71,6 +71,12 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	ProgramOptions::bscanSegmetationLineColor.getColorDialogAction()->setIcon(QIcon(":/icons/color_wheel.png"));
 
 
-	ProgramOptions::layerSegFindPointMaxPoints.setDialogTitleAndText(tr("Max interpolation points"), tr("max points for spline interpolation"));
-	ProgramOptions::layerSegFindPointMaxPoints.getInputDialogAction()->setText(tr("max interpolation points"));
+	ProgramOptions::layerSegFindPointMaxPoints.setDescriptions(tr("Max interpolation points"), tr("max points for spline interpolation"));
+	ProgramOptions::layerSegFindPointMaxAbsError.setDescriptions(tr("max spline interpolation error"), tr("maximal difference for spline interpolation and segmentation line"));
+	ProgramOptions::layerSegFindPointRemoveTol  .setDescriptions(tr("points remove tolerance"), tr("maximal alowed error for spline interpolation"));
+
+
+	ProgramOptions::layerSegActiveLineSize    .setDescriptions(tr("active line size"), tr("Line size of active segmentation layer"));
+	ProgramOptions::layerSegPassivLineSize    .setDescriptions(tr("passiv line size"), tr("Line size of passiv segmentation layer"));
+	ProgramOptions::layerSegSplinePointSize   .setDescriptions(tr("spline point size"), tr("Point size of the spline tool"));
 }
