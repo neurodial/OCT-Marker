@@ -34,6 +34,8 @@ public:
 
 	virtual void setDescriptions(const QString& shortDesc, const QString& longDesc)
 	                                                                { description = longDesc; descriptionShort = shortDesc; }
+
+	virtual bool isDefault() const = 0;
 };
 
 
@@ -83,8 +85,10 @@ public:
 
 	QAction* getAction()                                            { return action; }
 	
-	virtual QVariant getVariant()                                   { return QVariant(value); }
-	virtual void setVariant(const QVariant& variant)                { setValuePrivat(variant.toBool()); }
+	virtual QVariant getVariant()                          override { return QVariant(value); }
+	virtual void setVariant(const QVariant& variant)       override { setValuePrivat(variant.toBool()); }
+
+	virtual bool isDefault() const                         override { return value == defaultValue; }
 	
 public slots:
 	void setValue(bool v)                                           { setValuePrivat(v); }
@@ -130,11 +134,12 @@ public:
 
 	QAction* getInputDialogAction() { return inputDialogAction; }
 	
-	virtual QVariant getVariant()                    override { return QVariant(value); }
-	virtual void setVariant(const QVariant& variant) override { value = variant.toInt(); }
+	virtual QVariant getVariant()                          override { return QVariant(value); }
+	virtual void setVariant(const QVariant& variant)       override { value = variant.toInt(); }
 
 	virtual void setDescriptions(const QString& shortDesc, const QString& longDesc) override;
 
+	virtual bool isDefault() const                         override { return value == defaultValue; }
 public slots:
 	void setValue(int v) { if(value!=v) { value = v; emit(valueChanged(v));} }
 	void showInputDialog();
@@ -183,6 +188,7 @@ public:
 
 	virtual void setDescriptions(const QString& shortDesc, const QString& longDesc) override;
 
+	virtual bool isDefault() const                         override { return value == defaultValue; }
 public slots:
 	void setValue(double v) { if(value!=v) { value = v; emit(valueChanged(v));} }
 	void showInputDialog();
@@ -212,6 +218,7 @@ public:
 	virtual QVariant getVariant() { return QVariant(value); }
 	virtual void setVariant(const QVariant& variant) { value = variant.toString(); }
 
+	virtual bool isDefault() const                         override { return value == defaultValue; }
 public slots:
 	void setValue(const QString& v) { value = v; emit(valueChanged(v)); }
 
@@ -251,6 +258,7 @@ public:
 
 	virtual void setDescriptions(const QString& shortDesc, const QString& longDesc) override;
 
+	virtual bool isDefault() const                         override { return value == defaultValue; }
 public slots:
 	void setValue(const QColor& v) { value = v; emit(valueChanged(v)); }
 	void showColorDialog();

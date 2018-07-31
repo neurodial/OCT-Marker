@@ -71,8 +71,17 @@ OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true      , "Thickness
 OptionBool   ProgramOptions::intervallMarkSloMapAuteGenerate(false    , "SloMapAuteGenerate", "IntervallMark");
 
 
+
+namespace
+{
+	QSettings* generateSettings(const QString& postfix = QString())
+	{
+		return new QSettings("becrf", "oct-marker" + postfix);
+	}
+}
+
 ProgramOptions::ProgramOptions()
-: settings(new QSettings("becrf", "oct-marker"))
+: settings(generateSettings())
 , resetAction(new QAction)
 {
 	resetAction->setText(tr("reset configuration"));
@@ -123,8 +132,10 @@ void ProgramOptions::readAllOptions()
 
 void ProgramOptions::writeAllOptions()
 {
-	QSettings& settings = getSettings();
+	if(!getSaveOptions())
+		return;
 
+	QSettings& settings = getSettings();
 
 	ConfigList& list = getAllOptionsPrivate();
 	for(auto optClass : list.sortedConfig)
@@ -133,7 +144,12 @@ void ProgramOptions::writeAllOptions()
 
 		settings.beginGroup(optClass.first);
 		for(Option* opt : options)
-			settings.setValue(opt->getName(), opt->getVariant());
+		{
+			if(opt->isDefault())
+				settings.remove(opt->getName());
+			else
+				settings.setValue(opt->getName(), opt->getVariant());
+		}
 		settings.endGroup();
 	}
 }
@@ -166,6 +182,26 @@ void ProgramOptions::setIniFile(const QString& iniFilename)
 		delete oldSettings;
 	}
 }
+
+void ProgramOptions::setOptionsPostfix(const QString& postfix)
+{
+	ProgramOptions& instance = getInstance();
+	QSettings* oldSettings = instance.settings;
+	instance.settings = generateSettings(postfix);
+	delete oldSettings;
+}
+
+void ProgramOptions::setSaveOptions(bool save)
+{
+	getInstance().saveOptions = save;
+}
+
+bool ProgramOptions::getSaveOptions()
+{
+	return getInstance().saveOptions;
+}
+
+
 
 QAction* ProgramOptions::getResetAction()
 {

@@ -22,6 +22,7 @@ class ProgramOptions : public QObject
 
 	QSettings* settings = nullptr;
 	QAction*   resetAction;
+	bool saveOptions = true;
 
 	struct ConfigList
 	{
@@ -96,6 +97,9 @@ public:
 	static QAction* getResetAction();
 
 	static void setIniFile(const QString& iniFilename);
+	static void setOptionsPostfix(const QString& postfix);
+	static void setSaveOptions(bool save);
+	static bool getSaveOptions();
 
 private slots:
 	void resetAllOptionsPrivate()                                   { resetAllOptions(); }

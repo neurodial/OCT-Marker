@@ -71,6 +71,7 @@ int main(int argc, char **argv)
 	parser.addOptions({
 		// A boolean option with a single name (-p)
 		{"i-want-stupid-spline-gui", QCoreApplication::translate("main", "Show stupid spline gui")},
+		{"dont-save-options"       , QCoreApplication::translate("main", "dont save options set in application")},
 		{{"i", "ini-file"},
 		    QCoreApplication::translate("main", "use config from ini file"),
 		    QCoreApplication::translate("main", "ini file")},
@@ -90,6 +91,9 @@ int main(int argc, char **argv)
 		ProgramOptions::setIniFile(iniFile);
 	}
 
+	if(parser.isSet("save-options"))
+		ProgramOptions::setSaveOptions(false);
+
     const QStringList fileList = parser.positionalArguments();
 
 	qDebug("Build Type      : %s", BuildConstants::buildTyp);
@@ -107,8 +111,9 @@ int main(int argc, char **argv)
 	bool stupidSplineGui = parser.isSet("i-want-stupid-spline-gui");
 	if(stupidSplineGui)
 	{
-		if(parser.isSet("ini-file"))
-			ProgramOptions::readAllOptions();
+		if(!parser.isSet("ini-file"))
+			ProgramOptions::setOptionsPostfix("-spline-gui");
+		ProgramOptions::readAllOptions();
 
 		StupidSplineWindow octMarkerProg;
 		if(fileList.size() > 0)

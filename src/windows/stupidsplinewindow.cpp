@@ -185,8 +185,7 @@ void StupidSplineWindow::closeEvent(QCloseEvent* e)
 
 
 	// save programoptions
-// 	ProgramOptions::loadOctdataAtStart.setValue(OctDataManager::getInstance().getLoadedFilename());
-// 	ProgramOptions::writeAllOptions();
+	ProgramOptions::writeAllOptions();
 
 	QSettings& settings = ProgramOptions::getSettings();
 	
