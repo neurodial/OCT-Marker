@@ -10,7 +10,7 @@
 
 OctDataModel::OctDataModel()
 {
-	connect(&OctDataManager::getInstance(), &OctDataManager::octFileChanged, this, &OctDataModel::setOctData);
+	connect(&OctDataManager::getInstance(), static_cast<void(OctDataManager::*)(const OctData::OCT*)>(&OctDataManager::octFileChanged), this, &OctDataModel::setOctData);
 }
 
 

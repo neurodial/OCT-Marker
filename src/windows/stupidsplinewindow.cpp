@@ -57,6 +57,7 @@ StupidSplineWindow::StupidSplineWindow()
 	OctDataManager& octDataManager = OctDataManager::getInstance();
 	connect(&octDataManager, &OctDataManager::loadFileSignal  , this, &StupidSplineWindow::loadFileStatusSlot);
 	connect(&octDataManager, &OctDataManager::loadFileProgress, this, &StupidSplineWindow::loadFileProgress  );
+	connect(&octDataManager, static_cast<void(OctDataManager::*)()>(&OctDataManager::octFileChanged), this, &StupidSplineWindow::updateWindowTitle );
 
 	updateWindowTitle();
 
@@ -220,7 +221,6 @@ void StupidSplineWindow::loadFileStatusSlot(bool loading)
 			progressDialog->deleteLater();
 			progressDialog = nullptr;
 		}
-		updateWindowTitle();
 		copyLayerSegmentationFromOCTData();
 	}
 }

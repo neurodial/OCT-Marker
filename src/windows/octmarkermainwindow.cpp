@@ -137,8 +137,9 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 	// setActionToggel();
 	setAcceptDrops(true);
 
-	connect(&OctDataManager::getInstance(), &OctDataManager::seriesChanged   , this, &OCTMarkerMainWindow::newCscanLoaded);
-	
+// 	connect(&OctDataManager::getInstance(), &OctDataManager::octFileChanged, this, &OCTMarkerMainWindow::updateWindowTitle);
+	connect(&OctDataManager::getInstance(), static_cast<void(OctDataManager::*)()>(&OctDataManager::octFileChanged), this, &OCTMarkerMainWindow::updateWindowTitle );
+
 	for(BscanMarkerBase* marker : markerManager.getBscanMarker())
 	{
 		QToolBar* toolbar = marker->createToolbar(this);
@@ -861,7 +862,7 @@ void OCTMarkerMainWindow::showSaveOctScanDialog()
 	}
 }
 
-void OCTMarkerMainWindow::newCscanLoaded()
+void OCTMarkerMainWindow::updateWindowTitle()
 {
 	setWindowTitle(tr("OCT-Marker - %1").arg(OctDataManager::getInstance().getLoadedFilename()));
 }

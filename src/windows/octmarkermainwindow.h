@@ -79,7 +79,7 @@ signals:
 	void loadLastFile();
 
 private slots:
-	void newCscanLoaded();
+	void updateWindowTitle();
 
 	void loadFileStatusSlot(bool loading);
 	void loadFileProgress(double frac);
