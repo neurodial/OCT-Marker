@@ -46,11 +46,20 @@ void OptionColor::setDescriptions(const QString& shortDesc, const QString& longD
 
 void OptionInt::showInputDialog()
 {
-	QString labelText = getDescription() + "\n" + tr("Default value: %1").arg(defaultValue);
-	bool ok;
-	int v = QInputDialog::getInt(nullptr, getDescriptionShort(), labelText, value, valueMin, valueMax, valueStepSize, &ok);
-	if(ok)
-		setValue(v);
+	int oldValue = value;
+	QInputDialog dialog;
+	dialog.setInputMode(QInputDialog::IntInput);
+	dialog.setIntRange(valueMin, valueMax);
+	dialog.setIntValue(value);
+	dialog.setIntStep(valueStepSize);
+	dialog.setWindowTitle(getDescriptionShort());
+	dialog.setLabelText(getDescription() + "\n" + tr("Default value: %1").arg(defaultValue));
+
+	connect(&dialog, &QInputDialog::intValueChanged, this, &OptionInt::setValue);
+
+	int result = dialog.exec();
+	if(result != QDialog::Accepted)
+		setValue(oldValue);
 }
 
 void OptionInt::setDescriptions(const QString& shortDesc, const QString& longDesc)
@@ -63,6 +72,7 @@ void OptionInt::setDescriptions(const QString& shortDesc, const QString& longDes
 
 void OptionDouble::showInputDialog()
 {
+	double oldValue = value;
 	QInputDialog dialog;
 	dialog.setInputMode(QInputDialog::DoubleInput);
 	dialog.setDoubleRange(valueMin, valueMax);
@@ -73,9 +83,11 @@ void OptionDouble::showInputDialog()
 	dialog.setWindowTitle(getDescriptionShort());
 	dialog.setLabelText(getDescription() + "\n" + tr("Default value: %1").arg(defaultValue));
 
+	connect(&dialog, &QInputDialog::doubleValueChanged, this, &OptionDouble::setValue);
+
 	int result = dialog.exec();
-	if(result == QDialog::Accepted)
-		setValue(dialog.doubleValue());
+	if(result != QDialog::Accepted)
+		setValue(oldValue);
 }
 
 void OptionDouble::setDescriptions(const QString& shortDesc, const QString& longDesc)

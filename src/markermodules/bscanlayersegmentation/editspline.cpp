@@ -303,7 +303,7 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 	double minDist = 0;
 	PointIterator minDistPoint;
 	std::tie(minDistPoint, minDist) = findNextPoint(clickPoint, scaleFactor);
-	bool clickOnPoint = minDist < 10;
+	bool clickOnPoint = minDist < ProgramOptions::layerSegSplinePointSize()+2;
 
 	if(event->button() == Qt::RightButton)
 	{

@@ -61,10 +61,10 @@ OptionInt    ProgramOptions::layerSegFindPointMaxPoints  (40  , "PointMaxPoints"
 
 OptionColor  ProgramOptions::layerSegActiveLineColor     (Qt::red   , "ActiveLineColor"  , "LayerSeg");
 OptionColor  ProgramOptions::layerSegPassivLineColor     (Qt::yellow, "PassivLineColor"  , "LayerSeg");
-OptionInt    ProgramOptions::layerSegActiveLineSize      (2         , "ActiveLineSize"   , "LayerSeg");
-OptionInt    ProgramOptions::layerSegPassivLineSize      (1         , "PassivLineSize"   , "LayerSeg");
+OptionInt    ProgramOptions::layerSegActiveLineSize      (2         , "ActiveLineSize"   , "LayerSeg", 1, 15);
+OptionInt    ProgramOptions::layerSegPassivLineSize      (1         , "PassivLineSize"   , "LayerSeg", 1, 15);
 
-OptionInt    ProgramOptions::layerSegSplinePointSize     (8         , "SplinePointSize"  , "LayerSeg");
+OptionInt    ProgramOptions::layerSegSplinePointSize     (8         , "SplinePointSize"  , "LayerSeg", 5, 30);
 OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true      , "ThicknessmapBlend", "LayerSeg");
 
 
