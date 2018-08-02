@@ -6,7 +6,6 @@ set( CMAKE_CXX_STANDARD 11 )
 
 
 find_package(Boost 1.40 COMPONENTS filesystem serialization system iostreams REQUIRED)
-# find_package (Threads REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(LibOctData 1 CONFIG REQUIRED)
 find_package(OctCppFramework REQUIRED)
@@ -20,7 +19,6 @@ option(BUILD_MEX_WITH_STATIC_CPP_LIB "build mex with static c++ lib" OFF)
 
 
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel.")
-
 
 if(BUILD_QT_PROGRAMM)
 
@@ -130,3 +128,4 @@ if(BUILD_OCTAVE_MEX_FUNCTIONS)
 	target_link_libraries(oct_read_seg OctCppFramework::oct_cpp_framework)
 
 endif()
+

@@ -13,30 +13,30 @@
 
 
 
-OptionBool  ProgramOptions::bscansShowSegmentationslines(true   , "bscansShowSegmentationslines", "ProgramOptions");
-OptionColor ProgramOptions::bscanSegmetationLineColor   (Qt::red, "bscanSegmetationLineColor"   , "ProgramOptions");
-OptionInt   ProgramOptions::bscanSegmetationLineThicknes(1      , "bscanSegmetationLineThicknes", "ProgramOptions");
-OptionInt   ProgramOptions::bscanAspectRatioType        (0      , "bscanAspectRatioType"        , "ProgramOptions"); // 0 fix value, 1 from bscan, 2 best fit
-OptionBool  ProgramOptions::bscanAutoFitImage           (true   , "bscanAutoFitImage"           , "ProgramOptions");
+OptionBool   ProgramOptions::bscansShowSegmentationslines(true   , "bscansShowSegmentationslines", "ProgramOptions");
+OptionColor  ProgramOptions::bscanSegmetationLineColor   (Qt::red, "bscanSegmetationLineColor"   , "ProgramOptions");
+OptionInt    ProgramOptions::bscanSegmetationLineThicknes(1      , "bscanSegmetationLineThicknes", "ProgramOptions");
+OptionInt    ProgramOptions::bscanAspectRatioType        (0      , "bscanAspectRatioType"        , "ProgramOptions"); // 0 fix value, 1 from bscan, 2 best fit
+OptionBool   ProgramOptions::bscanAutoFitImage           (true   , "bscanAutoFitImage"           , "ProgramOptions");
 
-OptionBool  ProgramOptions::bscanShowExtraSegmentationslines(true, "bscanShowExtraSegmentationslines", "ExtraData");
-
-
-OptionBool ProgramOptions::fillEmptyPixelWhite(false, "fillEmptyPixelWhite", "ProgramOptions");
-OptionBool ProgramOptions::registerBScans     (true , "registerBScans"     , "ProgramOptions");
-OptionBool ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      , "ProgramOptions");
-
-OptionBool ProgramOptions::saveOctBinFlat     (false, "saveOctBinFlat"     , "ProgramOptions");
-
-OptionBool ProgramOptions::holdOCTRawData     (false, "holdOCTRawData"     , "ProgramOptions");
-OptionBool ProgramOptions::readBScans         (true , "readBScans"         , "ProgramOptions");
-
-OptionInt  ProgramOptions::e2eGrayTransform   (1    , "e2eGrayTransform"   , "ProgramOptions");
+OptionBool   ProgramOptions::bscanShowExtraSegmentationslines(true, "bscanShowExtraSegmentationslines", "ExtraData");
 
 
-OptionBool ProgramOptions::sloShowLabels       (false, "sloShowLabels"       , "ProgramOptions");
-OptionBool ProgramOptions::sloShowGrid         (true , "sloShowGrid"         , "ProgramOptions");
-OptionBool ProgramOptions::sloShowBScanMousePos(true , "sloShowBScanMousePos", "ProgramOptions");
+OptionBool   ProgramOptions::fillEmptyPixelWhite(false, "fillEmptyPixelWhite", "ProgramOptions");
+OptionBool   ProgramOptions::registerBScans     (true , "registerBScans"     , "ProgramOptions");
+OptionBool   ProgramOptions::loadRotateSlo      (false, "loadRotateSlo"      , "ProgramOptions");
+
+OptionBool   ProgramOptions::saveOctBinFlat     (false, "saveOctBinFlat"     , "ProgramOptions");
+
+OptionBool   ProgramOptions::holdOCTRawData     (false, "holdOCTRawData"     , "ProgramOptions");
+OptionBool   ProgramOptions::readBScans         (true , "readBScans"         , "ProgramOptions");
+
+OptionInt    ProgramOptions::e2eGrayTransform   (1    , "e2eGrayTransform"   , "ProgramOptions");
+
+
+OptionBool   ProgramOptions::sloShowLabels       (false, "sloShowLabels"       , "ProgramOptions");
+OptionBool   ProgramOptions::sloShowGrid         (true , "sloShowGrid"         , "ProgramOptions");
+OptionBool   ProgramOptions::sloShowBScanMousePos(true , "sloShowBScanMousePos", "ProgramOptions");
 
 OptionInt    ProgramOptions::sloShowsBScansPos (1    , "sloShowsBScansPos"   , "ProgramOptions"); // 0 nothing, 1 act BScan, 2 all BScans
 OptionBool   ProgramOptions::sloShowOverlay    (true , "sloShowOverlay"      , "ProgramOptions");
@@ -47,24 +47,24 @@ OptionBool   ProgramOptions::sloClipScanArea   (false, "sloClipScanArea"      , 
 OptionString ProgramOptions::octDirectory      (".", "octDirectory"      , "ProgramOptions");
 OptionString ProgramOptions::loadOctdataAtStart("" , "loadOctDataAtStart", "ProgramOptions");
 
-OptionBool ProgramOptions::autoSaveOctMarkers         (true, "autoSaveOctMarkers", "ProgramOptions");
-OptionInt  ProgramOptions::defaultFileformatOctMarkers(static_cast<int>(OctMarkerFileformat::INFO)  , "defaultFileformatOctMarkers", "ProgramOptions");
+OptionBool   ProgramOptions::autoSaveOctMarkers         (true, "autoSaveOctMarkers", "ProgramOptions");
+OptionInt    ProgramOptions::defaultFileformatOctMarkers(static_cast<int>(OctMarkerFileformat::INFO), "defaultFileformatOctMarkers", "ProgramOptions");
 
-OptionInt  ProgramOptions::bscanMarkerToolId(-1, "bscanMarkerToolId", "ProgramOptions");
-OptionInt  ProgramOptions::  sloMarkerToolId(-1,   "sloMarkerToolId", "ProgramOptions");
+OptionInt    ProgramOptions::bscanMarkerToolId(-1, "bscanMarkerToolId", "ProgramOptions");
+OptionInt    ProgramOptions::  sloMarkerToolId(-1,   "sloMarkerToolId", "ProgramOptions");
 
-OptionDouble ProgramOptions::layerSegFindPointInsertTol  (0.2 , "PointInsertTol"  , "LayerSeg");
-OptionDouble ProgramOptions::layerSegFindPointRemoveTol  (0.1 , "PointRemoveTol"  , "LayerSeg");
-OptionDouble ProgramOptions::layerSegFindPointMaxAbsError(0.25, "PointMaxAbsError", "LayerSeg");
+OptionDouble ProgramOptions::layerSegFindPointInsertTol  (0.2 , "PointInsertTol"  , "LayerSeg", 0, 10, 0.1);
+OptionDouble ProgramOptions::layerSegFindPointRemoveTol  (0.1 , "PointRemoveTol"  , "LayerSeg", 0, 10, 0.05);
+OptionDouble ProgramOptions::layerSegFindPointMaxAbsError(0.25, "PointMaxAbsError", "LayerSeg", 0, 10, 0.1);
 OptionInt    ProgramOptions::layerSegFindPointMaxPoints  (40  , "PointMaxPoints"  , "LayerSeg", 0, 1000);
 
 
 OptionColor  ProgramOptions::layerSegActiveLineColor     (Qt::red   , "ActiveLineColor"  , "LayerSeg");
 OptionColor  ProgramOptions::layerSegPassivLineColor     (Qt::yellow, "PassivLineColor"  , "LayerSeg");
-OptionInt    ProgramOptions::layerSegActiveLineSize      (         2, "ActiveLineSize"   , "LayerSeg");
-OptionInt    ProgramOptions::layerSegPassivLineSize      (         1, "PassivLineSize"   , "LayerSeg");
+OptionInt    ProgramOptions::layerSegActiveLineSize      (2         , "ActiveLineSize"   , "LayerSeg");
+OptionInt    ProgramOptions::layerSegPassivLineSize      (1         , "PassivLineSize"   , "LayerSeg");
 
-OptionInt    ProgramOptions::layerSegSplinePointSize     (         8, "SplinePointSize"  , "LayerSeg");
+OptionInt    ProgramOptions::layerSegSplinePointSize     (8         , "SplinePointSize"  , "LayerSeg");
 OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true      , "ThicknessmapBlend", "LayerSeg");
 
 

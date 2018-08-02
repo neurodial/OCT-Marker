@@ -33,26 +33,26 @@ class ProgramOptions : public QObject
 public:
 	friend class Option;
 
-	static OptionBool  bscansShowSegmentationslines;
-	static OptionColor bscanSegmetationLineColor;
-	static OptionInt   bscanSegmetationLineThicknes;
-	static OptionInt   bscanAspectRatioType;
-	static OptionBool  bscanAutoFitImage;
-	
-	static OptionBool  bscanShowExtraSegmentationslines;
+	static OptionBool   bscansShowSegmentationslines;
+	static OptionColor  bscanSegmetationLineColor;
+	static OptionInt    bscanSegmetationLineThicknes;
+	static OptionInt    bscanAspectRatioType;
+	static OptionBool   bscanAutoFitImage;
 
-	static OptionBool fillEmptyPixelWhite;
-	static OptionBool registerBScans;
-	static OptionBool loadRotateSlo;
+	static OptionBool   bscanShowExtraSegmentationslines;
 
-	static OptionBool saveOctBinFlat;
+	static OptionBool   fillEmptyPixelWhite;
+	static OptionBool   registerBScans;
+	static OptionBool   loadRotateSlo;
+
+	static OptionBool   saveOctBinFlat;
 
 
-	static OptionBool holdOCTRawData;
-	static OptionBool readBScans;
+	static OptionBool   holdOCTRawData;
+	static OptionBool   readBScans;
 
-	static OptionInt  e2eGrayTransform;
-	
+	static OptionInt    e2eGrayTransform;
+
 	static OptionBool   sloShowLabels;
 	static OptionBool   sloShowGrid;
 	static OptionBool   sloShowBScanMousePos;
@@ -64,10 +64,10 @@ public:
 	static OptionString octDirectory;
 	static OptionString loadOctdataAtStart;
 	
-	static OptionBool autoSaveOctMarkers;
-	static OptionInt  defaultFileformatOctMarkers;
+	static OptionBool   autoSaveOctMarkers;
+	static OptionInt    defaultFileformatOctMarkers;
 
-	static OptionInt  bscanMarkerToolId;
+	static OptionInt    bscanMarkerToolId;
 	static OptionInt    sloMarkerToolId;
 
 	
