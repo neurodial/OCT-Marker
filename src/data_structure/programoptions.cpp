@@ -56,7 +56,7 @@ OptionInt    ProgramOptions::  sloMarkerToolId(-1,   "sloMarkerToolId", "Program
 OptionDouble ProgramOptions::layerSegFindPointInsertTol  (0.2 , "PointInsertTol"  , "LayerSeg", 0, 10, 0.1);
 OptionDouble ProgramOptions::layerSegFindPointRemoveTol  (0.1 , "PointRemoveTol"  , "LayerSeg", 0, 10, 0.05);
 OptionDouble ProgramOptions::layerSegFindPointMaxAbsError(0.25, "PointMaxAbsError", "LayerSeg", 0, 10, 0.1);
-OptionInt    ProgramOptions::layerSegFindPointMaxPoints  (40  , "PointMaxPoints"  , "LayerSeg", 0, 1000);
+OptionInt    ProgramOptions::layerSegFindPointMaxPoints  (0   , "PointMaxPoints"  , "LayerSeg", 0, 1000);
 
 
 OptionColor  ProgramOptions::layerSegActiveLineColor     (Qt::red   , "ActiveLineColor"  , "LayerSeg");
