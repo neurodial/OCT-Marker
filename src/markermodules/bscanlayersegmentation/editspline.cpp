@@ -4,6 +4,7 @@
 
 #include<QPainter>
 #include<QMouseEvent>
+#include<QRubberBand>
 
 #include <widgets/bscanmarkerwidget.h>
 
@@ -66,7 +67,7 @@ namespace
 				addPointPrivat(rec, p);
 		}
 
-		static void addPoints(QRect& rec, std::vector<Point2D>::const_iterator begin, const std::vector<Point2D>::const_iterator end)
+		static void addPoints(QRect& rec, EditSpline::PointConstIterator begin, const EditSpline::PointConstIterator end)
 		{
 			while(begin != end)
 			{
@@ -75,9 +76,9 @@ namespace
 			}
 		}
 
-		static void addPoints2Rec(QRect& rec, std::vector<Point2D>::const_iterator p, const std::vector<Point2D>& vec, const int addPos = 0)
+		static void addPoints2Rec(QRect& rec, EditSpline::PointConstIterator p, const EditSpline::PointList& vec, const int addPos = 0)
 		{
-			addPointPrivat(rec, *p);
+			addPoint(rec, *p);
 			if(addPos > 0)
 			{
 				for(int pos = 0; pos < addPos; ++pos)
@@ -176,8 +177,8 @@ namespace
 EditSpline::EditSpline(BScanLayerSegmentation* base)
 : EditBase(base)
 ,  baseEditPoint(supportingPoints.end())
-, firstEditPoint(supportingPoints.end())
-,  lastEditPoint(supportingPoints.end())
+// , firstEditPoint(supportingPoints.end())
+// ,  lastEditPoint(supportingPoints.end())
 {
 
 }
@@ -188,18 +189,19 @@ void EditSpline::paintPoints(QPainter& painter, const ScaleFactor& factor) const
 {
 	painter.setPen(QPen(ProgramOptions::layerSegActiveLineColor()));
 	painter.setBrush(QBrush(Qt::black));
+	bool paintActivePoint = false;
 
 	const int pointSize = ProgramOptions::layerSegSplinePointSize();
 
-	for(const Point2D& p : supportingPoints)
-		paintPoint(painter, p, factor, pointSize);
-
-	if(firstEditPoint != supportingPoints.end() && lastEditPoint != supportingPoints.end())
+	for(const SplinePoint& p : supportingPoints)
 	{
-		painter.setBrush(QBrush(Qt::green));
-		PointIterator endIt = lastEditPoint + 1;
-		for(PointIterator pIt = firstEditPoint; pIt != endIt; ++pIt)
-			paintPoint(painter, *pIt, factor, pointSize);
+		if(paintActivePoint != p.marked)
+		{
+			if(p.marked) painter.setBrush(QBrush(Qt::green));
+			else         painter.setBrush(QBrush(Qt::black));
+			paintActivePoint = p.marked;
+		}
+		paintPoint(painter, p, factor, pointSize);
 	}
 }
 
@@ -210,34 +212,76 @@ void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const 
 	paintPoints(painter, scaleFactor);
 }
 
-BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BScanMarkerWidget* widget)
+BscanMarkerBase::RedrawRequest EditSpline::movePointEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
-	if(lastEditPoint != firstEditPoint)
+	if(baseEditPoint == supportingPoints.end())
 		return BscanMarkerBase::RedrawRequest();
 
-	if(!movePoint || !event || !widget || lastEditPoint == supportingPoints.end())
+	if(!movePoint || !event || !widget)
 		return BscanMarkerBase::RedrawRequest();
-	Point2D oldPoint = *lastEditPoint;
 
-	const double minPos = (lastEditPoint == supportingPoints.begin())?              0:(lastEditPoint-1)->getX()+1;
-	const double maxPos = (lastEditPoint == supportingPoints.end()-1)?getBScanWidth():(lastEditPoint+1)->getX()-1;
+
+	Point2D oldPoint = *baseEditPoint;
+
+	const double minPos = (baseEditPoint == supportingPoints.begin())?              0:(baseEditPoint-1)->getX()+1;
+	const double maxPos = (baseEditPoint == supportingPoints.end()-1)?getBScanWidth():(baseEditPoint+1)->getX()-1;
 
 	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
 	double newXVal = std::min(maxPos, std::max(minPos, std::round(event->x()/scaleFactor.getFactorX())));
 	double newYVal = std::min(static_cast<double>(getBScanHight()), std::max(0., event->y()/scaleFactor.getFactorY()));
 
-	lastEditPoint->setX(newXVal);
-	lastEditPoint->setY(newYVal);
+	baseEditPoint->setX(newXVal);
+	baseEditPoint->setY(newYVal);
 	recalcInterpolation();
 
-	QRect repaintRect = createRec(oldPoint, *lastEditPoint);
-	RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawPos);
-	RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawNeg);
+	QRect repaintRect = createRec(oldPoint, *baseEditPoint);
+	RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawPos);
+	RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawNeg);
 
 	updateRec4Paint(repaintRect, scaleFactor);
 	BscanMarkerBase::RedrawRequest request;
 	request.redraw = true;
 	request.rect   = repaintRect;
+
+	pointMoved = true;
+
+	return request;
+}
+
+
+BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BScanMarkerWidget* widget)
+{
+	if(movePoint)
+		return movePointEvent(event, widget);
+
+
+	BscanMarkerBase::RedrawRequest request;
+
+	if(rubberBand && rubberBand->isVisible())
+	{
+		QRect rAlt = rubberBand->geometry();
+		rubberBand->setGeometry(QRect(rubberBandOrigin, event->pos()).normalized());
+		QRect rNeu = rubberBand->geometry();
+
+		int pointSize = ProgramOptions::layerSegSplinePointSize();
+
+		const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
+		double minY = rNeu.y     ()/scaleFactor.getFactorY();
+		double minX = rNeu.x     ()/scaleFactor.getFactorX();
+		double maxY = rNeu.height()/scaleFactor.getFactorY() + minY;
+		double maxX = rNeu.width ()/scaleFactor.getFactorX() + minX;
+
+// 		qDebug("%lf %lf %lf %lf", minX, minY, maxX, maxY);
+
+		for(SplinePoint& point : supportingPoints)
+		{
+			point.marked = (point.getX() >= minX && point.getX() <= maxX
+			             && point.getY() >= minY && point.getY() <= maxY);
+		}
+		request.redraw = true;
+		request.rect   = rNeu.united(rAlt);
+		request.rect.adjust(-pointSize, -pointSize, +pointSize, +pointSize);
+	}
 
 	return request;
 }
@@ -253,12 +297,11 @@ bool EditSpline::testInsertPoint(const Point2D& insertPoint, const ScaleFactor& 
 		double pY = insertPoint.getY();
 		if(std::abs(segLine->at(pX) - pY) < 10./scaleFactor.getFactorY())
 		{
-			for(std::vector<Point2D>::iterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
+			for(PointIterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
 			{
 				if(p->getX() > pX)
 				{
-					firstEditPoint = supportingPoints.insert(p, insertPoint);
-					 lastEditPoint = firstEditPoint;
+					baseEditPoint = supportingPoints.insert(p, SplinePoint(insertPoint));
 					recalcInterpolation();
 					return true;
 				}
@@ -270,11 +313,11 @@ bool EditSpline::testInsertPoint(const Point2D& insertPoint, const ScaleFactor& 
 }
 
 
-std::tuple<std::vector<Point2D>::iterator, double> EditSpline::findNextPoint(const Point2D& clickPoint, const ScaleFactor& scaleFactor)
+std::tuple<EditSpline::PointIterator, double> EditSpline::findNextPoint(const Point2D& clickPoint, const ScaleFactor& scaleFactor)
 {
 	double minDist = std::numeric_limits<double>::infinity();
-	std::vector<Point2D>::iterator minDistPoint = supportingPoints.end();
-	for(std::vector<Point2D>::iterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
+	PointIterator minDistPoint = supportingPoints.end();
+	for(PointIterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
 	{
 		double dist = p->euklidDist(clickPoint, scaleFactor);
 		if(dist < minDist)
@@ -286,16 +329,33 @@ std::tuple<std::vector<Point2D>::iterator, double> EditSpline::findNextPoint(con
 	return std::make_pair(minDistPoint, minDist);
 }
 
+void EditSpline::resetMarkedPoints(QRect& rect)
+{
+	for(SplinePoint& p : supportingPoints)
+	{
+		if(p.marked)
+		{
+			RecPointAdder::addPoint(rect, p);
+			p.marked = false;
+		}
+	}
+}
 
 
 BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, BScanMarkerWidget* widget)
 {
 	BscanMarkerBase::RedrawRequest redraw;
 	QRect repaintRect;
-	if(firstEditPoint != supportingPoints.end())
-		RecPointAdder::addPoints(repaintRect, firstEditPoint, lastEditPoint);
-	if(lastEditPoint  != supportingPoints.end())
-		RecPointAdder::addPoint(repaintRect, *lastEditPoint);
+// 	if(firstEditPoint != supportingPoints.end())
+// 		RecPointAdder::addPoints(repaintRect, firstEditPoint, lastEditPoint);
+// 	if(lastEditPoint  != supportingPoints.end())
+// 		RecPointAdder::addPoint(repaintRect, *lastEditPoint);
+
+	bool modPress = (event->modifiers() & Qt::KeyboardModifier::ShiftModifier);
+
+	if(!modPress)
+		resetMarkedPoints(repaintRect);
+
 
 	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
 	Point2D clickPoint(event->x()/scaleFactor.getFactorX(), event->y()/scaleFactor.getFactorY());
@@ -307,26 +367,30 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 
 	if(event->button() == Qt::RightButton)
 	{
-		if(clickOnPoint)
+		if(clickOnPoint && !modPress)
 		{
-			redraw = deletePoints(minDistPoint, minDistPoint);
+			minDistPoint->marked = true;
+			redraw = deleteMarkedPoints();
 			repaintRect = redraw.rect;
 		}
 	}
 	else
 	{
-		if(event->modifiers() & Qt::KeyboardModifier::ShiftModifier)
+		if(modPress)
 		{
 			if(clickOnPoint)
 			{
-				if(baseEditPoint == supportingPoints.end())
-					baseEditPoint = minDistPoint;
-				firstEditPoint = baseEditPoint;
-				lastEditPoint  = minDistPoint ;
-
-				if(firstEditPoint > lastEditPoint)
-					std::swap(firstEditPoint, lastEditPoint);
-
+				bool marked = false;
+				for(PointIterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
+				{
+					if(p == minDistPoint || p == baseEditPoint)
+					{
+						p->marked = true;
+						marked = !marked;
+					}
+					else
+						p->marked = marked;
+				}
 				redraw.redraw = true;
 			}
 		}
@@ -335,23 +399,30 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 			if(clickOnPoint)
 			{
 				movePoint = true;
-				firstEditPoint = minDistPoint;
-				lastEditPoint  = minDistPoint;
+				baseEditPoint = minDistPoint;
+				baseEditPoint->marked = true;
+				RecPointAdder::addPoint(repaintRect, *baseEditPoint);
 			}
 			else
 			{
-				firstEditPoint = supportingPoints.end();
-				lastEditPoint  = supportingPoints.end();
 				movePoint = testInsertPoint(clickPoint, scaleFactor);
 
 				if(movePoint)
 				{
-					RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawPos);
-					RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawNeg);
+					RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawPos);
+					RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawNeg);
+				}
+				else
+				{
+					rubberBandOrigin = event->pos();
+
+					if(!rubberBand)
+						rubberBand = new QRubberBand(QRubberBand::Rectangle, widget);
+					rubberBand->setGeometry(QRect(rubberBandOrigin, QSize()));
+					rubberBand->show();
 				}
 			}
 
-			baseEditPoint = firstEditPoint;
 			startMovePosX = baseEditPoint->getX();
 			redraw.redraw = true; // TODO
 		}
@@ -360,12 +431,11 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 
 	if(redraw.redraw)
 	{
-		if(firstEditPoint != supportingPoints.end())
-			RecPointAdder::addPoints(repaintRect, firstEditPoint, lastEditPoint);
-		if(lastEditPoint  != supportingPoints.end())
-			RecPointAdder::addPoint(repaintRect, *lastEditPoint);
-		updateRec4Paint(repaintRect, scaleFactor);
-		redraw.rect   = repaintRect;
+		if(repaintRect.isValid())
+		{
+			updateRec4Paint(repaintRect, scaleFactor);
+			redraw.rect   = repaintRect;
+		}
 	}
 
 	event->accept();
@@ -375,15 +445,19 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 
 BscanMarkerBase::RedrawRequest EditSpline::mouseReleaseEvent(QMouseEvent*, BScanMarkerWidget*)
 {
-	if(movePoint)
+	if(rubberBand)
+		rubberBand->hide();
+
+	if(movePoint && pointMoved)
 	{
-		QRect repaintRect = createRec(*lastEditPoint, *lastEditPoint);
-		RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawPos);
-		RecPointAdder::addPoints2Rec(repaintRect, lastEditPoint, supportingPoints, pointDrawNeg);
+		QRect repaintRect; // = createRec(*lastEditPoint, *lastEditPoint);
+		RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawPos);
+		RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawNeg);
 		RecPointAdder::addPoint(repaintRect, Point2D(startMovePosX, 0));
 		rangeModified(repaintRect.left(), repaintRect.right()+1);
 	}
-	movePoint = false;
+	movePoint  = false;
+	pointMoved = false;
 	return BscanMarkerBase::RedrawRequest();
 }
 
@@ -396,17 +470,23 @@ void EditSpline::segLineChanged(OctData::Segmentationlines::Segmentline* segLine
 
 	reduceFactor = 1;
 
-// 	QTime t;
-// 	t.start();
-	FindSupportingPoints::Config conf = getFindSupportingPointsConfig();
+	calcSupportPoints();
+}
+
+void EditSpline::calcSupportPoints()
+{
 	FindSupportingPoints alg(*segLine);
+
+	FindSupportingPoints::Config conf = getFindSupportingPointsConfig();
+	conf.removeTol   *= reduceFactor;
+	conf.maxAbsError *= reduceFactor;
 	alg.setConfig(conf);
 	alg.calculateSupportingPoints();
 
-// 	qDebug("FindSupportingPoints: %d ms", t.elapsed());
+	std::vector<Point2D> newPoints = alg.getSupportingPoints();
+	supportingPoints.resize(newPoints.size());
 
-	supportingPoints.clear();
-	supportingPoints = alg.getSupportingPoints();
+	std::transform(newPoints.begin(), newPoints.end(), supportingPoints.begin(), [](const Point2D& p){ return SplinePoint(p); } );
 	resetEditPoints();
 
 	recalcInterpolation();
@@ -420,8 +500,8 @@ void EditSpline::contextMenuEvent(QContextMenuEvent* event)
 
 void EditSpline::resetEditPoints()
 {
-	firstEditPoint = supportingPoints.end();
-	 lastEditPoint = supportingPoints.end();
+// 	firstEditPoint = supportingPoints.end();
+// 	 lastEditPoint = supportingPoints.end();
 	 baseEditPoint = supportingPoints.end();
 }
 
@@ -431,7 +511,10 @@ void EditSpline::recalcInterpolation() // TODO: lokale neuberechnung
 	if(!segLine)
 		return;
 
-	PChip pchip(supportingPoints, segLine->size());
+	std::vector<Point2D> points(supportingPoints.size());
+	std::copy(supportingPoints.begin(), supportingPoints.end(), points.begin());
+
+	PChip pchip(points, segLine->size());
 	const std::vector<double>& pchipPoints = pchip.getValues();
 
 	if(pchipPoints.size() > 0)
@@ -441,31 +524,72 @@ void EditSpline::recalcInterpolation() // TODO: lokale neuberechnung
 
 bool EditSpline::deleteSelectedPoints()
 {
-	BscanMarkerBase::RedrawRequest request = deletePoints(firstEditPoint, lastEditPoint);
+	BscanMarkerBase::RedrawRequest request = deleteMarkedPoints();
 	if(request.redraw)
 		requestFullUpdate();
 	return request.redraw;
 }
 
-BscanMarkerBase::RedrawRequest EditSpline::deletePoints(PointIterator begin, PointIterator last)
+
+
+BscanMarkerBase::RedrawRequest EditSpline::deleteMarkedPoints()
 {
 	BscanMarkerBase::RedrawRequest redraw;
-	if(begin != supportingPoints.end() && last != supportingPoints.end())
-	{
-		redraw.rect = createRec(*begin);
-		RecPointAdder::addPoints2Rec(redraw.rect, begin, supportingPoints, pointDrawNeg);
-		RecPointAdder::addPoints2Rec(redraw.rect, last , supportingPoints, pointDrawPos);
+	PointIterator beginRemove = supportingPoints.end();
+	std::size_t startRemoveIndex = 0;
 
-		++last;
-		supportingPoints.erase(begin, last);
+	for(size_t index = 0; index < supportingPoints.size(); ++index)
+	{
+		if(supportingPoints[index].marked)
+		{
+			if(beginRemove == supportingPoints.end())
+			{
+				RecPointAdder::addPoint(redraw.rect, supportingPoints[index]);
+				beginRemove = supportingPoints.begin() + index;
+				startRemoveIndex = index;
+			}
+		}
+		else
+		{
+			if(beginRemove != supportingPoints.end())
+			{
+				supportingPoints.erase(beginRemove, supportingPoints.begin() + index);
+				beginRemove = supportingPoints.end();
+				index = startRemoveIndex;
+			}
+		}
+	}
+
+	if(beginRemove != supportingPoints.end())
+		supportingPoints.erase(beginRemove, supportingPoints.end());
+
+	if(redraw.rect.isValid())
+	{
+		RecPointAdder::addPoints2Rec(redraw.rect, baseEditPoint, supportingPoints, pointDrawPos);
+		RecPointAdder::addPoints2Rec(redraw.rect, baseEditPoint, supportingPoints, pointDrawNeg);
+
 		recalcInterpolation();
 		resetEditPoints();
-
 		redraw.redraw = true;
-
-
 		rangeModified(redraw.rect.left(), redraw.rect.right()+1);
 	}
+
+// 	if(begin != supportingPoints.end() && last != supportingPoints.end())
+// 	{
+// 		redraw.rect = createRec(*begin);
+// 		RecPointAdder::addPoints2Rec(redraw.rect, begin, supportingPoints, pointDrawNeg);
+// 		RecPointAdder::addPoints2Rec(redraw.rect, last , supportingPoints, pointDrawPos);
+//
+// 		++last;
+// 		supportingPoints.erase(begin, last);
+// 		recalcInterpolation();
+// 		resetEditPoints();
+//
+// 		redraw.redraw = true;
+//
+//
+// 		rangeModified(redraw.rect.left(), redraw.rect.right()+1);
+// 	}
 	return redraw;
 }
 
@@ -487,52 +611,7 @@ bool EditSpline::keyPressEvent(QKeyEvent* event, BScanMarkerWidget*)
 
 void EditSpline::reducePoints()
 {
-	if(lastEditPoint == supportingPoints.end() || lastEditPoint == firstEditPoint)
-	{
-		if(supportingPoints.size() > 3)
-		{
-			reduceFactor += 1.;
-			reducePoints(supportingPoints.begin(), supportingPoints.end()-1, reduceFactor);
-		}
-	}
-	else
-		reduceMarkedPoints();
+	reduceFactor += 1.;
+	calcSupportPoints();
 }
 
-void EditSpline::reduceMarkedPoints()
-{
-	lastEditPoint = reducePoints(firstEditPoint, lastEditPoint, 2);
-}
-
-EditSpline::PointIterator EditSpline::reducePoints(PointIterator beginPoint, PointIterator endPoint, double factor)
-{
-	if(beginPoint != supportingPoints.end() && endPoint != supportingPoints.end())
-	{
-// 		QTime t;
-// 		t.start();
-
-		FindSupportingPoints alg(*segLine, beginPoint, endPoint);
-
-		FindSupportingPoints::Config conf = getFindSupportingPointsConfig();
-		conf.removeTol   *= factor;
-		conf.maxAbsError *= factor;
-		alg.setConfig(conf);
-
-		alg.removePoints();
-		PointList p = alg.getSupportingPoints();
-
-		endPoint = supportingPoints.erase(beginPoint+1, endPoint);
-		endPoint = supportingPoints.insert(endPoint   , p.begin()+1, p.end());
-
-		if(p.size() > 0)
-			endPoint += p.size() - 1;
-		else
-			--endPoint;
-
-// 		qDebug("FindSupportingPoints: %d ms", t.elapsed());
-
-		recalcInterpolation();
-		requestFullUpdate();
-	}
-	return endPoint;
-}

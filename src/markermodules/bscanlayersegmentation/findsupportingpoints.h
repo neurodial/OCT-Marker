@@ -3,6 +3,7 @@
 
 #include<vector>
 #include<list>
+#include<algorithm>
 
 #include<data_structure/point2d.h>
 
@@ -34,13 +35,21 @@ public:
 
 	typedef std::list<DestPoint>::iterator PtIt;
 	typedef PtSource::const_iterator PtItSource;
-
-	typedef std::vector<Point2D>::const_iterator SupportPtItIn;
+/*
+	typedef std::vector<Point2D>::const_iterator SupportPtItIn;*/
 
 
 // 	FindSupportingPoints(const std::vector<Point2D>& values);
 	FindSupportingPoints(const std::vector<double >& values);
-	FindSupportingPoints(const std::vector<double >& values, SupportPtItIn it1, SupportPtItIn it2);
+// 	FindSupportingPoints(const std::vector<double >& values, SupportPtItIn it1, SupportPtItIn it2);
+
+	template<typename SupportPtItIn>
+	FindSupportingPoints(const std::vector<double>& values, SupportPtItIn it1, SupportPtItIn it2)
+	: FindSupportingPoints(values)
+	{
+		std::transform(it1, it2, std::back_inserter(destPoints), [](const Point2D& point) { return DestPoint(point); });
+	}
+
 
 	void removePoints();
 

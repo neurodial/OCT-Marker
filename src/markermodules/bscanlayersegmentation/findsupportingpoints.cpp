@@ -1,7 +1,6 @@
 #include "findsupportingpoints.h"
 
 #include<iostream>
-#include<algorithm>
 #include<iterator>
 #include<cmath>
 #include "pchip.h"
@@ -18,13 +17,6 @@ FindSupportingPoints::FindSupportingPoints(const std::vector<double>& values)
 
 	interpolated.resize(length);
 }
-
-FindSupportingPoints::FindSupportingPoints(const std::vector<double>& values, SupportPtItIn it1, SupportPtItIn it2)
-: FindSupportingPoints(values)
-{
-	std::transform(it1, it2, std::back_inserter(destPoints), [](const Point2D& point) { return DestPoint(point); });
-}
-
 
 
 void FindSupportingPoints::calculateSupportingPoints()
