@@ -535,6 +535,7 @@ bool EditSpline::deleteSelectedPoints()
 BscanMarkerBase::RedrawRequest EditSpline::deleteMarkedPoints()
 {
 	BscanMarkerBase::RedrawRequest redraw;
+	QRect removeRect;
 	PointIterator beginRemove = supportingPoints.end();
 	std::size_t startRemoveIndex = 0;
 
@@ -544,7 +545,7 @@ BscanMarkerBase::RedrawRequest EditSpline::deleteMarkedPoints()
 		{
 			if(beginRemove == supportingPoints.end())
 			{
-				RecPointAdder::addPoint(redraw.rect, supportingPoints[index]);
+				RecPointAdder::addPoint(removeRect, supportingPoints[index]);
 				beginRemove = supportingPoints.begin() + index;
 				startRemoveIndex = index;
 			}
@@ -553,43 +554,42 @@ BscanMarkerBase::RedrawRequest EditSpline::deleteMarkedPoints()
 		{
 			if(beginRemove != supportingPoints.end())
 			{
-				supportingPoints.erase(beginRemove, supportingPoints.begin() + index);
+				PointIterator lastRemovePoint = supportingPoints.begin() + index;
+				RecPointAdder::addPoints2Rec(removeRect, beginRemove    , supportingPoints, pointDrawNeg);
+				RecPointAdder::addPoints2Rec(removeRect, lastRemovePoint, supportingPoints, pointDrawPos);
+
+
+				supportingPoints.erase(beginRemove, lastRemovePoint);
 				beginRemove = supportingPoints.end();
 				index = startRemoveIndex;
+
+				recalcInterpolation();
+				rangeModified(removeRect.left(), removeRect.right()+1);
+
+				redraw.rect = redraw.rect.united(removeRect);
 			}
 		}
 	}
 
 	if(beginRemove != supportingPoints.end())
-		supportingPoints.erase(beginRemove, supportingPoints.end());
+	{
+		PointIterator lastRemovePoint = supportingPoints.end();
+		RecPointAdder::addPoints2Rec(removeRect, beginRemove    , supportingPoints, pointDrawPos);
+		RecPointAdder::addPoints2Rec(removeRect, lastRemovePoint, supportingPoints, pointDrawNeg);
+
+		supportingPoints.erase(beginRemove, lastRemovePoint);
+
+		recalcInterpolation();
+		rangeModified(removeRect.left(), removeRect.right()+1);
+
+		redraw.rect = redraw.rect.united(removeRect);
+	}
 
 	if(redraw.rect.isValid())
 	{
-		RecPointAdder::addPoints2Rec(redraw.rect, baseEditPoint, supportingPoints, pointDrawPos);
-		RecPointAdder::addPoints2Rec(redraw.rect, baseEditPoint, supportingPoints, pointDrawNeg);
-
-		recalcInterpolation();
 		resetEditPoints();
 		redraw.redraw = true;
-		rangeModified(redraw.rect.left(), redraw.rect.right()+1);
 	}
-
-// 	if(begin != supportingPoints.end() && last != supportingPoints.end())
-// 	{
-// 		redraw.rect = createRec(*begin);
-// 		RecPointAdder::addPoints2Rec(redraw.rect, begin, supportingPoints, pointDrawNeg);
-// 		RecPointAdder::addPoints2Rec(redraw.rect, last , supportingPoints, pointDrawPos);
-//
-// 		++last;
-// 		supportingPoints.erase(begin, last);
-// 		recalcInterpolation();
-// 		resetEditPoints();
-//
-// 		redraw.redraw = true;
-//
-//
-// 		rangeModified(redraw.rect.left(), redraw.rect.right()+1);
-// 	}
 	return redraw;
 }
 
