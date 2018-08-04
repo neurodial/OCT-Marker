@@ -13,11 +13,18 @@ class Rect2DBase
 	T yMin;
 	T yMax;
 public:
-	Rect2DBase(const Point2DBase<T>& p)
+	explicit Rect2DBase(const Point2DBase<T>& p)
 	: xMin(p.getX())
 	, xMax(p.getX())
 	, yMin(p.getY())
 	, yMax(p.getY())
+	{}
+
+	explicit Rect2DBase(const QRect& r)
+	: xMin(r.x())
+	, xMax(r.x() + r.width())
+	, yMin(r.y())
+	, yMax(r.y() + r.height())
 	{}
 
 	Rect2DBase& operator+=(const Point2DBase<T>& p)
@@ -43,9 +50,23 @@ public:
 		yMax += d;
 	}
 
+	void scaleXY(T factorX, T factorY)
+	{
+		xMin /= factorX;
+		xMax /= factorX;
+		yMin /= factorY;
+		yMax /= factorY;
+	}
+
 	QRect toQRect() const { return QRect(xMin, yMin, xMax-xMin, yMax-yMin); }
+
+	T getXMin()                                               const { return xMin; }
+	T getXMax()                                               const { return xMax; }
+	T getYMin()                                               const { return yMin; }
+	T getYMax()                                               const { return yMax; }
 };
 
 typedef Rect2DBase<int> Rect2DInt;
+typedef Rect2DBase<double> Rect2D;
 
 #endif // RECT2D_H

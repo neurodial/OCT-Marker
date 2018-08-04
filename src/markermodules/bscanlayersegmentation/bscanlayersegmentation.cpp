@@ -239,8 +239,8 @@ std::vector<double> BScanLayerSegmentation::getSegPart(const std::vector<double>
 	if(ascanBegin >= ascanEnd)
 		return std::vector<double>();
 
-	if(ascanEnd >= segLine.size())
-		return std::vector<double>();
+	if(ascanEnd > segLine.size())
+		ascanEnd = segLine.size();
 
 	auto it1 = segLine.begin() + ascanBegin;
 	auto it2 = segLine.begin() + ascanEnd;
@@ -259,13 +259,17 @@ void BScanLayerSegmentation::rangeModified(std::size_t ascanBegin, std::size_t a
 
 	OctData::Segmentationlines::Segmentline& line = lines[bscanNr].lines.getSegmentLine(actEditType);
 
-	LayerSegCommand* command = new LayerSegCommand(this, ascanBegin, getSegPart(tempLine, ascanBegin, ascanEnd), getSegPart(line, ascanBegin, ascanEnd));
+	std::vector<double> newSegPart = getSegPart(tempLine, ascanBegin, ascanEnd);
+	std::vector<double> oldSegPart = getSegPart(line    , ascanBegin, ascanEnd);
+
+	modifiedSegPart(bscanNr, actEditType, ascanBegin, newSegPart, false);
+
+	LayerSegCommand* command = new LayerSegCommand(this, ascanBegin, std::move(newSegPart), std::move(oldSegPart));
 	addUndoCommand(command);
 
-	modifiedSegPart(bscanNr, actEditType, ascanBegin, ascanEnd-ascanBegin, tempLine.data() + ascanBegin, false);
 }
 
-void BScanLayerSegmentation::modifiedSegPart(std::size_t bscan, OctData::Segmentationlines::SegmentlineType segLine, std::size_t start, std::size_t length, const double* segPart, bool updateMethode)
+void BScanLayerSegmentation::modifiedSegPart(std::size_t bscan, OctData::Segmentationlines::SegmentlineType segLine, std::size_t start, const std::vector<double>& segPart, bool updateMethode)
 {
 	if(lines.size() <= bscan)
 		return;
@@ -273,13 +277,18 @@ void BScanLayerSegmentation::modifiedSegPart(std::size_t bscan, OctData::Segment
 	lines[bscan].lineModified[static_cast<std::size_t>(segLine)] = true;
 	OctData::Segmentationlines::Segmentline& line = lines[bscan].lines.getSegmentLine(segLine);
 
-	const std::size_t endPos = std::min(start+length, line.size());
+	if(line.size() <= start)
+		return;
 
+	const std::size_t maxCpoy = std::min(segPart.size(), line.size() - start);
+
+	std::copy(segPart.begin(), segPart.begin() + maxCpoy, line.begin() + start);
+/*
 	for(std::size_t i = start; i < endPos; ++i)
 	{
 		line[i] = *segPart;
 		++segPart;
-	}
+	}*/
 
 	if(updateMethode)
 	{

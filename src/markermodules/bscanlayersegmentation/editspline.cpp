@@ -262,24 +262,25 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseMoveEvent(QMouseEvent* event, BS
 		QRect rAlt = rubberBand->geometry();
 		rubberBand->setGeometry(QRect(rubberBandOrigin, event->pos()).normalized());
 		QRect rNeu = rubberBand->geometry();
+		QRect updateRect = rNeu.united(rAlt);
 
 		int pointSize = ProgramOptions::layerSegSplinePointSize();
 
 		const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
-		double minY = rNeu.y     ()/scaleFactor.getFactorY();
-		double minX = rNeu.x     ()/scaleFactor.getFactorX();
-		double maxY = rNeu.height()/scaleFactor.getFactorY() + minY;
-		double maxX = rNeu.width ()/scaleFactor.getFactorX() + minX;
+		Rect2D markRect(rNeu);
+		markRect.scaleXY(scaleFactor.getFactorX(), scaleFactor.getFactorY());
 
+		Rect2D updateRect2D(updateRect);
+		updateRect2D.scaleXY(scaleFactor.getFactorX(), scaleFactor.getFactorY());
 // 		qDebug("%lf %lf %lf %lf", minX, minY, maxX, maxY);
 
 		for(SplinePoint& point : supportingPoints)
 		{
-			point.marked = (point.getX() >= minX && point.getX() <= maxX
-			             && point.getY() >= minY && point.getY() <= maxY);
+			if(point.isInside(updateRect2D))
+				point.marked = point.isInside(markRect);
 		}
 		request.redraw = true;
-		request.rect   = rNeu.united(rAlt);
+		request.rect   = updateRect;
 		request.rect.adjust(-pointSize, -pointSize, +pointSize, +pointSize);
 	}
 
@@ -376,9 +377,9 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 	}
 	else
 	{
-		if(modPress)
+		if(clickOnPoint)
 		{
-			if(clickOnPoint)
+			if(modPress)
 			{
 				bool marked = false;
 				for(PointIterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
@@ -391,51 +392,44 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 					else
 						p->marked = marked;
 				}
-				redraw.redraw = true;
 			}
-		}
-		else
-		{
-			if(clickOnPoint)
+			else
 			{
 				movePoint = true;
 				baseEditPoint = minDistPoint;
 				baseEditPoint->marked = true;
+				startMovePosX = baseEditPoint->getX();
+
 				RecPointAdder::addPoint(repaintRect, *baseEditPoint);
+			}
+		}
+		else
+		{
+			movePoint = testInsertPoint(clickPoint, scaleFactor);
+
+			if(movePoint)
+			{
+				RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawPos);
+				RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawNeg);
 			}
 			else
 			{
-				movePoint = testInsertPoint(clickPoint, scaleFactor);
+				rubberBandOrigin = event->pos();
 
-				if(movePoint)
-				{
-					RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawPos);
-					RecPointAdder::addPoints2Rec(repaintRect, baseEditPoint, supportingPoints, pointDrawNeg);
-				}
-				else
-				{
-					rubberBandOrigin = event->pos();
-
-					if(!rubberBand)
-						rubberBand = new QRubberBand(QRubberBand::Rectangle, widget);
-					rubberBand->setGeometry(QRect(rubberBandOrigin, QSize()));
-					rubberBand->show();
-				}
+				if(!rubberBand)
+					rubberBand = new QRubberBand(QRubberBand::Rectangle, widget);
+				rubberBand->setGeometry(QRect(rubberBandOrigin, QSize()));
+				rubberBand->show();
 			}
-
-			startMovePosX = baseEditPoint->getX();
-			redraw.redraw = true; // TODO
 		}
 	}
 
 
-	if(redraw.redraw)
+	if(repaintRect.isValid())
 	{
-		if(repaintRect.isValid())
-		{
-			updateRec4Paint(repaintRect, scaleFactor);
-			redraw.rect   = repaintRect;
-		}
+		updateRec4Paint(repaintRect, scaleFactor);
+		redraw.rect   = repaintRect;
+		redraw.redraw = true;
 	}
 
 	event->accept();
@@ -545,6 +539,7 @@ BscanMarkerBase::RedrawRequest EditSpline::deleteMarkedPoints()
 		{
 			if(beginRemove == supportingPoints.end())
 			{
+				removeRect = QRect();
 				RecPointAdder::addPoint(removeRect, supportingPoints[index]);
 				beginRemove = supportingPoints.begin() + index;
 				startRemoveIndex = index;
@@ -556,7 +551,7 @@ BscanMarkerBase::RedrawRequest EditSpline::deleteMarkedPoints()
 			{
 				PointIterator lastRemovePoint = supportingPoints.begin() + index;
 				RecPointAdder::addPoints2Rec(removeRect, beginRemove    , supportingPoints, pointDrawNeg);
-				RecPointAdder::addPoints2Rec(removeRect, lastRemovePoint, supportingPoints, pointDrawPos);
+				RecPointAdder::addPoints2Rec(removeRect, lastRemovePoint, supportingPoints, pointDrawPos-1);
 
 
 				supportingPoints.erase(beginRemove, lastRemovePoint);
@@ -575,7 +570,7 @@ BscanMarkerBase::RedrawRequest EditSpline::deleteMarkedPoints()
 	{
 		PointIterator lastRemovePoint = supportingPoints.end();
 		RecPointAdder::addPoints2Rec(removeRect, beginRemove    , supportingPoints, pointDrawPos);
-		RecPointAdder::addPoints2Rec(removeRect, lastRemovePoint, supportingPoints, pointDrawNeg);
+		RecPointAdder::addPoint(removeRect, *(lastRemovePoint-1));
 
 		supportingPoints.erase(beginRemove, lastRemovePoint);
 

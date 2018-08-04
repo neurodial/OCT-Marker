@@ -95,7 +95,7 @@ public:
 	bool isThicknessmapVisible()                              const { return showThicknessmap; }
 
 	void modifiedSegPart(std::size_t bscan, OctData::Segmentationlines::SegmentlineType segLine, std::size_t start, const std::vector<double>& segPart)
-	                                                                { modifiedSegPart(bscan, segLine, start, segPart.size(), segPart.data(), true); }
+	                                                                { modifiedSegPart(bscan, segLine, start, segPart, true); }
 
 	ThicknessmapConfig& getThicknessmapConfig()                     { return thicknessmapConfig; }
 
@@ -133,7 +133,7 @@ private:
 	std::size_t getMaxBscanWidth() const;
 
 	void rangeModified(std::size_t ascanBegin, std::size_t ascanEnd);
-	void modifiedSegPart(std::size_t bscan, OctData::Segmentationlines::SegmentlineType segLine, std::size_t start, std::size_t length, const double* segPart, bool updateMethode);
+	void modifiedSegPart(std::size_t bscan, OctData::Segmentationlines::SegmentlineType segLine, std::size_t start, const std::vector<double>& segPart, bool updateMethode);
 	void updateEditLine();
 
 	std::vector<double> getSegPart(const std::vector<double>& segLine, std::size_t ascanBegin, std::size_t ascanEnd);

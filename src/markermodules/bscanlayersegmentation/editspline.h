@@ -7,6 +7,7 @@
 
 
 #include<data_structure/point2d.h>
+#include<data_structure/rect2d.h>
 
 
 #include<QPoint>
@@ -23,6 +24,13 @@ public:
 		explicit SplinePoint(const Point2D& p) : Point2D(p) {}
 
 		bool marked = false;
+
+		bool isInside(double minX, double minY, double maxX, double maxY)
+		{
+			return (getX() >= minX && getX() <= maxX
+			     && getY() >= minY && getY() <= maxY);
+		}
+		bool isInside(const Rect2D& r) { return isInside(r.getXMin(), r.getYMin(), r.getXMax(), r.getYMax()); }
 	};
 	typedef std::vector<SplinePoint> PointList;
 	typedef PointList::iterator  PointIterator;
