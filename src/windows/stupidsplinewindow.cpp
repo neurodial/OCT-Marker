@@ -40,10 +40,10 @@ StupidSplineWindow::StupidSplineWindow()
 , bscanMarkerWidget  (new BScanMarkerWidget)
 , markerActions      (bscanMarkerWidget)
 {
-	ProgramOptions::bscansShowSegmentationslines.setValue(false);
-	ProgramOptions::bscanAspectRatioType.setValue(2); // best fit
+	setProgramOptions();
 	setMinimumWidth(1000);
 // 	setMinimumHeight(600);
+	connect(ProgramOptions::getResetAction(), &QAction::triggered, this, &StupidSplineWindow::setProgramOptions);
 
 	pmm = new PaintMarker();
 	bscanMarkerWidget->setPaintMarker(pmm);
@@ -389,4 +389,10 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	dwZoomControl->setFixedHeight(dwZoomControl->minimumSizeHint().height());
 
 	return dwZoomControl;
+}
+
+void StupidSplineWindow::setProgramOptions()
+{
+	ProgramOptions::bscansShowSegmentationslines.setValue(false);
+	ProgramOptions::bscanAspectRatioType.setValue(2); // best fit
 }

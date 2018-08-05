@@ -63,5 +63,7 @@ private slots:
 
 	void loadFileStatusSlot(bool loading);
 	void loadFileProgress(double frac);
+
+	void setProgramOptions();
 };
 
