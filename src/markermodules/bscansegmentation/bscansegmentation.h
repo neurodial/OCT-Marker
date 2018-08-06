@@ -67,6 +67,10 @@ class BScanSegmentation : public BscanMarkerBase
 	SegMats segments;
 	mutable cv::Mat* actMat = nullptr;
 	mutable std::size_t actMatNr = 0;
+	QImage areaImage;
+
+	void updateAreaImage(const QRect& rect);
+	void updateAreaImage(const RedrawRequest& redraw, const ScaleFactor& factor);
 
 	void clearSegments();
 	void createSegments();
@@ -167,6 +171,9 @@ public slots:
 	void importSegmentationFromOct(const std::string& filename);
 
 	void showTikzCode();
+
+private slots:
+	void updateAreaImageSlot();
 
 signals:
 	void paintArea0Selected(bool = true);

@@ -30,6 +30,7 @@ class CVImageWidget : public QWidget
 
 	bool grayCvImage;
 	ScaleMethod scaleMethod = ScaleMethod::Factor;
+	QSize scaledSize;
 
 	const FilterImage* imageFilter = nullptr;
 	
@@ -43,8 +44,8 @@ public:
 	explicit CVImageWidget(QWidget *parent = 0);
 	virtual ~CVImageWidget();
 
-	QSize sizeHint()        const                      override { return qtImage.size(); }
-	QSize minimumSizeHint() const                      override { return qtImage.size()/100; }
+	QSize sizeHint()        const                      override { return scaledSize; }
+	QSize minimumSizeHint() const                      override { return scaledSize/100; }
 
 	virtual void setImageSize(QSize size)                       { imageScale        = size  ; scaleMethod = ScaleMethod::Size  ; updateScaleFactorXY(); cvImage2qtImage(); }
 	virtual void setScaleFactor(double factor)                  { scaleFactorConfig = factor; scaleMethod = ScaleMethod::Factor; updateScaleFactorXY(); cvImage2qtImage(); }
@@ -52,8 +53,8 @@ public:
 	int  imageHight() const;
 	int  imageWidth() const;
 
-	int  scaledImageHeight() const                              { return qtImage.height(); }
-	int  scaledImageWidth() const                               { return qtImage.width() ; }
+	int  scaledImageHeight() const                              { return scaledSize.height(); }
+	int  scaledImageWidth() const                               { return scaledSize.width() ; }
 
 // 	double getImageScaleFactor()                          const { return scaleFactor ; }
 	const ScaleFactor& getImageScaleFactor()              const { return scaleFactor; }
@@ -68,6 +69,7 @@ public:
 
 	void setImageFilter(const FilterImage* imageFilter);
 
+	static void drawScaled(const QImage& image, QPainter& painter, const QRect* rect, const ScaleFactor& sf);
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
 	virtual void wheelEvent(QWheelEvent* event) override;
@@ -89,7 +91,7 @@ protected:
 	void updateScaleFactor();
 	static void cvImage2qtImage(const cv::Mat& cvImage, QImage& qimage);
 
-	void setZoomInternal(double factor)                          { if(scaleFactorConfig != factor && factor <= 8 && factor > 0) { scaleFactorConfig = factor; updateScaleFactorXY(); cvImage2qtImage(); zoomChanged(factor); } }
+	void setZoomInternal(double factor)                          { if(scaleFactorConfig != factor && factor <= 25 && factor > 0) { scaleFactorConfig = factor; updateScaleFactorXY(); zoomChanged(factor); sizeChanged(); /* TODO: */ cvImage2qtImage(); } }
 	double getFactorFitImage2Parent();
 
 public slots:

@@ -50,12 +50,11 @@ void CVImageWidget::addZoomItems()
 {
 	addZoomAction(1);
 	addZoomAction(2);
-	addZoomAction(3);
 	addZoomAction(4);
 	addZoomAction(6);
-	addZoomAction(8);
-// 	addZoomAction(9);
-// 	addZoomAction(12);
+	addZoomAction(9);
+	addZoomAction(12);
+	addZoomAction(25);
 }
 
 
@@ -160,6 +159,8 @@ void CVImageWidget::updateScaleFactorXY()
 	scaleFactor.setFactorX(scaleFactorX);
 	scaleFactor.setFactorY(scaleFactorY);
 	scaleFactor.setFactor(scaleFactorConfig);
+
+	scaledSize = QSize(qtImage.width()*scaleFactor.getFactorX(), qtImage.height()*scaleFactor.getFactorY());
 }
 
 double CVImageWidget::getFactorFitImage2Parent()
@@ -260,16 +261,8 @@ void CVImageWidget::cvImage2qtImage()
 			break;
 	}
 
-	const Qt::AspectRatioMode aspectRadioMode = (aspectRatio == 1.0) ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
-
-	if(!scaleFactor.isIdentical())
-		qtImage = qtImage.scaled(static_cast<int>(outputImage.cols*scaleFactor.getFactorX() + 0.5)
-		                       , static_cast<int>(outputImage.rows*scaleFactor.getFactorY() + 0.5)
-		                       , aspectRadioMode
-		                       , Qt::FastTransformation);
-
-	update();
 	sizeChanged();
+	update();
 }
 
 int CVImageWidget::imageHight() const
@@ -308,14 +301,39 @@ void CVImageWidget::saveBaseImage()
 }
 
 
+void CVImageWidget::drawScaled(const QImage& image, QPainter& painter, const QRect* rect, const ScaleFactor& factor)
+{
+// 	QRect sourceRect;
+// 	if(!rect)
+// 		sourceRect = image.rect();
+// 	else
+// 	{
+// 		sourceRect = QRect(static_cast<int>((rect->x     ()  )/factor.getFactorX())
+// 		                 , static_cast<int>((rect->y     ()  )/factor.getFactorY())
+// 		                 , static_cast<int>((rect->width ()+0)/factor.getFactorX() + 0)
+// 		                 , static_cast<int>((rect->height()+2)/factor.getFactorY() + 2));
+// 	}
+	QRect sourceRect = image.rect();
+
+	QRect destRect(static_cast<int>(sourceRect.x     ()*factor.getFactorX())
+	             , static_cast<int>(sourceRect.y     ()*factor.getFactorY())
+	             , static_cast<int>(sourceRect.width ()*factor.getFactorX())
+	             , static_cast<int>(sourceRect.height()*factor.getFactorY()));
+
+
+	painter.drawImage(destRect, image, sourceRect);
+}
+
+
 void CVImageWidget::paintEvent(QPaintEvent* event)
 {
 	// Display the image
 	QPainter painter(this);
 	if(event)
-		painter.drawImage(event->rect(), qtImage, event->rect());
+		drawScaled(qtImage, painter, &event->rect(), scaleFactor);
 	else
-		painter.drawImage(QPoint(0,0), qtImage);
+		drawScaled(qtImage, painter, nullptr, scaleFactor);
+
 	painter.end();
 }
 

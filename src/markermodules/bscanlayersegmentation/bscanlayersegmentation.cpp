@@ -281,7 +281,6 @@ void BScanLayerSegmentation::modifiedSegPart(std::size_t bscan, OctData::Segment
 		return;
 
 	const std::size_t maxCpoy = std::min(segPart.size(), line.size() - start);
-
 	std::copy(segPart.begin(), segPart.begin() + maxCpoy, line.begin() + start);
 /*
 	for(std::size_t i = start; i < endPos; ++i)

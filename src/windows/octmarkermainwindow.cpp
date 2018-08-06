@@ -269,6 +269,7 @@ void OCTMarkerMainWindow::setupMenu()
 
 	viewMenu->addAction(ProgramOptions::bscanSegmetationLineColor.getColorDialogAction());
 	viewMenu->addSeparator();
+	viewMenu->addAction(ProgramOptions::freeFormedSegmetationShowArea  .getAction());
 	viewMenu->addMenu(layerSegmentMenu);
 	viewMenu->addSeparator();
 	viewMenu->addAction(ProgramOptions::bscanShowExtraSegmentationslines.getAction());

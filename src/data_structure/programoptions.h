@@ -84,6 +84,10 @@ public:
 
 	static OptionBool   layerSegThicknessmapBlend;
 
+
+	static OptionInt    freeFormedSegmetationLineThickness;
+	static OptionBool   freeFormedSegmetationShowArea;
+
 	static OptionBool   intervallMarkSloMapAuteGenerate;
 	
 	static std::vector<Option*>& getAllOptions()                    { return getAllOptionsPrivate().allConfig; }

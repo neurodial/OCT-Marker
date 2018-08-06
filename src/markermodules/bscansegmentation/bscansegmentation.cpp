@@ -28,6 +28,7 @@
 
 #include <data_structure/simplecvmatcompress.h>
 #include <data_structure/scalefactor.h>
+#include <data_structure/programoptions.h>
 #include "importsegmentation.h"
 #include "simplemarchingsquare.h"
 
@@ -56,6 +57,8 @@ BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
 	widgetPtr2WGSegmentation = widget;
 
 	
+	connect(&ProgramOptions::freeFormedSegmetationShowArea, &OptionBool::trueSignal, this, &BScanSegmentation::updateAreaImageSlot);
+	connect(&ProgramOptions::freeFormedSegmetationShowArea, &OptionBool::valueChanged, this, &BScanSegmentation::requestFullUpdate);
 	// connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanSegmentation::newSeriesLoaded);
 }
 
@@ -230,6 +233,9 @@ void BScanSegmentation::drawMarker(QPainter& p, BScanMarkerWidget* widget, const
 	if(factor.getFactorX() <= 0 || factor.getFactorY() <= 0)
 		return;
 
+	if(ProgramOptions::freeFormedSegmetationShowArea())
+		CVImageWidget::drawScaled(areaImage, p, &rect, factor);
+
 	if(factor.isIdentical())
 	{
 		PaintFactor1 pf(p);
@@ -347,6 +353,8 @@ BscanMarkerBase::RedrawRequest BScanSegmentation::mouseMoveEvent(QMouseEvent* e,
 				result.redraw = setOnCoord(x, y, factor);
 
 			result.redraw |= actLocalOperator->drawMarker();
+
+			updateAreaImage(result, factor);
 		}
 	}
 	mousePoint = e->pos();
@@ -367,6 +375,8 @@ BscanMarkerBase::RedrawRequest  BScanSegmentation::mousePressEvent(QMouseEvent* 
 	{
 		startOnCoord(e->x(), e->y(), factor);
 		result.redraw = setOnCoord(e->x(), e->y(), factor);
+
+		updateAreaImage(result, factor);
 	}
 	return result;
 }
@@ -392,6 +402,7 @@ BscanMarkerBase::RedrawRequest  BScanSegmentation::mouseReleaseEvent(QMouseEvent
 		transformCoordWidget2Mat(x, y, factor, xD, yD);
 
 		result.redraw = actLocalOperator->endOnCoord(xD, yD);
+		updateAreaImage(result, factor);
 	}
 
 	return result;
@@ -471,6 +482,7 @@ void BScanSegmentation::dilateBScan()
 	int iterations = 1;
 	cv::dilate(*actMat, *actMat, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
 
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -483,6 +495,7 @@ void BScanSegmentation::erodeBScan()
 	int iterations = 1;
 	cv::erode(*actMat, *actMat, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
 
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -494,6 +507,7 @@ void BScanSegmentation::opencloseBScan()
 
 	BScanSegAlgorithm::openClose(*actMat);
 
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -506,6 +520,7 @@ void BScanSegmentation::medianBScan()
 
 	medianBlur(*actMat, *actMat, 3);
 
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -515,7 +530,10 @@ void BScanSegmentation::removeUnconectedAreas()
 		return;
 
 	if(BScanSegAlgorithm::removeUnconectedAreas(*actMat))
+	{
+		updateAreaImage(areaImage.rect());
 		requestFullUpdate();
+	}
 }
 
 void BScanSegmentation::extendLeftRightSpace()
@@ -524,7 +542,10 @@ void BScanSegmentation::extendLeftRightSpace()
 		return;
 
 	if(BScanSegAlgorithm::extendLeftRightSpace(*actMat))
+	{
 		requestFullUpdate();
+		updateAreaImage(areaImage.rect());
+	}
 }
 
 void BScanSegmentation::seriesRemoveUnconectedAreas()
@@ -539,6 +560,7 @@ void BScanSegmentation::seriesRemoveUnconectedAreas()
 		}
 	}
 	setActMat(getActBScanNr());
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -554,6 +576,7 @@ void BScanSegmentation::seriesExtendLeftRightSpace()
 		}
 	}
 	setActMat(getActBScanNr());
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -655,6 +678,7 @@ void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::Th
 
 	BScanSegAlgorithm::initFromThresholdDirection(image, *actMat, data, BScanSegmentationMarker::paintArea0Value, BScanSegmentationMarker::paintArea1Value);
 
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -676,6 +700,7 @@ void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::T
 		++bscanCount;
 	}
 	setActMat(getActBScanNr());
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -695,6 +720,7 @@ void BScanSegmentation::initBScanFromSegline(OctData::Segmentationlines::Segment
 
 	BScanSegAlgorithm::initFromSegline(*bscan, *actMat, type);
 
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -718,6 +744,7 @@ void BScanSegmentation::initSeriesFromSegline(OctData::Segmentationlines::Segmen
 		++bscanCount;
 	}
 	setActMat(getActBScanNr());
+	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
 
@@ -783,12 +810,59 @@ bool BScanSegmentation::setActMat(std::size_t nr, bool saveOldState)
 					*actMat = cv::Mat(bscan->getHeight(), bscan->getWidth(), cv::DataType<uint8_t>::type, cvScalar(BScanSegmentationMarker::markermatInitialValue));
 				}
 			}
-
+			areaImage = QImage(QSize(actMat->cols, actMat->rows), QImage::Format_ARGB32_Premultiplied);
+			updateAreaImage(areaImage.rect());
 			return true;
-	}
+		}
 	}
 	return false;
 }
+
+
+void BScanSegmentation::updateAreaImageSlot()
+{
+	updateAreaImage(areaImage.rect());
+}
+
+void BScanSegmentation::updateAreaImage(const RedrawRequest& redraw, const ScaleFactor& factor)
+{
+	QRect rect(redraw.rect.x()/factor.getFactorX(), redraw.rect.y()/factor.getFactorY(), redraw.rect.width()/factor.getFactorX(), redraw.rect.height()/factor.getFactorY());
+	updateAreaImage(rect);
+}
+
+void BScanSegmentation::updateAreaImage(const QRect& rect)
+{
+	if(!ProgramOptions::freeFormedSegmetationShowArea())
+		return;
+
+	if(areaImage.width() != actMat->cols || areaImage.height() != actMat->rows)
+		return;
+
+	QRgb f1 = qRgba(128, 0, 0, 128);
+	QRgb f2 = qRgba(0, 0, 0, 0);
+
+	int startX = std::max(0, rect.x());
+	int startY = std::max(0, rect.y());
+	int endX   = std::min(actMat->cols, rect.x() + rect.width());
+	int endY   = std::min(actMat->rows, rect.y() + rect.height());
+
+	for(int row = startY; row < endY; ++row)
+	{
+		QRgb* outPtr = reinterpret_cast<QRgb*>(areaImage.scanLine(row)) + startX;
+		const BScanSegmentationMarker::internalMatType* inPtr = actMat->ptr<BScanSegmentationMarker::internalMatType>(row) + startX;
+
+		for(int col = startX; col < endX; ++col)
+		{
+			if(*inPtr)
+				*outPtr = f1;
+			else
+				*outPtr = f2;
+			++outPtr;
+			++inPtr;
+		}
+	}
+}
+
 
 void BScanSegmentation::rejectMatChanges()
 {

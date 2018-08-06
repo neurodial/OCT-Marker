@@ -68,6 +68,10 @@ OptionInt    ProgramOptions::layerSegSplinePointSize     (8         , "SplinePoi
 OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true      , "ThicknessmapBlend", "LayerSeg");
 
 
+OptionInt    ProgramOptions::freeFormedSegmetationLineThickness(1      , "bscanSegmetationLineThickness", "FreeFormedSegmentation");
+OptionBool   ProgramOptions::freeFormedSegmetationShowArea     (true   , "showArea"                     , "FreeFormedSegmentation");
+
+
 OptionBool   ProgramOptions::intervallMarkSloMapAuteGenerate(false    , "SloMapAuteGenerate", "IntervallMark");
 
 
