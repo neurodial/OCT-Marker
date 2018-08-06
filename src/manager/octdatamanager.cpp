@@ -363,3 +363,9 @@ void OctDataManager::clearSeriesCache()
 	delete seriesSLODistanceMap;
 	seriesSLODistanceMap = nullptr;
 }
+
+void OctDataManager::abortLoadingOctFile()
+{
+	if(loadThread)
+		loadThread->breakLoad();
+}

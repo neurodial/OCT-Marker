@@ -207,10 +207,14 @@ void StupidSplineWindow::loadFileStatusSlot(bool loading)
 		if(!progressDialog)
 			progressDialog = new QProgressDialog(tr("Opening file ..."), tr("Abort"), 0, 100, this);
 
-		progressDialog->setCancelButtonText(nullptr);
+// 		progressDialog->setCancelButtonText(nullptr);
 		progressDialog->setWindowModality(Qt::WindowModal);
 		progressDialog->setValue(0);
 		progressDialog->setVisible(true);
+		progressDialog->setAutoClose(false);
+
+		OctDataManager& octDataManager = OctDataManager::getInstance();
+		connect(progressDialog, &QProgressDialog::canceled, &octDataManager, &OctDataManager::abortLoadingOctFile);
 	}
 	else
 	{
@@ -395,4 +399,5 @@ void StupidSplineWindow::setProgramOptions()
 {
 	ProgramOptions::bscansShowSegmentationslines.setValue(false);
 	ProgramOptions::bscanAspectRatioType.setValue(2); // best fit
+	ProgramOptions::bscanAutoFitImage.setValue(true);
 }

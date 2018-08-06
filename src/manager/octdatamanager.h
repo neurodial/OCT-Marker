@@ -69,6 +69,8 @@ public slots:
 
 	void saveOctScan(QString filename);
 
+	void abortLoadingOctFile();
+
 signals:
 	void octFileChanged();
 	void octFileChanged(const OctData::OCT*    );

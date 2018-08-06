@@ -70,8 +70,9 @@ QAction* OctMarkerActions::getZoomMenuAction()
 		addZoomAction(4, bscanMarkerWidget, *zoomMenu);
 		addZoomAction(6, bscanMarkerWidget, *zoomMenu);
 		addZoomAction(8, bscanMarkerWidget, *zoomMenu);
-	// 	addZoomAction(10, bscanMarkerWidget, *zoomMenu);
-	// 	addZoomAction(12, bscanMarkerWidget, *zoomMenu);
+		addZoomAction(12, bscanMarkerWidget, *zoomMenu);
+		addZoomAction(18, bscanMarkerWidget, *zoomMenu);
+		addZoomAction(25, bscanMarkerWidget, *zoomMenu);
 
 		updateZoom(bscanMarkerWidget->getScaleFactor());
 	}
