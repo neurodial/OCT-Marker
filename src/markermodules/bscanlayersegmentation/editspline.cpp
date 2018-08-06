@@ -347,10 +347,6 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 {
 	BscanMarkerBase::RedrawRequest redraw;
 	QRect repaintRect;
-// 	if(firstEditPoint != supportingPoints.end())
-// 		RecPointAdder::addPoints(repaintRect, firstEditPoint, lastEditPoint);
-// 	if(lastEditPoint  != supportingPoints.end())
-// 		RecPointAdder::addPoint(repaintRect, *lastEditPoint);
 
 	bool modPress = (event->modifiers() & Qt::KeyboardModifier::ShiftModifier);
 
@@ -384,13 +380,17 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 				bool marked = false;
 				for(PointIterator p = supportingPoints.begin(); p != supportingPoints.end(); ++p)
 				{
+					bool markPoint = marked;
 					if(p == minDistPoint || p == baseEditPoint)
 					{
-						p->marked = true;
 						marked = !marked;
+						markPoint = true;
 					}
-					else
-						p->marked = marked;
+					if(p->marked != markPoint)
+					{
+						RecPointAdder::addPoint(repaintRect, *p);
+						p->marked = markPoint;
+					}
 				}
 			}
 			else
