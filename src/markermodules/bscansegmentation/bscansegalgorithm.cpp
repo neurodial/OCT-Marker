@@ -68,19 +68,36 @@ namespace
 	template<typename Operator>
 	struct PartitionFromGrayValueWorker
 	{
-		inline static void iterateRow(cv::Mat* levelSetData
-		                            , const cv::Mat&       img
-		                            , const uint8_t        grayValue
-		                            , const uint8_t        breakValue
-		                            , const std::size_t    startInner
-		                            , const std::size_t    posOuter
-		                            , const std::size_t    numInner
-		                            , const std::ptrdiff_t itLineNum
-		                            , const int            neededStrikes
-		                            , const double         negStrikesFactor)
+		cv::Mat* levelSetData ;
+		const cv::Mat&       img;
+		const BScanSegmentationMarker::internalMatType paintVal0;
+		const BScanSegmentationMarker::internalMatType paintVal1;
+		const int    neededStrikes   ;
+		const double negStrikesFactor;
+
+		PartitionFromGrayValueWorker(const BScanSegmentationMarker::ThresholdDirectionData& data
+		                           , const cv::Mat& image
+		                           , cv::Mat& segMat
+		                           , BScanSegmentationMarker::internalMatType paintVal0
+		                           , BScanSegmentationMarker::internalMatType paintVal1)
+		: levelSetData(&segMat)
+		, img(image)
+		, paintVal0(paintVal0)
+		, paintVal1(paintVal1)
+		, neededStrikes   (data.neededStrikes   )
+		, negStrikesFactor(data.negStrikesFactor)
+		{
+		}
+
+		inline void iterateRow(const uint8_t        grayValue
+		                     , const uint8_t        breakValue
+		                     , const std::size_t    startInner
+		                     , const std::size_t    posOuter
+		                     , const std::size_t    numInner
+		                     , const std::ptrdiff_t itLineNum)
 		{
 			BScanSegmentationMarker::internalMatType* levelSetIt  = Operator::template startIt      <BScanSegmentationMarker::internalMatType>(*levelSetData, startInner, posOuter);
-			const uint8_t*                      imgIt       = Operator::template startIt_const<uint8_t>(img          , startInner, posOuter);
+			const uint8_t*                            imgIt       = Operator::template startIt_const<uint8_t                                 >(img          , startInner, posOuter);
 
 			int         negStri  = 0;
 			int         strikes  = 0;
@@ -106,7 +123,7 @@ namespace
 					}
 				}
 
-				*levelSetIt =  BScanSegmentationMarker::paintArea0Value;
+				*levelSetIt =  paintVal0;
 				levelSetIt  = Operator::op(levelSetIt, itLineNum);
 				imgIt       = Operator::op(imgIt     , itLineNum);
 			}
@@ -119,13 +136,13 @@ namespace
 
 			for(; innerPos < numInner; ++innerPos)
 			{
-				*levelSetIt =  BScanSegmentationMarker::paintArea1Value;
+				*levelSetIt = paintVal1;
 				levelSetIt  = Operator::op(levelSetIt, itLineNum);
 				imgIt       = Operator::op(imgIt     , itLineNum);
 			}
 		}
 
-		static void iterateAbsolute(cv::Mat* levelSetData, const cv::Mat& img, const BScanSegmentationMarker::internalMatType grayValue, const int neededStrikes, const double negStrikesFactor)
+		void iterateAbsolute(const BScanSegmentationMarker::internalMatType grayValue)
 		{
 			const std::size_t    numInner   = Operator::numInner(levelSetData); // levelSetData->getSizeY();
 			const std::size_t    numOuter   = Operator::numOuter(levelSetData); // levelSetData->getSizeX();
@@ -134,11 +151,11 @@ namespace
 
 			for(size_t outerPos = 0; outerPos < numOuter; ++outerPos)
 			{
-				iterateRow(levelSetData, img, grayValue, std::numeric_limits<uint8_t>::max(), innerStart, outerPos, numInner, itLineNum, neededStrikes, negStrikesFactor);
+				iterateRow(grayValue, std::numeric_limits<uint8_t>::max(), innerStart, outerPos, numInner, itLineNum);
 			}
 		}
 
-		static void iterateRelativ(cv::Mat* levelSetData, const cv::Mat& img, double frac, const int neededStrikes, const double negStrikesFactor)
+		void iterateRelativ(double frac)
 		{
 			const std::size_t    numInner   = Operator::numInner(levelSetData);
 			const std::size_t    numOuter   = Operator::numOuter(levelSetData);
@@ -162,19 +179,19 @@ namespace
 				}
 				const uint8_t grayValue = static_cast<uint8_t>((maxGrayValueCol-minGrayValueCol)*frac + minGrayValueCol);
 
-				iterateRow(levelSetData, img, grayValue, maxGrayValueCol, innerStart, outerPos, numInner, itLineNum, neededStrikes, negStrikesFactor);
+				iterateRow(grayValue, maxGrayValueCol, innerStart, outerPos, numInner, itLineNum);
 			}
 		}
 
-		static void initFromThresholdMethod(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdDirectionData& data)
+		void initFromThresholdMethod(const BScanSegmentationMarker::ThresholdDirectionData& data)
 		{
 			switch(data.method)
 			{
 				case BScanSegmentationMarker::ThresholdMethod::Absolute:
-					iterateAbsolute(&segMat, image, data.absoluteValue, data.neededStrikes, data.negStrikesFactor);
+					iterateAbsolute(data.absoluteValue);
 					break;
 				case BScanSegmentationMarker::ThresholdMethod::Relative:
-					iterateRelativ(&segMat , image, data.relativeFrac , data.neededStrikes, data.negStrikesFactor);
+					iterateRelativ(data.relativeFrac  );
 					break;
 			}
 		}
@@ -238,7 +255,10 @@ namespace
 	}
 }
 
-void BScanSegAlgorithm::initFromThresholdDirection(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdDirectionData& data)
+void BScanSegAlgorithm::initFromThresholdDirection(const cv::Mat& image, cv::Mat& segMat
+                                                 , const BScanSegmentationMarker::ThresholdDirectionData& data
+                                                 , BScanSegmentationMarker::internalMatType paintArea0Value
+                                                 , BScanSegmentationMarker::internalMatType paintArea1Value)
 {
 	assert(image.cols == segMat.cols);
 	assert(image.rows == segMat.rows);
@@ -247,35 +267,56 @@ void BScanSegAlgorithm::initFromThresholdDirection(const cv::Mat& image, cv::Mat
 	switch(data.direction)
 	{
 		case BScanSegmentationMarker::ThresholdDirectionData::Direction::down:
-			PartitionFromGrayValueWorker<OpDown >::initFromThresholdMethod(image, segMat, data);
+		{
+			PartitionFromGrayValueWorker<OpDown > worker(data, image, segMat, paintArea0Value, paintArea1Value);
+			worker.initFromThresholdMethod(data);
 			break;
+		}
 		case BScanSegmentationMarker::ThresholdDirectionData::Direction::up:
-			PartitionFromGrayValueWorker<OpUp   >::initFromThresholdMethod(image, segMat, data);
+		{
+			PartitionFromGrayValueWorker<OpUp   > worker(data, image, segMat, paintArea0Value, paintArea1Value);
+			worker.initFromThresholdMethod(data);
 			break;
+		}
 		case BScanSegmentationMarker::ThresholdDirectionData::Direction::right:
-			PartitionFromGrayValueWorker<OpRight>::initFromThresholdMethod(image, segMat, data);
+		{
+			PartitionFromGrayValueWorker<OpRight> worker(data, image, segMat, paintArea0Value, paintArea1Value);
+			worker.initFromThresholdMethod(data);
 			break;
+		}
 		case BScanSegmentationMarker::ThresholdDirectionData::Direction::left:
-			PartitionFromGrayValueWorker<OpLeft >::initFromThresholdMethod(image, segMat, data);
+		{
+			PartitionFromGrayValueWorker<OpLeft > worker(data, image, segMat, paintArea0Value, paintArea1Value);
+			worker.initFromThresholdMethod(data);
 			break;
+		}
 	}
 }
 
-
-void BScanSegAlgorithm::initFromThreshold(const cv::Mat& image, cv::Mat& segMat, const BScanSegmentationMarker::ThresholdData& data)
+BScanSegmentationMarker::internalMatType BScanSegAlgorithm::getThresholdGrayValue(const cv::Mat& image, const BScanSegmentationMarker::ThresholdData& data)
 {
-	assert(image.cols == segMat.cols);
-	assert(image.rows == segMat.rows);
-
-	BScanSegmentationMarker::internalMatType grayValue = data.absoluteValue;
 	if(data.method == BScanSegmentationMarker::ThresholdMethod::Relative)
 	{
 		double minVal;
 		double maxVal;
 		cv::minMaxLoc(image, &minVal, &maxVal);
-		grayValue = static_cast<BScanSegmentationMarker::internalMatType>((maxVal-minVal)*data.relativeFrac + minVal);
+		return static_cast<BScanSegmentationMarker::internalMatType>((maxVal-minVal)*data.relativeFrac + minVal);
 	}
+	else
+		return data.absoluteValue;
+}
 
+
+void BScanSegAlgorithm::initFromThreshold(const cv::Mat& image
+                                        , cv::Mat& segMat
+                                        , const BScanSegmentationMarker::ThresholdData& data
+                                        , BScanSegmentationMarker::internalMatType paintArea0Value
+                                        , BScanSegmentationMarker::internalMatType paintArea1Value)
+{
+	assert(image.cols == segMat.cols);
+	assert(image.rows == segMat.rows);
+
+	const BScanSegmentationMarker::internalMatType grayValue = getThresholdGrayValue(image, data);
 
 	// accept only char type matrices
 	CV_Assert(image.depth() == CV_8U);
@@ -297,7 +338,7 @@ void BScanSegAlgorithm::initFromThreshold(const cv::Mat& image, cv::Mat& segMat,
 
 		for(int j = 0;j < nCols; ++j)
 		{
-			*segIt = *imgIt<grayValue ? BScanSegmentationMarker::paintArea0Value : BScanSegmentationMarker::paintArea1Value;
+			*segIt = *imgIt<grayValue ? paintArea0Value : paintArea1Value;
 			++imgIt;
 			++segIt;
 		}
@@ -318,20 +359,6 @@ void BScanSegAlgorithm::initFromSegline(const OctData::BScan& bscan, cv::Mat& se
 		for(double value : segline)
 		{
 			fillRow(colIt, colSize, rowSize, BScanSegmentationMarker::paintArea0Value, BScanSegmentationMarker::paintArea1Value, static_cast<std::size_t>(value));
-// 			const std::size_t rowCh = std::min(static_cast<std::size_t>(value), rowSize);
-// 			BScanSegmentationMarker::internalMatType* rowIt = colIt;
-//
-// 			for(std::size_t row = 0; row < rowCh; ++row)
-// 			{
-// 				*rowIt = BScanSegmentationMarker::paintArea0Value;
-// 				rowIt += colSize;
-// 			}
-//
-// 			for(std::size_t row = rowCh; row < rowSize; ++row)
-// 			{
-// 				*rowIt = BScanSegmentationMarker::paintArea1Value;
-// 				rowIt += colSize;
-// 			}
 
 			++colIt;
 		}

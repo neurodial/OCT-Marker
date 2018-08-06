@@ -289,13 +289,14 @@ bool BScanSegmentation::startOnCoord(int x, int y, const ScaleFactor& factor)
 }
 
 
-
-
 uint8_t BScanSegmentation::valueOnCoord(int x, int y)
 {
 	setActMat(getActBScanNr());
 	if(!actMat || actMat->empty())
 		return BScanSegmentationMarker::markermatInitialValue;
+
+	if(x < 0 || y < 0 || x >= actMat->cols || y >= actMat->rows)
+		return 0;
 
 	return actMat->at<uint8_t>(cv::Point(x, y));
 }
@@ -652,7 +653,7 @@ void BScanSegmentation::initBScanFromThreshold(const BScanSegmentationMarker::Th
 		return;
 
 
-	BScanSegAlgorithm::initFromThresholdDirection(image, *actMat, data);
+	BScanSegAlgorithm::initFromThresholdDirection(image, *actMat, data, BScanSegmentationMarker::paintArea0Value, BScanSegmentationMarker::paintArea1Value);
 
 	requestFullUpdate();
 }
@@ -670,7 +671,7 @@ void BScanSegmentation::initSeriesFromThreshold(const BScanSegmentationMarker::T
 		if(setActMat(bscanCount))
 		{
 			if(actMat && !actMat->empty())
-				BScanSegAlgorithm::initFromThresholdDirection(image, *actMat, data);
+				BScanSegAlgorithm::initFromThresholdDirection(image, *actMat, data, BScanSegmentationMarker::paintArea0Value, BScanSegmentationMarker::paintArea1Value);
 		}
 		++bscanCount;
 	}

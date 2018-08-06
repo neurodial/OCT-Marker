@@ -126,6 +126,8 @@ private slots:
 	void slotLocalOperation(bool);
 	void slotLocalNN(bool);
 
+	void setPaintColor();
+
 	void switchSizeLocalThresholdDir();
 	void switchSizeLocalThreshold();
 	void switchSizeLocalOperation();

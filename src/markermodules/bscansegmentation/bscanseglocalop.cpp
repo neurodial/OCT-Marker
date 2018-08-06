@@ -11,6 +11,27 @@
 #include <octdata/datastruct/bscan.h>
 
 
+
+BScanSegmentationMarker::ColorData BScanSegLocalOp::localColorData;
+
+namespace
+{
+	QIcon createColorIcon(const QColor& color)
+	{
+		QPixmap pixmap(15, 15);
+		pixmap.fill(color);
+		return QIcon(pixmap);
+	}
+
+	QIcon createMonocromeIcon(uint8_t grayvalue)
+	{
+		return createColorIcon(QColor::fromRgb(grayvalue, grayvalue, grayvalue));
+	}
+
+}
+
+
+
 cv::Mat* BScanSegLocalOp::getActMat()
 {
 	return segmentation.actMat;
@@ -37,6 +58,43 @@ std::size_t BScanSegLocalOp::getBScanNr()
 }
 
 
+BScanSegmentationMarker::internalMatType BScanSegLocalOp::getStartPaintColor(int x, int y)
+{
+	switch(localColorData.paintColor)
+	{
+		case BScanSegmentationMarker::ColorData::PaintColor::Auto:
+			return valueOnCoord(x, y);
+		case BScanSegmentationMarker::ColorData::PaintColor::Area0:
+			return BScanSegmentationMarker::paintArea0Value;
+		case BScanSegmentationMarker::ColorData::PaintColor::Area1:
+			return BScanSegmentationMarker::paintArea1Value;
+	}
+	return BScanSegmentationMarker::paintArea0Value;
+}
+
+QIcon BScanSegLocalOp::getPaintColorIcon(BScanSegmentationMarker::ColorData::PaintColor color)
+{
+	switch(color)
+	{
+		case BScanSegmentationMarker::ColorData::PaintColor::Area0:
+			return createMonocromeIcon(255);
+		case BScanSegmentationMarker::ColorData::PaintColor::Auto:
+			return createMonocromeIcon(124);
+		case BScanSegmentationMarker::ColorData::PaintColor::Area1:
+			return createMonocromeIcon(0);
+	}
+	return QIcon();
+}
+
+BScanSegmentationMarker::internalMatType BScanSegLocalOp::getOtherPaintValue(BScanSegmentationMarker::internalMatType v)
+{
+	if(v == BScanSegmentationMarker::paintArea0Value)
+		return BScanSegmentationMarker::paintArea1Value;
+	if(v == BScanSegmentationMarker::paintArea1Value)
+		return BScanSegmentationMarker::paintArea0Value;
+	return BScanSegmentationMarker::paintArea1Value; // TODO: error handling
+}
+
 
 
 namespace
@@ -52,26 +110,6 @@ namespace
 		return update;
 	}
 }
-
-
-
-namespace
-{
-	QIcon createColorIcon(const QColor& color)
-	{
-		QPixmap pixmap(15, 15);
-		pixmap.fill(color);
-		return QIcon(pixmap);
-	}
-
-	QIcon createMonocromeIcon(uint8_t grayvalue)
-	{
-		return createColorIcon(QColor::fromRgb(grayvalue, grayvalue, grayvalue));
-	}
-
-}
-
-
 
 
 void BScanSegLocalOpPaint::drawMarkerPaint(QPainter& painter, const QPoint& centerDrawPoint, const ScaleFactor& factor) const
@@ -130,20 +168,12 @@ bool BScanSegLocalOpPaint::drawOnCoord(int x, int y)
 
 bool BScanSegLocalOpPaint::startOnCoord(int x, int y)
 {
-	switch(localPaintData.paintColor)
-	{
-		case BScanSegmentationMarker::PaintData::PaintColor::Auto:
-			paintValue = valueOnCoord(x, y);
-			break;
-		case BScanSegmentationMarker::PaintData::PaintColor::Area0:
-			paintValue = BScanSegmentationMarker::paintArea0Value;
-			break;
-		case BScanSegmentationMarker::PaintData::PaintColor::Area1:
-			paintValue = BScanSegmentationMarker::paintArea1Value;
-			break;
-	}
+	paintValue = getStartPaintColor(x, y);
 	return true;
 }
+
+
+
 
 void BScanSegLocalOpPaint::setOperatorSize(int size)
 {
@@ -156,20 +186,6 @@ void BScanSegLocalOpPaint::setPaintData(const BScanSegmentationMarker::PaintData
 {
 	if(assignUpdateNecessary(localPaintData, data))
 		updateCursor();
-}
-
-QIcon BScanSegLocalOpPaint::getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor color) const
-{
-	switch(color)
-	{
-		case BScanSegmentationMarker::PaintData::PaintColor::Area0:
-			return createMonocromeIcon(255);
-		case BScanSegmentationMarker::PaintData::PaintColor::Auto:
-			return createMonocromeIcon(124);
-		case BScanSegmentationMarker::PaintData::PaintColor::Area1:
-			return createMonocromeIcon(0);
-	}
-	return QIcon();
 }
 
 
@@ -256,6 +272,23 @@ void BScanSegLocalOpThresholdDirection::drawMarkerPaint(QPainter& painter, const
 	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
 }
 
+bool BScanSegLocalOpThresholdDirection::startOnCoord(int x, int y)
+{
+	switch(localThresholdData.direction)
+	{
+		case BScanSegmentationMarker::ThresholdDirectionData::Direction::down : y -= paintSizeHeight; break;
+		case BScanSegmentationMarker::ThresholdDirectionData::Direction::up   : y += paintSizeHeight; break;
+		case BScanSegmentationMarker::ThresholdDirectionData::Direction::right: x -= paintSizeWidth ; break;
+		case BScanSegmentationMarker::ThresholdDirectionData::Direction::left : x += paintSizeWidth ; break;
+	}
+
+	val1 = getStartPaintColor(x, y);
+	val2 = getOtherPaintValue(val1);
+
+	return true;
+}
+
+
 
 bool BScanSegLocalOpThresholdDirection::applyThreshold(int x, int y)
 {
@@ -283,7 +316,7 @@ bool BScanSegLocalOpThresholdDirection::applyThreshold(int x, int y)
 	cv::Mat tmp = (*map)(cv::Rect(x0, y0, x1-x0, y1-y0));
 	cv::Mat tmpImages = bscan->getImage()(cv::Rect(x0, y0, x1-x0, y1-y0));
 
-	BScanSegAlgorithm::initFromThresholdDirection(tmpImages, tmp, localThresholdData);
+	BScanSegAlgorithm::initFromThresholdDirection(tmpImages, tmp, localThresholdData, val1, val2);
 
 	return true;
 }
@@ -318,8 +351,31 @@ void BScanSegLocalOpThreshold::drawMarkerPaint(QPainter& painter, const QPoint& 
 	painter.drawRect(centerDrawPoint.x()-sizeW, centerDrawPoint.y()-sizeH, sizeW*2, sizeH*2);
 }
 
+bool BScanSegLocalOpThreshold::startOnCoord(int x, int y)
+{
+	val1 = getStartPaintColor(x, y);
+	val2 = getOtherPaintValue(val1);
 
-bool BScanSegLocalOpThreshold::applyThreshold(int x, int y)
+	if(localColorData.paintColor == BScanSegmentationMarker::ColorData::PaintColor::Auto)
+	{
+		cv::Mat segMat;
+		cv::Mat imageMat;
+		bool result = getLocalImageMat(x, y, imageMat, segMat);
+		if(result)
+		{
+			const BScanSegmentationMarker::internalMatType grayValue    = BScanSegAlgorithm::getThresholdGrayValue(imageMat, localThresholdData);
+			const BScanSegmentationMarker::internalMatType centralValue = imageMat.at<BScanSegmentationMarker::internalMatType>(imageMat.cols/2, imageMat.rows/2);
+
+			if(grayValue < centralValue)
+				std::swap(val1, val2);
+		}
+	}
+
+	return true;
+}
+
+
+bool BScanSegLocalOpThreshold::getLocalImageMat(int x, int y, cv::Mat& image, cv::Mat& seg)
 {
 	cv::Mat* map = getActMat();
 	if(!map || map->empty())
@@ -342,12 +398,20 @@ bool BScanSegLocalOpThreshold::applyThreshold(int x, int y)
 	if(!bscan)
 		return false;
 
-	cv::Mat tmp = (*map)(cv::Rect(x0, y0, x1-x0, y1-y0));
-	cv::Mat tmpImages = bscan->getImage()(cv::Rect(x0, y0, x1-x0, y1-y0));
-
-	BScanSegAlgorithm::initFromThreshold(tmpImages, tmp, localThresholdData);
-
+	seg   = (*map)(cv::Rect(x0, y0, x1-x0, y1-y0));
+	image = bscan->getImage()(cv::Rect(x0, y0, x1-x0, y1-y0));
 	return true;
+}
+
+
+bool BScanSegLocalOpThreshold::applyThreshold(int x, int y)
+{
+	cv::Mat segMat;
+	cv::Mat imageMat;
+	bool result = getLocalImageMat(x, y, imageMat, segMat);
+	if(result)
+		BScanSegAlgorithm::initFromThreshold(imageMat, segMat, localThresholdData, val1, val2);
+	return result;
 }
 void BScanSegLocalOpThreshold::setOperatorSizeHeight(int size)
 {

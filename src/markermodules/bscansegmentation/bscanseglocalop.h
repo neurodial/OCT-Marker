@@ -30,6 +30,9 @@ public:
 	virtual int getOperatorHeight()const = 0;
 	virtual int getOperatorWidth() const = 0;
 
+	static void setColorData(BScanSegmentationMarker::ColorData cd) { localColorData = cd; }
+	static BScanSegmentationMarker::ColorData getColorData()        { return localColorData; }
+	static QIcon getPaintColorIcon(BScanSegmentationMarker::ColorData::PaintColor color);
 protected:
 	BScanSegmentation& segmentation;
 
@@ -39,6 +42,8 @@ protected:
 	std::size_t getBScanNr();
 
 	BScanSegmentationMarker::internalMatType valueOnCoord(int x, int y);
+	BScanSegmentationMarker::internalMatType getStartPaintColor(int x, int y);
+	BScanSegmentationMarker::internalMatType getOtherPaintValue(BScanSegmentationMarker::internalMatType v);
 
 	void updateCursor();
 
@@ -53,6 +58,9 @@ protected:
 			return maxOperatorSize;
 		return size;
 	}
+
+
+	static BScanSegmentationMarker::ColorData localColorData;
 };
 
 
@@ -81,7 +89,6 @@ public:
 	void setPaintData(const BScanSegmentationMarker::PaintData& data);
 
 	const BScanSegmentationMarker::PaintData& getPaintData() const  { return localPaintData; }
-	QIcon getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor color) const;
 };
 
 
@@ -95,6 +102,9 @@ class BScanSegLocalOpThresholdDirection : public BScanSegLocalOp
 
 	BScanSegmentationMarker::ThresholdDirectionData localThresholdData;
 
+	BScanSegmentationMarker::internalMatType val1;
+	BScanSegmentationMarker::internalMatType val2;
+
 	bool applyThreshold(int x, int y);
 public:
 	BScanSegLocalOpThresholdDirection(BScanSegmentation& parent) : BScanSegLocalOp(parent) {}
@@ -104,7 +114,7 @@ public:
 
 	bool endOnCoord(int x, int y)           override                { return applyThreshold(x, y); }
 	bool drawOnCoord(int x, int y)          override                { if(applyOnMouseMove) return applyThreshold(x, y); return false; }
-	bool startOnCoord(int /*x*/, int /*y*/) override                { return false; }
+	bool startOnCoord(int x, int y)         override;
 
 	int getOperatorHeight()const            override                { return paintSizeHeight; }
 	int getOperatorWidth() const            override                { return paintSizeWidth ; }
@@ -126,6 +136,12 @@ class BScanSegLocalOpThreshold : public BScanSegLocalOp
 
 	BScanSegmentationMarker::ThresholdData localThresholdData;
 
+	BScanSegmentationMarker::internalMatType val1;
+	BScanSegmentationMarker::internalMatType val2;
+	BScanSegmentationMarker::internalMatType switchVal = 0;
+
+	bool getLocalImageMat(int x, int y, cv::Mat& image, cv::Mat& seg);
+
 	bool applyThreshold(int x, int y);
 public:
 	BScanSegLocalOpThreshold(BScanSegmentation& parent) : BScanSegLocalOp(parent) {}
@@ -135,7 +151,7 @@ public:
 
 	bool endOnCoord(int x, int y)           override                { return applyThreshold(x, y); }
 	bool drawOnCoord(int x, int y)          override                { if(applyOnMouseMove) return applyThreshold(x, y); return false; }
-	bool startOnCoord(int /*x*/, int /*y*/) override                { return false; }
+	bool startOnCoord(int x, int y)         override;
 
 	int getOperatorHeight()const            override                { return paintSizeHeight; }
 	int getOperatorWidth() const            override                { return paintSizeWidth ; }

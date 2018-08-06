@@ -15,9 +15,23 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <item>
+      <widget class="QLabel" name="label_25">
+       <property name="text">
+        <string>Layer</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBoxLayer"/>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="seriesTab">
       <attribute name="title">
@@ -525,7 +539,28 @@
        <string>Local</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="21" column="2">
+       <item row="11" column="1" rowspan="2">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Strikes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Modus</string>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="0" colspan="3">
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="24" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QSpinBox" name="localSizeThresholdWidthSpinBox">
@@ -574,108 +609,23 @@
          </item>
         </layout>
        </item>
-       <item row="22" column="1">
+       <item row="25" column="1">
         <widget class="QRadioButton" name="radioLocalThresholdAbsolut">
          <property name="text">
           <string>Absolute</string>
          </property>
         </widget>
        </item>
-       <item row="15" column="1" colspan="2">
+       <item row="18" column="1" colspan="2">
         <widget class="QWidget" name="widget_2" native="true">
          <layout class="QGridLayout" name="gridLayout_7">
           <property name="margin">
            <number>0</number>
           </property>
-          <item row="1" column="2">
-           <widget class="QToolButton" name="buttonLocalPaintArea1">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QToolButton" name="buttonLocalPaintRec">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../application.qrc">
-              <normaloff>:/icons/paint_quadrat.png</normaloff>:/icons/paint_quadrat.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QToolButton" name="buttonLocalPaintArea0">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QToolButton" name="buttonLocalPaintCircle">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../application.qrc">
-              <normaloff>:/icons/paint_disc.png</normaloff>:/icons/paint_disc.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QToolButton" name="buttonLocalPaintAreaAuto">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="2">
-           <widget class="QToolButton" name="buttonLocalPaintPen">
-            <property name="text">
-             <string>Pen</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../application.qrc">
-              <normaloff>:/icons/pen.png</normaloff>:/icons/pen.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="5" column="0">
         <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -691,14 +641,7 @@
          </property>
         </spacer>
        </item>
-       <item row="12" column="0" colspan="3">
-        <widget class="Line" name="line_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="17" column="2">
+       <item row="20" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QSpinBox" name="localSizeOperationWidthSpinBox">
@@ -747,14 +690,14 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="1">
+       <item row="9" column="1">
         <widget class="QRadioButton" name="radioLocalThresholdDirRelative">
          <property name="text">
           <string>Relative</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="2">
+       <item row="5" column="2">
         <layout class="QGridLayout" name="gridLayout_6">
          <property name="margin">
           <number>0</number>
@@ -863,7 +806,7 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="2">
+       <item row="9" column="2">
         <widget class="QDoubleSpinBox" name="localThresholdDirRelativeSpinBox">
          <property name="maximum">
           <double>1.000000000000000</double>
@@ -873,14 +816,14 @@
          </property>
         </widget>
        </item>
-       <item row="17" column="0" colspan="2">
+       <item row="20" column="0" colspan="2">
         <widget class="QRadioButton" name="radioLocalOperation">
          <property name="text">
           <string>Operation</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="2">
+       <item row="12" column="2">
         <widget class="QSpinBox" name="localThresholdDirStrikes">
          <property name="minimum">
           <number>1</number>
@@ -893,14 +836,14 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="4" column="0" colspan="2">
         <widget class="QRadioButton" name="radioLocalThresholdDir">
          <property name="text">
           <string>Threshold</string>
          </property>
         </widget>
        </item>
-       <item row="18" column="1" rowspan="2" colspan="2">
+       <item row="21" column="1" rowspan="2" colspan="2">
         <widget class="QWidget" name="widget" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="margin">
@@ -981,42 +924,35 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="7" column="1">
         <widget class="QRadioButton" name="radioLocalThresholdDirAbsolut">
          <property name="text">
           <string>Absolute</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="1" rowspan="2">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Strikes</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="2">
+       <item row="7" column="2">
         <widget class="QSpinBox" name="localThresholdDirAboluteSpinbox">
          <property name="maximum">
           <number>255</number>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="5" column="1">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Direction</string>
          </property>
         </widget>
        </item>
-       <item row="16" column="0" colspan="3">
+       <item row="19" column="0" colspan="3">
         <widget class="Line" name="line_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
+       <item row="4" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QSpinBox" name="localSizeThresholdDirWidthSpinBox">
@@ -1065,14 +1001,14 @@
          </item>
         </layout>
        </item>
-       <item row="11" column="1">
+       <item row="14" column="1">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>Strikes Fail</string>
          </property>
         </widget>
        </item>
-       <item row="11" column="2">
+       <item row="14" column="2">
         <widget class="QDoubleSpinBox" name="localThresholdDirStrikesFailFactor">
          <property name="maximum">
           <double>1.000000000000000</double>
@@ -1082,19 +1018,68 @@
          </property>
         </widget>
        </item>
-       <item row="13" column="0" colspan="2">
+       <item row="16" column="0" colspan="2">
         <widget class="QRadioButton" name="radioLocalPaint">
          <property name="text">
           <string>Paint</string>
          </property>
         </widget>
        </item>
-       <item row="13" column="2">
+       <item row="16" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QSpinBox" name="localSizePaintSpinBox">
            <property name="minimum">
             <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_7">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="buttonLocalPaintCircle">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../application.qrc">
+             <normaloff>:/icons/paint_disc.png</normaloff>:/icons/paint_disc.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="buttonLocalPaintRec">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../application.qrc">
+             <normaloff>:/icons/paint_quadrat.png</normaloff>:/icons/paint_quadrat.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="buttonLocalPaintPen">
+           <property name="text">
+            <string>Pen</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../application.qrc">
+             <normaloff>:/icons/pen.png</normaloff>:/icons/pen.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -1113,28 +1098,28 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="1" colspan="2">
+       <item row="6" column="1" colspan="2">
         <widget class="QCheckBox" name="checkBoxApplyOnMove">
          <property name="text">
           <string>apply on mouse move</string>
          </property>
         </widget>
        </item>
-       <item row="20" column="0" colspan="3">
+       <item row="23" column="0" colspan="3">
         <widget class="Line" name="line_3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="21" column="0" colspan="2">
+       <item row="24" column="0" colspan="2">
         <widget class="QRadioButton" name="radioLocalThreshold">
          <property name="text">
           <string>Threshold</string>
          </property>
         </widget>
        </item>
-       <item row="22" column="2">
+       <item row="25" column="2">
         <widget class="QSpinBox" name="localThresholdAboluteSpinbox">
          <property name="maximum">
           <number>255</number>
@@ -1144,14 +1129,14 @@
          </property>
         </widget>
        </item>
-       <item row="23" column="1">
+       <item row="26" column="1">
         <widget class="QRadioButton" name="radioLocalThresholdRelative">
          <property name="text">
           <string>Relative</string>
          </property>
         </widget>
        </item>
-       <item row="23" column="2">
+       <item row="26" column="2">
         <widget class="QDoubleSpinBox" name="localThresholdRelativeSpinBox">
          <property name="maximum">
           <double>1.000000000000000</double>
@@ -1161,7 +1146,7 @@
          </property>
         </widget>
        </item>
-       <item row="26" column="1">
+       <item row="29" column="1">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1174,19 +1159,73 @@
          </property>
         </spacer>
        </item>
-       <item row="25" column="0" colspan="2">
+       <item row="28" column="0" colspan="2">
         <widget class="QRadioButton" name="radioLocalNN">
          <property name="text">
           <string>NN test</string>
          </property>
         </widget>
        </item>
-       <item row="24" column="0" colspan="3">
+       <item row="27" column="0" colspan="3">
         <widget class="Line" name="line_nn">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
+       </item>
+       <item row="2" column="0" colspan="3">
+        <widget class="Line" name="line_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QToolButton" name="buttonLocalPaintArea0">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="buttonLocalPaintAreaAuto">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="buttonLocalPaintArea1">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_13">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -1226,11 +1265,6 @@
   <tabstop>localThresholdDirRelativeSpinBox</tabstop>
   <tabstop>localThresholdDirStrikes</tabstop>
   <tabstop>radioLocalPaint</tabstop>
-  <tabstop>buttonLocalPaintCircle</tabstop>
-  <tabstop>buttonLocalPaintRec</tabstop>
-  <tabstop>buttonLocalPaintArea0</tabstop>
-  <tabstop>buttonLocalPaintAreaAuto</tabstop>
-  <tabstop>buttonLocalPaintArea1</tabstop>
   <tabstop>radioLocalOperation</tabstop>
   <tabstop>buttonLocalOperationErode</tabstop>
   <tabstop>buttonLocalOperationDilate</tabstop>

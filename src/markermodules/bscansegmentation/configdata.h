@@ -56,15 +56,23 @@ namespace BScanSegmentationMarker
 	struct PaintData
 	{
 		enum class PaintMethod { Circle, Rect, Pen };
-		enum class PaintColor  { Area0, Auto, Area1 };
 
 		PaintMethod paintMethod = PaintMethod::Circle;
-		PaintColor  paintColor  = PaintColor::Auto;
 
 		bool operator==(const PaintData& other) const
 		{
-			return paintMethod == other.paintMethod
-			    && paintColor  == other.paintColor;
+			return paintMethod == other.paintMethod;
+		}
+	};
+
+	struct ColorData
+	{
+		enum class PaintColor  { Area0, Auto, Area1 };
+		PaintColor  paintColor = PaintColor::Auto;
+
+		bool operator==(const ColorData& other) const
+		{
+			return paintColor == other.paintColor;
 		}
 	};
 

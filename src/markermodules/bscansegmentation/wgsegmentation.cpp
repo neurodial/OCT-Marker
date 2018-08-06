@@ -127,10 +127,10 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 	localPaintAreaBG->addButton(buttonLocalPaintArea0   );
 	localPaintAreaBG->addButton(buttonLocalPaintAreaAuto);
 	localPaintAreaBG->addButton(buttonLocalPaintArea1   );
-	buttonLocalPaintArea0   ->setChecked(localOpPaint->getPaintData().paintColor == BScanSegmentationMarker::PaintData::PaintColor::Area0);
-	buttonLocalPaintAreaAuto->setChecked(localOpPaint->getPaintData().paintColor == BScanSegmentationMarker::PaintData::PaintColor::Auto );
-	buttonLocalPaintArea1   ->setChecked(localOpPaint->getPaintData().paintColor == BScanSegmentationMarker::PaintData::PaintColor::Area1);
-	connect(localPaintAreaBG, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::activateLocalPaint);
+	buttonLocalPaintArea0   ->setChecked(BScanSegLocalOp::getColorData().paintColor == BScanSegmentationMarker::ColorData::PaintColor::Area0);
+	buttonLocalPaintAreaAuto->setChecked(BScanSegLocalOp::getColorData().paintColor == BScanSegmentationMarker::ColorData::PaintColor::Auto );
+	buttonLocalPaintArea1   ->setChecked(BScanSegLocalOp::getColorData().paintColor == BScanSegmentationMarker::ColorData::PaintColor::Area1);
+	connect(localPaintAreaBG, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &WGSegmentation::setPaintColor);
 
 	QButtonGroup* localOperationBG = new QButtonGroup(this);
 	localOperationBG->addButton(buttonLocalOperationErode    );
@@ -176,9 +176,9 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 
 
 	// Icons
-	buttonLocalPaintArea0   ->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor::Area0));
-	buttonLocalPaintAreaAuto->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor::Auto ));
-	buttonLocalPaintArea1   ->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::PaintData::PaintColor::Area1));
+	buttonLocalPaintArea0   ->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::ColorData::PaintColor::Area0));
+	buttonLocalPaintAreaAuto->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::ColorData::PaintColor::Auto ));
+	buttonLocalPaintArea1   ->setIcon(localOpPaint->getPaintColorIcon(BScanSegmentationMarker::ColorData::PaintColor::Area1));
 
 	connect(tabWidget, &QTabWidget::currentChanged, this, &WGSegmentation::tabWidgetCurrentChanged);
 
@@ -325,19 +325,27 @@ void WGSegmentation::slotLocalThreshDir(bool checked)
 	segmentation->setLocalMethod(BScanSegmentationMarker::LocalMethod::ThresholdDirection);
 }
 
+void WGSegmentation::setPaintColor()
+{
+	BScanSegmentationMarker::ColorData data;
+
+	if(buttonLocalPaintArea0->isChecked())
+		data.paintColor = BScanSegmentationMarker::ColorData::PaintColor::Area0;
+	else if(buttonLocalPaintArea1->isChecked())
+		data.paintColor = BScanSegmentationMarker::ColorData::PaintColor::Area1;
+	else
+		data.paintColor = BScanSegmentationMarker::ColorData::PaintColor::Auto;
+
+	BScanSegLocalOp::setColorData(data);
+}
+
+
 void WGSegmentation::slotLocalPaint(bool checked)
 {
 	if(!checked)
 		return;
 
 	BScanSegmentationMarker::PaintData data;
-
-	if(buttonLocalPaintArea0->isChecked())
-		data.paintColor = BScanSegmentationMarker::PaintData::PaintColor::Area0;
-	else if(buttonLocalPaintArea1->isChecked())
-		data.paintColor = BScanSegmentationMarker::PaintData::PaintColor::Area1;
-	else
-		data.paintColor = BScanSegmentationMarker::PaintData::PaintColor::Auto;
 
 	if(buttonLocalPaintCircle->isChecked())
 		data.paintMethod = BScanSegmentationMarker::PaintData::PaintMethod::Circle;
