@@ -141,8 +141,6 @@ private slots:
 	void setLocalOperator(BScanSegmentationMarker::LocalMethod method);
 
 
-	void importSegmentationFromOctSlot();
-
 	void initSeriesFromSegline();
 	void initBScanFromSegline();
 

@@ -29,8 +29,8 @@
 #include <data_structure/simplecvmatcompress.h>
 #include <data_structure/scalefactor.h>
 #include <data_structure/programoptions.h>
-#include "importsegmentation.h"
 #include "simplemarchingsquare.h"
+#include "freeformsegcommand.h"
 
 
 
@@ -405,6 +405,7 @@ BscanMarkerBase::RedrawRequest  BScanSegmentation::mouseReleaseEvent(QMouseEvent
 
 		result.redraw = actLocalOperator->endOnCoord(xD, yD);
 		updateAreaImage(result, factor);
+		createUndoStep();
 	}
 
 	return result;
@@ -450,13 +451,6 @@ bool BScanSegmentation::keyPressEvent(QKeyEvent* e, BScanMarkerWidget*)
 		case Qt::Key_5:
 			setLocalMethod(BScanSegmentationMarker::LocalMethod::NN);
 			return true;
-		case Qt::Key_Z:
-			if(e->modifiers() == Qt::ControlModifier)
-			{
-				rejectMatChanges();
-				return true;
-			}
-			break;
 		case Qt::Key_G:
 			showTikzCode();
 			return true;
@@ -484,6 +478,7 @@ void BScanSegmentation::dilateBScan()
 	int iterations = 1;
 	cv::dilate(*actMat, *actMat, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
 
+	createUndoStep();
 	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
@@ -497,6 +492,7 @@ void BScanSegmentation::erodeBScan()
 	int iterations = 1;
 	cv::erode(*actMat, *actMat, cv::Mat(), cv::Point(-1, -1), iterations, cv::BORDER_REFLECT_101, 1);
 
+	createUndoStep();
 	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
@@ -509,6 +505,7 @@ void BScanSegmentation::opencloseBScan()
 
 	BScanSegAlgorithm::openClose(*actMat);
 
+	createUndoStep();
 	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
@@ -522,6 +519,7 @@ void BScanSegmentation::medianBScan()
 
 	medianBlur(*actMat, *actMat, 3);
 
+	createUndoStep();
 	updateAreaImage(areaImage.rect());
 	requestFullUpdate();
 }
@@ -625,12 +623,10 @@ void BScanSegmentation::createSegments(const OctData::Series* series)
 }
 
 
-
-
-
-
 void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::property_tree::ptree& markerTree)
 {
+	BscanMarkerBase::newSeriesLoaded(series, markerTree);
+
 	if(!series)
 		return;
 	createSegments(series);
@@ -639,13 +635,17 @@ void BScanSegmentation::newSeriesLoaded(const OctData::Series* series, boost::pr
 
 void BScanSegmentation::saveState(boost::property_tree::ptree& markerTree)
 {
-	saveActMatState();
+	BscanMarkerBase::saveState(markerTree);
+
+	createUndoStep();
 	BScanSegmentationPtree::fillPTree(markerTree, this);
 	stateChangedSinceLastSave = false;
 }
 
 void BScanSegmentation::loadState(boost::property_tree::ptree& markerTree)
 {
+	BscanMarkerBase::loadState(markerTree);
+
 	BScanSegmentationPtree::parsePTree(markerTree, this);
 	setActMat(getActBScanNr(), false);
 	stateChangedSinceLastSave = false;
@@ -790,7 +790,7 @@ bool BScanSegmentation::setActMat(std::size_t nr, bool saveOldState)
 	if(actMat)
 	{
 		if(saveOldState)
-			saveActMatState(); // save state from old bscan
+			createUndoStep(); // save state from old bscan
 
 		if(segments.size() > nr)
 		{
@@ -858,23 +858,44 @@ void BScanSegmentation::updateAreaImage(const QRect& rect)
 	}
 }
 
-
-void BScanSegmentation::rejectMatChanges()
-{
-	setActMat(actMatNr, false);
-}
-
-void BScanSegmentation::saveActMatState()
+void BScanSegmentation::createUndoStep()
 {
 	if(actMat && segments.size() > actMatNr)
 	{
-		if((*segments[actMatNr]) != *actMat)
+		SimpleCvMatCompress newMat;
+		newMat.readFromMat(*actMat);
+
+		if((*segments[actMatNr]) != newMat)
 		{
-			segments[actMatNr]->readFromMat(*actMat);
 			stateChangedSinceLastSave = true;
+
+			FreeFormSegCommand* command = new FreeFormSegCommand(*this, *(segments[actMatNr]));
+			addUndoCommand(command);
+
+			*(segments[actMatNr]) = newMat;
 		}
 	}
 }
+
+
+bool BScanSegmentation::swapActMat(SimpleCvMatCompress& otherMat)
+{
+	if(!actMat)
+		return false;
+
+	SimpleCvMatCompress oldMat;
+	oldMat.readFromMat(*actMat);
+	otherMat.writeToMat(*actMat);
+
+	*(segments[actMatNr]) = otherMat;
+
+	std::swap(oldMat, otherMat);
+
+	updateAreaImage(areaImage.rect());
+	requestFullUpdate();
+	return true;
+}
+
 
 bool BScanSegmentation::hasActMatChanged() const
 {
@@ -883,12 +904,6 @@ bool BScanSegmentation::hasActMatChanged() const
 	return false;
 }
 
-
-void BScanSegmentation::importSegmentationFromOct(const std::string& filename)
-{
-	if(ImportSegmentation::importOct(this, filename))
-		requestFullUpdate();
-}
 
 void BScanSegmentation::showTikzCode()
 {

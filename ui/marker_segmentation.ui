@@ -258,17 +258,6 @@
             </property>
            </spacer>
           </item>
-          <item>
-           <widget class="QToolButton" name="buttonImportOCT">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../application.qrc">
-              <normaloff>:/icons/folder_image.png</normaloff>:/icons/folder_image.png</iconset>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>

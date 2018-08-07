@@ -93,10 +93,6 @@ class BScanSegmentation : public BscanMarkerBase
 	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, const ScaleFactor& factor);
 
 	bool setActMat(std::size_t nr, bool saveOldState = true);
-
-	void saveActMatState();
-	void rejectMatChanges();
-
 	bool hasActMatChanged() const;
 
 	QString generateTikzCode() const;
@@ -133,6 +129,9 @@ public:
 
 
 	BScanSegmentationMarker::LocalMethod getLocalMethod() const     { return localMethod; }
+	bool swapActMat(SimpleCvMatCompress& otherMat);
+
+	void createUndoStep();
 
 
 	BScanSegLocalOpThresholdDirection* getLocalOpThresholdDirection() { return localOpThresholdDirection; }
@@ -161,8 +160,6 @@ public slots:
 	virtual void updateCursor();
 
 	void removeSeriesSegmentation()                                 { createSegments(); requestFullUpdate(); }
-
-	void importSegmentationFromOct(const std::string& filename);
 
 	void showTikzCode();
 

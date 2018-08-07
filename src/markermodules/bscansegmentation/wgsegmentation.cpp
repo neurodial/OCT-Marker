@@ -243,7 +243,6 @@ void WGSegmentation::createConnections()
 	connect(buttonSeriesInitFromThreshold, &QPushButton::clicked, this, &WGSegmentation::slotSeriesInitFromThresh);
 
 	connect(buttonBScanInitFromThreshold , &QPushButton::clicked, this, &WGSegmentation::slotBscanInitFromThresh );
-	connect(buttonImportOCT              , &QPushButton::clicked, this, &WGSegmentation::importSegmentationFromOctSlot );
 
 
 	connect(buttonBScanErode             , &QPushButton::clicked, segmentation, &BScanSegmentation::erodeBScan          );
@@ -506,8 +505,6 @@ void WGSegmentation::setCreateNewSeriesStartValueEnable(bool b)
 	buttonSeriesExtendLeftRightSpace ->setEnabled(b);
 	buttonSeriesRemoveUnconectedAreas->setEnabled(b);
 
-	buttonImportOCT                  ->setEnabled(b);
-
 	checkBoxCreateNewSeriesStartValue->setChecked(b);
 
 
@@ -725,23 +722,3 @@ void WGSegmentationThreshold::widgetActivated()
 {
 	emit(blockAction());
 }
-
-
-void WGSegmentation::importSegmentationFromOctSlot()
-{
-// 		EYE00021_E_1776.vol_seg_bin.bin
-	const QString& filename = OctDataManager::getInstance().getLoadedFilename();
-	QString importfile = filename + "_seg_bin.bin";
-	QFileInfo fileinfo(importfile);
-
-	if(!fileinfo.exists())
-		importfile = QString();
-
-	QString file = QFileDialog::getOpenFileName(this, tr("Import marker from oct file"), importfile, ".bin");
-	if(!file.isEmpty())
-	{
-		segmentation->importSegmentationFromOct(file.toStdString());
-	}
-}
-
-

@@ -19,6 +19,10 @@ public:
 	bool operator==(const cv::Mat& mat) const;
 	bool operator!=(const cv::Mat& mat) const                       { return !(this->operator==(mat)); }
 
+
+	bool operator==(const SimpleCvMatCompress& mat) const           { return SimpleMatCompress::operator==(mat); }
+	bool operator!=(const SimpleCvMatCompress& mat) const           { return !(this->operator==(mat)); }
+
 };
 
 #endif // SIMPLECVMATCOMPRESS_H
