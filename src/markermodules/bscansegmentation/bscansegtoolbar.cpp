@@ -2,6 +2,7 @@
 
 #include <QSpinBox>
 
+#include<data_structure/programoptions.h>
 #include "bscansegmentation.h"
 
 
@@ -18,13 +19,7 @@ BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 	QActionGroup*  actionPaintMethod  = new QActionGroup(parent);
 	*/
 
-	QSpinBox* paintSizeSpinBox = new QSpinBox(this);
-	paintSizeSpinBox->setMinimum(1);
-	paintSizeSpinBox->setMaximum(4);
-	paintSizeSpinBox->setValue(seg->getSeglinePaintSize());
-	connect(paintSizeSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), seg             , &BScanSegmentation::setSeglinePaintSize);
-	// connect(seg             , &BScanSegmentation::localOperatorSizeChanged                , paintSizeSpinBox, &QSpinBox::setValue                     );
-	addWidget(paintSizeSpinBox);
+	addWidget(ProgramOptions::freeFormedSegmetationLineThickness.createSpinBox(this));
 
 	/*
 	QAction* actionPaintMethodDisc = new QAction(parent);

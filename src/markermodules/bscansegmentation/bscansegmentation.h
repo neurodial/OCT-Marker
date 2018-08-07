@@ -92,8 +92,6 @@ class BScanSegmentation : public BscanMarkerBase
 
 	QRect getWidgetPaintSize(const QPoint& p1, const QPoint& p2, const ScaleFactor& factor);
 
-	int seglinePaintSize = 1;
-
 	bool setActMat(std::size_t nr, bool saveOldState = true);
 
 	void saveActMatState();
@@ -136,8 +134,6 @@ public:
 
 	BScanSegmentationMarker::LocalMethod getLocalMethod() const     { return localMethod; }
 
-	int getSeglinePaintSize()                                       { return seglinePaintSize; }
-
 
 	BScanSegLocalOpThresholdDirection* getLocalOpThresholdDirection() { return localOpThresholdDirection; }
 	BScanSegLocalOpThreshold*          getLocalOpThreshold()        { return localOpThreshold; }
@@ -163,8 +159,6 @@ public slots:
 	virtual void setLocalMethod(BScanSegmentationMarker::LocalMethod method);
 
 	virtual void updateCursor();
-
-	virtual void setSeglinePaintSize(int size);
 
 	void removeSeriesSegmentation()                                 { createSegments(); requestFullUpdate(); }
 

@@ -2,6 +2,7 @@
 #include<QColorDialog>
 #include<QInputDialog>
 #include<QLineEdit>
+#include<QSpinBox>
 
 #include <data_structure/programoptions.h>
 
@@ -12,6 +13,16 @@ Option::Option(const QString& name, const QString& optClass)
 {
 	ProgramOptions::registerOption(this);
 }
+
+
+void OptionBool::setDescriptions(const QString& shortDesc, const QString& longDesc)
+{
+	Option::setDescriptions(shortDesc, longDesc);
+
+	action->setText(shortDesc);
+	action->setToolTip(longDesc);
+}
+
 
 void OptionColor::showColorDialog()
 {
@@ -61,6 +72,21 @@ void OptionInt::showInputDialog()
 	if(result != QDialog::Accepted)
 		setValue(oldValue);
 }
+
+QSpinBox* OptionInt::createSpinBox(QWidget* parent)
+{
+	QSpinBox* spinbox = new QSpinBox(parent);
+	spinbox->setRange(valueMin, valueMax);
+	spinbox->setValue(value);
+	spinbox->setSingleStep(valueStepSize);
+	spinbox->setToolTip(getDescription());
+
+	connect(spinbox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this   , &OptionInt::setValue);
+	connect(this   , &OptionInt::valueChanged                                    , spinbox, &QSpinBox ::setValue);
+
+	return spinbox;
+}
+
 
 void OptionInt::setDescriptions(const QString& shortDesc, const QString& longDesc)
 {

@@ -8,6 +8,7 @@
 #include <QAction>
 #include<QIcon>
 
+class QSpinBox;
 class ProgramOptions;
 
 class Option : public QObject
@@ -89,7 +90,8 @@ public:
 	virtual void setVariant(const QVariant& variant)       override { setValuePrivat(variant.toBool()); }
 
 	virtual bool isDefault() const                         override { return value == defaultValue; }
-	
+
+	virtual void setDescriptions(const QString& shortDesc, const QString& longDesc) override;
 public slots:
 	void setValue(bool v)                                           { setValuePrivat(v); }
 	void setValueInvers(bool v)                                     { setValuePrivat(!v); }
@@ -135,6 +137,7 @@ public:
 	int operator()() const                                          { return value; }
 
 	QAction* getInputDialogAction()                                 { return inputDialogAction; }
+	QSpinBox* createSpinBox(QWidget* parent);
 	
 	virtual QVariant getVariant()                          override { return QVariant(value); }
 	virtual void setVariant(const QVariant& variant)       override { value = variant.toInt(); }

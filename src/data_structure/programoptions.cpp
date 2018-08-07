@@ -68,7 +68,7 @@ OptionInt    ProgramOptions::layerSegSplinePointSize     (8         , "SplinePoi
 OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true      , "ThicknessmapBlend", "LayerSeg");
 
 
-OptionInt    ProgramOptions::freeFormedSegmetationLineThickness(1      , "bscanSegmetationLineThickness", "FreeFormedSegmentation");
+OptionInt    ProgramOptions::freeFormedSegmetationLineThickness(1      , "bscanSegmetationLineThickness", "FreeFormedSegmentation", 1, 10);
 OptionBool   ProgramOptions::freeFormedSegmetationShowArea     (true   , "showArea"                     , "FreeFormedSegmentation");
 
 

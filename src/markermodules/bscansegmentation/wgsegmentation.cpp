@@ -1,14 +1,18 @@
 #include "wgsegmentation.h"
 
+#include<QFileDialog>
+#include<QToolButton>
+#include<QButtonGroup>
+
+#include<data_structure/programoptions.h>
+
 #include "bscansegmentation.h"
 #include "configdata.h"
+
 #include "bscanseglocalop.h"
 #include "bscanseglocalopnn.h"
 
 #include "wgsegnn.h"
-
-#include <QButtonGroup>
-#include <QFileDialog>
 
 
 #include <octdata/datastruct/segmentationlines.h>
@@ -21,6 +25,17 @@ WGSegmentation::WGSegmentation(BScanSegmentation* parent)
 , thresLocal (this)
 {
 	setupUi(this);
+
+	// add options
+	QToolButton* buttonShowArea = new QToolButton(this);
+	buttonShowArea->setDefaultAction(ProgramOptions::freeFormedSegmetationShowArea.getAction());
+	layoutSegmentationOptions->addWidget(buttonShowArea);
+	layoutSegmentationOptions->addWidget(ProgramOptions::freeFormedSegmetationLineThickness.createSpinBox(this));
+
+	layoutSegmentationOptions->addStretch();
+
+
+	// config segmentation tool
 
 	tabWidget->setCurrentWidget(localTab);
 

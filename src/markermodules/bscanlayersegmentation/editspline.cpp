@@ -177,8 +177,6 @@ namespace
 EditSpline::EditSpline(BScanLayerSegmentation* base)
 : EditBase(base)
 ,  baseEditPoint(supportingPoints.end())
-// , firstEditPoint(supportingPoints.end())
-// ,  lastEditPoint(supportingPoints.end())
 {
 
 }
@@ -495,8 +493,6 @@ void EditSpline::contextMenuEvent(QContextMenuEvent* event)
 
 void EditSpline::resetEditPoints()
 {
-// 	firstEditPoint = supportingPoints.end();
-// 	 lastEditPoint = supportingPoints.end();
 	 baseEditPoint = supportingPoints.end();
 }
 

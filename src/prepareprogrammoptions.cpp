@@ -57,11 +57,17 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	sloClipScanArea->setText(tr("clip to scan area"));
 	sloClipScanArea->setIcon(QIcon::fromTheme("view-fullscreen", QIcon(":/icons/tango/actions/system-search.svgz")));
 
+	/*
+	 *  Intervall mark spezific options
+	 */
 	QAction* intervallMarkSloMapAuteGenerate = ProgramOptions::intervallMarkSloMapAuteGenerate.getAction();
 	intervallMarkSloMapAuteGenerate->setText(tr("Generate SLO map"));
 	intervallMarkSloMapAuteGenerate->setIcon(QIcon(":/icons/map.png"));
 
 
+	/*
+	 *  Layer segmentation spezific options
+	 */
 	ProgramOptions::layerSegActiveLineColor.getColorDialogAction()->setText(tr("Active line color"));
 	ProgramOptions::layerSegPassivLineColor.getColorDialogAction()->setText(tr("Passiv line color"));
 	ProgramOptions::layerSegActiveLineColor.getColorDialogAction()->setIcon(QIcon(":/icons/color_wheel.png"));
@@ -79,4 +85,13 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	ProgramOptions::layerSegActiveLineSize    .setDescriptions(tr("active line size"), tr("Line size of active segmentation layer"));
 	ProgramOptions::layerSegPassivLineSize    .setDescriptions(tr("passiv line size"), tr("Line size of passiv segmentation layer"));
 	ProgramOptions::layerSegSplinePointSize   .setDescriptions(tr("spline point size"), tr("Point size of the spline tool"));
+
+
+	/*
+	 *  Free form segmentation spezific options
+	 */
+
+	ProgramOptions::freeFormedSegmetationShowArea.setDescriptions(tr("color segmentation area"), tr("Fill the area inside from the segmentation"));
+	ProgramOptions::freeFormedSegmetationShowArea.getAction()->setIcon(QIcon(":/icons/typicons/image.svgz"));
+
 }

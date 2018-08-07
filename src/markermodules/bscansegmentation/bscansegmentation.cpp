@@ -60,6 +60,8 @@ BScanSegmentation::BScanSegmentation(OctMarkerManager* markerManager)
 	connect(&ProgramOptions::freeFormedSegmetationShowArea, &OptionBool::trueSignal, this, &BScanSegmentation::updateAreaImageSlot);
 	connect(&ProgramOptions::freeFormedSegmetationShowArea, &OptionBool::valueChanged, this, &BScanSegmentation::requestFullUpdate);
 	// connect(markerManager, &BScanMarkerManager::newSeriesShowed, this, &BScanSegmentation::newSeriesLoaded);
+
+	connect(&ProgramOptions::freeFormedSegmetationLineThickness, &OptionInt::valueChanged, this, &BScanSegmentation::requestFullUpdate);
 }
 
 BScanSegmentation::~BScanSegmentation()
@@ -177,7 +179,7 @@ void BScanSegmentation::drawSegmentLine(Painter& painter, Transformer& transform
 	int endW   = std::min(drawX+drawWidth , mapWidth);
 
 	QPen pen(Qt::red);
-	pen.setWidth(seglinePaintSize);
+	pen.setWidth(ProgramOptions::freeFormedSegmetationLineThickness());
 	painter.setPen(pen);
 	drawSegmentLineRec(painter, transform, *actMat, startH, endH, startW, endW);
 }
@@ -779,13 +781,6 @@ void BScanSegmentation::setLocalMethod(BScanSegmentationMarker::LocalMethod meth
 		localOperatorChanged(method);
 	}
 }
-
-void BScanSegmentation::setSeglinePaintSize(int size)
-{
-	seglinePaintSize = size;
-	requestFullUpdate();
-}
-
 
 bool BScanSegmentation::setActMat(std::size_t nr, bool saveOldState)
 {
