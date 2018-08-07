@@ -386,6 +386,9 @@ void FindSupportingPoints::divideLocalMinMax(const PtItSource firstPoint, const 
 	PtItSource it = firstPoint+1;
 	dir.isDirectionChangeAndUpdate(it->getY());
 
+	if(it == lastPoint)
+		return;
+
 	++it;
 
 	for(; it != lastPoint; ++it)

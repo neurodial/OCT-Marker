@@ -261,21 +261,10 @@ void CVImageWidget::cvImage2qtImage()
 			break;
 	}
 
+
 	sizeChanged();
 	update();
 }
-
-int CVImageWidget::imageHight() const
-{
-	return cvImage.rows;
-}
-
-int CVImageWidget::imageWidth() const
-{
-	return cvImage.cols;
-}
-
-
 
 
 void CVImageWidget::saveImage()

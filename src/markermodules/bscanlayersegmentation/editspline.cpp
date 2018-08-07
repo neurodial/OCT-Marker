@@ -304,6 +304,7 @@ bool EditSpline::testInsertPoint(const Point2D& insertPoint, const ScaleFactor& 
 				{
 					baseEditPoint = supportingPoints.insert(p, SplinePoint(insertPoint));
 					recalcInterpolation();
+					pointMoved = true;
 					return true;
 				}
 			}
@@ -566,10 +567,10 @@ BscanMarkerBase::RedrawRequest EditSpline::deleteMarkedPoints()
 		}
 	}
 
-	if(beginRemove != supportingPoints.end())
+	if(beginRemove != supportingPoints.end()) // Delete with last point
 	{
 		PointIterator lastRemovePoint = supportingPoints.end();
-		RecPointAdder::addPoints2Rec(removeRect, beginRemove    , supportingPoints, pointDrawPos);
+		RecPointAdder::addPoints2Rec(removeRect, beginRemove    , supportingPoints, pointDrawNeg);
 		RecPointAdder::addPoint(removeRect, *(lastRemovePoint-1));
 
 		supportingPoints.erase(beginRemove, lastRemovePoint);

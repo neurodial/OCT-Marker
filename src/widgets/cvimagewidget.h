@@ -50,8 +50,8 @@ public:
 	virtual void setImageSize(QSize size)                       { imageScale        = size  ; scaleMethod = ScaleMethod::Size  ; updateScaleFactorXY(); cvImage2qtImage(); }
 	virtual void setScaleFactor(double factor)                  { scaleFactorConfig = factor; scaleMethod = ScaleMethod::Factor; updateScaleFactorXY(); cvImage2qtImage(); }
 
-	int  imageHight() const;
-	int  imageWidth() const;
+	int  imageHight() const                                     { return qtImage.height(); }
+	int  imageWidth() const                                     { return qtImage.width (); }
 
 	int  scaledImageHeight() const                              { return scaledSize.height(); }
 	int  scaledImageWidth() const                               { return scaledSize.width() ; }
@@ -91,7 +91,7 @@ protected:
 	void updateScaleFactor();
 	static void cvImage2qtImage(const cv::Mat& cvImage, QImage& qimage);
 
-	void setZoomInternal(double factor)                          { if(scaleFactorConfig != factor && factor <= 25 && factor > 0) { scaleFactorConfig = factor; updateScaleFactorXY(); zoomChanged(factor); sizeChanged(); /* TODO: */ cvImage2qtImage(); } }
+	void setZoomInternal(double factor)                          { if(scaleFactorConfig != factor && factor <= 25 && factor > 0) { scaleFactorConfig = factor; updateScaleFactorXY(); zoomChanged(factor); cvImage2qtImage(); } }
 	double getFactorFitImage2Parent();
 
 public slots:
