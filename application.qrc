@@ -79,6 +79,7 @@
 
 	<file>icons/tango/actions/zoom-in.svgz</file>
 	<file>icons/tango/actions/zoom-out.svgz</file>
+	<file>icons/tango/actions/document-properties.svgz</file>
 
 	<file>icons/tango/actions/go-next.svgz</file>
 	<file>icons/tango/actions/go-previous.svgz</file>

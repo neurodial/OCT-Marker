@@ -701,7 +701,7 @@
     </message>
 </context>
 <context>
-    <name>DwOctInformations</name>
+    <name>OctInformationsWidget</name>
     <message>
         <location filename="../src/widgets/dwoctinformations.cpp" line="161"/>
         <location filename="../src/widgets/dwoctinformations.cpp" line="205"/>

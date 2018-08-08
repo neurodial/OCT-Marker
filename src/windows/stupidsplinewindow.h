@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QWidgetAction>
 
 class QAction;
 class QSpinBox;
@@ -15,6 +16,9 @@ class BScanLayerSegmentation;
 class PaintMarker;
 
 #include"octmarkeractions.h"
+
+
+
 
 class StupidSplineWindow : public QMainWindow
 {

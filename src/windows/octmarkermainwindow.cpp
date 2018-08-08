@@ -17,7 +17,7 @@
 #include <widgets/wgsloimage.h>
 #include <widgets/bscanmarkerwidget.h>
 #include <widgets/wgoctdatatree.h>
-#include <widgets/dwoctinformations.h>
+#include <widgets/octinformationswidget.h>
 #include <widgets/dwmarkerwidgets.h>
 #include <widgets/scrollareapan.h>
 #include <widgets/mousecoordstatus.h>
@@ -111,7 +111,10 @@ OCTMarkerMainWindow::OCTMarkerMainWindow(bool loadLastFile)
 	treeDock->setWidget(tree);
 	addDockWidget(Qt::RightDockWidgetArea, treeDock);
 	
-	DwOctInformations* dwoctinformations = new DwOctInformations(this);
+
+	QDockWidget* dwoctinformations = new QDockWidget(tr("Oct informations"), this);
+	dwoctinformations->setWidget(new OctInformationsWidget(this));
+// 	DwOctInformations* dwoctinformations = new DwOctInformations(this);
 	dwoctinformations->setObjectName("DwOctInformations");
 	addDockWidget(Qt::RightDockWidgetArea, dwoctinformations);
 

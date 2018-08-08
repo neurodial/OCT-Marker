@@ -16,6 +16,7 @@
 #include <widgets/dwmarkerwidgets.h>
 #include <widgets/scrollareapan.h>
 #include <widgets/bscanchooserspinbox.h>
+#include <widgets/octinformationwidgetaction.h>
 
 #include <data_structure/programoptions.h>
 
@@ -59,17 +60,13 @@ StupidSplineWindow::StupidSplineWindow()
 	connect(&octDataManager, &OctDataManager::loadFileProgress, this, &StupidSplineWindow::loadFileProgress  );
 	connect(&octDataManager, static_cast<void(OctDataManager::*)()>(&OctDataManager::octFileChanged), this, &StupidSplineWindow::updateWindowTitle );
 
-	updateWindowTitle();
 
 	OctMarkerManager& marker = OctMarkerManager::getInstance();
 	marker.setBscanMarkerTextID(QString("LayerSegmentation"));
 	setIconsInMarkerWidget();
 
 
-	QSettings& settings = ProgramOptions::getSettings();
-	restoreGeometry(settings.value("stupidMainWindowGeometry").toByteArray());
 
-	
 	// General Objects
 	setCentralWidget(bscanMarkerWidgetScrollArea);
 
@@ -99,8 +96,12 @@ StupidSplineWindow::StupidSplineWindow()
 	addDockWidget(Qt::LeftDockWidgetArea, dwmarkerwidgets);
 
 
+	QSettings& settings = ProgramOptions::getSettings();
+	restoreGeometry(settings.value("stupidMainWindowGeometry").toByteArray());
+
 	// General Config
 	setWindowIcon(QIcon(":/icons/typicons/oct_marker_logo.svg"));
+	updateWindowTitle();
 }
 
 StupidSplineWindow::~StupidSplineWindow()
@@ -289,6 +290,22 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	QHBoxLayout* layoutStupidControls = new QHBoxLayout;
 	QFont textFont = QFont("Times", 20, QFont::Bold);
 
+
+	// ----------------------
+	// Oct informations
+	// ----------------------
+	OctInformationWidgetAction* octInformationAction = new OctInformationWidgetAction(this);
+	QToolButton* buttonOctInformation = new QToolButton(this);
+	buttonOctInformation->setFont(textFont);
+	buttonOctInformation->setIconSize(buttonSize);
+	buttonOctInformation->setDefaultAction(octInformationAction);
+	buttonOctInformation->addAction(octInformationAction);
+	buttonOctInformation->setPopupMode(QToolButton::InstantPopup);
+	layoutStupidControls->addWidget(buttonOctInformation);
+
+	addLayoutVLine(layoutStupidControls);
+
+
 	BScanChooserSpinBox* bscanChooser = new BScanChooserSpinBox(this);
 	bscanChooser->setFont(textFont);
 	layoutStupidControls->addWidget(bscanChooser);
@@ -401,3 +418,4 @@ void StupidSplineWindow::setProgramOptions()
 	ProgramOptions::bscanAspectRatioType.setValue(2); // best fit
 	ProgramOptions::bscanAutoFitImage.setValue(true);
 }
+

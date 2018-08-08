@@ -41,7 +41,9 @@ public:
 	static OctDataManager& getInstance()                            { static OctDataManager instance; return instance; }
 	
 	const QString& getLoadedFilename() const                        { return actFilename; }
-	const OctData::Series* getSeries() const                        { return actSeries;   }
+	const OctData::Patient* getPatient() const                      { return actPatient ; }
+	const OctData::Study  * getStudy  () const                      { return actStudy   ; }
+	const OctData::Series * getSeries () const                      { return actSeries  ; }
 	boost::property_tree::ptree* getMarkerTree(const OctData::Series* series)
 	                                                                { return getMarkerTreeSeries(series); }
 	

@@ -1,4 +1,4 @@
-#include "dwoctinformations.h"
+#include "octinformationswidget.h"
 
 #include <cmath>
 
@@ -74,20 +74,24 @@ namespace
 		LayoutFiller(QWidget* parent) : parent(parent) {}
 
 		template<typename T>
-		void setInformationConvert(QFormLayout* formlayout, const QString& labelText, const T& information, DwOctInformations::OctInfoField& octInfo)
+		void setInformationConvert(QFormLayout* formlayout, const QString& labelText, const T& information, OctInformationsWidget::OctInfoField& octInfo)
 		{
 			setInformation(formlayout, labelText, QString("%1").arg(information), octInfo);
 		}
 
-		void setInformation(QFormLayout* formlayout, const QString& labelText, const QString& information, DwOctInformations::OctInfoField& octInfo)
+		void setInformation(QFormLayout* formlayout, const QString& labelText, const QString& information, OctInformationsWidget::OctInfoField& octInfo)
 		{
 			if(octInfo.labelDesc == nullptr)
+			{
 				octInfo.labelDesc = new QLabel(labelText, parent);
+				octInfo.labelDesc->setVisible(false);
+			}
 
 			if(octInfo.labelInfo == nullptr)
 			{
 				octInfo.labelInfo = new QLabel(parent);
 				octInfo.labelInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
+				octInfo.labelInfo->setVisible(false);
 			}
 
 			if(!information.isEmpty())
@@ -124,8 +128,8 @@ namespace
 }
 
 
-DwOctInformations::DwOctInformations(QWidget* parent)
-:QDockWidget(parent)
+OctInformationsWidget::OctInformationsWidget(QWidget* parent)
+:QWidget(parent)
 {
 	setupUi(this);
 	
@@ -143,15 +147,20 @@ DwOctInformations::DwOctInformations(QWidget* parent)
 	groupBoxBScan  ->setLayout(bscanInformations );
 
 	groupBoxPatDiagnose->setVisible(false);
-		
-	connect(&dataManager  , &OctDataManager  ::patientChanged, this, &DwOctInformations::setPatient);
-	connect(&dataManager  , &OctDataManager  ::studyChanged  , this, &DwOctInformations::setStudy  );
-	connect(&dataManager  , &OctDataManager  ::seriesChanged , this, &DwOctInformations::setSeries );
-	connect(&markerManager, &OctMarkerManager::newBScanShowed, this, &DwOctInformations::setBScan  );
+
+	setPatient(dataManager.getPatient());
+	setStudy  (dataManager.getStudy  ());
+	setSeries (dataManager.getSeries ());
+	setBScan  (markerManager.getActBScan());
+
+	connect(&dataManager  , &OctDataManager  ::patientChanged, this, &OctInformationsWidget::setPatient);
+	connect(&dataManager  , &OctDataManager  ::studyChanged  , this, &OctInformationsWidget::setStudy  );
+	connect(&dataManager  , &OctDataManager  ::seriesChanged , this, &OctInformationsWidget::setSeries );
+	connect(&markerManager, &OctMarkerManager::newBScanShowed, this, &OctInformationsWidget::setBScan  );
 }
 
 
-void DwOctInformations::setPatient(const OctData::Patient* patient)
+void OctInformationsWidget::setPatient(const OctData::Patient* patient)
 {
 	clearQLayout(patientInformations);
 	
@@ -195,7 +204,7 @@ void DwOctInformations::setPatient(const OctData::Patient* patient)
 }
 
 
-void DwOctInformations::setStudy(const OctData::Study* study)
+void OctInformationsWidget::setStudy(const OctData::Study* study)
 {
 	clearQLayout(studyInformations);
 	
@@ -212,7 +221,7 @@ void DwOctInformations::setStudy(const OctData::Study* study)
 }
 
 
-void DwOctInformations::setSeries(const OctData::Series* series)
+void OctInformationsWidget::setSeries(const OctData::Series* series)
 {
 	clearQLayout(seriesInformations);
 	
@@ -317,7 +326,7 @@ void DwOctInformations::setSeries(const OctData::Series* series)
 	}
 }
 
-void DwOctInformations::setBScan(const OctData::BScan* bscan)
+void OctInformationsWidget::setBScan(const OctData::BScan* bscan)
 {
 	LayoutFiller filler(this);
 

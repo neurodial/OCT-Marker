@@ -1,7 +1,7 @@
 #ifndef DWOCTINFORMATIONS_H
 #define DWOCTINFORMATIONS_H
 
-#include<QDockWidget>
+#include<QWidget>
 
 namespace OctData
 {
@@ -18,7 +18,7 @@ class OctMarkerManager;
 class QLabel;
 
 
-class DwOctInformations : public QDockWidget, Ui::UiOctInformations
+class OctInformationsWidget : public QWidget, Ui::UiOctInformations
 {
 	Q_OBJECT
 public:
@@ -30,8 +30,8 @@ public:
 	};
 
 
-	explicit DwOctInformations(QWidget *parent = nullptr);
-	virtual ~DwOctInformations() = default;
+	explicit OctInformationsWidget(QWidget *parent = nullptr);
+	virtual ~OctInformationsWidget() = default;
 
 public slots:
 	void setPatient(const OctData::Patient* patient);
