@@ -237,6 +237,7 @@ void OctDataManager::loadOctDataThreadFinish()
 			}
 
 			emit(octFileChanged());
+			emit(octFileChanged(actFilename));
 			emit(octFileChanged(octData   ));
 			emit(patientChanged(actPatient));
 			emit(studyChanged  (actStudy  ));

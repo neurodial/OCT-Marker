@@ -33,13 +33,15 @@ public:
 	explicit OctInformationsWidget(QWidget *parent = nullptr);
 	virtual ~OctInformationsWidget() = default;
 
-public slots:
+private slots:
+	void setOctFile(QString filename);
 	void setPatient(const OctData::Patient* patient);
 	void setStudy  (const OctData::Study  * study  );
 	void setSeries (const OctData::Series * series );
 	void setBScan  (const OctData::BScan  * bscan );
 
 private:
+	QFormLayout* octfileInformations = nullptr;
 	QFormLayout* patientInformations = nullptr;
 	QFormLayout* studyInformations   = nullptr;
 	QFormLayout* seriesInformations  = nullptr;

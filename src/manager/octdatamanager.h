@@ -75,6 +75,7 @@ public slots:
 
 signals:
 	void octFileChanged();
+	void octFileChanged(QString filename);
 	void octFileChanged(const OctData::OCT*    );
 	void patientChanged(const OctData::Patient*);
 	void studyChanged  (const OctData::Study*  );

@@ -2,17 +2,18 @@
 
 #include <cmath>
 
+#include <QFormLayout>
+#include <QLabel>
+#include<QFileInfo>
+
 #include <octdata/datastruct/series.h>
 #include <octdata/datastruct/bscan.h>
 #include <octdata/datastruct/sloimage.h>
 #include <octdata/datastruct/oct.h>
 
 #include <manager/octdatamanager.h>
-
 #include <manager/octmarkermanager.h>
 
-#include <QFormLayout>
-#include <QLabel>
 
 
 
@@ -136,11 +137,13 @@ OctInformationsWidget::OctInformationsWidget(QWidget* parent)
 	OctDataManager  & dataManager   = OctDataManager  ::getInstance();
 	OctMarkerManager& markerManager = OctMarkerManager::getInstance();
 	
+	octfileInformations = new QFormLayout;
 	patientInformations = new QFormLayout;
 	studyInformations   = new QFormLayout;
 	seriesInformations  = new QFormLayout;
 	bscanInformations   = new QFormLayout;
 	
+	groupBoxOctFile->setLayout(octfileInformations);
 	groupBoxPatient->setLayout(patientInformations);
 	groupBoxStudy  ->setLayout(studyInformations  );
 	groupBoxSeries ->setLayout(seriesInformations );
@@ -148,16 +151,32 @@ OctInformationsWidget::OctInformationsWidget(QWidget* parent)
 
 	groupBoxPatDiagnose->setVisible(false);
 
+	setOctFile(dataManager.getLoadedFilename());
 	setPatient(dataManager.getPatient());
 	setStudy  (dataManager.getStudy  ());
 	setSeries (dataManager.getSeries ());
 	setBScan  (markerManager.getActBScan());
+
+
+	connect(&dataManager  , static_cast<void(OctDataManager::*)(QString)>(&OctDataManager::octFileChanged), this, &OctInformationsWidget::setOctFile);
 
 	connect(&dataManager  , &OctDataManager  ::patientChanged, this, &OctInformationsWidget::setPatient);
 	connect(&dataManager  , &OctDataManager  ::studyChanged  , this, &OctInformationsWidget::setStudy  );
 	connect(&dataManager  , &OctDataManager  ::seriesChanged , this, &OctInformationsWidget::setSeries );
 	connect(&markerManager, &OctMarkerManager::newBScanShowed, this, &OctInformationsWidget::setBScan  );
 }
+
+void OctInformationsWidget::setOctFile(QString filename)
+{
+	clearQLayout(octfileInformations);
+
+	QFileInfo fileinfo(filename);
+
+
+	addInformation(octfileInformations, tr("file name"), fileinfo.fileName(), this);
+	addInformation(octfileInformations, tr("file path"), fileinfo.path(), this);
+}
+
 
 
 void OctInformationsWidget::setPatient(const OctData::Patient* patient)
