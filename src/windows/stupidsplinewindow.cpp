@@ -7,6 +7,8 @@
 #include <QPushButton>
 #include <QToolButton>
 #include <QProgressDialog>
+#include <QSlider>
+#include<QLabel>
 
 #include <octdata/datastruct/series.h>
 
@@ -285,6 +287,24 @@ QToolButton* StupidSplineWindow::genToolButton(QAction* action)
 	return button;
 }
 
+QAction* StupidSplineWindow::getDoubleSliderAction(OptionDouble& option, const QString& label)
+{
+	QWidgetAction* sloOverlayAlphaSliderAction = new QWidgetAction(this);
+
+	QSlider* sloOverlayAlphaSlider = option.createSlider(Qt::Horizontal, this);
+	QWidget* widget = new QWidget(this);
+	QHBoxLayout* layout = new QHBoxLayout(widget);
+	layout->addWidget(new QLabel(label, widget));
+	layout->addWidget(sloOverlayAlphaSlider);
+	widget->setLayout(layout);
+
+	sloOverlayAlphaSliderAction->setDefaultWidget(widget);
+	sloOverlayAlphaSliderAction->setIcon(QIcon(":/icons/tango/actions/document-save.svgz"));
+
+	return sloOverlayAlphaSliderAction;
+}
+
+
 QDockWidget* StupidSplineWindow::createStupidControls()
 {
 	QHBoxLayout* layoutStupidControls = new QHBoxLayout;
@@ -372,6 +392,8 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	settingsMenu->addAction(ProgramOptions::layerSegActiveLineSize .getInputDialogAction());
 	settingsMenu->addAction(ProgramOptions::layerSegPassivLineSize .getInputDialogAction());
 	settingsMenu->addAction(ProgramOptions::layerSegSplinePointSize.getInputDialogAction());
+
+	settingsMenu->addAction(getDoubleSliderAction(ProgramOptions::sloOverlayAlpha, tr("SLO α value")));
 
 	settingsMenu->addSection(tr("Spline interpolation options"));
 

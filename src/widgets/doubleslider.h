@@ -16,6 +16,14 @@ public:
 		connect(this, &QSlider::valueChanged, this, &DoubleSlider::vChanged);
 	}
 
+	DoubleSlider(Qt::Orientation orientation, int factor, QWidget* parent)
+	: QSlider(orientation, parent)
+	, factor(factor)
+	{
+		connect(this, &QSlider::valueChanged, this, &DoubleSlider::vChanged);
+	}
+
+
 	void setRange(double min, double max)
 	{
 		QSlider::setRange(static_cast<int>(min*factor)

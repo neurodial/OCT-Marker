@@ -738,7 +738,7 @@
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="115"/>
         <source>Oct informations</source>
-        <translation type="unfinished">OCT-Informationen</translation>
+        <translation>OCT-Informationen</translation>
     </message>
     <message>
         <location filename="../src/windows/octmarkermainwindow.cpp" line="128"/>
@@ -1092,257 +1092,257 @@
 <context>
     <name>OctInformationsWidget</name>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="188"/>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="232"/>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="249"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="189"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="233"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="250"/>
         <source>internal Id</source>
         <translation>Interne ID</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="190"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="191"/>
         <source>Surname</source>
         <translation>Nachname</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="191"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="192"/>
         <source>Forename</source>
         <translation>Vorname</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="192"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="193"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="193"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="194"/>
         <source>ID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="194"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="195"/>
         <source>Ancestry</source>
         <translation>Abstammung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="197"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="198"/>
         <source>Birthdate</source>
         <translation>Geburtstag</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="203"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="204"/>
         <source>Female</source>
         <translation>Weiblich</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="206"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="207"/>
         <source>Male</source>
         <translation>Männlich</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="211"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="212"/>
         <source>Sex</source>
         <translation>Geschlecht</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="212"/>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="234"/>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="257"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="213"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="235"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="258"/>
         <source>UID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="233"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="234"/>
         <source>Name</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="235"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="236"/>
         <source>Operator</source>
         <translation>Bediener</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="237"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="238"/>
         <source>Study date</source>
         <translation>Studiendatum</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="252"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="253"/>
         <source>Scan date</source>
         <translation>Aufnahmedatum</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="258"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="259"/>
         <source>Ref. UID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="262"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="263"/>
         <source>Baseline scan</source>
         <translation>Basisaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="262"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="263"/>
         <source>true</source>
         <translation>Wahr</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="262"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="263"/>
         <source>false</source>
         <translation>Falsch</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="270"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="271"/>
         <source>OS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="273"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="274"/>
         <source>OD</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="278"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="279"/>
         <source>Laterality</source>
         <translation>Lateralität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="284"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="285"/>
         <source>Single line scan</source>
         <translation>einzelner Linienscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="287"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="288"/>
         <source>Circular scan</source>
         <translation>Ringscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="290"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="291"/>
         <source>Volume scan</source>
         <translation>Volumenaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="293"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="294"/>
         <source>Fast volume scan</source>
         <translation>Schnelle Volumenaufnahme</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="296"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="297"/>
         <source>Radial scan</source>
         <translation>Sternscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="299"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="300"/>
         <source>Radial+Circles scan</source>
         <translation>Stern- und Radialscan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="306"/>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="325"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="307"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="326"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="309"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="310"/>
         <source>Scan pattern</source>
         <translation>Scanmuster</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="315"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="316"/>
         <source>ONH</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="318"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="319"/>
         <source>Retina</source>
         <translation>Netzhaut</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="328"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="329"/>
         <source>Examined Structure</source>
         <translation>Untersuchte Struktur</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="332"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="333"/>
         <source>Scan focus</source>
         <translation>Aufnahmefokus</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="334"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="335"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="340"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="341"/>
         <source>Slo scale X</source>
         <translation>SLO-X-Skalierung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="341"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="342"/>
         <source>Slo scale Y</source>
         <translation>SLO-Y-Skalierung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="343"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="344"/>
         <source>Slo width (pixel)</source>
         <translation>Slobreite (Pixel)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="342"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="343"/>
         <source>Slo height (pixel)</source>
         <translation>Slohöhe (pixel)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="175"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="176"/>
         <source>file name</source>
         <translation>Dateiname</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="176"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="177"/>
         <source>file path</source>
         <translation>Dateipath</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="375"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="376"/>
         <source>Acquisition time</source>
         <translation>Aufnahmezeit</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="376"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="377"/>
         <source>Image quality</source>
         <translation>Bildqualität</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="377"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="378"/>
         <source>Images average</source>
         <translation>Gemittelte Bilder</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="379"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="380"/>
         <source>Scale X</source>
         <translation>X-Skalierung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="380"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="381"/>
         <source>Distance</source>
         <translation>Distanz</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="381"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="382"/>
         <source>Scale Z</source>
         <translation>Z-Skalierung</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="383"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="384"/>
         <source>Angle</source>
         <translation>Winkel</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="385"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="386"/>
         <source>width (pixel)</source>
         <translation>Breite (Pixel)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/octinformationswidget.cpp" line="386"/>
+        <location filename="../src/widgets/octinformationswidget.cpp" line="387"/>
         <source>height (pixel)</source>
         <translation>Höhe (Pixel)</translation>
     </message>
@@ -1417,7 +1417,7 @@
 <context>
     <name>OptionDouble</name>
     <message>
-        <location filename="../src/helper/programoptionstype.cpp" line="110"/>
+        <location filename="../src/helper/programoptionstype.cpp" line="136"/>
         <source>Default value: %1</source>
         <translation>Standardwert: %1</translation>
     </message>
@@ -1425,7 +1425,7 @@
 <context>
     <name>OptionInt</name>
     <message>
-        <location filename="../src/helper/programoptionstype.cpp" line="67"/>
+        <location filename="../src/helper/programoptionstype.cpp" line="93"/>
         <source>Default value: %1</source>
         <translation>Standardwert: %1</translation>
     </message>
@@ -1665,8 +1665,8 @@
 <context>
     <name>StupidSplineWindow</name>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="252"/>
         <location filename="../src/windows/stupidsplinewindow.cpp" line="254"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="256"/>
         <source>OCT-Marker - simple spline gui</source>
         <translation>OCT-Marker - vereinfachte Spline-Oberfläche</translation>
     </message>
@@ -1687,74 +1687,79 @@
         <translation type="vanished">Wiederherstellen</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="356"/>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="357"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="376"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="377"/>
         <source>Quit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="346"/>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="347"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="366"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="367"/>
         <source>Save and Close</source>
         <translation>Speichern und Beenden</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="177"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="179"/>
         <source>Data not saved</source>
         <translation>Daten nicht gespeichert</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="177"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="179"/>
         <source>You have unsaved changes, what will you do?</source>
         <translation>Es gibt ungespeicherte Änderungen, was wollen Sie tun?</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="183"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="185"/>
         <source>Data cant saved</source>
         <translation>Daten konnten nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="183"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="185"/>
         <source>The data cant be saved, abort closing</source>
         <translation>Daten konnten nicht gespeichert werden, Beenden abgebrochen</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="209"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="211"/>
         <source>Opening file ...</source>
         <translation>Öffne Datei ...</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="209"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="211"/>
         <source>Abort</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="260"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="262"/>
         <source>Error on save</source>
         <translation>Fehler beim speichern</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="260"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="262"/>
         <source>Internal error in saveLayerSegmentation()</source>
         <translation>Interner Fehler in saveLayerSegmentation()</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="367"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="387"/>
         <source>View options</source>
         <translation>Anzeigeoptionen</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="376"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="396"/>
+        <source>SLO α value</source>
+        <translation>SLO-α-Wert</translation>
+    </message>
+    <message>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="398"/>
         <source>Spline interpolation options</source>
         <translation>Spline-Interpoloationseinstellungen</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="382"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="404"/>
         <source>General</source>
         <translation>Allgemeines</translation>
     </message>
     <message>
-        <location filename="../src/windows/stupidsplinewindow.cpp" line="388"/>
+        <location filename="../src/windows/stupidsplinewindow.cpp" line="410"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>

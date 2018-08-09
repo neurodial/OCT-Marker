@@ -4,7 +4,8 @@
 #include<QLineEdit>
 #include<QSpinBox>
 
-#include <data_structure/programoptions.h>
+#include<data_structure/programoptions.h>
+#include<widgets/doubleslider.h>
 
 
 Option::Option(const QString& name, const QString& optClass)
@@ -22,6 +23,31 @@ void OptionBool::setDescriptions(const QString& shortDesc, const QString& longDe
 	action->setText(shortDesc);
 	action->setToolTip(longDesc);
 }
+
+
+OptionDouble::OptionDouble(const double v, const QString& name, const QString& optClass, double min, double max, double stepSize)
+: Option(name, optClass)
+, value(v)
+, defaultValue(v)
+, valueMin(min)
+, valueMax(max)
+, valueStepSize(stepSize)
+, inputDialogAction(new QAction(this))
+{
+	connect(inputDialogAction, &QAction::triggered, this, &OptionDouble::showInputDialog);
+}
+
+QSlider* OptionDouble::createSlider(Qt::Orientation orientation, QWidget* parent)
+{
+	DoubleSlider* dslider = new DoubleSlider(orientation, static_cast<int>((valueMax-valueMin)*200), nullptr);
+	dslider->setRange(valueMin, valueMax);
+	dslider->setValue(value);
+
+	connect(dslider, &DoubleSlider::valueChanged, this, &OptionDouble::setValue);
+	connect(this, &OptionDouble::valueChanged, dslider, &DoubleSlider::setValue);
+	return dslider;
+}
+
 
 
 void OptionColor::showColorDialog()

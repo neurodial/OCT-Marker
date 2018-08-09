@@ -14,6 +14,7 @@ class QProgressDialog;
 
 class BScanLayerSegmentation;
 class PaintMarker;
+class OptionDouble;
 
 #include"octmarkeractions.h"
 
@@ -52,6 +53,7 @@ class StupidSplineWindow : public QMainWindow
 	void updateWindowTitle();
 
 	QToolButton* genToolButton(QAction* action);
+	QAction* getDoubleSliderAction(OptionDouble& option, const QString& label);
 
 	BScanLayerSegmentation* getLayerSegmentationModul();
 public:

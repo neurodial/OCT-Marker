@@ -9,6 +9,7 @@
 #include<QIcon>
 
 class QSpinBox;
+class QSlider;
 class ProgramOptions;
 
 class Option : public QObject
@@ -169,17 +170,7 @@ class OptionDouble : public Option
 
 	QAction* inputDialogAction;
 
-	OptionDouble(const double v, const QString& name, const QString& optClass, double min = 0, double max = 100, double stepSize = 1)
-	: Option(name, optClass)
-	, value(v)
-	, defaultValue(v)
-	, valueMin(min)
-	, valueMax(max)
-	, valueStepSize(stepSize)
-	, inputDialogAction(new QAction(this))
-	{
-		connect(inputDialogAction, &QAction::triggered, this, &OptionDouble::showInputDialog);
-	}
+	OptionDouble(const double v, const QString& name, const QString& optClass, double min = 0, double max = 100, double stepSize = 1);
 	OptionDouble(const OptionDouble&) = delete;
 	OptionDouble& operator=(const OptionDouble&) = delete;
 public:
@@ -189,6 +180,7 @@ public:
 	double operator()() const                                       { return value; }
 
 	QAction* getInputDialogAction()                                 { return inputDialogAction; }
+	QSlider* createSlider(Qt::Orientation orientation, QWidget* parent);
 
 	virtual QVariant getVariant()                          override { return QVariant(value); }
 	virtual void setVariant(const QVariant& variant)       override { value = variant.toDouble(); }
