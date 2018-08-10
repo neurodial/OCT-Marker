@@ -349,8 +349,6 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 
 	bool modPress = (event->modifiers() & Qt::KeyboardModifier::ShiftModifier);
 
-	if(!modPress)
-		resetMarkedPoints(repaintRect);
 
 
 	const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
@@ -372,6 +370,9 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 	}
 	else
 	{
+		if(!modPress)
+			resetMarkedPoints(repaintRect);
+
 		if(clickOnPoint)
 		{
 			if(modPress)
@@ -534,10 +535,10 @@ BscanMarkerBase::RedrawRequest EditSpline::deleteMarkedPoints()
 	{
 		if(supportingPoints[index].marked)
 		{
+			RecPointAdder::addPoint(removeRect, supportingPoints[index]);
 			if(beginRemove == supportingPoints.end())
 			{
 				removeRect = QRect();
-				RecPointAdder::addPoint(removeRect, supportingPoints[index]);
 				beginRemove = supportingPoints.begin() + index;
 				startRemoveIndex = index;
 			}
