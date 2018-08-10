@@ -269,28 +269,7 @@ void WGLayerSeg::thicknessmapTemplateChanged(int indexInt)
 	ThicknessmapTemplates& templates = ThicknessmapTemplates::getInstance();
 	const std::vector<ThicknessmapTemplates::Configuration>& configurations = templates.getConfigurations();
 	if(index < configurations.size())
-	{
-		BScanLayerSegmentation::ThicknessmapConfig& thicknessmapConfig = parent->getThicknessmapConfig();
-
-		const ThicknessmapTemplates::Configuration& config = configurations[index];
-
-		switch(config.getUseColorMap())
-		{
-			case ThicknessmapTemplates::UseColorMap::hsv:
-				thicknessmapConfig.setHSVColor();
-				break;
-			case ThicknessmapTemplates::UseColorMap::yellow:
-				thicknessmapConfig.setYellowColor();
-				break;
-		}
-		thicknessmapConfig.setUpperColorLimit(config.getMaxValue());
-		thicknessmapConfig.setLowerColorLimit(config.getMinValue());
-		thicknessmapConfig.upperLayer = config.getLine1();
-		thicknessmapConfig.lowerLayer = config.getLine2();
-
-		parent->generateThicknessmap();
-	}
-
+		parent->setThicknessmapConfig(configurations[index]);
 }
 
 

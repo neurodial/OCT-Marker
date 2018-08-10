@@ -346,6 +346,27 @@ bool BScanLayerSegmentation::keyPressEvent(QKeyEvent* event, BScanMarkerWidget* 
 	return false;
 }
 
+
+void BScanLayerSegmentation::setThicknessmapConfig(const ThicknessmapTemplates::Configuration& config)
+{
+	switch(config.getUseColorMap())
+	{
+		case ThicknessmapTemplates::UseColorMap::hsv:
+			thicknessmapConfig.setHSVColor();
+			break;
+		case ThicknessmapTemplates::UseColorMap::yellow:
+			thicknessmapConfig.setYellowColor();
+			break;
+	}
+	thicknessmapConfig.setUpperColorLimit(config.getMaxValue());
+	thicknessmapConfig.setLowerColorLimit(config.getMinValue());
+	thicknessmapConfig.upperLayer = config.getLine1();
+	thicknessmapConfig.lowerLayer = config.getLine2();
+
+	generateThicknessmap();
+}
+
+
 void BScanLayerSegmentation::generateThicknessmap()
 {
 	if(thicknessmapConfig.colormap)

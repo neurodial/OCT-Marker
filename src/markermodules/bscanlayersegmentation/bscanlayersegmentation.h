@@ -8,6 +8,7 @@
 #include "../bscanmarkerbase.h"
 
 #include<data_structure/point2d.h>
+#include "thicknessmaptemplates.h"
 #include<array>
 
 class QWidget;
@@ -98,6 +99,7 @@ public:
 	                                                                { modifiedSegPart(bscan, segLine, start, segPart, true); }
 
 	ThicknessmapConfig& getThicknessmapConfig()                     { return thicknessmapConfig; }
+	void setThicknessmapConfig(const ThicknessmapTemplates::Configuration& config);
 
 private:
 	OctData::Segmentationlines::Segmentline tempLine;
