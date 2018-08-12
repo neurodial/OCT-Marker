@@ -65,7 +65,7 @@ BscanMarkerBase::RedrawRequest EditPen::mouseReleaseEvent(QMouseEvent* event, BS
 // 	smoothMinMaxIntervall();
 	BscanMarkerBase::RedrawRequest redraw = smoothMinMaxIntervall(widget->getImageScaleFactor());
 
-	rangeModified(actPaintMinX, actPaintMaxX);
+	rangeModified(actPaintMinX, actPaintMaxX+1);
 	paintSegLine = false;
 	return redraw;
 }
