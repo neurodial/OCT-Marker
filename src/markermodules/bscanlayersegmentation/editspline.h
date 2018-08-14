@@ -63,7 +63,7 @@ private:
 	BscanMarkerBase::RedrawRequest movePointEvent(QMouseEvent* event, BScanMarkerWidget* widget);
 
 	bool deleteSelectedPoints();
-	BscanMarkerBase::RedrawRequest deleteMarkedPoints();
+	QRect deleteMarkedPoints();
 
 	void resetEditPoints();
 	void reducePoints();

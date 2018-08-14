@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 		ProgramOptions::setIniFile(iniFile);
 	}
 
-	if(parser.isSet("save-options"))
+	if(parser.isSet("dont-save-options"))
 		ProgramOptions::setSaveOptions(false);
 
     const QStringList fileList = parser.positionalArguments();
