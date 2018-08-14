@@ -47,6 +47,7 @@ BscanMarkerBase::RedrawRequest EditPen::mousePressEvent(QMouseEvent* event, BSca
 	if(event->button() == Qt::LeftButton)
 	{
 		paintSegLine = true;
+		lineChanged  = false;
 		const ScaleFactor& scaleFactor = widget->getImageScaleFactor();
 		lastPoint = calcPoint(event->x(), event->y(), scaleFactor, getBScanWidth());
 		actPaintMaxX = lastPoint.x;
@@ -60,12 +61,11 @@ BscanMarkerBase::RedrawRequest EditPen::mouseReleaseEvent(QMouseEvent* event, BS
 	if(!paintSegLine || !segLine)
 		return BscanMarkerBase::RedrawRequest();
 
-
-// 	smoothMinMaxIntervall();
-// 	smoothMinMaxIntervall();
 	BscanMarkerBase::RedrawRequest redraw = smoothMinMaxIntervall(widget->getImageScaleFactor());
 
-	rangeModified(actPaintMinX, actPaintMaxX+1);
+	if(lineChanged)
+		rangeModified(actPaintMinX, actPaintMaxX+1);
+	lineChanged  = false;
 	paintSegLine = false;
 	return redraw;
 }
@@ -133,6 +133,7 @@ void EditPen::segLineChanged(OctData::Segmentationlines::Segmentline* segLine)
 
 void EditPen::setLinePoint2Point(const EditPen::SegPoint& p1, const EditPen::SegPoint& p2, OctData::Segmentationlines::Segmentline& segLine)
 {
+	lineChanged = true;
 	if(p1.x == p2.x)
 	{
 		segLine[p2.x] = p2.y;
@@ -167,7 +168,6 @@ void EditPen::setLinePoint2Point(const EditPen::SegPoint& p1, const EditPen::Seg
 		double posD = static_cast<double>(pos);
 		segLine[pos+pMin] = pMinY*(1. - posD/lengthD) + pMaxY*(posD/lengthD);
 	}
-// 	qDebug("%lf", segLine[length+pMin]);
 }
 
 

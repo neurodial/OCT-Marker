@@ -22,6 +22,7 @@ class EditPen : public EditBase
 	std::size_t actPaintMaxX;
 
 	bool paintSegLine = false;
+	bool lineChanged  = false;
 
 	OctData::Segmentationlines::Segmentline* segLine = nullptr;
 
