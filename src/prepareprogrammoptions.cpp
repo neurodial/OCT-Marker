@@ -87,6 +87,7 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	ProgramOptions::layerSegSplinePointSize   .setDescriptions(tr("spline point size"), tr("Point size of the spline tool"));
 
 	ProgramOptions::layerSegSloMapsAutoUpdate .setDescriptions(tr("Slo maps auto update"), tr("Generate slo maps after bscan change"));
+	ProgramOptions::layerSegHighlightSegLine  .setDescriptions(tr("Highlight segmentation line"), tr("Highlight segmentation line from buttons"));
 
 	/*
 	 *  Free form segmentation spezific options

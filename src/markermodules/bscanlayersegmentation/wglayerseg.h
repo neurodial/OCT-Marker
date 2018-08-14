@@ -45,9 +45,6 @@ public:
 	void setIconsToSimple(int size);
 
 private slots:
-
-	void changeSeglineId(std::size_t index);
-
 	void markerMethodChanged();
 
 	void setMarkerMethodPen();

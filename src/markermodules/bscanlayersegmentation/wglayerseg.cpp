@@ -14,11 +14,10 @@
 #include<QDesktopWidget>
 
 #include<octdata/datastruct/segmentationlines.h>
-
-#include<widgets/numberpushbutton.h>
+#include <data_structure/programoptions.h>
 
 #include"thicknessmaptemplates.h"
-#include <data_structure/programoptions.h>
+#include"seglinebutton.h"
 
 namespace
 {
@@ -98,50 +97,28 @@ void WGLayerSeg::addLayerButtons(QLayout& layout)
 	LayoutAdder layoutAdder(&layout, this);
 
 	layerButtons = new QButtonGroup(this);
-	QSignalMapper* signalMapper = new QSignalMapper(this);
-
-	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
-	seglineButtons.resize(numSegLines);
-
 	const OctData::Segmentationlines::SegmentlineType actType = parent->getActEditSeglineType();
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
 	{
-		const auto keyListIt = std::find(BScanLayerSegmentation::keySeglines.begin(), BScanLayerSegmentation::keySeglines.end(), type);
+		// ----------------------
+		// Edit segline button
+		// ----------------------
 
-		QPushButton* button;
-		if(keyListIt != BScanLayerSegmentation::keySeglines.end())
-		{
-			const int pos = static_cast<int>(keyListIt - BScanLayerSegmentation::keySeglines.begin());
-			button = new NumberPushButton(pos, this);
-		}
-		else
-			button = new QPushButton(this);
-
-		button->setText(OctData::Segmentationlines::getSegmentlineName(type));
+		SegLineButton* button = new SegLineButton(type, this);
 		button->setCheckable(true);
-
-        connect(button, &QPushButton::clicked, signalMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
-        signalMapper->setMapping(button, static_cast<int>(type));
 
 		if(actType == type)
 			button->setChecked(true);
 
-		layerButtons->addButton(button);
+		connect(button, &SegLineButton::clickSegLineButton, parent, &BScanLayerSegmentation::setActEditLinetype);
+
+		connect(button, &SegLineButton::enterSegLineButton, parent, &BScanLayerSegmentation::highlightLinetype );
+		connect(button, &SegLineButton::leaveSegLineButton, parent, &BScanLayerSegmentation::highlightNoLinetype);
+
+		layerButtons->addButton(button, static_cast<int>(type));
 		layoutAdder.addWidget(button);
-		seglineButtons[static_cast<std::size_t>(type)] = button;
 	}
-    connect(signalMapper, static_cast<void (QSignalMapper::*)(int)>(&QSignalMapper::mapped), this, &WGLayerSeg::changeSeglineId);
 }
-
-
-
-void WGLayerSeg::changeSeglineId(std::size_t index)
-{
-	const std::size_t numSegLines = OctData::Segmentationlines::getSegmentlineTypes().size();
-	if(index < numSegLines)
-		parent->setActEditLinetype(OctData::Segmentationlines::getSegmentlineTypes().at(index));
-}
-
 
 
 namespace
@@ -278,9 +255,11 @@ void WGLayerSeg::thicknessmapTemplateChanged(int indexInt)
 
 void WGLayerSeg::segLineIdChanged(std::size_t index)
 {
-	if(seglineButtons.size() > index)
+	if(layerButtons)
 	{
-		seglineButtons[index]->setChecked(true);
+		QAbstractButton* button = layerButtons->button(index);
+		if(button)
+			button->setChecked(true);
 	}
 }
 

@@ -84,6 +84,7 @@ public:
 
 	static OptionBool   layerSegThicknessmapBlend;
 	static OptionBool   layerSegSloMapsAutoUpdate;
+	static OptionBool   layerSegHighlightSegLine;
 
 
 	static OptionInt    freeFormedSegmetationLineThickness;

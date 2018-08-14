@@ -263,7 +263,10 @@ void OCTMarkerMainWindow::setupMenu()
 	layerSegmentMenu->addAction(ProgramOptions::layerSegActiveLineSize .getInputDialogAction());
 	layerSegmentMenu->addAction(ProgramOptions::layerSegPassivLineSize .getInputDialogAction());
 	layerSegmentMenu->addAction(ProgramOptions::layerSegSplinePointSize.getInputDialogAction());
+	layerSegmentMenu->addAction(ProgramOptions::layerSegHighlightSegLine .getAction());
+	layerSegmentMenu->addSeparator();
 	layerSegmentMenu->addAction(ProgramOptions::layerSegThicknessmapBlend.getAction());
+	layerSegmentMenu->addAction(ProgramOptions::layerSegSloMapsAutoUpdate.getAction());
 
 
 	QMenu* viewMenu = new QMenu(this);

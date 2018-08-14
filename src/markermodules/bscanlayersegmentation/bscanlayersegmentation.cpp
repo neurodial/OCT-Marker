@@ -108,6 +108,11 @@ void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* wi
 	penNormal.setColor(ProgramOptions::layerSegPassivLineColor());
 	penNormal.setWidth(ProgramOptions::layerSegPassivLineSize ());
 
+	QPen penHighlight;
+	penHighlight.setColor(ProgramOptions::layerSegPassivLineColor());
+	penHighlight.setWidth(ProgramOptions::layerSegPassivLineSize ()+3);
+
+
 
 	painter.setPen(penNormal);
 	for(OctData::Segmentationlines::SegmentlineType type : OctData::Segmentationlines::getSegmentlineTypes())
@@ -115,7 +120,14 @@ void BScanLayerSegmentation::drawMarker(QPainter& painter, BScanMarkerWidget* wi
 		if(type == actEditType)
 			continue;
 
-		BScanMarkerWidget::paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].lines.getSegmentLine(type), scaleFactor);
+		if(highlightLine && acthighlightLineType == type)
+		{
+			painter.setPen(penHighlight);
+			BScanMarkerWidget::paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].lines.getSegmentLine(type), scaleFactor);
+			painter.setPen(penNormal);
+		}
+		else
+			BScanMarkerWidget::paintSegmentationLine(painter, bScanHeight, lines[getActBScanNr()].lines.getSegmentLine(type), scaleFactor);
 	}
 
 	painter.setPen(penEdit);
@@ -231,6 +243,30 @@ void BScanLayerSegmentation::setActEditLinetype(OctData::Segmentationlines::Segm
 		emit(segLineIdChanged(static_cast<int>(type)));
 
 	requestFullUpdate();
+}
+
+
+
+void BScanLayerSegmentation::highlightLinetype(OctData::Segmentationlines::SegmentlineType type)
+{
+	if(!ProgramOptions::layerSegHighlightSegLine())
+		return;
+
+	if(!highlightLine || acthighlightLineType != type)
+	{
+		highlightLine = true;
+		acthighlightLineType = type;
+		requestFullUpdate();
+	}
+}
+
+void BScanLayerSegmentation::highlightNoLinetype()
+{
+	if(highlightLine)
+	{
+		highlightLine = false;
+		requestFullUpdate();
+	}
 }
 
 

@@ -403,6 +403,7 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 
 	settingsMenu->addSection(tr("Performance options"));
 	settingsMenu->addAction(ProgramOptions::layerSegSloMapsAutoUpdate.getAction());
+	settingsMenu->addAction(ProgramOptions::layerSegHighlightSegLine .getAction());
 
 	settingsMenu->addSection(tr("General"));
 	settingsMenu->addAction(ProgramOptions::getResetAction());

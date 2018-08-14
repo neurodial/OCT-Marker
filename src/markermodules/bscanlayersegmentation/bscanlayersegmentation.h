@@ -81,9 +81,6 @@ public:
 
 	OctData::Segmentationlines::SegmentlineType getActEditSeglineType() const { return actEditType; }
 
-
-	void setActEditLinetype(OctData::Segmentationlines::SegmentlineType type);
-
 	void setSegMethod(SegMethod method);
 	SegMethod getSegMethod() const;
 
@@ -105,6 +102,10 @@ private:
 	OctData::Segmentationlines::Segmentline tempLine;
 	std::vector<BScanSegData> lines;
 	OctData::Segmentationlines::SegmentlineType actEditType = OctData::Segmentationlines::SegmentlineType::ILM;
+
+	bool highlightLine = false;
+	OctData::Segmentationlines::SegmentlineType acthighlightLineType = OctData::Segmentationlines::SegmentlineType::ILM;
+
 
 	void resetMarkers(const OctData::Series* series);
 	void resetMarkers(std::size_t bscanNr);
@@ -150,6 +151,10 @@ public slots:
 	void setThicknessmapVisible(bool visible);
 
 	void generateThicknessmap();
+
+	void setActEditLinetype(OctData::Segmentationlines::SegmentlineType type);
+	void highlightLinetype (OctData::Segmentationlines::SegmentlineType type);
+	void highlightNoLinetype();
 };
 
 #endif // BSCANLAYERSEGMENTATION_H

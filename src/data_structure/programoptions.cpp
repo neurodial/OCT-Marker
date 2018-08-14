@@ -67,6 +67,7 @@ OptionInt    ProgramOptions::layerSegPassivLineSize      (1         , "PassivLin
 OptionInt    ProgramOptions::layerSegSplinePointSize     (8         , "SplinePointSize"  , "LayerSeg", 5, 30);
 OptionBool   ProgramOptions::layerSegThicknessmapBlend   (true      , "ThicknessmapBlend", "LayerSeg");
 OptionBool   ProgramOptions::layerSegSloMapsAutoUpdate   (true      , "SloMapsAutoUpdate", "LayerSeg");
+OptionBool   ProgramOptions::layerSegHighlightSegLine    (true      , "HighlightSegLine", "LayerSeg");
 
 
 OptionInt    ProgramOptions::freeFormedSegmetationLineThickness(1      , "bscanSegmetationLineThickness", "FreeFormedSegmentation", 1, 10);
