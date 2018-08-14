@@ -401,6 +401,9 @@ QDockWidget* StupidSplineWindow::createStupidControls()
 	settingsMenu->addAction(ProgramOptions::layerSegFindPointMaxAbsError.getInputDialogAction());
 	settingsMenu->addAction(ProgramOptions::layerSegFindPointRemoveTol  .getInputDialogAction());
 
+	settingsMenu->addSection(tr("Performance options"));
+	settingsMenu->addAction(ProgramOptions::layerSegSloMapsAutoUpdate.getAction());
+
 	settingsMenu->addSection(tr("General"));
 	settingsMenu->addAction(ProgramOptions::getResetAction());
 

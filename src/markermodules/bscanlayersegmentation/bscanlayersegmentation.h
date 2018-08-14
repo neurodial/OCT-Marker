@@ -123,6 +123,7 @@ private:
 
 	bool showSegmentationlines = true;
 	bool showThicknessmap      = true;
+	bool changeActBScan        = false;
 
 	cv::Mat* thicknesMapImage = nullptr;
 

@@ -26,6 +26,7 @@ class WGLayerSeg : public QWidget
 	QAction* actionMarkerMethodPen    = nullptr;
 	QAction* actionMarkerMethodSpline = nullptr;
 	QAction* actionShowSeglines       = nullptr;
+	QAction* actionUpdateThicknessmap = nullptr;
 
 	QToolButton* buttonMarkerMethodPen    = nullptr;
 	QToolButton* buttonMarkerMethodSpline = nullptr;

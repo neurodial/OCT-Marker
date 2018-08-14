@@ -82,6 +82,9 @@ WGLayerSeg::WGLayerSeg(BScanLayerSegmentation* parent)
 	connect(parent, &BScanLayerSegmentation::segLineIdChanged     , this, &WGLayerSeg::segLineIdChanged     );
 	connect(parent, &BScanLayerSegmentation::segLineVisibleChanged, this, &WGLayerSeg::segLineVisibleChanged);
 	connect(thicknessmapTemplates, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &WGLayerSeg::thicknessmapTemplateChanged);
+
+	connect(&ProgramOptions::layerSegSloMapsAutoUpdate, &OptionBool::valueChangedInvers, actionUpdateThicknessmap, &QAction::setEnabled);
+	actionUpdateThicknessmap->setEnabled(!ProgramOptions::layerSegSloMapsAutoUpdate());
 }
 
 
@@ -222,7 +225,7 @@ void WGLayerSeg::addThicknessMapControls(QLayout& layout)
 
 	layoutTools->addStretch();
 
-	QAction* actionUpdateThicknessmap = new QAction(this);
+	actionUpdateThicknessmap = new QAction(this);
 	actionUpdateThicknessmap->setText(tr("update thicknessmap"));
 	actionUpdateThicknessmap->setIcon(QIcon(":/icons/typicons/arrow-sync-outline.svg"));
 	connect(actionUpdateThicknessmap, &QAction::triggered, parent, &BScanLayerSegmentation::generateThicknessmap);

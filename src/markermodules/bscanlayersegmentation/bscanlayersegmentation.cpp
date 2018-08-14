@@ -282,12 +282,7 @@ void BScanLayerSegmentation::modifiedSegPart(std::size_t bscan, OctData::Segment
 
 	const std::size_t maxCpoy = std::min(segPart.size(), line.size() - start);
 	std::copy(segPart.begin(), segPart.begin() + maxCpoy, line.begin() + start);
-/*
-	for(std::size_t i = start; i < endPos; ++i)
-	{
-		line[i] = *segPart;
-		++segPart;
-	}*/
+	changeActBScan = true;
 
 	if(updateMethode)
 	{
@@ -363,13 +358,15 @@ void BScanLayerSegmentation::setThicknessmapConfig(const ThicknessmapTemplates::
 	thicknessmapConfig.upperLayer = config.getLine1();
 	thicknessmapConfig.lowerLayer = config.getLine2();
 
+
+	showThicknessmap = true;
 	generateThicknessmap();
 }
 
 
 void BScanLayerSegmentation::generateThicknessmap()
 {
-	if(thicknessmapConfig.colormap)
+	if(thicknessmapConfig.colormap && showThicknessmap)
 	{
 // 		QElapsedTimer timer;
 // 		timer.start();
@@ -384,7 +381,6 @@ void BScanLayerSegmentation::generateThicknessmap()
 			ThicknessMap tm;
 			tm.createMap(*distMap, lines, thicknessmapConfig.upperLayer, thicknessmapConfig.lowerLayer, factor, *thicknessmapConfig.colormap);
 			*thicknesMapImage = tm.getThicknessMap();
-			showThicknessmap = true;
 			requestSloOverlayUpdate();
 
 // 			std::cout << "Creating thickness map took " << timer.elapsed() << " milliseconds" << std::endl;
@@ -476,12 +472,15 @@ void BScanLayerSegmentation::copySegLinesFromOctDataWhenNotFilled(std::size_t bs
 	}
 }
 
-
-
 void BScanLayerSegmentation::setActBScan(std::size_t bscan)
 {
 	BscanMarkerBase::setActBScan(bscan);
 	updateEditLine();
+	if(changeActBScan && ProgramOptions::layerSegSloMapsAutoUpdate())
+	{
+		generateThicknessmap();
+	}
+	changeActBScan = false;
 }
 
 void BScanLayerSegmentation::loadState(boost::property_tree::ptree& markerTree)

@@ -83,6 +83,7 @@ public:
 	static OptionInt    layerSegSplinePointSize;
 
 	static OptionBool   layerSegThicknessmapBlend;
+	static OptionBool   layerSegSloMapsAutoUpdate;
 
 
 	static OptionInt    freeFormedSegmetationLineThickness;

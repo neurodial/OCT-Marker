@@ -71,6 +71,7 @@ class OptionBool : public Option
 			value = v;
 			action->setChecked(v);
 			emit(valueChanged(v));
+			emit(valueChangedInvers(!v));
 			if(v)
 				emit(trueSignal());
 			else
@@ -99,6 +100,7 @@ public slots:
 	
 signals:
 	void valueChanged(bool v);
+	void valueChangedInvers(bool v);
 	void trueSignal();
 	void falseSignal();
 };

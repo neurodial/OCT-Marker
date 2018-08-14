@@ -86,6 +86,7 @@ void PrepareProgrammOptions::prepareProgrammOptions()
 	ProgramOptions::layerSegPassivLineSize    .setDescriptions(tr("passiv line size"), tr("Line size of passiv segmentation layer"));
 	ProgramOptions::layerSegSplinePointSize   .setDescriptions(tr("spline point size"), tr("Point size of the spline tool"));
 
+	ProgramOptions::layerSegSloMapsAutoUpdate .setDescriptions(tr("Slo maps auto update"), tr("Generate slo maps after bscan change"));
 
 	/*
 	 *  Free form segmentation spezific options
