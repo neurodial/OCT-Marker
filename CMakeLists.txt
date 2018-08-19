@@ -36,6 +36,7 @@ if(BUILD_QT_PROGRAMM)
 
 
 	set(CMAKE_AUTOMOC ON)
+	set(CMAKE_AUTOUIC ON)
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
@@ -46,7 +47,7 @@ if(BUILD_QT_PROGRAMM)
 
 
 	if(CMAKE_COMPILER_IS_GNUCXX)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wunreachable-code -Wconversion") # ")        ## Optimize -O3 -Weverything -Weffc++
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wunreachable-code -Wconversion -Werror=return-type") # ")        ## Optimize -O3 -Weverything -Weffc++
 		if(WIN32)
 			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -mwindows")
 		endif()
@@ -64,12 +65,12 @@ if(BUILD_QT_PROGRAMM)
 	set(srcs_directories data_structure algos widgets windows manager markermodules model markerobjects helper imagefilter qt)
 
 	foreach(loop_var ${srcs_directories})
-		file(GLOB sources_base "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")
-		file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/**/*.cpp")
+		file(GLOB_RECURSE sources_base "${CMAKE_CURRENT_SOURCE_DIR}/src/${loop_var}/*.cpp")
 		list(APPEND octmarker_SRCS ${sources} ${sources_base})
 	endforeach(loop_var)
 
 	file(GLOB ui_forms ${CMAKE_CURRENT_SOURCE_DIR}/ui/*.ui)
+	list(APPEND octmarker_SRCS ${ui_forms})
 
 
 	file(GLOB LANG ${CMAKE_CURRENT_SOURCE_DIR}/language_files/*.ts)
@@ -77,13 +78,11 @@ if(BUILD_QT_PROGRAMM)
 	set(octmarker_RESOURCES application.qrc)
 
 
-	QT5_WRAP_UI(ui_files_headers ${ui_forms})
 	QT5_ADD_RESOURCES(octmarker_RESOURCES_RCC ${octmarker_RESOURCES})
 	QT5_ADD_TRANSLATION(TRANSLATIONS ${LANG})
 
 
 	add_executable(octmarker src/main.cpp src/prepareprogrammoptions.cpp ${octmarker_SRCS}
-		${ui_files_headers}
 		${TRANSLATIONS}
 		${octmarker_RESOURCES_RCC} octmarker.rc)
 
