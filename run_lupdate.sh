@@ -1,1 +1,1 @@
-lupdate src ui -ts language_files/octmarker-de.ts
+lupdate src -ts language_files/octmarker-de.ts

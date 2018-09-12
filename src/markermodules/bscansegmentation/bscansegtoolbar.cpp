@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2018 Kay Gawlik <kaydev@amarunet.de> <kay.gawlik@beuth-hochschule.de> <kay.gawlik@charite.de>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "bscansegtoolbar.h"
 
 #include <QSpinBox>
@@ -5,91 +23,12 @@
 #include<data_structure/programoptions.h>
 #include "bscansegmentation.h"
 
-
-
-
-
 BScanSegToolBar::BScanSegToolBar(BScanSegmentation* seg, QObject* parent)
 : QToolBar(tr("Segmentation"), dynamic_cast<QWidget*>(parent))
 {
 	setObjectName("ToolBarSegmentationMarker");
 
-	/*
-	QActionGroup*  actionGroupMethod  = new QActionGroup(parent);
-	QActionGroup*  actionPaintMethod  = new QActionGroup(parent);
-	*/
-
 	addWidget(ProgramOptions::freeFormedSegmetationLineThickness.createSpinBox(this));
-
-	/*
-	QAction* actionPaintMethodDisc = new QAction(parent);
-	actionPaintMethodDisc->setCheckable(true);
-	actionPaintMethodDisc->setChecked(paintMethod == PaintMethod::Disc);
-	actionPaintMethodDisc->setText(tr("Disc"));
-	actionPaintMethodDisc->setIcon(QIcon(":/icons/paint_disc.png"));
-	connect(actionPaintMethodDisc, &QAction::triggered, this, &BScanSegmentation::setPaintMethodDisc);
-	toolBar->addAction(actionPaintMethodDisc);
-	actionPaintMethod->addAction(actionPaintMethodDisc);
-
-
-	QAction* actionPaintMethodQuadrat = new QAction(parent);
-	actionPaintMethodQuadrat->setCheckable(true);
-	actionPaintMethodQuadrat->setText(tr("Quadrat"));
-	actionPaintMethodQuadrat->setChecked(paintMethod == PaintMethod::Quadrat);
-	actionPaintMethodQuadrat->setIcon(QIcon(":/icons/paint_quadrat.png"));
-	connect(actionPaintMethodQuadrat, &QAction::triggered, this, &BScanSegmentation::setPaintMethodQuadrat);
-	toolBar->addAction(actionPaintMethodQuadrat);
-	actionPaintMethod->addAction(actionPaintMethodQuadrat);
-
-	toolBar->addSeparator();
-
-	QAction* addAreaAction = new QAction(parent);
-	addAreaAction->setCheckable(true);
-	addAreaAction->setText(tr("Add"));
-	addAreaAction->setIcon(createMonocromeIcon(paintArea0Value*255));
-	connect(addAreaAction, &QAction::triggered, this, &BScanSegmentation::paintArea0Slot);
-	connect(this, &BScanSegmentation::paintArea0Selected, addAreaAction, &QAction::setChecked);
-	toolBar->addAction(addAreaAction);
-	actionGroupMethod->addAction(addAreaAction);
-
-	QAction* autoRemoveAddAreaAction = new QAction(parent);
-	autoRemoveAddAreaAction->setCheckable(true);
-	autoRemoveAddAreaAction->setChecked(autoPaintValue);
-	autoRemoveAddAreaAction->setText(tr("Auto"));
-	autoRemoveAddAreaAction->setIcon(createMonocromeIcon(124));
-	connect(autoRemoveAddAreaAction, &QAction::triggered, this, &BScanSegmentation::autoAddRemoveArea);
-	connect(this, &BScanSegmentation::paintAutoAreaSelected, autoRemoveAddAreaAction, &QAction::setChecked);
-	toolBar->addAction(autoRemoveAddAreaAction);
-	actionGroupMethod->addAction(autoRemoveAddAreaAction);
-
-	QAction* removeAreaAction = new QAction(parent);
-	removeAreaAction->setCheckable(true);
-	removeAreaAction->setText(tr("Add"));
-	removeAreaAction->setIcon(createMonocromeIcon(paintArea1Value*255));
-	connect(removeAreaAction, &QAction::triggered, this, &BScanSegmentation::paintArea1Slot);
-	connect(this, &BScanSegmentation::paintArea1Selected, removeAreaAction, &QAction::setChecked);
-	toolBar->addAction(removeAreaAction);
-	actionGroupMethod->addAction(removeAreaAction);
-*/
-
-	/*
-	addSeparator();
-
-	QAction* actionInitFromIlm = new QAction(parent);
-	actionInitFromIlm->setText(tr("Init from ILM"));
-	actionInitFromIlm->setIcon(QIcon(":/icons/wand.png"));
-	connect(actionInitFromIlm, &QAction::triggered, this, &BScanSegmentation::initFromSegmentline);
-	toolBar->addAction(actionInitFromIlm);
-
-
-	QAction* actionInitFromTrashold = new QAction(parent);
-	actionInitFromTrashold->setText(tr("Init from threshold"));
-	actionInitFromTrashold->setIcon(QIcon(":/icons/wand.png"));
-	connect(actionInitFromTrashold, &QAction::triggered, this, &BScanSegmentation::initFromThreshold);
-	toolBar->addAction(actionInitFromTrashold);
-
-	toolBar->addSeparator();
-	*/
 
 	QAction* actionErodeBScan = new QAction(this);
 	actionErodeBScan->setText(tr("Erode"));

@@ -94,5 +94,7 @@
 	<file>icons/tango/apps/help-browser.svgz</file>
 	<file>icons/tango/apps/accessories-text-editor.svgz</file>
 	<file>icons/tango/categories/preferences-system.svgz</file>
+
+	<file>license.txt</file>
 </qresource>
 </RCC>
