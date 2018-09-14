@@ -540,7 +540,7 @@ void FindSupportingPoints::createRefPoints(const std::vector<double>& values)
 		double val = values[x];
 		if(val < 1000 && val > 0)
 		{
-			refValues.push_back(Point2D(x, val));
+			refValues.push_back(Point2D(static_cast<double>(x), val));
 		}
 	}
 }

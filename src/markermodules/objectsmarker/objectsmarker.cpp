@@ -34,21 +34,6 @@
 #include"widgetobjectmarker.h"
 
 
-namespace
-{
-	QPointF toScene(const QPoint& p, const ScaleFactor& factor)
-	{
-		return QPointF(p.x()/factor.getFactorX(), p.y()/factor.getFactorY());
-	}
-
-	QPointF toScene(const QPoint& p, const BScanMarkerWidget& markerWidget)
-	{
-		return toScene(p, markerWidget.getImageScaleFactor());
-	}
-}
-
-
-
 Objectsmarker::Objectsmarker(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
 , graphicsScene(new ObjectsmarkerScene(objectsfactory, this))

@@ -20,10 +20,13 @@
 
 #include<algorithm>
 
+std::size_t ClassifierMarker::Marker::markerCounter = 0;
+
+
 ClassifierMarker::Marker::Marker(const std::string& internalName, const std::string& name)
 : internalName(internalName)
 , name        (name)
-, id          (id)
+, id          (markerCounter++)
 {
 }
 

@@ -569,8 +569,9 @@ std::size_t BScanLayerSegmentation::getMaxBscanWidth() const // TODO: Codedopplu
 	{
 		if(bscan)
 		{
-			if(maxBscanWidth < bscan->getWidth())
-				maxBscanWidth = static_cast<std::size_t>(bscan->getWidth());
+			const std::size_t bscanWidth = static_cast<std::size_t>(bscan->getWidth());
+			if(maxBscanWidth < bscanWidth)
+				maxBscanWidth = bscanWidth;
 		}
 	}
 	return maxBscanWidth;

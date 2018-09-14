@@ -167,7 +167,7 @@ QSize ThicknessmapLegend::minimumSizeHint() const
 	return QSize(broder*2 + legendBarWidth + distanceBarLabel + labelsMaxWidth, 200);
 }
 
-void ThicknessmapLegend::paintEvent(QPaintEvent* event)
+void ThicknessmapLegend::paintEvent(QPaintEvent* /*event*/)
 {
 	QPainter p(this);
 

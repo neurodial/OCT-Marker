@@ -89,7 +89,7 @@ const SloIntervallMap::Color& SloIntervallMap::getColor(std::size_t bscan, std::
 	{
 		return colorCache.at(bscan).at(ascan);
 	}
-	catch(std::out_of_range)
+	catch(const std::out_of_range&)
 	{
 		static Color invalidIndex;
 		return invalidIndex;

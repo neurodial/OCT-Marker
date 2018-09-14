@@ -49,8 +49,8 @@ public:
 
 	void paintLine(const Point2D& p1, const Point2D& p2)
 	{
-		painter.drawPoint(p1.getX(), p1.getY());
-		painter.drawPoint(p2.getX(), p2.getY());
+		painter.drawPoint(static_cast<int>(p1.getX()), static_cast<int>(p1.getY()));
+		painter.drawPoint(static_cast<int>(p2.getX()), static_cast<int>(p2.getY()));
 	}
 };
 

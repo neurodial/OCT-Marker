@@ -132,17 +132,6 @@ namespace
 		           , static_cast<int>(y2-y1+1));
 	}
 
-	QRect createRec(const Point2D& p)
-	{
-		double x = p.getX();
-		double y = p.getY();
-
-		return QRect(static_cast<int>(x)
-		           , static_cast<int>(y)
-		           , static_cast<int>(1)
-		           , static_cast<int>(1));
-	}
-
 
 	QRect& operator*=(QRect& rect, const ScaleFactor& factor)
 	{
@@ -157,11 +146,11 @@ namespace
 		return rect;
 	}
 
-	std::ostream& operator<<(std::ostream& stream, const QRect& rect)
-	{
-		stream << "(" << rect.x() << ", " << rect.y() << " | " << rect.width() << ", " << rect.height() << ")";
-		return stream;
-	}
+// 	std::ostream& operator<<(std::ostream& stream, const QRect& rect)
+// 	{
+// 		stream << "(" << rect.x() << ", " << rect.y() << " | " << rect.width() << ", " << rect.height() << ")";
+// 		return stream;
+// 	}
 
 
 	void paintPoint(QPainter& painter, const Point2D& p, const ScaleFactor& factor, int size)
@@ -246,7 +235,7 @@ void EditSpline::paintPoints(QPainter& painter, const ScaleFactor& factor) const
 
 
 
-void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, const ScaleFactor& scaleFactor) const
+void EditSpline::drawMarker(QPainter& painter, BScanMarkerWidget* /*widget*/, const QRect& /*rect*/, const ScaleFactor& scaleFactor) const
 {
 	paintPoints(painter, scaleFactor);
 }
@@ -329,7 +318,7 @@ bool EditSpline::testInsertPoint(const Point2D& insertPoint, const ScaleFactor& 
 		return false;
 
 	int pX = static_cast<int>(std::round(insertPoint.getX()));
-	if(pX >= 0 && pX < segLine->size())
+	if(pX >= 0 && static_cast<std::size_t>(pX) < segLine->size())
 	{
 		double pY = insertPoint.getY();
 		if(std::abs(segLine->at(pX) - pY) < 10./scaleFactor.getFactorY())
@@ -437,7 +426,7 @@ BscanMarkerBase::RedrawRequest EditSpline::mousePressEvent(QMouseEvent* event, B
 				movePoint = true;
 				baseEditPoint = minDistPoint;
 				baseEditPoint->marked = true;
-				startMovePosX = baseEditPoint->getX();
+				startMovePosX = static_cast<std::size_t>(baseEditPoint->getX());
 
 				RecPointAdder::addPoint(request.rect, *baseEditPoint);
 			}
@@ -480,7 +469,7 @@ BscanMarkerBase::RedrawRequest EditSpline::mouseReleaseEvent(QMouseEvent*, BScan
 	{
 		RecPointAdder::addPoints2Rec(redraw.rect, baseEditPoint, supportingPoints, pointDrawPos);
 		RecPointAdder::addPoints2Rec(redraw.rect, baseEditPoint, supportingPoints, pointDrawNeg);
-		RecPointAdder::addPoint(redraw.rect, Point2D(startMovePosX, 0));
+		RecPointAdder::addPoint(redraw.rect, Point2D(static_cast<double>(startMovePosX), 0));
 		rangeModified(redraw.rect.left(), redraw.rect.right()+1);
 
 		baseEditPoint->marked = false;

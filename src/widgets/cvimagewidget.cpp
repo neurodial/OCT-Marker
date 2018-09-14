@@ -178,7 +178,8 @@ void CVImageWidget::updateScaleFactorXY()
 	scaleFactor.setFactorY(scaleFactorY);
 	scaleFactor.setFactor(scaleFactorConfig);
 
-	scaledSize = QSize(qtImage.width()*scaleFactor.getFactorX(), qtImage.height()*scaleFactor.getFactorY());
+	scaledSize = QSize(static_cast<int>(qtImage.width ()*scaleFactor.getFactorX())
+	                 , static_cast<int>(qtImage.height()*scaleFactor.getFactorY()));
 }
 
 double CVImageWidget::getFactorFitImage2Parent()
@@ -308,7 +309,7 @@ void CVImageWidget::saveBaseImage()
 }
 
 
-void CVImageWidget::drawScaled(const QImage& image, QPainter& painter, const QRect* rect, const ScaleFactor& factor)
+void CVImageWidget::drawScaled(const QImage& image, QPainter& painter, const QRect* /*rect*/, const ScaleFactor& factor)
 {
 // 	QRect sourceRect;
 // 	if(!rect)

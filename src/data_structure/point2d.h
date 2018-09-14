@@ -50,7 +50,7 @@ public:
 	Point2DBase operator*(T factor)             const              { return Point2DBase(x*factor, y*factor); }
 	Point2DBase& operator+=(const Point2DBase& o)                  { x += o.x; y += o.y; return *this; }
 
-	T length() const;
+	double length() const;
 	void normize()                                                 { T len = length(); if(len > 1e-8) *this /= len; }
 
 	Point2DBase& operator*=(T factor)                              { x *= factor; y *= factor; return *this; }

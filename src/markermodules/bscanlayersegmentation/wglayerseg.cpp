@@ -275,7 +275,7 @@ void WGLayerSeg::segLineIdChanged(std::size_t index)
 {
 	if(layerButtons)
 	{
-		QAbstractButton* button = layerButtons->button(index);
+		QAbstractButton* button = layerButtons->button(static_cast<int>(index));
 		if(button)
 			button->setChecked(true);
 	}

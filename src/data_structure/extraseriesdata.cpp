@@ -64,7 +64,7 @@ namespace
 	}
 }
 
-bool ExtraSeriesData::loadExtraData(const OctData::Series& series, const bpt::ptree& ptree)
+bool ExtraSeriesData::loadExtraData(const OctData::Series& /*series*/, const bpt::ptree& /*ptree*/)
 {
 	try
 	{

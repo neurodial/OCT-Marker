@@ -125,8 +125,8 @@ PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 	std::cout << "delta.size() : " << delta.size() << std::endl;
 	std::cout << "points.size(): " << points.size() << std::endl;*/
 
-	std::size_t firstPos = points[0].getX()>0?points[0].getX():0;
-	std::size_t lastPos  = points[points.size()-1].getX();
+	std::size_t firstPos = points[0].getX()>0?static_cast<std::size_t>(points[0].getX()):0;
+	std::size_t lastPos  = static_cast<std::size_t>(points[points.size()-1].getX());
 
 	if(lastPos > length)
 		lastPos = length;
@@ -134,7 +134,7 @@ PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 	for(std::size_t actPos = firstPos; actPos <= lastPos; ++actPos)
 	{
 		// Piecewise polynomial coefficients
-		if(actPos >= pointIntervalUntil)
+		if(actPos >= static_cast<std::size_t>(pointIntervalUntil))
 		{
 			actPointIndex = nextPointIndex;
 			++nextPointIndex;
@@ -146,11 +146,11 @@ PChip::PChip(const std::vector<Point2D>& points, std::size_t length)
 			if(nextPointIndex < points.size()-1)
 				pointIntervalUntil = points[nextPointIndex].getX();
 			else
-				pointIntervalUntil = length;
+				pointIntervalUntil = static_cast<double>(length);
 		}
 
 		// Evaluate interpolant
-		double s = actPos - pointXValue;
+		double s = static_cast<double>(actPos) - pointXValue;
 		values[actPos] = pointYValue + s*(d[actPointIndex] + s*(c + s*b));
 	}
 }

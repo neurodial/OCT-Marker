@@ -494,7 +494,7 @@ namespace
 			if(bscanNr >= series.bscanCount())
 				return;
 
-			FindMinAScan fmas(OctData::CoordSLOpx(x, y), slideInfo.ascanId);
+			FindMinAScan fmas(OctData::CoordSLOpx(static_cast<double>(x), static_cast<double>(y)), slideInfo.ascanId);
 
 			const OctData::BScan* bscan = series.getBScan(bscanNr);
 			if(bscan)

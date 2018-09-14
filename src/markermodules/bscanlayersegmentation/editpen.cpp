@@ -25,7 +25,7 @@
 #include <widgets/bscanmarkerwidget.h>
 
 
-void EditPen::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect&, const ScaleFactor& scaleFactor) const
+void EditPen::drawMarker(QPainter& /*painter*/, BScanMarkerWidget* /*widget*/, const QRect& /*rect*/, const ScaleFactor& /*scaleFactor*/) const
 {
 }
 
@@ -74,7 +74,7 @@ BscanMarkerBase::RedrawRequest EditPen::mousePressEvent(QMouseEvent* event, BSca
 	return BscanMarkerBase::RedrawRequest();
 }
 
-BscanMarkerBase::RedrawRequest EditPen::mouseReleaseEvent(QMouseEvent* event, BScanMarkerWidget* widget)
+BscanMarkerBase::RedrawRequest EditPen::mouseReleaseEvent(QMouseEvent* /*event*/, BScanMarkerWidget* widget)
 {
 	if(!paintSegLine || !segLine)
 		return BscanMarkerBase::RedrawRequest();

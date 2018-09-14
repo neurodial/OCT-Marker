@@ -55,7 +55,7 @@ OptionDouble::OptionDouble(const double v, const QString& name, const QString& o
 	connect(inputDialogAction, &QAction::triggered, this, &OptionDouble::showInputDialog);
 }
 
-QSlider* OptionDouble::createSlider(Qt::Orientation orientation, QWidget* parent)
+QSlider* OptionDouble::createSlider(Qt::Orientation orientation, QWidget* /*parent*/)
 {
 	DoubleSlider* dslider = new DoubleSlider(orientation, static_cast<int>((valueMax-valueMin)*200), nullptr);
 	dslider->setRange(valueMin, valueMax);

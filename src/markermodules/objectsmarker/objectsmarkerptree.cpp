@@ -80,7 +80,7 @@ void ObjectsMarkerPTree::fillPTree(boost::property_tree::ptree& ptree, const Obj
 			continue;
 
 		static const std::string nodeName = "BScan";
-		bpt::ptree& bscanNode = PTreeHelper::getNodeWithId(ptree, nodeName, bscan);
+		bpt::ptree& bscanNode = PTreeHelper::getNodeWithId(ptree, nodeName, static_cast<int>(bscan));
 		bpt::ptree& objectsNode = bscanNode.add("Objects", "");
 
 		for(const RectItem* item : items)
@@ -110,9 +110,7 @@ bool ObjectsMarkerPTree::parsePTree(const boost::property_tree::ptree& ptree, Ob
 		try
 		{
 			const bpt::ptree& bscanNode = bscanPair.second;
-			int bscanId                 = bscanNode.get_child("ID").get_value<int>(-1);
-			if(bscanId == -1)
-				continue;
+			std::size_t bscanId         = bscanNode.get_child("ID").get_value<std::size_t>();
 
 			if(numBscans <= bscanId)
 				continue; // TODO: Error message

@@ -125,9 +125,7 @@ bool BScanLayerSegPTree::parsePTree(const boost::property_tree::ptree& ptree, BS
 			continue;
 
 		int bscanId = idNode->get_value<int>(-1);
-		if(bscanId < 0)
-			continue;
-		if(bscanId >= markerManager->lines.size())
+		if(bscanId < 0 || static_cast<std::size_t>(bscanId) >= markerManager->lines.size())
 			continue;
 
 		boost::optional<const bpt::ptree&> linesNode = bscanNode.get_child_optional("Lines");

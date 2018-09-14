@@ -22,6 +22,8 @@
 #include<string>
 #include<vector>
 
+
+
 class ClassifierMarker
 {
 public:
@@ -31,7 +33,7 @@ public:
 	{
 		friend class ClassifierMarker;
 
-// 		static std::size_t markerCounter;
+		static std::size_t markerCounter;
 
 		std::string internalName;
 		std::string name;
@@ -48,7 +50,7 @@ public:
 
 		bool operator==(const std::string& internalName) const         { return internalName == this->internalName; }
 
-// 		static std::size_t getMaxInternalId()                          { return markerCounter; }
+		static std::size_t getMaxInternalId()                          { return markerCounter; }
 		std::size_t getId() const { return id; }
 	};
 

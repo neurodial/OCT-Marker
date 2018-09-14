@@ -40,7 +40,7 @@ void FilterGammaContrastBrightness::applyFilter(const cv::Mat& in, cv::Mat& out)
 	const uint8_t* dataIn  = in .ptr<uint8_t>();
 	      uint8_t* dataOut = out.ptr<uint8_t>();
 
-	for(std::size_t i = 0; i < in.rows*in.cols*in.channels(); ++i)
+	for(int i = 0; i < in.rows*in.cols*in.channels(); ++i)
 	{
 		*dataOut = lut[*dataIn];
 		++dataIn;
@@ -55,7 +55,7 @@ void FilterGammaContrastBrightness::calcLut()
 	const double contrast   = parameter.contrast  ;
 	const double brightness = parameter.brightness;
 
-	for (int i = 0; i < sizeof(lut)/sizeof(lut[0]); i++)
+	for(int i = 0; i < static_cast<int>(sizeof(lut)/sizeof(lut[0])); ++i)
 	{
 		const double gammaValue = std::pow((i / 255.0), gamma);
 		lut[i] = cv::saturate_cast<uchar>((gammaValue*contrast + brightness)*255.0);

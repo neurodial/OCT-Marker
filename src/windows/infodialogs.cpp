@@ -81,25 +81,15 @@ void AboutDialog::showLicense()
 		licenseDialog.setLayout(layout);
 		licenseDialog.resize(550, licenseDialog.height());
 		licenseDialog.exec();
-
-
-// 		QMessageBox::information(this, tr("License text"), file.readAll());
 	}
 	else
 		QMessageBox::critical(this, tr("License text"), tr("Missing license file"));
 }
 
-void InfoDialogs::showAboutDialog(QWidget* parent)
+void InfoDialogs::showAboutDialog(QWidget* /*parent*/)
 {
 	AboutDialog test;
-/*
-	QHBoxLayout* buttonLayout = new QHBoxLayout;
-	buttonLayout->addStretch();
-// 	buttonLayout->addWidget();
 
-	test.setLayout(buttonLayout)*/;
-
-// 	test.show();
 	test.exec();
 }
 

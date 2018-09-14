@@ -93,14 +93,14 @@ Qt::ItemFlags PaintMarkerModel::flags(const QModelIndex& index) const
 }
 
 
-int PaintMarkerModel::columnCount(const QModelIndex& parent) const
+int PaintMarkerModel::columnCount(const QModelIndex& /*parent*/) const
 {
 	return 2;
 }
 
-int PaintMarkerModel::rowCount(const QModelIndex& parent) const
+int PaintMarkerModel::rowCount(const QModelIndex& /*parent*/) const
 {
-	return markers.size();
+	return static_cast<int>(markers.size());
 }
 
 

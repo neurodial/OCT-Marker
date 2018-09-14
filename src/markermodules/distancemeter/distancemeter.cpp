@@ -50,7 +50,7 @@ DistanceMeter::~DistanceMeter()
 	delete wgDistanceMeter;
 }
 
-void DistanceMeter::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& rect) const
+void DistanceMeter::drawMarker(QPainter& painter, BScanMarkerWidget* widget, const QRect& /*rect*/) const
 {
 	if(!widget)
 		return;
@@ -66,8 +66,8 @@ void DistanceMeter::drawPosition(QPainter& painter, const DistanceMeter::Positio
 {
 	if(pos.valid && pos.bscanNr == actBscanNr)
 	{
-		int posX = pos.x_px*sf.getFactorX();
-		int posY = pos.y_px*sf.getFactorY();
+		int posX = static_cast<int>(pos.x_px*sf.getFactorX());
+		int posY = static_cast<int>(pos.y_px*sf.getFactorY());
 
 		QPen p;
 		p.setColor(c);
@@ -124,8 +124,8 @@ DistanceMeter::Position DistanceMeter::calcPosition(const QPointF& p)
 	pos.z_milliMeter = p.y()*actBScan->getScaleFactor().getZ();
 
 	pos.valid = true;
-	pos.x_px = p.x();
-	pos.y_px = p.y();
+	pos.x_px = static_cast<int>(p.x());
+	pos.y_px = static_cast<int>(p.y());
 	pos.bscanNr = actBscanNr;
 	pos.bscan = actBScan;
 

@@ -154,7 +154,7 @@ namespace
     (0) ---- (1)
 */
 	public:
-		void handleSquare(uint8_t gridVal0, uint8_t gridVal1, uint8_t gridVal2, uint8_t gridVal3, int i, int j, PaintSegLine& painter)
+		void handleSquare(uint8_t gridVal0, uint8_t /*gridVal1*/, uint8_t gridVal2, uint8_t gridVal3, int i, int j, PaintSegLine& painter)
 		{
 			if(gridVal0 != gridVal3)
 				painter.paintLine(Point2D(j, i), Point2D(j-1, i));
@@ -839,7 +839,10 @@ void BScanSegmentation::updateAreaImageSlot()
 
 void BScanSegmentation::updateAreaImage(const RedrawRequest& redraw, const ScaleFactor& factor)
 {
-	QRect rect(redraw.rect.x()/factor.getFactorX(), redraw.rect.y()/factor.getFactorY(), redraw.rect.width()/factor.getFactorX(), redraw.rect.height()/factor.getFactorY());
+	QRect rect(static_cast<int>(redraw.rect.x()     /factor.getFactorX())
+	         , static_cast<int>(redraw.rect.y()     /factor.getFactorY())
+	         , static_cast<int>(redraw.rect.width() /factor.getFactorX())
+	         , static_cast<int>(redraw.rect.height()/factor.getFactorY()));
 	updateAreaImage(rect);
 }
 
