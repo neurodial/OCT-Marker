@@ -125,10 +125,13 @@ int main(int argc, char **argv)
 
     const QStringList fileList = parser.positionalArguments();
 
+	bool gitTimeOk = true;
+	QString gitTimeStr(BuildConstants::gitTimeStamp);
+	QDateTime gitTime = QDateTime::fromSecsSinceEpoch(gitTimeStr.toLongLong(&gitTimeOk));
+
 	qDebug("Build Type      : %s", BuildConstants::buildTyp);
 	qDebug("Git Hash        : %s", BuildConstants::gitSha1);
-	qDebug("Build Date      : %s", BuildConstants::buildDate);
-	qDebug("Build Time      : %s", BuildConstants::buildTime);
+	if(gitTimeOk) qDebug("Git Date        : %s", gitTime.toString(Qt::ISODate).toUtf8().data());
 	qDebug("Compiler Id     : %s", BuildConstants::compilerId);
 	qDebug("Compiler Version: %s", BuildConstants::compilerVersion);
 

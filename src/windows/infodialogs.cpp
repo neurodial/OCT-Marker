@@ -23,6 +23,7 @@
 #include<QMessageBox>
 #include<QHBoxLayout>
 #include<QVBoxLayout>
+#include<QDateTime>
 
 #include<QFile>
 #include<QTextEdit>
@@ -38,6 +39,10 @@ AboutDialog::AboutDialog()
 	setWindowIcon(appIcon);
 	labelIcon->setPixmap(appIcon.pixmap(QSize(60, 60)));
 
+	bool gitTimeOk = true;
+	QString gitTimeStr(BuildConstants::gitTimeStamp);
+	QDateTime gitTime = QDateTime::fromSecsSinceEpoch(gitTimeStr.toLongLong(&gitTimeOk));
+
 	QString text("<h1><b>Info &#252;ber OCT-Marker</b></h1>");
 
 	text += "<br /><center><b>nicht für den klinischen Gebrauch bestimmt<br />not for clinical usage</b></center>";
@@ -47,8 +52,8 @@ AboutDialog::AboutDialog()
 	text += " und dem <a href=\"http://tango.freedesktop.org/\">Tango-Desktop-Project</a>";
 
 	text += "<br/><br/><b>Build-Informationen</b><table>";
-	text += QString("<tr><td>&#220;bersetzungszeit </td><td> %1 %2</td></tr>").arg(BuildConstants::buildDate).arg(BuildConstants::buildTime);
 	text += QString("<tr><td>Qt-Version </td><td> %1</td></tr>").arg(qVersion());
+	if(gitTimeOk) text += QString("<tr><td>Git-Commit-Zeit </td><td> %1</td></tr>").arg(gitTime.toString(Qt::SystemLocaleLongDate));
 	text += QString("<tr><td>Git-Hash   </td><td> %1</td></tr>").arg(BuildConstants::gitSha1);
 	text += QString("<tr><td>Build-Typ  </td><td> %1</td></tr>").arg(BuildConstants::buildTyp);
 	text += QString("<tr><td>Compiler   </td><td> %1 %2</td></tr>").arg(BuildConstants::compilerId).arg(BuildConstants::compilerVersion);

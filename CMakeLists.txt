@@ -30,6 +30,7 @@ if(BUILD_QT_PROGRAMM)
 
 	include(GetGitRevisionDescription)
 	get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+	git_author_date(GIT_DATE)
 
 	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/buildconstants.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/buildconstants.cpp" @ONLY)
 	list(APPEND octmarker_SRCS "${CMAKE_CURRENT_BINARY_DIR}/buildconstants.cpp")
