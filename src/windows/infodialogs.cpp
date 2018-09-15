@@ -41,7 +41,7 @@ AboutDialog::AboutDialog()
 
 	bool gitTimeOk = true;
 	QString gitTimeStr(BuildConstants::gitTimeStamp);
-	QDateTime gitTime = QDateTime::fromSecsSinceEpoch(gitTimeStr.toLongLong(&gitTimeOk));
+	QDateTime gitTime = QDateTime::fromMSecsSinceEpoch(gitTimeStr.toLongLong(&gitTimeOk)*1000);
 
 	QString text("<h1><b>Info &#252;ber OCT-Marker</b></h1>");
 
