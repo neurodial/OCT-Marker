@@ -16,10 +16,10 @@
  *
  */
 
+#define _USE_MATH_DEFINES
+
 #include "bscanintervalmarker.h"
 
-
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 // for mingw

@@ -16,10 +16,9 @@
  *
  */
 
-#include "thicknessmap.h"
-
-
 #define _USE_MATH_DEFINES
+
+#include "thicknessmap.h"
 
 #include<map>
 #include<limits>

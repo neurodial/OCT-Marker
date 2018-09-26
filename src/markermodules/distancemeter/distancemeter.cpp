@@ -17,11 +17,10 @@
  */
 
 
+#define _USE_MATH_DEFINES
+
 #include "distancemeter.h"
 
-#include"wgdistancemeter.h"
-
-#define _USE_MATH_DEFINES
 #include<cmath>
 
 #include<QMouseEvent>
@@ -33,6 +32,9 @@
 
 #include<data_structure/scalefactor.h>
 #include<widgets/bscanmarkerwidget.h>
+
+#include"wgdistancemeter.h"
+
 
 DistanceMeter::DistanceMeter(OctMarkerManager* markerManager)
 : BscanMarkerBase(markerManager)
